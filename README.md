@@ -137,5 +137,6 @@ Notes:
 
 ## Status
 
-Built phase-by-phase following a documented 14-step workflow. Progress and decisions are
-tracked in [`docs/PROGRESS.md`](docs/PROGRESS.md).
+Built phase-by-phase following a documented 14-step workflow.
+**To resume work (or onboard a new contributor/agent), read [`docs/SESSION-LOG.md`](docs/SESSION-LOG.md) first**, then
+[`docs/PROGRESS.md`](docs/PROGRESS.md) for the phase checklist.
