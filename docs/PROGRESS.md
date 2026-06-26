@@ -142,5 +142,6 @@ architecture and can be added behind existing ports or as new domain modules.
 - **i18n-ready:** Arabic + English planned (RTL aware) — copy externalized from day one where practical.
 
 ## Notes for the next session
-- The 24 reference `.jpg` files live at repo root; catalog in `.kiro/steering/visual-references.md`.
+- **Master resume guide: `docs/SESSION-LOG.md`** (read it first). A `.kiro/steering/project-status.md` auto-loads this context in new sessions.
+- The 24 reference `.jpg` files live in `references/`; catalog in `.kiro/steering/visual-references.md`.
 - `design-taste-frontend` skill is landing-page oriented (its Section 13 marks dashboards out of scope). Apply its taste/anti-slop rules to marketing surfaces; use disciplined product-UI conventions for the app itself.
