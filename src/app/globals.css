@@ -1,158 +1,128 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   Flousi Design System v2 — "Soft Capital"
-   Design read: premium finance product. Visual language pulled directly from
-   the reference screens: neumorphic soft-UI (glossy 3D orbs, connected
-   steppers), grainy mesh gradients (grainient), bento depth, a single electric
-   blue accent, and a confident grotesk display face.
-   Spec: docs/DESIGN-SYSTEM.md. Components consume SEMANTIC tokens only.
+   Flousi Design System — grounded in the ui-ux-pro-max skill (see
+   design-system/MASTER.md) + the reference screens.
+   Finance product → trust blue + profit green + alert red + slate neutrals,
+   Bento Box Grid + Soft UI Evolution, IBM Plex. NO purple/violet (anti-pattern).
    ========================================================================== */
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* ----------------------------------------------------------------------------
-   TIER 1 — Primitives
-   -------------------------------------------------------------------------- */
+/* ---------------- Primitives ---------------- */
 :root {
-  /* Cool neutrals tuned for soft-UI (slightly blue-grey) */
-  --n-0: #ffffff;
-  --n-25: #f7f8fb;
-  --n-50: #eef1f6;
-  --n-100: #e6e9f0;
-  --n-150: #dce0e9;
-  --n-200: #ccd2de;
-  --n-300: #aab2c2;
-  --n-400: #8b94a6;
-  --n-500: #697285;
-  --n-600: #5a6273;
-  --n-700: #3d4453;
-  --n-800: #262b36;
-  --n-900: #161922;
-  --n-950: #0a0c11;
+  /* Brand */
+  --blue-700: #1b399e;
+  --blue-600: #1e40af; /* trust blue (primary) */
+  --blue-500: #2563eb;
+  --blue-400: #3b82f6;
+  --blue-300: #60a5fa;
+  --teal-500: #06b6d4;
+  --teal-600: #0e7490;
+  --green-600: #059669; /* profit */
+  --green-500: #10b981;
+  --red-600: #dc2626;
+  --red-500: #ef4444;
+  --amber-600: #d97706;
+  --amber-500: #f59e0b;
 
-  /* Electric blue accent (the locked single accent) */
-  --blue-300: #9cc0ff;
-  --blue-400: #5b8cff;
-  --blue-500: #2f6bff;
-  --blue-600: #1f5cf5;
-  --blue-700: #1a4cd6;
-
-  /* Mesh-only hues (used ONLY inside grainient gradients, never as flat UI) */
-  --indigo: #6366f1;
-  --violet: #8b5cf6;
-  --rose: #fb5d8a;
-
-  --emerald-400: #34d39a;
-  --emerald-500: #10b981;
-  --emerald-600: #06966b;
-  --rose-500: #f43f6e;
-  --rose-600: #e11d54;
-  --amber-500: #f5a524;
-  --amber-600: #d98a16;
-
-  /* Radius — generous & soft */
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
+  /* Radius — Bento + Soft UI */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
   --radius-full: 9999px;
 
   /* Motion */
-  --motion-fast: 140ms;
+  --motion-fast: 150ms;
   --motion-base: 240ms;
-  --motion-slow: 420ms;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-slow: 360ms;
+  --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
 
-  /* ---------- TIER 2 — Semantic (light / "day") ---------- */
-  --bg: #e9ecf2;
-  --bg-tint: #eef1f6;
+  /* ---------- Semantic (light) ---------- */
+  --bg: #f5f5f7;
+  --bg-tint: #fbfbfd;
   --surface: #ffffff;
-  --surface-2: #f4f6fa;
-  --sunken: #e3e7ef;
-  --border: #e0e4ec;
-  --border-soft: #eaedf3;
-  --fg: #11141b;
-  --muted: #5a6273;
-  --subtle: #99a1b2;
+  --surface-2: #efeff3;
+  --sunken: #e9e9ee;
+  --border: #e5e6eb;
+  --border-soft: #eeeef2;
+  --fg: #1d1d1f;
+  --muted: #5b6472;
+  --subtle: #9aa1ad;
 
-  --accent: #2f6bff;
-  --accent-strong: #1f5cf5;
+  --accent: #1e40af;
+  --accent-strong: #1b399e;
   --accent-fg: #ffffff;
-  --accent-soft: #e8efff;
+  --accent-soft: #e7ecf9;
 
-  --success: #06966b;
-  --success-soft: #e3f8ef;
-  --danger: #e11d54;
-  --danger-soft: #ffe9ef;
-  --warning: #d98a16;
-  --warning-soft: #fff4e0;
-  --info: #1f5cf5;
-  --info-soft: #e8efff;
-  --focus: #2f6bff;
+  --success: #059669;
+  --success-soft: #e3f5ee;
+  --danger: #dc2626;
+  --danger-soft: #fce8e8;
+  --warning: #d97706;
+  --warning-soft: #fbf0e0;
+  --info: #1e40af;
+  --info-soft: #e7ecf9;
+  --focus: #1e40af;
 
-  /* Neumorphic shadow ingredients */
   --neu-hi: rgba(255, 255, 255, 0.92);
-  --neu-lo: rgba(38, 50, 84, 0.13);
-  /* Ambient card elevation (tinted, never pure black) */
-  --shadow-xs: 0 1px 2px rgba(38, 50, 84, 0.06);
-  --shadow-sm: 0 2px 8px -2px rgba(38, 50, 84, 0.10), 0 1px 2px rgba(38, 50, 84, 0.06);
-  --shadow-md: 0 10px 26px -8px rgba(38, 50, 84, 0.16), 0 3px 8px -4px rgba(38, 50, 84, 0.08);
-  --shadow-lg: 0 24px 48px -16px rgba(38, 50, 84, 0.22), 0 8px 16px -8px rgba(38, 50, 84, 0.10);
-  --shadow-xl: 0 40px 80px -24px rgba(38, 50, 84, 0.28);
-  --shadow-accent: 0 12px 30px -8px rgba(47, 107, 255, 0.45);
+  --neu-lo: rgba(16, 24, 40, 0.10);
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 6px 16px -4px rgba(16, 24, 40, 0.10), 0 2px 6px -2px rgba(16, 24, 40, 0.06);
+  --shadow-lg: 0 16px 32px -8px rgba(16, 24, 40, 0.14), 0 6px 12px -8px rgba(16, 24, 40, 0.08);
+  --shadow-xl: 0 28px 56px -16px rgba(16, 24, 40, 0.20);
+  --shadow-accent: 0 10px 24px -6px rgba(30, 64, 175, 0.35);
 
-  /* Mesh / grain */
-  --grain-opacity: 0.06;
+  --grain-opacity: 0.05;
 }
 
-/* ---------- Semantic (dark / "night") ---------- */
+/* ---------- Semantic (dark) ---------- */
 [data-theme="dark"] {
-  --bg: #08090d;
-  --bg-tint: #0c0e14;
-  --surface: #14161f;
-  --surface-2: #1b1e29;
-  --sunken: #0e1018;
-  --border: #232734;
-  --border-soft: #1a1d27;
-  --fg: #eef1f8;
-  --muted: #99a1b2;
-  --subtle: #5a6273;
+  --bg: #0f172a;
+  --bg-tint: #111c33;
+  --surface: #192134;
+  --surface-2: #1e2740;
+  --sunken: #101a34;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-soft: rgba(255, 255, 255, 0.05);
+  --fg: #f8fafc;
+  --muted: #94a3b8;
+  --subtle: #64748b;
 
-  --accent: #5b8cff;
-  --accent-strong: #2f6bff;
+  --accent: #3b82f6;
+  --accent-strong: #2563eb;
   --accent-fg: #ffffff;
-  --accent-soft: rgba(91, 140, 255, 0.16);
+  --accent-soft: rgba(59, 130, 246, 0.16);
 
-  --success: #34d39a;
+  --success: #10b981;
   --success-soft: rgba(16, 185, 129, 0.16);
-  --danger: #ff6b91;
-  --danger-soft: rgba(244, 63, 110, 0.16);
-  --warning: #f5b54a;
-  --warning-soft: rgba(245, 165, 36, 0.16);
-  --info: #5b8cff;
-  --info-soft: rgba(91, 140, 255, 0.16);
-  --focus: #5b8cff;
+  --danger: #ef4444;
+  --danger-soft: rgba(239, 68, 68, 0.16);
+  --warning: #f59e0b;
+  --warning-soft: rgba(245, 158, 11, 0.16);
+  --info: #3b82f6;
+  --info-soft: rgba(59, 130, 246, 0.16);
+  --focus: #60a5fa;
 
-  --neu-hi: rgba(255, 255, 255, 0.05);
-  --neu-lo: rgba(0, 0, 0, 0.55);
+  --neu-hi: rgba(255, 255, 255, 0.045);
+  --neu-lo: rgba(0, 0, 0, 0.5);
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 12px 28px -8px rgba(0, 0, 0, 0.6), 0 3px 8px -4px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 24px 50px -16px rgba(0, 0, 0, 0.7);
-  --shadow-xl: 0 40px 80px -24px rgba(0, 0, 0, 0.8);
-  --shadow-accent: 0 14px 36px -8px rgba(47, 107, 255, 0.5);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 20px -6px rgba(0, 0, 0, 0.55), 0 2px 6px -2px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 18px 36px -10px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 30px 60px -18px rgba(0, 0, 0, 0.7);
+  --shadow-accent: 0 12px 28px -6px rgba(59, 130, 246, 0.45);
 
-  --grain-opacity: 0.08;
+  --grain-opacity: 0.07;
 }
 
-/* ----------------------------------------------------------------------------
-   Map to Tailwind utilities
-   -------------------------------------------------------------------------- */
+/* ---------------- Map to Tailwind ---------------- */
 @theme inline {
-  --font-sans: "General Sans", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-sans-ibm), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-ibm), ui-monospace, monospace;
 
   --color-bg: var(--bg);
   --color-bg-tint: var(--bg-tint);
@@ -190,67 +160,44 @@
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
-
-  --ease-out: var(--ease-out);
-  --ease-spring: var(--ease-spring);
 }
 
-/* ----------------------------------------------------------------------------
-   Base
-   -------------------------------------------------------------------------- */
+/* ---------------- Base ---------------- */
 @layer base {
-  html {
-    color-scheme: light;
-  }
-  html[data-theme="dark"] {
-    color-scheme: dark;
-  }
+  html { color-scheme: light; }
+  html[data-theme="dark"] { color-scheme: dark; }
   body {
     background-color: var(--bg);
     color: var(--fg);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    letter-spacing: -0.01em;
   }
-  h1, h2, h3, h4 {
-    letter-spacing: -0.025em;
-  }
-  .tnum, .font-mono {
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum";
-  }
+  h1, h2, h3, h4 { letter-spacing: -0.02em; }
+  .tnum, .font-mono { font-variant-numeric: tabular-nums; }
   :focus-visible {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
     border-radius: var(--radius-sm);
   }
-  ::selection {
-    background-color: var(--accent);
-    color: #fff;
-  }
+  ::selection { background-color: var(--accent); color: #fff; }
 }
 
-/* ----------------------------------------------------------------------------
-   Materials — neumorphism, mesh gradients, grain, glossy orbs
-   -------------------------------------------------------------------------- */
+/* ---------------- Materials ---------------- */
 @layer components {
-  /* Soft raised / inset surfaces */
-  .neu-raised {
-    box-shadow: -7px -7px 16px var(--neu-hi), 8px 8px 20px var(--neu-lo);
-  }
-  .neu-raised-sm {
-    box-shadow: -3px -3px 8px var(--neu-hi), 4px 4px 10px var(--neu-lo);
-  }
-  .neu-inset {
-    box-shadow: inset 3px 3px 7px var(--neu-lo), inset -3px -3px 7px var(--neu-hi);
-  }
+  /* Soft UI Evolution — accessible neumorphic depth */
+  .neu-raised { box-shadow: -6px -6px 14px var(--neu-hi), 6px 6px 16px var(--neu-lo); }
+  .neu-raised-sm { box-shadow: -3px -3px 7px var(--neu-hi), 3px 3px 9px var(--neu-lo); }
+  .neu-inset { box-shadow: inset 3px 3px 7px var(--neu-lo), inset -3px -3px 7px var(--neu-hi); }
 
-  /* Grain overlay (apply to a positioned element). GPU-cheap, fixed shapes only. */
-  .grainy {
-    position: relative;
-    isolation: isolate;
+  /* Bento card hover lift */
+  .bento-hover {
+    transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out);
   }
+  .bento-hover:hover { transform: scale(1.02); box-shadow: var(--shadow-md); }
+
+  /* Grain overlay */
+  .grainy { position: relative; isolation: isolate; }
   .grainy::after {
     content: "";
     position: absolute;
@@ -263,52 +210,40 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* Grainient mesh — light aurora fading into the card surface (ref: use-cases bento) */
+  /* Brand gradient mesh — blue -> teal -> green (NO purple, per finance anti-pattern) */
   .mesh-aurora {
-    background-color: var(--accent);
+    background-color: #1e40af;
     background-image:
-      radial-gradient(90% 70% at 18% 12%, var(--violet) 0%, transparent 55%),
-      radial-gradient(90% 80% at 88% 10%, var(--blue-400) 0%, transparent 55%),
-      linear-gradient(180deg, var(--blue-500) 0%, var(--indigo) 48%, transparent 100%);
+      radial-gradient(85% 80% at 12% 10%, #2563eb 0%, transparent 55%),
+      radial-gradient(85% 80% at 92% 6%, #06b6d4 0%, transparent 52%),
+      linear-gradient(160deg, #1e40af 0%, #0e7490 62%, #059669 118%);
   }
-  /* Dark glow rising from the bottom (ref: dark CTA cards) */
+  /* Profit glow rising from below (dark) */
   .mesh-night {
-    background-color: #0a0b12;
+    background-color: #0b1220;
     background-image:
-      radial-gradient(80% 70% at 50% 118%, rgba(124, 92, 255, 0.95) 0%, rgba(58, 42, 143, 0.6) 34%, transparent 68%),
-      radial-gradient(60% 50% at 20% 110%, rgba(47, 107, 255, 0.7) 0%, transparent 60%);
+      radial-gradient(80% 72% at 50% 120%, rgba(37, 99, 235, 0.92) 0%, rgba(6, 182, 212, 0.45) 36%, transparent 70%),
+      radial-gradient(60% 50% at 16% 112%, rgba(5, 150, 105, 0.55) 0%, transparent 60%);
   }
+  /* Loss glow (semantic red) */
   .mesh-night-rose {
-    background-color: #0a0b12;
-    background-image:
-      radial-gradient(80% 70% at 50% 118%, rgba(251, 93, 138, 0.95) 0%, rgba(150, 36, 70, 0.55) 34%, transparent 68%);
+    background-color: #0b1220;
+    background-image: radial-gradient(80% 72% at 50% 120%, rgba(239, 68, 68, 0.9) 0%, rgba(150, 36, 40, 0.5) 36%, transparent 70%);
   }
 
-  /* Glossy 3D orbs (ref: plan-selector radios, stepper node) */
-  .orb {
-    border-radius: var(--radius-full);
-    position: relative;
-  }
+  /* Glossy 3D orbs */
+  .orb { border-radius: var(--radius-full); position: relative; }
   .orb-blue {
-    background: radial-gradient(circle at 34% 26%, #bcd2ff 0%, #4d82ff 38%, #1b46c4 100%);
-    box-shadow:
-      inset 0 2px 3px rgba(255, 255, 255, 0.7),
-      inset 0 -7px 12px rgba(8, 20, 70, 0.4),
-      0 8px 18px rgba(47, 107, 255, 0.45);
+    background: radial-gradient(circle at 34% 26%, #bcd2ff 0%, #3b82f6 38%, #1e40af 100%);
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.7), inset 0 -7px 12px rgba(8,20,70,0.4), 0 8px 18px rgba(30,64,175,0.42);
   }
   .orb-silver {
     background: radial-gradient(circle at 34% 26%, #ffffff 0%, #dfe3ea 42%, #b4bcc9 100%);
-    box-shadow:
-      inset 0 2px 3px rgba(255, 255, 255, 0.95),
-      inset 0 -7px 12px rgba(20, 30, 60, 0.14),
-      0 6px 14px rgba(38, 50, 84, 0.18);
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.95), inset 0 -7px 12px rgba(20,30,60,0.14), 0 6px 14px rgba(16,24,40,0.18);
   }
   .orb-emerald {
-    background: radial-gradient(circle at 34% 26%, #b7f5dd 0%, #19c98c 40%, #06794f 100%);
-    box-shadow:
-      inset 0 2px 3px rgba(255, 255, 255, 0.7),
-      inset 0 -7px 12px rgba(0, 50, 30, 0.35),
-      0 8px 18px rgba(16, 185, 129, 0.4);
+    background: radial-gradient(circle at 34% 26%, #a7f3d0 0%, #10b981 40%, #059669 100%);
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.7), inset 0 -7px 12px rgba(0,50,30,0.35), 0 8px 18px rgba(5,150,105,0.4);
   }
 }
 
