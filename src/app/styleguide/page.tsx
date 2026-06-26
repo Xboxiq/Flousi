@@ -139,7 +139,11 @@ export default function StyleguidePage() {
             icon={<Package size={24} />}
             title="No products yet"
             description="Add your first product to start tracking profit."
-            action={<Button size="sm" leadingIcon={<Plus size={16} weight="bold" />}>Add product</Button>}
+            action={
+              <Button size="sm" leadingIcon={<Plus size={16} weight="bold" />}>
+                Add product
+              </Button>
+            }
           />
           <Card className="p-5">
             <Skeleton className="h-4 w-24" />

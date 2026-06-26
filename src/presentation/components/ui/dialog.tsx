@@ -15,7 +15,15 @@ interface DialogProps {
   className?: string;
 }
 
-export function Dialog({ open, onClose, title, description, children, footer, className }: DialogProps) {
+export function Dialog({
+  open,
+  onClose,
+  title,
+  description,
+  children,
+  footer,
+  className,
+}: DialogProps) {
   const reduce = useReducedMotion();
 
   useEffect(() => {
@@ -32,7 +40,11 @@ export function Dialog({ open, onClose, title, description, children, footer, cl
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+        >
           <motion.div
             className="absolute inset-0 bg-black/45"
             initial={{ opacity: 0 }}

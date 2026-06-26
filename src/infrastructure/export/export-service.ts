@@ -55,7 +55,10 @@ export const localExportService: ExportService = {
 const EXT: Record<ExportFormat, string> = { csv: "csv", xlsx: "xlsx", pdf: "pdf" };
 
 function slugify(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 /** Build the file and trigger a browser download. */

@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { CalendarCheck, Lock } from "@phosphor-icons/react";
-import type { AccountingPeriod } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { computePeriodSummary, nextPeriodAfter } from "@/application/periods";
 import { PageHeader } from "@/presentation/components/layout/page-header";
@@ -40,7 +39,8 @@ export function PeriodsView() {
     [periods],
   );
 
-  const money = (n: number) => formatCurrency(n, { currency: settings.currency, locale: settings.locale });
+  const money = (n: number) =>
+    formatCurrency(n, { currency: settings.currency, locale: settings.locale });
 
   const liveSummary = active ? computePeriodSummary(active, products, sales) : null;
 
@@ -74,7 +74,10 @@ export function PeriodsView() {
   if (!loaded) {
     return (
       <>
-        <PageHeader title="Accounting periods" description="Close months and lock historical reports." />
+        <PageHeader
+          title="Accounting periods"
+          description="Close months and lock historical reports."
+        />
         <Skeleton className="h-48 w-full" />
       </>
     );
@@ -82,7 +85,10 @@ export function PeriodsView() {
 
   return (
     <>
-      <PageHeader title="Accounting periods" description="Close months and lock historical reports." />
+      <PageHeader
+        title="Accounting periods"
+        description="Close months and lock historical reports."
+      />
 
       {/* Active period */}
       {active && liveSummary ? (
@@ -116,7 +122,9 @@ export function PeriodsView() {
         Closed periods
       </h2>
       {closed.length === 0 ? (
-        <p className="text-sm text-muted">No closed periods yet. Closed months will appear here, read-only.</p>
+        <p className="text-sm text-muted">
+          No closed periods yet. Closed months will appear here, read-only.
+        </p>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {closed.map((period) => (
@@ -176,7 +184,13 @@ function SummaryGrid({
   live,
   compact,
 }: {
-  summary: { revenue: number; totalCost: number; netProfit: number; margin: number; saleCount: number };
+  summary: {
+    revenue: number;
+    totalCost: number;
+    netProfit: number;
+    margin: number;
+    saleCount: number;
+  };
   money: (n: number) => string;
   locale: string;
   live?: boolean;
@@ -197,7 +211,9 @@ function SummaryGrid({
       {items.map((it) => (
         <div key={it.label}>
           <div className="text-xs text-muted">{it.label}</div>
-          <div className={`mt-0.5 font-mono text-lg font-semibold tabular-nums ${it.tone ?? "text-fg"}`}>
+          <div
+            className={`mt-0.5 font-mono text-lg font-semibold tabular-nums ${it.tone ?? "text-fg"}`}
+          >
             {it.value}
           </div>
         </div>

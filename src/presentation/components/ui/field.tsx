@@ -14,7 +14,15 @@ interface FieldProps {
  * Form field wrapper enforcing the design-system rule:
  * label ABOVE, helper/error BELOW. Never placeholder-as-label.
  */
-export function Field({ label, htmlFor, helper, error, required, className, children }: FieldProps) {
+export function Field({
+  label,
+  htmlFor,
+  helper,
+  error,
+  required,
+  className,
+  children,
+}: FieldProps) {
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
       {label && (

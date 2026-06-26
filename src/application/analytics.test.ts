@@ -59,7 +59,10 @@ describe("computeDashboard", () => {
   it("isolates current-month figures", () => {
     const m = computeDashboard(
       [product()],
-      [sale({ soldAt: "2026-06-05T12:00:00.000Z" }), sale({ id: "s2", soldAt: "2026-03-05T12:00:00.000Z" })],
+      [
+        sale({ soldAt: "2026-06-05T12:00:00.000Z" }),
+        sale({ id: "s2", soldAt: "2026-03-05T12:00:00.000Z" }),
+      ],
       { now },
     );
     expect(m.monthProfit).toBe(60); // only June sale
@@ -73,11 +76,24 @@ describe("computeDashboard", () => {
   });
 
   it("ranks top products by net profit", () => {
-    const a = product({ id: "a", name: "A", sellingPrice: 100, costs: makeCostBreakdown({ purchase: { fixed: 40, percent: 0 } }) });
-    const b = product({ id: "b", name: "B", sellingPrice: 100, costs: makeCostBreakdown({ purchase: { fixed: 90, percent: 0 } }) });
+    const a = product({
+      id: "a",
+      name: "A",
+      sellingPrice: 100,
+      costs: makeCostBreakdown({ purchase: { fixed: 40, percent: 0 } }),
+    });
+    const b = product({
+      id: "b",
+      name: "B",
+      sellingPrice: 100,
+      costs: makeCostBreakdown({ purchase: { fixed: 90, percent: 0 } }),
+    });
     const m = computeDashboard(
       [a, b],
-      [sale({ productId: "a", unitPrice: 100 }), sale({ id: "s2", productId: "b", unitPrice: 100 })],
+      [
+        sale({ productId: "a", unitPrice: 100 }),
+        sale({ id: "s2", productId: "b", unitPrice: 100 }),
+      ],
       { now },
     );
     expect(m.topProducts[0].name).toBe("A");

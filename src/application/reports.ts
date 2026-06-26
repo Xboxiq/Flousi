@@ -28,7 +28,20 @@ export interface Report {
   rows: (string | number)[][];
 }
 
-const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH_LABELS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 const COST_LABELS: Record<string, string> = {
   purchase: "Purchase cost",
   shipping: "Shipping",
@@ -59,8 +72,12 @@ export function buildReport(type: ReportType, products: Product[], sales: Sale[]
     const agg = new Map<string, Bucket & { units: number; name: string; sku: string }>();
     for (const sp of enriched) {
       if (!sp.product) continue;
-      const cur =
-        agg.get(sp.product.id) ?? { ...emptyBucket(), units: 0, name: sp.product.name, sku: sp.product.sku ?? "" };
+      const cur = agg.get(sp.product.id) ?? {
+        ...emptyBucket(),
+        units: 0,
+        name: sp.product.name,
+        sku: sp.product.sku ?? "",
+      };
       cur.revenue += sp.revenue;
       cur.totalCost += sp.totalCost;
       cur.netProfit += sp.netProfit;
@@ -165,7 +182,13 @@ export function buildReport(type: ReportType, products: Product[], sales: Sale[]
       { label: "Net profit", kind: "profit" },
       { label: "Margin", kind: "percent" },
     ],
-    rows: ordered.map((b) => [b.label, round2(b.revenue), round2(b.totalCost), round2(b.netProfit), margin(b)]),
+    rows: ordered.map((b) => [
+      b.label,
+      round2(b.revenue),
+      round2(b.totalCost),
+      round2(b.netProfit),
+      margin(b),
+    ]),
   };
 }
 

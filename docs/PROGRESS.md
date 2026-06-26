@@ -5,7 +5,7 @@
 > Update it at the end of every working session.
 
 **Last updated:** 2026-06-26
-**Current phase:** Phase 14 — Optimization & documentation (in progress)
+**Current phase:** ✅ All 14 phases complete (v1)
 **Branch:** `build-flousi-foundation`
 
 ---
@@ -27,8 +27,8 @@
 | 10 | Monthly closing | ⬜ Pending |
 | 11 | Reports + export | ⬜ Pending |
 | 12 | Settings | ⬜ Pending |
-| 13 | Testing | ⬜ Pending |
-| 14 | Optimization & documentation | ⬜ Pending |
+| 13 | Testing | ✅ Done |
+| 14 | Optimization & documentation | ✅ Done |
 
 Legend: ✅ done · 🚧 in progress · ⬜ pending
 
@@ -120,7 +120,17 @@ Note: Next routes live in `src/app/*` (Next convention); the rest of presentatio
 - [x] Infrastructure: CSV export (2)
 - [x] 24 tests passing
 
-### Phase 14 — Optimization & documentation 🚧
+### Phase 14 — Optimization & documentation ✅
+- [x] ESLint clean, Prettier formatted
+- [x] README.md (overview, stack, architecture, scripts, structure, roadmap)
+- [x] Final typecheck + build + tests green
+
+---
+
+## v1 complete
+All 14 workflow phases delivered. Future modules (auth, cloud sync, inventory, orders,
+customers, expenses, AI insights, RBAC, PWA, full i18n/RTL) are unblocked by the
+architecture and can be added behind existing ports or as new domain modules.
 
 ---
 

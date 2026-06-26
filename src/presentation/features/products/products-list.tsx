@@ -44,7 +44,8 @@ export function ProductsList() {
       .map((p) => ({ product: p, result: ProfitCalculator.forProduct(p) }));
   }, [products, query, status]);
 
-  const money = (n: number, c: string) => formatCurrency(n, { currency: c, locale: settings.locale });
+  const money = (n: number, c: string) =>
+    formatCurrency(n, { currency: c, locale: settings.locale });
 
   const actions = (
     <Button asChild leadingIcon={<Plus size={16} weight="bold" />}>
@@ -55,7 +56,11 @@ export function ProductsList() {
   if (!loaded) {
     return (
       <>
-        <PageHeader title="Products" description="Every product and its real profit." actions={actions} />
+        <PageHeader
+          title="Products"
+          description="Every product and its real profit."
+          actions={actions}
+        />
         <Skeleton className="h-96 w-full" />
       </>
     );
@@ -63,7 +68,11 @@ export function ProductsList() {
 
   return (
     <>
-      <PageHeader title="Products" description="Every product and its real profit." actions={actions} />
+      <PageHeader
+        title="Products"
+        description="Every product and its real profit."
+        actions={actions}
+      />
 
       {products.length === 0 ? (
         <EmptyState
@@ -80,7 +89,10 @@ export function ProductsList() {
         <Card>
           <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center">
             <div className="relative w-full sm:max-w-xs">
-              <MagnifyingGlass size={16} className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-subtle" />
+              <MagnifyingGlass
+                size={16}
+                className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-subtle"
+              />
               <Input
                 placeholder="Search products…"
                 value={query}
@@ -121,7 +133,9 @@ export function ProductsList() {
                 >
                   <TD>
                     <div className="font-medium text-fg">{product.name}</div>
-                    {product.sku && <div className="font-mono text-xs text-subtle">{product.sku}</div>}
+                    {product.sku && (
+                      <div className="font-mono text-xs text-subtle">{product.sku}</div>
+                    )}
                   </TD>
                   <TD className="text-muted">{product.category ?? "—"}</TD>
                   <TD className="text-end font-mono tabular-nums">

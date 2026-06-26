@@ -23,7 +23,15 @@ const VALUE_TONE = {
 } as const;
 
 /** KPI tile: label, large tabular value, optional trend delta. */
-export function Stat({ label, value, delta, deltaLabel, icon, tone = "default", className }: StatProps) {
+export function Stat({
+  label,
+  value,
+  delta,
+  deltaLabel,
+  icon,
+  tone = "default",
+  className,
+}: StatProps) {
   const up = (delta ?? 0) >= 0;
   return (
     <Card className={cn("p-5", className)}>

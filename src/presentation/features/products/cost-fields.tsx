@@ -29,8 +29,14 @@ export function CostFields({ costs, currencySymbol, onChange }: Props) {
         <span>Percent</span>
       </div>
       {COST_LINES.map((line) => (
-        <div key={line} className="grid grid-cols-2 gap-3 sm:grid-cols-[1fr_120px_120px] sm:items-center">
-          <label className="col-span-2 text-sm font-medium text-fg sm:col-span-1" htmlFor={`${line}-fixed`}>
+        <div
+          key={line}
+          className="grid grid-cols-2 gap-3 sm:grid-cols-[1fr_120px_120px] sm:items-center"
+        >
+          <label
+            className="col-span-2 text-sm font-medium text-fg sm:col-span-1"
+            htmlFor={`${line}-fixed`}
+          >
             {LABELS[line]}
           </label>
           <Input

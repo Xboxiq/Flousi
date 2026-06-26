@@ -2,21 +2,12 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import {
-  Coins,
-  TrendUp,
-  Receipt,
-  Percent,
-  Package,
-  Plus,
-  ArrowRight,
-} from "@phosphor-icons/react";
+import { Coins, TrendUp, Receipt, Percent, Package, Plus, ArrowRight } from "@phosphor-icons/react";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { computeDashboard } from "@/application/analytics";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import { ProfitAreaChart } from "@/presentation/components/charts/profit-area-chart";
 import {
-  Badge,
   Button,
   Card,
   CardContent,
@@ -32,11 +23,7 @@ import {
   THead,
   TR,
 } from "@/presentation/components/ui";
-import {
-  formatCurrency,
-  formatPercent,
-  formatSignedPercent,
-} from "@/presentation/lib/format";
+import { formatCurrency, formatPercent, formatSignedPercent } from "@/presentation/lib/format";
 
 export function DashboardView() {
   const loaded = useDataStore((s) => s.loaded);
@@ -56,8 +43,12 @@ export function DashboardView() {
   const m = metrics.monthly;
   const last = m[m.length - 1];
   const prev = m[m.length - 2];
-  const profitDelta = prev && prev.netProfit ? (last.netProfit - prev.netProfit) / Math.abs(prev.netProfit) : undefined;
-  const revenueDelta = prev && prev.revenue ? (last.revenue - prev.revenue) / Math.abs(prev.revenue) : undefined;
+  const profitDelta =
+    prev && prev.netProfit
+      ? (last.netProfit - prev.netProfit) / Math.abs(prev.netProfit)
+      : undefined;
+  const revenueDelta =
+    prev && prev.revenue ? (last.revenue - prev.revenue) / Math.abs(prev.revenue) : undefined;
 
   const actions = (
     <>
@@ -154,7 +145,11 @@ export function DashboardView() {
             </div>
           </CardHeader>
           <CardContent>
-            <ProfitAreaChart data={metrics.monthly} currency={settings.currency} locale={settings.locale} />
+            <ProfitAreaChart
+              data={metrics.monthly}
+              currency={settings.currency}
+              locale={settings.locale}
+            />
           </CardContent>
         </Card>
 

@@ -35,9 +35,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [preference, setPreferenceState] = useState<ThemePreference>("system");
   const [resolved, setResolved] = useState<ResolvedTheme>("light");
 
-  // Hydrate from storage on mount.
+  // Hydrate from storage on mount (one-time sync from an external store).
   useEffect(() => {
     const stored = (localStorage.getItem(STORAGE_KEY) as ThemePreference | null) ?? "system";
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional one-time hydration from localStorage
     setPreferenceState(stored);
   }, []);
 

@@ -6,7 +6,16 @@ import { FloppyDisk } from "@phosphor-icons/react";
 import { emptyCostBreakdown, type CostBreakdown, type CostLine } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { PageHeader } from "@/presentation/components/layout/page-header";
-import { Button, Card, CardContent, CardHeader, CardTitle, Field, Input, Select } from "@/presentation/components/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Field,
+  Input,
+  Select,
+} from "@/presentation/components/ui";
 import { currencySymbol } from "@/presentation/lib/format";
 import { CostFields } from "./cost-fields";
 import { ProfitPanel } from "./profit-panel";
@@ -79,7 +88,12 @@ export function CalculatorView() {
                 />
               </Field>
               <Field label="Currency" htmlFor="cur">
-                <Select id="cur" value={currency} options={CURRENCY_OPTIONS} onChange={(e) => setCurrency(e.target.value)} />
+                <Select
+                  id="cur"
+                  value={currency}
+                  options={CURRENCY_OPTIONS}
+                  onChange={(e) => setCurrency(e.target.value)}
+                />
               </Field>
             </CardContent>
           </Card>
@@ -99,7 +113,12 @@ export function CalculatorView() {
             </CardHeader>
             <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-end">
               <Field label="Product name" htmlFor="name" className="flex-1">
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Optional" />
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Optional"
+                />
               </Field>
               <Button
                 onClick={saveAsProduct}
@@ -114,7 +133,12 @@ export function CalculatorView() {
         </div>
 
         <div className="lg:sticky lg:top-20 lg:self-start">
-          <ProfitPanel sellingPrice={sellingPrice} costs={costs} currency={currency} locale={settings.locale} />
+          <ProfitPanel
+            sellingPrice={sellingPrice}
+            costs={costs}
+            currency={currency}
+            locale={settings.locale}
+          />
         </div>
       </div>
     </>

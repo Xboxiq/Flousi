@@ -66,11 +66,21 @@ export function ProductDetail({ id }: { id: string }) {
         description={product.sku ? `SKU ${product.sku}` : "Edit product details and costs."}
         actions={
           <>
-            <Badge tone={product.status === "active" ? "accent" : "neutral"}>{product.status}</Badge>
-            <Button variant="secondary" leadingIcon={<Plus size={16} />} onClick={() => setSaleOpen(true)}>
+            <Badge tone={product.status === "active" ? "accent" : "neutral"}>
+              {product.status}
+            </Badge>
+            <Button
+              variant="secondary"
+              leadingIcon={<Plus size={16} />}
+              onClick={() => setSaleOpen(true)}
+            >
               Record sale
             </Button>
-            <Button variant="ghost" leadingIcon={<Trash size={16} />} onClick={() => setConfirmDelete(true)}>
+            <Button
+              variant="ghost"
+              leadingIcon={<Trash size={16} />}
+              onClick={() => setConfirmDelete(true)}
+            >
               Delete
             </Button>
           </>

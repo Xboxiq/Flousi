@@ -8,10 +8,8 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "dan
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary:
-    "bg-accent text-accent-fg hover:bg-accent-hover shadow-xs focus-visible:outline-accent",
-  secondary:
-    "bg-surface-2 text-fg hover:bg-surface-3 border border-border",
+  primary: "bg-accent text-accent-fg hover:bg-accent-hover shadow-xs focus-visible:outline-accent",
+  secondary: "bg-surface-2 text-fg hover:bg-surface-3 border border-border",
   ghost: "text-muted hover:bg-surface-2 hover:text-fg",
   outline: "border border-border-strong text-fg hover:bg-surface-2",
   danger: "bg-danger text-white hover:opacity-90 shadow-xs",
@@ -60,7 +58,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   );
 
   if (asChild && isValidElement(children)) {
-    const child = children as React.ReactElement<{ className?: string; children?: React.ReactNode }>;
+    const child = children as React.ReactElement<{
+      className?: string;
+      children?: React.ReactNode;
+    }>;
     return cloneElement(child, {
       className: cn(classes, child.props.className),
       children: (

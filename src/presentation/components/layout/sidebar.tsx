@@ -58,7 +58,12 @@ export function Sidebar() {
         sidebarCollapsed ? "w-[72px]" : "w-60",
       )}
     >
-      <div className={cn("flex h-16 items-center border-b border-border px-4", sidebarCollapsed && "justify-center px-0")}>
+      <div
+        className={cn(
+          "flex h-16 items-center border-b border-border px-4",
+          sidebarCollapsed && "justify-center px-0",
+        )}
+      >
         <Logo collapsed={sidebarCollapsed} />
       </div>
       <SidebarNav collapsed={sidebarCollapsed} />
@@ -68,7 +73,10 @@ export function Sidebar() {
         aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         className="m-3 flex items-center justify-center gap-2 rounded-[var(--radius-md)] border border-border py-2 text-sm text-muted transition-colors hover:bg-surface-2 hover:text-fg"
       >
-        <CaretLeft size={16} className={cn("transition-transform", sidebarCollapsed && "rotate-180")} />
+        <CaretLeft
+          size={16}
+          className={cn("transition-transform", sidebarCollapsed && "rotate-180")}
+        />
         {!sidebarCollapsed && "Collapse"}
       </button>
     </aside>

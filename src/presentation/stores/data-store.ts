@@ -1,14 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import type {
-  Product,
-  NewProduct,
-  Sale,
-  NewSale,
-  AccountingPeriod,
-  AppSettings,
-} from "@/domain";
+import type { Product, NewProduct, Sale, NewSale, AccountingPeriod, AppSettings } from "@/domain";
 import {
   productRepository,
   saleRepository,

@@ -3,7 +3,14 @@ import { toCsv } from "./export-service";
 
 describe("toCsv", () => {
   it("serializes columns and rows", () => {
-    const csv = toCsv({ title: "T", columns: ["A", "B"], rows: [[1, 2], ["x", "y"]] });
+    const csv = toCsv({
+      title: "T",
+      columns: ["A", "B"],
+      rows: [
+        [1, 2],
+        ["x", "y"],
+      ],
+    });
     expect(csv).toBe("A,B\n1,2\nx,y");
   });
 

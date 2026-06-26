@@ -3,11 +3,7 @@
 export { Money } from "./value-objects/money";
 export { Percentage } from "./value-objects/percentage";
 
-export type {
-  CostComponent,
-  CostBreakdown,
-  CostLine,
-} from "./entities/cost-breakdown";
+export type { CostComponent, CostBreakdown, CostLine } from "./entities/cost-breakdown";
 export {
   COST_LINES,
   emptyCostComponent,
@@ -17,11 +13,7 @@ export {
 
 export type { Product, NewProduct, ProductStatus } from "./entities/product";
 export type { Sale, NewSale } from "./entities/sale";
-export type {
-  AccountingPeriod,
-  PeriodStatus,
-  PeriodSummary,
-} from "./entities/accounting-period";
+export type { AccountingPeriod, PeriodStatus, PeriodSummary } from "./entities/accounting-period";
 export { isLocked } from "./entities/accounting-period";
 
 export { ProfitCalculator } from "./services/profit-calculator";

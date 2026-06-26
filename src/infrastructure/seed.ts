@@ -138,7 +138,12 @@ function buildSeed(): { products: Product[]; sales: Sale[]; period: AccountingPe
       const count = seededCount(m, pi);
       for (let i = 0; i < count; i++) {
         const day = Math.min(((i * 3 + pi * 2) % 27) + 1, 27);
-        const soldAt = new Date(monthDate.getFullYear(), monthDate.getMonth(), day, 12).toISOString();
+        const soldAt = new Date(
+          monthDate.getFullYear(),
+          monthDate.getMonth(),
+          day,
+          12,
+        ).toISOString();
         sales.push({
           id: uuidGenerator.generate(),
           productId: product.id,

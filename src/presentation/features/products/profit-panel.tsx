@@ -26,7 +26,14 @@ interface Props {
 }
 
 /** Instant profit results: revenue, cost, net profit, margin, ROI, break-even. */
-export function ProfitPanel({ sellingPrice, costs, currency, locale, quantity = 1, className }: Props) {
+export function ProfitPanel({
+  sellingPrice,
+  costs,
+  currency,
+  locale,
+  quantity = 1,
+  className,
+}: Props) {
   const result = useMemo(
     () => ProfitCalculator.calculate({ sellingPrice, costs, currency, quantity }),
     [sellingPrice, costs, currency, quantity],

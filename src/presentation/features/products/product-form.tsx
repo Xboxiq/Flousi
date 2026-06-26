@@ -12,7 +12,17 @@ import {
   type ProductStatus,
 } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
-import { Button, Card, CardContent, CardHeader, CardTitle, Field, Input, Select, Textarea } from "@/presentation/components/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Field,
+  Input,
+  Select,
+  Textarea,
+} from "@/presentation/components/ui";
 import { currencySymbol } from "@/presentation/lib/format";
 import { CostFields } from "./cost-fields";
 import { ProfitPanel } from "./profit-panel";
@@ -119,13 +129,28 @@ export function ProductForm({ product }: Props) {
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <Field label="Product name" htmlFor="name" required className="sm:col-span-2">
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Linen Crossbody Tote" />
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Linen Crossbody Tote"
+              />
             </Field>
             <Field label="SKU" htmlFor="sku">
-              <Input id="sku" value={sku} onChange={(e) => setSku(e.target.value)} placeholder="BAG-LIN-01" />
+              <Input
+                id="sku"
+                value={sku}
+                onChange={(e) => setSku(e.target.value)}
+                placeholder="BAG-LIN-01"
+              />
             </Field>
             <Field label="Category" htmlFor="category">
-              <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Bags" />
+              <Input
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Bags"
+              />
             </Field>
             <Field label="Status" htmlFor="status">
               <Select
@@ -136,7 +161,12 @@ export function ProductForm({ product }: Props) {
               />
             </Field>
             <Field label="Notes" htmlFor="notes" className="sm:col-span-2">
-              <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Internal notes…" />
+              <Textarea
+                id="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Internal notes…"
+              />
             </Field>
           </CardContent>
         </Card>
@@ -199,7 +229,12 @@ export function ProductForm({ product }: Props) {
 
       {/* Sticky live results */}
       <div className="lg:sticky lg:top-20 lg:self-start">
-        <ProfitPanel sellingPrice={sellingPrice} costs={costs} currency={currency} locale={settings.locale} />
+        <ProfitPanel
+          sellingPrice={sellingPrice}
+          costs={costs}
+          currency={currency}
+          locale={settings.locale}
+        />
       </div>
     </form>
   );

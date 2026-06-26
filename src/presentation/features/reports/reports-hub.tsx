@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { CalendarBlank, ChartLineUp, Package, Coins, Receipt, ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import {
+  CalendarBlank,
+  ChartLineUp,
+  Package,
+  Coins,
+  Receipt,
+  ArrowRight,
+} from "@phosphor-icons/react/dist/ssr";
 import { REPORT_META, type ReportType } from "@/application/reports";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import { Card } from "@/presentation/components/ui";
@@ -29,7 +36,10 @@ export function ReportsHub() {
               <p className="mt-1 flex-1 text-sm text-muted">{REPORT_META[type].description}</p>
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-accent">
                 View report
-                <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight
+                  size={14}
+                  className="transition-transform group-hover:translate-x-0.5"
+                />
               </span>
             </Card>
           </Link>

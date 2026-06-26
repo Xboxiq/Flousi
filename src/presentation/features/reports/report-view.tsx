@@ -40,7 +40,10 @@ export function ReportView({ type }: { type: ReportType }) {
     switch (kind) {
       case "money":
       case "profit":
-        return formatCurrency(Number(raw), { currency: settings.currency, locale: settings.locale });
+        return formatCurrency(Number(raw), {
+          currency: settings.currency,
+          locale: settings.locale,
+        });
       case "percent":
         return formatPercent(Number(raw), { locale: settings.locale });
       case "number":
@@ -61,16 +64,38 @@ export function ReportView({ type }: { type: ReportType }) {
 
   const actions = (
     <>
-      <Button variant="secondary" size="sm" leadingIcon={<FileCsv size={16} />} onClick={() => onDownload("csv")} disabled={busy}>
+      <Button
+        variant="secondary"
+        size="sm"
+        leadingIcon={<FileCsv size={16} />}
+        onClick={() => onDownload("csv")}
+        disabled={busy}
+      >
         CSV
       </Button>
-      <Button variant="secondary" size="sm" leadingIcon={<FileXls size={16} />} onClick={() => onDownload("xlsx")} disabled={busy}>
+      <Button
+        variant="secondary"
+        size="sm"
+        leadingIcon={<FileXls size={16} />}
+        onClick={() => onDownload("xlsx")}
+        disabled={busy}
+      >
         Excel
       </Button>
-      <Button variant="secondary" size="sm" leadingIcon={<FilePdf size={16} />} onClick={() => onDownload("pdf")} disabled={busy}>
+      <Button
+        variant="secondary"
+        size="sm"
+        leadingIcon={<FilePdf size={16} />}
+        onClick={() => onDownload("pdf")}
+        disabled={busy}
+      >
         PDF
       </Button>
-      <Button size="sm" leadingIcon={<Printer size={16} />} onClick={() => printReport(toExportableTable(report))}>
+      <Button
+        size="sm"
+        leadingIcon={<Printer size={16} />}
+        onClick={() => printReport(toExportableTable(report))}
+      >
         Print
       </Button>
     </>
@@ -83,7 +108,11 @@ export function ReportView({ type }: { type: ReportType }) {
           <Link href="/reports">Reports</Link>
         </Button>
       </div>
-      <PageHeader title={report.title} description={REPORT_META[type].description} actions={loaded ? actions : undefined} />
+      <PageHeader
+        title={report.title}
+        description={REPORT_META[type].description}
+        actions={loaded ? actions : undefined}
+      />
 
       {!loaded ? (
         <Skeleton className="h-80 w-full" />

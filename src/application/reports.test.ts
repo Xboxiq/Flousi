@@ -10,15 +10,32 @@ const products: Product[] = [
     sellingPrice: 100,
     currency: "USD",
     status: "active",
-    costs: makeCostBreakdown({ purchase: { fixed: 40, percent: 0 }, marketplaceFees: { fixed: 0, percent: 10 } }),
+    costs: makeCostBreakdown({
+      purchase: { fixed: 40, percent: 0 },
+      marketplaceFees: { fixed: 0, percent: 10 },
+    }),
     createdAt: "",
     updatedAt: "",
   },
 ];
 
 const sales: Sale[] = [
-  { id: "s1", productId: "p1", quantity: 1, unitPrice: 100, currency: "USD", soldAt: "2026-06-10T12:00:00Z" },
-  { id: "s2", productId: "p1", quantity: 1, unitPrice: 100, currency: "USD", soldAt: "2026-05-10T12:00:00Z" },
+  {
+    id: "s1",
+    productId: "p1",
+    quantity: 1,
+    unitPrice: 100,
+    currency: "USD",
+    soldAt: "2026-06-10T12:00:00Z",
+  },
+  {
+    id: "s2",
+    productId: "p1",
+    quantity: 1,
+    unitPrice: 100,
+    currency: "USD",
+    soldAt: "2026-05-10T12:00:00Z",
+  },
 ];
 
 describe("buildReport", () => {

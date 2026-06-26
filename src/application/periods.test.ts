@@ -23,8 +23,24 @@ const products: Product[] = [
 ];
 
 const sales: Sale[] = [
-  { id: "s1", productId: "p1", quantity: 2, unitPrice: 50, currency: "USD", soldAt: "2026-06-10T12:00:00Z", periodId: "per1" },
-  { id: "s2", productId: "p1", quantity: 1, unitPrice: 50, currency: "USD", soldAt: "2026-05-10T12:00:00Z", periodId: "other" },
+  {
+    id: "s1",
+    productId: "p1",
+    quantity: 2,
+    unitPrice: 50,
+    currency: "USD",
+    soldAt: "2026-06-10T12:00:00Z",
+    periodId: "per1",
+  },
+  {
+    id: "s2",
+    productId: "p1",
+    quantity: 1,
+    unitPrice: 50,
+    currency: "USD",
+    soldAt: "2026-05-10T12:00:00Z",
+    periodId: "other",
+  },
 ];
 
 describe("computePeriodSummary", () => {
@@ -47,7 +63,11 @@ describe("nextPeriodAfter", () => {
   });
 
   it("rolls over the year boundary", () => {
-    const dec: AccountingPeriod = { ...period, label: "December 2026", startDate: "2026-12-01T00:00:00.000Z" };
+    const dec: AccountingPeriod = {
+      ...period,
+      label: "December 2026",
+      startDate: "2026-12-01T00:00:00.000Z",
+    };
     const next = nextPeriodAfter(dec);
     expect(next.label).toBe("January 2027");
   });

@@ -1,11 +1,23 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { DownloadSimple, UploadSimple, FloppyDisk, Sun, Moon, Desktop, Warning } from "@phosphor-icons/react";
+import {
+  DownloadSimple,
+  UploadSimple,
+  FloppyDisk,
+  Sun,
+  Moon,
+  Desktop,
+  Warning,
+} from "@phosphor-icons/react";
 import type { AppSettings } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { useTheme, type ThemePreference } from "@/presentation/components/theme/theme-provider";
-import { downloadBackup, importAll, clearAll } from "@/infrastructure/persistence/local-storage/backup";
+import {
+  downloadBackup,
+  importAll,
+  clearAll,
+} from "@/infrastructure/persistence/local-storage/backup";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
   Button,
@@ -68,7 +80,10 @@ export function SettingsView() {
       setDraft(useDataStore.getState().settings);
       setMessage({ tone: "success", text: "Backup restored successfully." });
     } catch (err) {
-      setMessage({ tone: "danger", text: err instanceof Error ? err.message : "Could not restore backup." });
+      setMessage({
+        tone: "danger",
+        text: err instanceof Error ? err.message : "Could not restore backup.",
+      });
     }
   };
 
@@ -99,7 +114,9 @@ export function SettingsView() {
                   onClick={() => setPreference(opt.value)}
                   className={cn(
                     "inline-flex items-center gap-2 rounded-[var(--radius-sm)] px-3 py-1.5 text-sm font-medium transition-colors",
-                    preference === opt.value ? "bg-accent text-accent-fg" : "text-muted hover:text-fg",
+                    preference === opt.value
+                      ? "bg-accent text-accent-fg"
+                      : "text-muted hover:text-fg",
                   )}
                 >
                   {opt.icon}
@@ -210,15 +227,28 @@ export function SettingsView() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             {message && (
-              <p className={cn("text-sm", message.tone === "success" ? "text-success" : "text-danger")}>
+              <p
+                className={cn(
+                  "text-sm",
+                  message.tone === "success" ? "text-success" : "text-danger",
+                )}
+              >
                 {message.text}
               </p>
             )}
             <div className="flex flex-wrap gap-3">
-              <Button variant="secondary" leadingIcon={<DownloadSimple size={16} />} onClick={downloadBackup}>
+              <Button
+                variant="secondary"
+                leadingIcon={<DownloadSimple size={16} />}
+                onClick={downloadBackup}
+              >
                 Download backup
               </Button>
-              <Button variant="secondary" leadingIcon={<UploadSimple size={16} />} onClick={() => fileRef.current?.click()}>
+              <Button
+                variant="secondary"
+                leadingIcon={<UploadSimple size={16} />}
+                onClick={() => fileRef.current?.click()}
+              >
                 Restore backup
               </Button>
               <input
@@ -232,7 +262,11 @@ export function SettingsView() {
                   e.target.value = "";
                 }}
               />
-              <Button variant="ghost" leadingIcon={<Warning size={16} />} onClick={() => setConfirmReset(true)}>
+              <Button
+                variant="ghost"
+                leadingIcon={<Warning size={16} />}
+                onClick={() => setConfirmReset(true)}
+              >
                 Reset all data
               </Button>
             </div>
@@ -256,7 +290,9 @@ export function SettingsView() {
           </>
         }
       >
-        <p className="text-sm text-muted">This cannot be undone. Consider downloading a backup first.</p>
+        <p className="text-sm text-muted">
+          This cannot be undone. Consider downloading a backup first.
+        </p>
       </Dialog>
     </>
   );
