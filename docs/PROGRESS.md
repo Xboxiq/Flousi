@@ -5,7 +5,7 @@
 > Update it at the end of every working session.
 
 **Last updated:** 2026-06-26
-**Current phase:** Phase 5 — Domain layer (in progress)
+**Current phase:** Phase 6 — Primitive UI components (in progress)
 **Branch:** `build-flousi-foundation`
 
 ---
@@ -63,14 +63,14 @@ Legend: ✅ done · 🚧 in progress · ⬜ pending
 
 Note: Next routes live in `src/app/*` (Next convention); the rest of presentation is under `src/presentation/*`.
 
-### Phase 5 — Domain layer ⬜
-- [ ] Value objects: `Money`, `Percentage`
-- [ ] Entities: `Product`, `CostBreakdown`, `Sale`, `AccountingPeriod`
-- [ ] `ProfitCalculator` (revenue, total cost, net profit, margin, break-even, ROI)
-- [ ] Multi-currency support primitives
+### Phase 5 — Domain layer ✅
+- [x] Value objects: `Money` (integer minor units, float-safe), `Percentage`
+- [x] Entities: `Product`, `CostBreakdown`/`CostComponent`, `Sale`, `AccountingPeriod` + `PeriodSummary`
+- [x] `ProfitCalculator` (revenue, total cost, net profit, margin, ROI, markup, break-even, per-line costs, quantity)
+- [x] Ports: repositories (Product/Sale/Period/Settings) + services (Clock/IdGenerator/ExportService)
+- [x] Barrel `@/domain`; unit tests (9 passing) for Money + calculator
 
-### Phases 6–14 ⬜
-See workflow table.
+### Phase 6 — Primitive UI components 🚧
 
 ---
 
