@@ -5,7 +5,7 @@
 > Update it at the end of every working session.
 
 **Last updated:** 2026-06-26
-**Current phase:** Phase 6 — Primitive UI components (in progress)
+**Current phase:** Phase 7 — App shell (in progress)
 **Branch:** `build-flousi-foundation`
 
 ---
@@ -70,7 +70,13 @@ Note: Next routes live in `src/app/*` (Next convention); the rest of presentatio
 - [x] Ports: repositories (Product/Sale/Period/Settings) + services (Clock/IdGenerator/ExportService)
 - [x] Barrel `@/domain`; unit tests (9 passing) for Money + calculator
 
-### Phase 6 — Primitive UI components 🚧
+### Phase 6 — Primitive UI components ✅
+- [x] Button (5 variants, sizes, loading), Input (+leading/trailing), Textarea, Select, Field
+- [x] Card family, Badge (6 tones + dot), Stat (KPI w/ trend), Skeleton, Spinner, EmptyState, Table family
+- [x] Barrel `@/presentation/components/ui`; living `/styleguide` route
+- [x] typecheck + build green
+
+### Phase 7 — App shell 🚧
 
 ---
 
