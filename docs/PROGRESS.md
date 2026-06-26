@@ -5,7 +5,7 @@
 > Update it at the end of every working session.
 
 **Last updated:** 2026-06-26
-**Current phase:** Phase 12 — Settings (in progress)
+**Current phase:** Phase 13 — Testing (in progress)
 **Branch:** `build-flousi-foundation`
 
 ---
@@ -109,7 +109,12 @@ Note: Next routes live in `src/app/*` (Next convention); the rest of presentatio
 - [x] `/reports` hub + `/reports/[type]` view (formatted table, export buttons), statically generated
 - [x] Removed not-yet-built Expenses from nav (future module)
 
-### Phase 12 — Settings 🚧
+### Phase 12 — Settings ✅
+- [x] Backup/restore utilities (export/import JSON, reset) in infrastructure
+- [x] `/settings`: appearance (theme), localization (currency/locale/language), default costs, data backup/restore/reset
+- [x] Persists via `saveSettings`; reset reseeds demo data
+
+### Phase 13 — Testing 🚧
 
 ---
 
