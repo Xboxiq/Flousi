@@ -5,7 +5,7 @@
 > Update it at the end of every working session.
 
 **Last updated:** 2026-06-26
-**Current phase:** Phase 9 — Products module + live Profit Calculator (in progress)
+**Current phase:** Phase 10 — Monthly closing (in progress)
 **Branch:** `build-flousi-foundation`
 
 ---
@@ -90,7 +90,14 @@ Note: Next routes live in `src/app/*` (Next convention); the rest of presentatio
 - [x] Dashboard UI: KPIs, Recharts revenue/profit area chart, top products, recent sales, quick actions; loading + empty states
 - [x] typecheck + build + test green
 
-### Phase 9 — Products module + live Profit Calculator 🚧
+### Phase 9 — Products module + live Profit Calculator ✅
+- [x] `ProfitPanel` (instant net profit, margin, revenue, cost, ROI, break-even, cost breakdown) + `Dialog` primitive
+- [x] `CostFields` (7 lines, fixed + %), `ProductForm` (create/edit, sticky live panel, settings-default prefill, validation)
+- [x] `/products` list (search, status filter, per-product profit), `/products/new`, `/products/[id]` (edit + record sale + delete)
+- [x] `RecordSaleDialog`, standalone `/calculator` with "Save as product"
+- [x] typecheck + build green (9 routes)
+
+### Phase 10 — Monthly closing 🚧
 
 ---
 

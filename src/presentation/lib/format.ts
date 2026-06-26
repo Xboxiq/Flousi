@@ -58,3 +58,13 @@ export function formatSignedPercent(ratio: number, opts: { locale?: string; digi
   const sign = ratio > 0 ? "+" : "";
   return sign + formatPercent(ratio, opts);
 }
+
+/** Extract the currency symbol for a currency/locale, e.g. "$", "€", "ر.س". */
+export function currencySymbol(currency = "USD", locale = "en-US"): string {
+  try {
+    const parts = new Intl.NumberFormat(locale, { style: "currency", currency }).formatToParts(0);
+    return parts.find((p) => p.type === "currency")?.value ?? currency;
+  } catch {
+    return currency;
+  }
+}
