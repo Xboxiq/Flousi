@@ -110,10 +110,10 @@ export function ProductForm({ product }: Props) {
       };
       if (isEdit && product) {
         await updateProduct(product.id, payload);
-        router.push(`/products/${product.id}`);
+        router.push(`/products/view?id=${product.id}`);
       } else {
         const created = await createProduct(payload);
-        router.push(`/products/${created.id}`);
+        router.push(`/products/view?id=${created.id}`);
       }
     } finally {
       setSaving(false);

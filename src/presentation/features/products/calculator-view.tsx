@@ -56,7 +56,7 @@ export function CalculatorView() {
         costs,
         status: "draft",
       });
-      router.push(`/products/${created.id}`);
+      router.push(`/products/view?id=${created.id}`);
     } finally {
       setSaving(false);
     }

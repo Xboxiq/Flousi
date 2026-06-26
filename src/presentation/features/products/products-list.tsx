@@ -129,7 +129,7 @@ export function ProductsList() {
                 <TR
                   key={product.id}
                   className="cursor-pointer"
-                  onClick={() => router.push(`/products/${product.id}`)}
+                  onClick={() => router.push(`/products/view?id=${product.id}`)}
                 >
                   <TD>
                     <div className="font-medium text-fg">{product.name}</div>

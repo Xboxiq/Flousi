@@ -111,6 +111,30 @@ stores, cloud database & sync, an HTTP API, offline/PWA, customers, orders, inve
 expense tracking, AI insights, RBAC, and audit logs. Each is additive behind existing
 ports or as new domain modules.
 
+## Deployment (GitHub Pages)
+
+Flousi is a fully static, local-first app, so it deploys to GitHub Pages via static export.
+
+**One-time setup:** in the repo, go to **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+After that, every push to `main` (or `build-flousi-foundation`) runs
+`.github/workflows/deploy.yml`, which builds the static export with
+`NEXT_PUBLIC_BASE_PATH=/Flousi` and publishes it. The site will be available at:
+
+```
+https://xboxiq.github.io/Flousi/
+```
+
+To build the export locally:
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/Flousi npm run build   # outputs to ./out
+```
+
+Notes:
+- The product detail page uses a static query-param route (`/products/view?id=…`) so it works without a server.
+- All data is stored in the browser (localStorage); demo data is seeded on first visit.
+
 ## Status
 
 Built phase-by-phase following a documented 14-step workflow. Progress and decisions are
