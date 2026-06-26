@@ -29,6 +29,7 @@ import {
   Dialog,
   Field,
   Input,
+  Segmented,
   Select,
 } from "@/presentation/components/ui";
 import { cn } from "@/presentation/lib/cn";
@@ -106,24 +107,7 @@ export function SettingsView() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="inline-flex rounded-[var(--radius-md)] border border-border p-1">
-              {THEME_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setPreference(opt.value)}
-                  className={cn(
-                    "inline-flex items-center gap-2 rounded-[var(--radius-sm)] px-3 py-1.5 text-sm font-medium transition-colors",
-                    preference === opt.value
-                      ? "bg-accent text-accent-fg"
-                      : "text-muted hover:text-fg",
-                  )}
-                >
-                  {opt.icon}
-                  {opt.label}
-                </button>
-              ))}
-            </div>
+            <Segmented options={THEME_OPTIONS} value={preference} onChange={setPreference} />
           </CardContent>
         </Card>
 

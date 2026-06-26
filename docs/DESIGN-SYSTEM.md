@@ -1,14 +1,20 @@
 # Flousi — Design System (Single Source of Truth)
 
-> One source of truth. No duplicated values. All tokens are implemented as CSS variables
-> in `src/presentation/styles/globals.css` and exposed to Tailwind v4 via `@theme`.
-> Components consume **semantic** tokens, never raw values.
+> **v2 — "Soft Capital".** The visual language is taken directly from the reference
+> screens: neumorphic soft-UI (glossy 3D orbs, connected steppers, soft raised
+> surfaces), grainy mesh gradients (grainient — an aurora for light accents, a
+> glow-from-below for dark cards), bento depth, one electric-blue accent, and the
+> General Sans display face. Implemented as CSS variables in
+> `src/presentation/styles` → `src/app/globals.css` and exposed to Tailwind v4 via
+> `@theme`. Components consume **semantic** tokens and the material classes
+> (`.neu-raised`, `.neu-inset`, `.mesh-aurora`, `.mesh-night`, `.grainy`, `.orb-*`).
 
 ## 0. Principles
-- Calm, clean, premium, financial, trustworthy. Reference quality: Stripe, Linear, Vercel.
-- One accent color, locked across the whole app. One radius scale. One type system.
-- Dual light/dark from day one. WCAG AA minimum (AAA for primary numbers).
-- Numbers are always tabular mono. Profit polarity is color-coded consistently.
+- Premium, tactile, financial, trustworthy. Reference quality: the uploaded soft-UI / grainient finance screens.
+- One accent (electric blue). Indigo/violet/rose appear ONLY inside grainient mesh gradients, never as flat UI.
+- Materials over flatness: soft neumorphic depth, glossy spheres, grainy gradient accents, generous radii.
+- Dual light/dark from day one. Numbers in tabular mono. Profit polarity color-coded.
+- Signature components: `MeshSurface`, `GlossyOrb`, `Segmented`, `Stepper` (see `/styleguide`).
 
 ## 1. Token tiers
 1. **Primitive tokens** — raw palette + scales (e.g. `--blue-600`, `--space-4`). Never used directly by components.

@@ -22,7 +22,7 @@ const VALUE_TONE = {
   danger: "text-danger",
 } as const;
 
-/** KPI tile: label, large tabular value, optional trend delta. */
+/** KPI tile: soft surface, label, large tabular value, optional trend delta. */
 export function Stat({
   label,
   value,
@@ -35,17 +35,26 @@ export function Stat({
   const up = (delta ?? 0) >= 0;
   return (
     <Card className={cn("p-5", className)}>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-medium text-muted">{label}</span>
-        {icon && <span className="text-subtle">{icon}</span>}
+        {icon && (
+          <span className="neu-raised-sm inline-flex size-9 items-center justify-center rounded-full bg-surface text-accent">
+            {icon}
+          </span>
+        )}
       </div>
-      <div className={cn("mt-3 font-mono text-2xl font-semibold tabular-nums", VALUE_TONE[tone])}>
+      <div
+        className={cn(
+          "mt-4 font-mono text-[26px] font-semibold leading-none tracking-tight tabular-nums",
+          VALUE_TONE[tone],
+        )}
+      >
         {value}
       </div>
       {deltaLabel && (
         <div
           className={cn(
-            "mt-2 inline-flex items-center gap-1 text-xs font-medium",
+            "mt-2.5 inline-flex items-center gap-1 text-xs font-medium",
             up ? "text-success" : "text-danger",
           )}
         >
