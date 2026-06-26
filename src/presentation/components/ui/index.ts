@@ -17,3 +17,4 @@ export { Skeleton } from "./skeleton";
 export { Spinner } from "./spinner";
 export { EmptyState } from "./empty-state";
 export { Table, THead, TBody, TR, TH, TD } from "./table";
+export { Dialog } from "./dialog";

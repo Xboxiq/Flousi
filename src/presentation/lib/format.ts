@@ -36,7 +36,10 @@ export function formatCurrencyCompact(amount: number, opts: FormatOptions = {}):
 }
 
 /** Format a ratio (0.42) as a percentage string ("42.0%"). */
-export function formatPercent(ratio: number, opts: { locale?: string; digits?: number } = {}): string {
+export function formatPercent(
+  ratio: number,
+  opts: { locale?: string; digits?: number } = {},
+): string {
   const { locale = DEFAULTS.locale, digits = 1 } = opts;
   return new Intl.NumberFormat(locale, {
     style: "percent",
@@ -46,7 +49,10 @@ export function formatPercent(ratio: number, opts: { locale?: string; digits?: n
 }
 
 /** Format a plain number with grouping. */
-export function formatNumber(value: number, opts: FormatOptions & { digits?: number } = {}): string {
+export function formatNumber(
+  value: number,
+  opts: FormatOptions & { digits?: number } = {},
+): string {
   const { locale = DEFAULTS.locale, digits } = opts;
   return new Intl.NumberFormat(locale, {
     maximumFractionDigits: digits ?? 2,
@@ -54,7 +60,20 @@ export function formatNumber(value: number, opts: FormatOptions & { digits?: num
 }
 
 /** Signed delta for KPI deltas, e.g. +12.4% / -3.1%. */
-export function formatSignedPercent(ratio: number, opts: { locale?: string; digits?: number } = {}): string {
+export function formatSignedPercent(
+  ratio: number,
+  opts: { locale?: string; digits?: number } = {},
+): string {
   const sign = ratio > 0 ? "+" : "";
   return sign + formatPercent(ratio, opts);
+}
+
+/** Extract the currency symbol for a currency/locale, e.g. "$", "€", "ر.س". */
+export function currencySymbol(currency = "USD", locale = "en-US"): string {
+  try {
+    const parts = new Intl.NumberFormat(locale, { style: "currency", currency }).formatToParts(0);
+    return parts.find((p) => p.type === "currency")?.value ?? currency;
+  } catch {
+    return currency;
+  }
 }

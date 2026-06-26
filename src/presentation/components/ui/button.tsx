@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef } from "react";
+import { cloneElement, forwardRef, isValidElement } from "react";
 import { cn } from "@/presentation/lib/cn";
 import { Spinner } from "./spinner";
 
@@ -8,10 +8,8 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "dan
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary:
-    "bg-accent text-accent-fg hover:bg-accent-hover shadow-xs focus-visible:outline-accent",
-  secondary:
-    "bg-surface-2 text-fg hover:bg-surface-3 border border-border",
+  primary: "bg-accent text-accent-fg hover:bg-accent-hover shadow-xs focus-visible:outline-accent",
+  secondary: "bg-surface-2 text-fg hover:bg-surface-3 border border-border",
   ghost: "text-muted hover:bg-surface-2 hover:text-fg",
   outline: "border border-border-strong text-fg hover:bg-surface-2",
   danger: "bg-danger text-white hover:opacity-90 shadow-xs",
@@ -31,6 +29,8 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   /** Icon rendered before the label. */
   leadingIcon?: React.ReactNode;
   trailingIcon?: React.ReactNode;
+  /** Render the single child element with button styles (e.g. a Next <Link>). */
+  asChild?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
@@ -42,24 +42,44 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     leadingIcon,
     trailingIcon,
     disabled,
+    asChild = false,
     children,
     ...props
   },
   ref,
 ) {
+  const classes = cn(
+    "inline-flex select-none items-center justify-center font-medium",
+    "transition-[background-color,color,transform,opacity] duration-[var(--motion-fast)]",
+    "active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50",
+    VARIANTS[variant],
+    SIZES[size],
+    className,
+  );
+
+  if (asChild && isValidElement(children)) {
+    const child = children as React.ReactElement<{
+      className?: string;
+      children?: React.ReactNode;
+    }>;
+    return cloneElement(child, {
+      className: cn(classes, child.props.className),
+      children: (
+        <>
+          {loading ? <Spinner /> : leadingIcon}
+          {child.props.children}
+          {!loading && trailingIcon}
+        </>
+      ),
+    });
+  }
+
   return (
     <button
       ref={ref}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={cn(
-        "inline-flex select-none items-center justify-center font-medium",
-        "transition-[background-color,color,transform,opacity] duration-[var(--motion-fast)]",
-        "active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50",
-        VARIANTS[variant],
-        SIZES[size],
-        className,
-      )}
+      className={classes}
       {...props}
     >
       {loading ? <Spinner /> : leadingIcon}

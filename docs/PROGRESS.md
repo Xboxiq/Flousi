@@ -5,7 +5,7 @@
 > Update it at the end of every working session.
 
 **Last updated:** 2026-06-26
-**Current phase:** Phase 7 — App shell (in progress)
+**Current phase:** ✅ All 14 phases complete (v1)
 **Branch:** `build-flousi-foundation`
 
 ---
@@ -27,8 +27,8 @@
 | 10 | Monthly closing | ⬜ Pending |
 | 11 | Reports + export | ⬜ Pending |
 | 12 | Settings | ⬜ Pending |
-| 13 | Testing | ⬜ Pending |
-| 14 | Optimization & documentation | ⬜ Pending |
+| 13 | Testing | ✅ Done |
+| 14 | Optimization & documentation | ✅ Done |
 
 Legend: ✅ done · 🚧 in progress · ⬜ pending
 
@@ -76,7 +76,61 @@ Note: Next routes live in `src/app/*` (Next convention); the rest of presentatio
 - [x] Barrel `@/presentation/components/ui`; living `/styleguide` route
 - [x] typecheck + build green
 
-### Phase 7 — App shell 🚧
+### Phase 7 — App shell ✅
+- [x] UI store (Zustand): sidebar collapse + mobile drawer
+- [x] Logo mark, nav config (Overview/Catalog/Finance/System), Sidebar (collapsible icon rail), MobileNav (animated drawer), TopBar (period switcher, search, theme toggle, quick-add)
+- [x] ThemeToggle, PageHeader, AppShell; `(app)` route group layout; dashboard moved under it
+- [x] Button gained `asChild`; typecheck + build green
+
+### Phase 8 — Dashboard ✅
+- [x] Infrastructure: storage helper, system (id/clock), localStorage repositories (Product/Sale/Period/Settings) implementing ports
+- [x] Realistic seed data (6 products, 6 months of sales, open period) — first-run only
+- [x] Application analytics: `computeDashboard` (revenue/expenses/net profit/margin, monthly series, top products, recent sales, today/month) via `ProfitCalculator`
+- [x] Client data store (Zustand) hydrating from repos + `DataBootstrap`
+- [x] Dashboard UI: KPIs, Recharts revenue/profit area chart, top products, recent sales, quick actions; loading + empty states
+- [x] typecheck + build + test green
+
+### Phase 9 — Products module + live Profit Calculator ✅
+- [x] `ProfitPanel` (instant net profit, margin, revenue, cost, ROI, break-even, cost breakdown) + `Dialog` primitive
+- [x] `CostFields` (7 lines, fixed + %), `ProductForm` (create/edit, sticky live panel, settings-default prefill, validation)
+- [x] `/products` list (search, status filter, per-product profit), `/products/new`, `/products/[id]` (edit + record sale + delete)
+- [x] `RecordSaleDialog`, standalone `/calculator` with "Save as product"
+- [x] typecheck + build green (9 routes)
+
+### Phase 10 — Monthly closing ✅
+- [x] `computePeriodSummary` + `nextPeriodAfter` (application/periods.ts)
+- [x] `/periods`: active period live totals + Close period; locked history with snapshots; start-period empty state
+- [x] Close-and-lock confirm dialog (snapshots summary, opens next period)
+- [x] Top-bar period switcher wired to active period
+
+### Phase 11 — Reports + export ✅
+- [x] `buildReport` (monthly/yearly/product/profit/expense) + `toExportableTable` (application/reports.ts)
+- [x] Export service: CSV (native), Excel (SheetJS), PDF (jsPDF+autotable), Print (clean window); `downloadReport`/`printReport`
+- [x] `/reports` hub + `/reports/[type]` view (formatted table, export buttons), statically generated
+- [x] Removed not-yet-built Expenses from nav (future module)
+
+### Phase 12 — Settings ✅
+- [x] Backup/restore utilities (export/import JSON, reset) in infrastructure
+- [x] `/settings`: appearance (theme), localization (currency/locale/language), default costs, data backup/restore/reset
+- [x] Persists via `saveSettings`; reset reseeds demo data
+
+### Phase 13 — Testing ✅
+- [x] Domain: ProfitCalculator + Money (9)
+- [x] Application: analytics (6), periods (3), reports (4)
+- [x] Infrastructure: CSV export (2)
+- [x] 24 tests passing
+
+### Phase 14 — Optimization & documentation ✅
+- [x] ESLint clean, Prettier formatted
+- [x] README.md (overview, stack, architecture, scripts, structure, roadmap)
+- [x] Final typecheck + build + tests green
+
+---
+
+## v1 complete
+All 14 workflow phases delivered. Future modules (auth, cloud sync, inventory, orders,
+customers, expenses, AI insights, RBAC, PWA, full i18n/RTL) are unblocked by the
+architecture and can be added behind existing ports or as new domain modules.
 
 ---
 
