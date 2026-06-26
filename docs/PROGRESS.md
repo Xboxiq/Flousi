@@ -5,7 +5,7 @@
 > Update it at the end of every working session.
 
 **Last updated:** 2026-06-26
-**Current phase:** Phase 8 — Dashboard (in progress)
+**Current phase:** Phase 9 — Products module + live Profit Calculator (in progress)
 **Branch:** `build-flousi-foundation`
 
 ---
@@ -82,7 +82,15 @@ Note: Next routes live in `src/app/*` (Next convention); the rest of presentatio
 - [x] ThemeToggle, PageHeader, AppShell; `(app)` route group layout; dashboard moved under it
 - [x] Button gained `asChild`; typecheck + build green
 
-### Phase 8 — Dashboard 🚧
+### Phase 8 — Dashboard ✅
+- [x] Infrastructure: storage helper, system (id/clock), localStorage repositories (Product/Sale/Period/Settings) implementing ports
+- [x] Realistic seed data (6 products, 6 months of sales, open period) — first-run only
+- [x] Application analytics: `computeDashboard` (revenue/expenses/net profit/margin, monthly series, top products, recent sales, today/month) via `ProfitCalculator`
+- [x] Client data store (Zustand) hydrating from repos + `DataBootstrap`
+- [x] Dashboard UI: KPIs, Recharts revenue/profit area chart, top products, recent sales, quick actions; loading + empty states
+- [x] typecheck + build + test green
+
+### Phase 9 — Products module + live Profit Calculator 🚧
 
 ---
 
