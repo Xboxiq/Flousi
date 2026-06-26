@@ -3,7 +3,6 @@ import {
   House,
   Package,
   Calculator,
-  Receipt,
   CalendarCheck,
   ChartBar,
   Gear,
@@ -36,7 +35,6 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Finance",
     items: [
-      { label: "Expenses", href: "/expenses", icon: Receipt },
       { label: "Periods", href: "/periods", icon: CalendarCheck },
       { label: "Reports", href: "/reports", icon: ChartBar },
     ],

@@ -5,7 +5,7 @@
 > Update it at the end of every working session.
 
 **Last updated:** 2026-06-26
-**Current phase:** Phase 11 — Reports + export (in progress)
+**Current phase:** Phase 12 — Settings (in progress)
 **Branch:** `build-flousi-foundation`
 
 ---
@@ -103,7 +103,13 @@ Note: Next routes live in `src/app/*` (Next convention); the rest of presentatio
 - [x] Close-and-lock confirm dialog (snapshots summary, opens next period)
 - [x] Top-bar period switcher wired to active period
 
-### Phase 11 — Reports + export 🚧
+### Phase 11 — Reports + export ✅
+- [x] `buildReport` (monthly/yearly/product/profit/expense) + `toExportableTable` (application/reports.ts)
+- [x] Export service: CSV (native), Excel (SheetJS), PDF (jsPDF+autotable), Print (clean window); `downloadReport`/`printReport`
+- [x] `/reports` hub + `/reports/[type]` view (formatted table, export buttons), statically generated
+- [x] Removed not-yet-built Expenses from nav (future module)
+
+### Phase 12 — Settings 🚧
 
 ---
 

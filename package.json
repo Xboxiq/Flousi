@@ -16,12 +16,15 @@
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
     "clsx": "^2.1.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "motion": "^12.42.0",
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "recharts": "^3.9.0",
     "tailwind-merge": "^3.6.0",
+    "xlsx": "^0.18.5",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
