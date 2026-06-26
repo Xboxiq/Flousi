@@ -6,9 +6,12 @@ import { Logo } from "./logo";
 import { ThemeToggle } from "@/presentation/components/theme/theme-toggle";
 import { Button } from "@/presentation/components/ui";
 import { useUiStore } from "@/presentation/stores/ui-store";
+import { useDataStore } from "@/presentation/stores/data-store";
 
 export function TopBar() {
   const { setMobileNavOpen } = useUiStore();
+  const periods = useDataStore((s) => s.periods);
+  const activePeriod = periods.find((p) => p.status === "open");
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-surface/80 px-4 backdrop-blur md:px-6">
@@ -26,13 +29,13 @@ export function TopBar() {
       </div>
 
       {/* Period switcher */}
-      <button
-        type="button"
+      <Link
+        href="/periods"
         className="hidden items-center gap-2 rounded-[var(--radius-md)] border border-border px-3 py-1.5 text-sm font-medium text-fg transition-colors hover:bg-surface-2 sm:inline-flex"
       >
         <CalendarBlank size={16} className="text-muted" />
-        June 2026
-      </button>
+        {activePeriod?.label ?? "No open period"}
+      </Link>
 
       {/* Search */}
       <div className="relative ms-auto hidden w-full max-w-xs md:block">

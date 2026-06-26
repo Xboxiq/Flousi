@@ -5,7 +5,7 @@
 > Update it at the end of every working session.
 
 **Last updated:** 2026-06-26
-**Current phase:** Phase 10 — Monthly closing (in progress)
+**Current phase:** Phase 11 — Reports + export (in progress)
 **Branch:** `build-flousi-foundation`
 
 ---
@@ -97,7 +97,13 @@ Note: Next routes live in `src/app/*` (Next convention); the rest of presentatio
 - [x] `RecordSaleDialog`, standalone `/calculator` with "Save as product"
 - [x] typecheck + build green (9 routes)
 
-### Phase 10 — Monthly closing 🚧
+### Phase 10 — Monthly closing ✅
+- [x] `computePeriodSummary` + `nextPeriodAfter` (application/periods.ts)
+- [x] `/periods`: active period live totals + Close period; locked history with snapshots; start-period empty state
+- [x] Close-and-lock confirm dialog (snapshots summary, opens next period)
+- [x] Top-bar period switcher wired to active period
+
+### Phase 11 — Reports + export 🚧
 
 ---
 
