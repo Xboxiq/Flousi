@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Tooling/skill files installed under .kiro (not app code):
+    ".kiro/**",
   ]),
 ]);
 
