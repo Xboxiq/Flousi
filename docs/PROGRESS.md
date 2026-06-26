@@ -5,7 +5,7 @@
 > Update it at the end of every working session.
 
 **Last updated:** 2026-06-26
-**Current phase:** Phase 13 — Testing (in progress)
+**Current phase:** Phase 14 — Optimization & documentation (in progress)
 **Branch:** `build-flousi-foundation`
 
 ---
@@ -114,7 +114,13 @@ Note: Next routes live in `src/app/*` (Next convention); the rest of presentatio
 - [x] `/settings`: appearance (theme), localization (currency/locale/language), default costs, data backup/restore/reset
 - [x] Persists via `saveSettings`; reset reseeds demo data
 
-### Phase 13 — Testing 🚧
+### Phase 13 — Testing ✅
+- [x] Domain: ProfitCalculator + Money (9)
+- [x] Application: analytics (6), periods (3), reports (4)
+- [x] Infrastructure: CSV export (2)
+- [x] 24 tests passing
+
+### Phase 14 — Optimization & documentation 🚧
 
 ---
 
