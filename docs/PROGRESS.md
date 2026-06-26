@@ -1,0 +1,86 @@
+# Flousi — Build Progress Tracker
+
+> **Autopilot resume file.** This is the single source of truth for "where the build is".
+> When resuming, read this file first, then continue from the first unchecked item.
+> Update it at the end of every working session.
+
+**Last updated:** 2026-06-26
+**Current phase:** Phase 5 — Domain layer (in progress)
+**Branch:** `build-flousi-foundation`
+
+---
+
+## Workflow (the mandated 14-step order)
+
+| # | Phase | Status |
+|---|-------|--------|
+| 0 | Research repository & understand assets | ✅ Done |
+| 1 | Plan architecture | ✅ Done |
+| 2 | Information Architecture & UX flows | ✅ Done |
+| 3 | Design system (single source of truth) | ✅ Done (spec) |
+| 4 | Foundation (scaffold + tooling + layers) | 🚧 In progress |
+| 5 | Domain layer (profit calculation engine) | ⬜ Pending |
+| 6 | Primitive UI components | ⬜ Pending |
+| 7 | App shell (layout + navigation) | ⬜ Pending |
+| 8 | Dashboard page | ⬜ Pending |
+| 9 | Products module + Profit Calculator | ⬜ Pending |
+| 10 | Monthly closing | ⬜ Pending |
+| 11 | Reports + export | ⬜ Pending |
+| 12 | Settings | ⬜ Pending |
+| 13 | Testing | ⬜ Pending |
+| 14 | Optimization & documentation | ⬜ Pending |
+
+Legend: ✅ done · 🚧 in progress · ⬜ pending
+
+---
+
+## Detailed checklist
+
+### Phase 0 — Research & assets ✅
+- [x] Studied 24 UI references (see `.kiro/steering/visual-references.md`)
+- [x] Studied skills: `design-taste-frontend`, `brandkit`, `animate`
+- [x] Locked design read (see ARCHITECTURE.md → Design Read)
+
+### Phase 1 — Architecture ✅
+- [x] `docs/ARCHITECTURE.md` (layers, tech stack, ADRs, extensibility)
+
+### Phase 2 — IA & UX ✅
+- [x] `docs/IA-UX.md` (page tree, navigation, core flows)
+
+### Phase 3 — Design system ✅
+- [x] `docs/DESIGN-SYSTEM.md` (tokens spec)
+
+### Phase 4 — Foundation ✅
+- [x] Next.js 16 (App Router) + React 19 + TypeScript scaffolded at repo root
+- [x] Tailwind v4 configured
+- [x] Geist + Geist Mono wired via `next/font`
+- [x] Icon library (`@phosphor-icons/react`) + Motion + Zustand + Recharts installed
+- [x] ESLint + Prettier configured; Vitest configured
+- [x] Clean Architecture folder structure started (`src/presentation/*`; domain/application/infrastructure land in Phase 5)
+- [x] Design tokens implemented in `globals.css` (`@theme` semantic utilities) + theme provider (no-flash script, light/dark/system)
+- [x] App boots — `npm run typecheck` and `npm run build` both pass
+- [x] Reference images moved to `references/`
+
+Note: Next routes live in `src/app/*` (Next convention); the rest of presentation is under `src/presentation/*`.
+
+### Phase 5 — Domain layer ⬜
+- [ ] Value objects: `Money`, `Percentage`
+- [ ] Entities: `Product`, `CostBreakdown`, `Sale`, `AccountingPeriod`
+- [ ] `ProfitCalculator` (revenue, total cost, net profit, margin, break-even, ROI)
+- [ ] Multi-currency support primitives
+
+### Phases 6–14 ⬜
+See workflow table.
+
+---
+
+## Key decisions log (quick reference)
+- **Stack:** Next.js App Router, TypeScript (strict), Tailwind v4, Motion, Phosphor icons, Zustand, Recharts.
+- **Architecture:** Clean Architecture — domain is framework-free and the home of all profit math.
+- **Persistence:** Local-first via a `Repository` port; localStorage/IndexedDB adapter now, swappable to a cloud API later. No business logic in the persistence layer.
+- **Aesthetic:** Premium SaaS — Stripe/Linear/Vercel. Geist type, restrained motion, dual light/dark, one accent.
+- **i18n-ready:** Arabic + English planned (RTL aware) — copy externalized from day one where practical.
+
+## Notes for the next session
+- The 24 reference `.jpg` files live at repo root; catalog in `.kiro/steering/visual-references.md`.
+- `design-taste-frontend` skill is landing-page oriented (its Section 13 marks dashboards out of scope). Apply its taste/anti-slop rules to marketing surfaces; use disciplined product-UI conventions for the app itself.

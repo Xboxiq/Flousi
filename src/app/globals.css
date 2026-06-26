@@ -1,0 +1,239 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   Flousi Design System — single source of truth.
+   Spec: docs/DESIGN-SYSTEM.md. Components consume SEMANTIC tokens only.
+   ========================================================================== */
+
+/* Manual dark mode driven by [data-theme="dark"] on <html>. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ----------------------------------------------------------------------------
+   TIER 1 — Primitive tokens (raw palette + scales). Never used by components.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Neutrals — cool slate */
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  --gray-950: #020617;
+
+  /* Brand — indigo (the single locked accent) */
+  --brand-50: #eef2ff;
+  --brand-100: #e0e7ff;
+  --brand-200: #c7d2fe;
+  --brand-300: #a5b4fc;
+  --brand-400: #818cf8;
+  --brand-500: #6366f1;
+  --brand-600: #4f46e5;
+  --brand-700: #4338ca;
+  --brand-800: #3730a3;
+  --brand-900: #312e81;
+
+  /* Functional */
+  --emerald-400: #34d399;
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --rose-400: #fb7185;
+  --rose-500: #f43f5e;
+  --rose-600: #e11d48;
+  --amber-400: #fbbf24;
+  --amber-500: #f59e0b;
+  --amber-600: #d97706;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+
+  /* Radius scale */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Motion */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 320ms;
+  --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-in-out: cubic-bezier(0.65, 0.05, 0.36, 1);
+  --ease-in: cubic-bezier(0.32, 0, 0.67, 0);
+
+  /* ----- TIER 2 — Semantic tokens (light theme) ----- */
+  --bg: var(--gray-50);
+  --surface: #ffffff;
+  --surface-2: var(--gray-100);
+  --surface-3: var(--gray-200);
+  --border: var(--gray-200);
+  --border-strong: var(--gray-300);
+  --fg: var(--gray-900);
+  --muted: var(--gray-600);
+  --subtle: var(--gray-400);
+
+  --accent: var(--brand-600);
+  --accent-hover: var(--brand-700);
+  --accent-fg: #ffffff;
+  --accent-soft: var(--brand-50);
+
+  --success: var(--emerald-600);
+  --success-soft: #ecfdf5;
+  --danger: var(--rose-600);
+  --danger-soft: #fff1f2;
+  --warning: var(--amber-600);
+  --warning-soft: #fffbeb;
+  --info: var(--blue-600);
+  --info-soft: #eff6ff;
+
+  --focus: var(--brand-500);
+
+  /* Elevation — tinted, never pure black */
+  --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+  --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.08), 0 1px 2px -1px rgb(15 23 42 / 0.06);
+  --shadow-md: 0 4px 12px -2px rgb(15 23 42 / 0.10), 0 2px 6px -2px rgb(15 23 42 / 0.06);
+  --shadow-lg: 0 12px 28px -6px rgb(15 23 42 / 0.14), 0 6px 12px -6px rgb(15 23 42 / 0.08);
+  --shadow-xl: 0 24px 56px -12px rgb(15 23 42 / 0.22);
+}
+
+/* ----- Semantic tokens (dark theme) ----- */
+[data-theme="dark"] {
+  --bg: #0a0c10;
+  --surface: #111521;
+  --surface-2: #161b29;
+  --surface-3: #1d2433;
+  --border: #232a3a;
+  --border-strong: #313a4d;
+  --fg: #e6e9ef;
+  --muted: #9aa4b2;
+  --subtle: #5d6675;
+
+  --accent: var(--brand-500);
+  --accent-hover: var(--brand-400);
+  --accent-fg: #ffffff;
+  --accent-soft: rgb(99 102 241 / 0.14);
+
+  --success: var(--emerald-400);
+  --success-soft: rgb(16 185 129 / 0.14);
+  --danger: var(--rose-400);
+  --danger-soft: rgb(244 63 94 / 0.14);
+  --warning: var(--amber-400);
+  --warning-soft: rgb(245 158 11 / 0.14);
+  --info: var(--blue-400);
+  --info-soft: rgb(59 130 246 / 0.14);
+
+  --focus: var(--brand-400);
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.30);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.40), 0 1px 2px -1px rgb(0 0 0 / 0.30);
+  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.50), 0 2px 6px -2px rgb(0 0 0 / 0.40);
+  --shadow-lg: 0 12px 28px -6px rgb(0 0 0 / 0.55), 0 6px 12px -6px rgb(0 0 0 / 0.45);
+  --shadow-xl: 0 24px 56px -12px rgb(0 0 0 / 0.65);
+}
+
+/* ----------------------------------------------------------------------------
+   Map semantic tokens to Tailwind utilities (bg-surface, text-fg, border-border…)
+   -------------------------------------------------------------------------- */
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+
+  --color-focus: var(--focus);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
+  --ease-in: var(--ease-in);
+}
+
+/* ----------------------------------------------------------------------------
+   Base layer
+   -------------------------------------------------------------------------- */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    color-scheme: light;
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* All numeric data uses tabular figures for financial clarity. */
+  .tnum,
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+    color: var(--fg);
+  }
+}
+
+/* Respect reduced motion globally. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
