@@ -44,6 +44,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* General Sans (fontshare) — the brand display/UI face. */}
+        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
+          rel="stylesheet"
+        />
         <script dangerouslySetInnerHTML={{ __html: themeNoFlashScript }} />
       </head>
       <body className="min-h-full">

@@ -8,18 +8,20 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "dan
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: "bg-accent text-accent-fg hover:bg-accent-hover shadow-xs focus-visible:outline-accent",
-  secondary: "bg-surface-2 text-fg hover:bg-surface-3 border border-border",
+  primary:
+    "text-white [background-image:linear-gradient(180deg,var(--blue-400),var(--accent-strong))] [box-shadow:inset_0_1px_0_rgba(255,255,255,0.35),var(--shadow-accent)] hover:brightness-[1.06]",
+  secondary: "neu-raised-sm bg-surface text-fg hover:brightness-[0.99]",
   ghost: "text-muted hover:bg-surface-2 hover:text-fg",
-  outline: "border border-border-strong text-fg hover:bg-surface-2",
-  danger: "bg-danger text-white hover:opacity-90 shadow-xs",
+  outline: "border border-border bg-surface text-fg hover:bg-surface-2",
+  danger:
+    "text-white [background-image:linear-gradient(180deg,#ff6b91,var(--danger))] [box-shadow:inset_0_1px_0_rgba(255,255,255,0.3),0_10px_24px_-8px_rgba(225,29,84,0.5)] hover:brightness-[1.06]",
 };
 
 const SIZES: Record<ButtonSize, string> = {
-  sm: "h-8 px-3 text-sm gap-1.5 rounded-[var(--radius-sm)]",
-  md: "h-10 px-4 text-sm gap-2 rounded-[var(--radius-md)]",
-  lg: "h-11 px-5 text-base gap-2 rounded-[var(--radius-md)]",
-  icon: "size-10 rounded-[var(--radius-md)]",
+  sm: "h-9 px-3.5 text-sm gap-1.5 rounded-full",
+  md: "h-11 px-5 text-sm gap-2 rounded-full",
+  lg: "h-12 px-6 text-base gap-2 rounded-full",
+  icon: "size-11 rounded-full",
 };
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

@@ -2,7 +2,16 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { Coins, TrendUp, Receipt, Percent, Package, Plus, ArrowRight } from "@phosphor-icons/react";
+import {
+  Coins,
+  Receipt,
+  Percent,
+  Package,
+  Plus,
+  ArrowRight,
+  TrendUp,
+  Calculator,
+} from "@phosphor-icons/react";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { computeDashboard } from "@/application/analytics";
 import { PageHeader } from "@/presentation/components/layout/page-header";
@@ -14,6 +23,7 @@ import {
   CardHeader,
   CardTitle,
   EmptyState,
+  MeshSurface,
   Skeleton,
   Stat,
   Table,
@@ -39,20 +49,17 @@ export function DashboardView() {
   const money = (n: number) =>
     formatCurrency(n, { currency: settings.currency, locale: settings.locale });
 
-  // Month-over-month deltas from the trailing series.
   const m = metrics.monthly;
   const last = m[m.length - 1];
   const prev = m[m.length - 2];
   const profitDelta =
-    prev && prev.netProfit
-      ? (last.netProfit - prev.netProfit) / Math.abs(prev.netProfit)
-      : undefined;
+    prev && prev.netProfit ? (last.netProfit - prev.netProfit) / Math.abs(prev.netProfit) : undefined;
   const revenueDelta =
     prev && prev.revenue ? (last.revenue - prev.revenue) / Math.abs(prev.revenue) : undefined;
 
   const actions = (
     <>
-      <Button asChild variant="secondary" leadingIcon={<Receipt size={16} />}>
+      <Button asChild variant="secondary" leadingIcon={<Calculator size={16} />}>
         <Link href="/calculator">Quick calc</Link>
       </Button>
       <Button asChild leadingIcon={<Plus size={16} weight="bold" />}>
@@ -65,15 +72,12 @@ export function DashboardView() {
     return (
       <>
         <PageHeader title="Dashboard" description="Your store's profit at a glance." />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i} className="p-5">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="mt-3 h-8 w-32" />
-            </Card>
-          ))}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <Skeleton className="h-44 rounded-[var(--radius-xl)] sm:col-span-2" />
+          <Skeleton className="h-44 rounded-[var(--radius-lg)]" />
+          <Skeleton className="h-44 rounded-[var(--radius-lg)]" />
         </div>
-        <Skeleton className="mt-4 h-64 w-full" />
+        <Skeleton className="mt-5 h-72 w-full rounded-[var(--radius-lg)]" />
       </>
     );
   }
@@ -96,24 +100,40 @@ export function DashboardView() {
     );
   }
 
+  const profitUp = (profitDelta ?? 0) >= 0;
+
   return (
     <>
-      <PageHeader
-        title="Dashboard"
-        description="Your store's profit at a glance."
-        actions={actions}
-      />
+      <PageHeader title="Dashboard" description="Your store's profit at a glance." actions={actions} />
 
-      {/* KPIs */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Stat
-          label="Net profit (this month)"
-          value={money(metrics.monthProfit)}
-          tone={metrics.monthProfit >= 0 ? "success" : "danger"}
-          deltaLabel={profitDelta !== undefined ? formatSignedPercent(profitDelta) : undefined}
-          delta={profitDelta}
-          icon={<TrendUp size={18} />}
-        />
+      {/* KPI bento */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Hero — net profit on a grainient aurora */}
+        <MeshSurface
+          variant="aurora"
+          className="flex min-h-[200px] flex-col justify-between rounded-[var(--radius-xl)] p-6 text-white shadow-md sm:col-span-2"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-white/80">Net profit · this month</span>
+            {profitDelta !== undefined && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                <TrendUp size={13} weight="bold" className={profitUp ? "" : "rotate-180"} />
+                {formatSignedPercent(profitDelta)}
+              </span>
+            )}
+          </div>
+          <div>
+            <div className="font-mono text-[44px] font-semibold leading-none tracking-tight tabular-nums">
+              {money(metrics.monthProfit)}
+            </div>
+            <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-white/80">
+              <span>Margin {formatPercent(metrics.margin, { locale: settings.locale })}</span>
+              <span>Revenue {money(metrics.monthRevenue)}</span>
+              <span>Today {money(metrics.todayProfit)}</span>
+            </div>
+          </div>
+        </MeshSurface>
+
         <Stat
           label="Revenue (this month)"
           value={money(metrics.monthRevenue)}
@@ -121,56 +141,46 @@ export function DashboardView() {
           delta={revenueDelta}
           icon={<Coins size={18} />}
         />
-        <Stat
-          label="Total expenses"
-          value={money(metrics.totalCost)}
-          icon={<Receipt size={18} />}
-        />
-        <Stat
-          label="Overall margin"
-          value={formatPercent(metrics.margin, { locale: settings.locale })}
-          tone={metrics.margin >= 0 ? "success" : "danger"}
-          icon={<Percent size={18} />}
-        />
+        <Stat label="Total expenses" value={money(metrics.totalCost)} icon={<Receipt size={18} />} />
       </div>
 
-      {/* Chart + Top products */}
-      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+      {/* Chart + top products */}
+      <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Revenue & net profit</CardTitle>
+            <CardTitle>Revenue &amp; net profit</CardTitle>
             <div className="flex items-center gap-4 text-xs text-muted">
               <Legend color="var(--accent)" label="Revenue" />
               <Legend color="var(--success)" label="Net profit" />
             </div>
           </CardHeader>
           <CardContent>
-            <ProfitAreaChart
-              data={metrics.monthly}
-              currency={settings.currency}
-              locale={settings.locale}
-            />
+            <ProfitAreaChart data={metrics.monthly} currency={settings.currency} locale={settings.locale} />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle>Top products</CardTitle>
+            <Percent size={18} className="text-subtle" />
           </CardHeader>
-          <CardContent className="flex flex-col gap-3">
+          <CardContent className="flex flex-col gap-3.5">
             {metrics.topProducts.map((p) => {
               const max = metrics.topProducts[0]?.netProfit || 1;
-              const width = Math.max(4, Math.round((p.netProfit / max) * 100));
+              const width = Math.max(6, Math.round((p.netProfit / max) * 100));
               return (
-                <div key={p.productId} className="flex flex-col gap-1">
+                <div key={p.productId} className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between text-sm">
                     <span className="truncate font-medium text-fg">{p.name}</span>
                     <span className="ms-3 shrink-0 font-mono tabular-nums text-success">
                       {money(p.netProfit)}
                     </span>
                   </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-surface-2">
-                    <div className="h-full rounded-full bg-accent" style={{ width: `${width}%` }} />
+                  <div className="neu-inset h-2 overflow-hidden rounded-full bg-sunken">
+                    <div
+                      className="h-full rounded-full [background-image:linear-gradient(90deg,var(--blue-400),var(--accent-strong))]"
+                      style={{ width: `${width}%` }}
+                    />
                   </div>
                 </div>
               );
@@ -180,7 +190,7 @@ export function DashboardView() {
       </div>
 
       {/* Recent sales */}
-      <Card className="mt-4">
+      <Card className="mt-5">
         <CardHeader>
           <CardTitle>Recent sales</CardTitle>
           <Button asChild variant="ghost" size="sm" trailingIcon={<ArrowRight size={14} />}>

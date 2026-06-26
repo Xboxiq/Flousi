@@ -1,4 +1,5 @@
 import { Plus, Package, Tag } from "@phosphor-icons/react/dist/ssr";
+import { MaterialsDemo } from "@/presentation/features/styleguide/materials-demo";
 import {
   Badge,
   Button,
@@ -30,6 +31,10 @@ export default function StyleguidePage() {
         <h1 className="text-3xl font-semibold tracking-tight text-fg">Flousi Styleguide</h1>
         <p className="mt-2 text-muted">Primitive components rendered from the design tokens.</p>
       </header>
+
+      <div className="mb-14">
+        <MaterialsDemo />
+      </div>
 
       <Section title="Buttons">
         <div className="flex flex-wrap items-center gap-3">
