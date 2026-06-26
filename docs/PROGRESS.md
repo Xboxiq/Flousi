@@ -5,7 +5,7 @@
 > Update it at the end of every working session.
 
 **Last updated:** 2026-06-26
-**Current phase:** Phase 7 — App shell (in progress)
+**Current phase:** Phase 8 — Dashboard (in progress)
 **Branch:** `build-flousi-foundation`
 
 ---
@@ -76,7 +76,13 @@ Note: Next routes live in `src/app/*` (Next convention); the rest of presentatio
 - [x] Barrel `@/presentation/components/ui`; living `/styleguide` route
 - [x] typecheck + build green
 
-### Phase 7 — App shell 🚧
+### Phase 7 — App shell ✅
+- [x] UI store (Zustand): sidebar collapse + mobile drawer
+- [x] Logo mark, nav config (Overview/Catalog/Finance/System), Sidebar (collapsible icon rail), MobileNav (animated drawer), TopBar (period switcher, search, theme toggle, quick-add)
+- [x] ThemeToggle, PageHeader, AppShell; `(app)` route group layout; dashboard moved under it
+- [x] Button gained `asChild`; typecheck + build green
+
+### Phase 8 — Dashboard 🚧
 
 ---
 
