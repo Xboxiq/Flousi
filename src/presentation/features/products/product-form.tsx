@@ -20,6 +20,7 @@ import {
   CardTitle,
   Field,
   Input,
+  Segmented,
   Select,
   Textarea,
 } from "@/presentation/components/ui";
@@ -154,11 +155,10 @@ export function ProductForm({ product }: Props) {
               />
             </Field>
             <Field label="الحالة" htmlFor="status">
-              <Select
-                id="status"
-                value={status}
+              <Segmented
                 options={STATUS_OPTIONS}
-                onChange={(e) => setStatus(e.target.value as ProductStatus)}
+                value={status}
+                onChange={(v) => setStatus(v as ProductStatus)}
               />
             </Field>
             <Field label="ملاحظات" htmlFor="notes" className="sm:col-span-2">
