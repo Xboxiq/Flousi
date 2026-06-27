@@ -1,21 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans_Arabic, Tajawal, IBM_Plex_Mono } from "next/font/google";
+import { Rubik, Baloo_Bhaijaan_2, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider, themeNoFlashScript } from "@/presentation/components/theme/theme-provider";
 
-// Arabic-first type system. IBM Plex Sans Arabic keeps the data-trust DNA in
-// Arabic; Tajawal is the distinctive display face; IBM Plex Mono for figures.
-const plexArabic = IBM_Plex_Sans_Arabic({
-  variable: "--font-ar",
+// Soft-rounded Arabic-first type, matching the reference screens.
+const rubik = Rubik({
+  variable: "--font-rubik",
   subsets: ["arabic", "latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
-const tajawal = Tajawal({
-  variable: "--font-display-ar",
+const baloo = Baloo_Bhaijaan_2({
+  variable: "--font-baloo",
   subsets: ["arabic", "latin"],
-  weight: ["400", "500", "700", "800"],
+  weight: ["500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -52,7 +51,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${plexArabic.variable} ${tajawal.variable} ${plexMono.variable} h-full`}
+      className={`${rubik.variable} ${baloo.variable} ${plexMono.variable} h-full`}
       suppressHydrationWarning
     >
       <head>
