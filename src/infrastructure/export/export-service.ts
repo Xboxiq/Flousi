@@ -74,27 +74,58 @@ export async function downloadReport(format: ExportFormat, table: ExportableTabl
   URL.revokeObjectURL(url);
 }
 
-/** Open a clean, print-optimized window for the table and invoke print. */
+/**
+ * Open a branded, print-ready A4 report (RTL Arabic) and invoke print.
+ * The browser shapes Arabic + RTL correctly, so "Save as PDF" yields a clean,
+ * accurate Arabic PDF — far more reliable than client-side jsPDF for Arabic.
+ */
 export function printReport(table: ExportableTable): void {
-  const win = window.open("", "_blank", "width=900,height=700");
+  const win = window.open("", "_blank", "width=900,height=1000");
   if (!win) return;
+  const today = new Date().toLocaleDateString("ar-IQ", { year: "numeric", month: "long", day: "numeric" });
   const head = table.columns.map((c) => `<th>${c}</th>`).join("");
   const body = table.rows
-    .map((r) => `<tr>${r.map((c) => `<td>${String(c)}</td>`).join("")}</tr>`)
+    .map((r) => {
+      const isTotal = String(r[0]).trim() === "الإجمالي";
+      const cells = r
+        .map((c, i) => `<td class="${i === 0 ? "name" : "num"}">${String(c)}</td>`)
+        .join("");
+      return `<tr class="${isTotal ? "total" : ""}">${cells}</tr>`;
+    })
     .join("");
-  win.document.write(`<!doctype html><html><head><title>${table.title}</title>
-    <style>
-      body{font-family:ui-sans-serif,system-ui,sans-serif;color:#0f172a;padding:32px;}
-      h1{font-size:20px;margin:0 0 16px;}
-      table{width:100%;border-collapse:collapse;font-size:13px;}
-      th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #e2e8f0;}
-      th{text-transform:uppercase;font-size:11px;letter-spacing:.04em;color:#64748b;}
-      td:not(:first-child),th:not(:first-child){text-align:right;}
-    </style></head><body>
+
+  win.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8" />
+  <title>${table.title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Baloo+Bhaijaan+2:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    @page { size: A4; margin: 18mm; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Rubik', system-ui, sans-serif; color: #1b1c22; margin: 0; }
+    .head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 2px solid #0a84ff; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .mark { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(160deg,#2f6bff,#7c5cff); }
+    .brand b { font-family: 'Baloo Bhaijaan 2', sans-serif; font-size: 22px; }
+    .meta { text-align: left; color: #767b86; font-size: 12px; }
+    h1 { font-family: 'Baloo Bhaijaan 2', sans-serif; font-size: 20px; margin: 22px 0 4px; }
+    .sub { color: #767b86; font-size: 13px; margin: 0 0 18px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th { background: #f2f4f8; color: #767b86; font-weight: 600; text-align: right; padding: 10px 12px; font-size: 11px; }
+    th.num, td.num { text-align: left; font-variant-numeric: tabular-nums; }
+    tbody td { padding: 11px 12px; border-bottom: 1px solid #eef0f4; }
+    tbody tr.total td { border-top: 2px solid #0a84ff; border-bottom: none; font-weight: 700; background: #f7faff; }
+    .foot { margin-top: 22px; color: #a7acb6; font-size: 11px; text-align: center; }
+  </style></head><body>
+    <div class="head">
+      <div class="brand"><span class="mark"></span><b>فلوسي</b></div>
+      <div class="meta">تاريخ الإصدار<br/>${today}</div>
+    </div>
     <h1>${table.title}</h1>
+    <p class="sub">تقرير صافي الأرباح — مُولّد من منصّة فلوسي</p>
     <table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>
-    </body></html>`);
+    <div class="foot">فلوسي · حساب صافي أرباح المبيعات للمتاجر والأعمال الصغيرة</div>
+    <script>window.onload=function(){setTimeout(function(){window.print();},350);};</script>
+  </body></html>`);
   win.document.close();
   win.focus();
-  win.print();
 }

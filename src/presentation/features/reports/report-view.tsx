@@ -86,7 +86,7 @@ export function ReportView({ type }: { type: ReportType }) {
         variant="secondary"
         size="sm"
         leadingIcon={<FilePdf size={16} />}
-        onClick={() => onDownload("pdf")}
+        onClick={() => printReport(toExportableTable(report))}
         disabled={busy}
       >
         PDF
@@ -96,7 +96,7 @@ export function ReportView({ type }: { type: ReportType }) {
         leadingIcon={<Printer size={16} />}
         onClick={() => printReport(toExportableTable(report))}
       >
-        Print
+        طباعة
       </Button>
     </>
   );
