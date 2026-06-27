@@ -221,7 +221,7 @@ function ExportButtons({
       <Button variant="secondary" size="sm" leadingIcon={<FileXls size={15} />} onClick={() => downloadReport("xlsx", table())}>
         Excel
       </Button>
-      <Button variant="secondary" size="sm" leadingIcon={<FilePdf size={15} />} onClick={() => downloadReport("pdf", table())}>
+      <Button variant="secondary" size="sm" leadingIcon={<FilePdf size={15} />} onClick={() => printReport(table())}>
         PDF
       </Button>
       <Button variant="ghost" size="sm" leadingIcon={<Printer size={15} />} onClick={() => printReport(table())}>
