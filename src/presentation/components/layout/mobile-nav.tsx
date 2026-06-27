@@ -44,7 +44,7 @@ export function MobileNav() {
               <button
                 type="button"
                 onClick={() => setMobileNavOpen(false)}
-                aria-label="Close navigation"
+                aria-label="إغلاق القائمة"
                 className="inline-flex size-9 items-center justify-center rounded-[var(--radius-md)] text-muted hover:bg-surface-2 hover:text-fg"
               >
                 <X size={18} />

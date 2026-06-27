@@ -1,6 +1,6 @@
 import { DashboardView } from "@/presentation/features/dashboard/dashboard-view";
 
-export const metadata = { title: "Dashboard" };
+export const metadata = { title: "لوحة التحكم" };
 
 export default function DashboardPage() {
   return <DashboardView />;

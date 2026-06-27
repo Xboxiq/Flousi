@@ -49,18 +49,14 @@ export function ProductsList() {
 
   const actions = (
     <Button asChild leadingIcon={<Plus size={16} weight="bold" />}>
-      <Link href="/products/new">Add product</Link>
+      <Link href="/products/new">إضافة منتج</Link>
     </Button>
   );
 
   if (!loaded) {
     return (
       <>
-        <PageHeader
-          title="Products"
-          description="Every product and its real profit."
-          actions={actions}
-        />
+        <PageHeader title="المنتجات" description="كل منتج وصافي ربحه الحقيقي." actions={actions} />
         <Skeleton className="h-96 w-full" />
       </>
     );
@@ -68,20 +64,16 @@ export function ProductsList() {
 
   return (
     <>
-      <PageHeader
-        title="Products"
-        description="Every product and its real profit."
-        actions={actions}
-      />
+      <PageHeader title="المنتجات" description="كل منتج وصافي ربحه الحقيقي." actions={actions} />
 
       {products.length === 0 ? (
         <EmptyState
           icon={<Package size={24} />}
-          title="No products yet"
-          description="Add your first product to start tracking real net profit."
+          title="لا توجد منتجات بعد"
+          description="أضِف أول منتج لتبدأ بحساب صافي الربح الحقيقي."
           action={
             <Button asChild leadingIcon={<Plus size={16} weight="bold" />}>
-              <Link href="/products/new">Add product</Link>
+              <Link href="/products/new">إضافة منتج</Link>
             </Button>
           }
         />
@@ -94,7 +86,7 @@ export function ProductsList() {
                 className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-subtle"
               />
               <Input
-                placeholder="Search products…"
+                placeholder="ابحث في المنتجات…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="ps-9"
@@ -105,10 +97,10 @@ export function ProductsList() {
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 options={[
-                  { label: "All statuses", value: "all" },
-                  { label: "Active", value: "active" },
-                  { label: "Draft", value: "draft" },
-                  { label: "Archived", value: "archived" },
+                  { label: "كل الحالات", value: "all" },
+                  { label: "نشط", value: "active" },
+                  { label: "مسودة", value: "draft" },
+                  { label: "مؤرشف", value: "archived" },
                 ]}
               />
             </div>
@@ -117,11 +109,11 @@ export function ProductsList() {
           <Table>
             <THead>
               <TR>
-                <TH>Product</TH>
-                <TH>Category</TH>
-                <TH className="text-end">Price</TH>
-                <TH className="text-end">Net profit / unit</TH>
-                <TH className="text-end">Margin</TH>
+                <TH>المنتج</TH>
+                <TH>الفئة</TH>
+                <TH className="text-start">السعر</TH>
+                <TH className="text-start">صافي الربح / وحدة</TH>
+                <TH className="text-start">الهامش</TH>
               </TR>
             </THead>
             <TBody>
@@ -134,19 +126,20 @@ export function ProductsList() {
                   <TD>
                     <div className="font-medium text-fg">{product.name}</div>
                     {product.sku && (
-                      <div className="font-mono text-xs text-subtle">{product.sku}</div>
+                      <div className="font-mono text-xs text-subtle" dir="ltr">{product.sku}</div>
                     )}
                   </TD>
                   <TD className="text-muted">{product.category ?? "—"}</TD>
-                  <TD className="text-end font-mono tabular-nums">
+                  <TD className="text-start font-mono tabular-nums" dir="ltr">
                     {money(product.sellingPrice, product.currency)}
                   </TD>
                   <TD
-                    className={`text-end font-mono tabular-nums ${result.netProfit >= 0 ? "text-success" : "text-danger"}`}
+                    className={`text-start font-mono tabular-nums ${result.netProfit >= 0 ? "text-success" : "text-danger"}`}
+                    dir="ltr"
                   >
                     {money(result.netProfit, product.currency)}
                   </TD>
-                  <TD className="text-end">
+                  <TD className="text-start">
                     <Badge tone={result.margin >= 0 ? "success" : "danger"}>
                       {formatPercent(result.margin, { locale: settings.locale })}
                     </Badge>
@@ -156,7 +149,7 @@ export function ProductsList() {
               {rows.length === 0 && (
                 <TR>
                   <TD className="py-10 text-center text-muted" colSpan={5}>
-                    No products match your search.
+                    لا توجد منتجات مطابقة لبحثك.
                   </TD>
                 </TR>
               )}

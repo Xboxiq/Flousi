@@ -8,7 +8,7 @@ import {
   Percent,
   Package,
   Plus,
-  ArrowRight,
+  ArrowLeft,
   TrendUp,
   Calculator,
 } from "@phosphor-icons/react";
@@ -61,10 +61,10 @@ export function DashboardView() {
   const actions = (
     <>
       <Button asChild variant="secondary" leadingIcon={<Calculator size={16} />}>
-        <Link href="/calculator">Quick calc</Link>
+        <Link href="/calculator">حاسبة سريعة</Link>
       </Button>
       <Button asChild leadingIcon={<Plus size={16} weight="bold" />}>
-        <Link href="/products/new">Add product</Link>
+        <Link href="/products/new">إضافة منتج</Link>
       </Button>
     </>
   );
@@ -72,7 +72,7 @@ export function DashboardView() {
   if (!loaded) {
     return (
       <>
-        <PageHeader title="Dashboard" description="Your store's profit at a glance." />
+        <PageHeader title="لوحة التحكم" description="أرباح متجرك في لمحة." />
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <Skeleton className="h-44 rounded-[var(--radius-xl)] sm:col-span-2" />
           <Skeleton className="h-44 rounded-[var(--radius-lg)]" />
@@ -86,14 +86,14 @@ export function DashboardView() {
   if (products.length === 0) {
     return (
       <>
-        <PageHeader title="Dashboard" description="Your store's profit at a glance." />
+        <PageHeader title="لوحة التحكم" description="أرباح متجرك في لمحة." />
         <EmptyState
           icon={<Package size={24} />}
-          title="No products yet"
-          description="Add your first product to start tracking real net profit."
+          title="لا توجد منتجات بعد"
+          description="أضِف أول منتج لتبدأ بحساب صافي الربح الحقيقي."
           action={
             <Button asChild leadingIcon={<Plus size={16} weight="bold" />}>
-              <Link href="/products/new">Add product</Link>
+              <Link href="/products/new">إضافة منتج</Link>
             </Button>
           }
         />
@@ -105,17 +105,16 @@ export function DashboardView() {
 
   return (
     <>
-      <PageHeader title="Dashboard" description="Your store's profit at a glance." actions={actions} />
+      <PageHeader title="لوحة التحكم" description="أرباح متجرك في لمحة." actions={actions} />
 
-      {/* KPI bento */}
+      {/* شبكة المؤشرات */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Hero — net profit on a grainient aurora */}
         <MeshSurface
           variant="aurora"
           className="flex min-h-[200px] flex-col justify-between rounded-[var(--radius-xl)] p-6 text-white shadow-md sm:col-span-2"
         >
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-white/80">Net profit · this month</span>
+            <span className="text-sm font-medium text-white/80">صافي الربح · هذا الشهر</span>
             {profitDelta !== undefined && (
               <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-sm">
                 <TrendUp size={13} weight="bold" className={profitUp ? "" : "rotate-180"} />
@@ -124,39 +123,39 @@ export function DashboardView() {
             )}
           </div>
           <div>
-            <div className="font-mono text-[44px] font-semibold leading-none tracking-tight tabular-nums">
+            <div className="font-mono text-[44px] font-semibold leading-none tracking-tight tabular-nums" dir="ltr">
               <CountUp
                 value={metrics.monthProfit}
-                prefix={currencySymbol(settings.currency, settings.locale)}
-                decimals={2}
+                prefix={currencySymbol(settings.currency, settings.locale) + " "}
+                decimals={settings.currency === "IQD" ? 0 : 2}
               />
             </div>
             <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-white/80">
-              <span>Margin {formatPercent(metrics.margin, { locale: settings.locale })}</span>
-              <span>Revenue {money(metrics.monthRevenue)}</span>
-              <span>Today {money(metrics.todayProfit)}</span>
+              <span>الهامش {formatPercent(metrics.margin, { locale: settings.locale })}</span>
+              <span>الإيراد {money(metrics.monthRevenue)}</span>
+              <span>اليوم {money(metrics.todayProfit)}</span>
             </div>
           </div>
         </MeshSurface>
 
         <Stat
-          label="Revenue (this month)"
+          label="الإيراد (هذا الشهر)"
           value={money(metrics.monthRevenue)}
           deltaLabel={revenueDelta !== undefined ? formatSignedPercent(revenueDelta) : undefined}
           delta={revenueDelta}
           icon={<Coins size={18} />}
         />
-        <Stat label="Total expenses" value={money(metrics.totalCost)} icon={<Receipt size={18} />} />
+        <Stat label="إجمالي التكاليف" value={money(metrics.totalCost)} icon={<Receipt size={18} />} />
       </div>
 
-      {/* Chart + top products */}
+      {/* الرسم + أفضل المنتجات */}
       <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Revenue &amp; net profit</CardTitle>
+            <CardTitle>الإيراد وصافي الربح</CardTitle>
             <div className="flex items-center gap-4 text-xs text-muted">
-              <Legend color="var(--accent)" label="Revenue" />
-              <Legend color="var(--success)" label="Net profit" />
+              <Legend color="var(--accent)" label="الإيراد" />
+              <Legend color="var(--success)" label="صافي الربح" />
             </div>
           </CardHeader>
           <CardContent>
@@ -166,7 +165,7 @@ export function DashboardView() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Top products</CardTitle>
+            <CardTitle>أفضل المنتجات</CardTitle>
             <Percent size={18} className="text-subtle" />
           </CardHeader>
           <CardContent className="flex flex-col gap-3.5">
@@ -177,7 +176,7 @@ export function DashboardView() {
                 <div key={p.productId} className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between text-sm">
                     <span className="truncate font-medium text-fg">{p.name}</span>
-                    <span className="ms-3 shrink-0 font-mono tabular-nums text-success">
+                    <span className="ms-3 shrink-0 font-mono tabular-nums text-success" dir="ltr">
                       {money(p.netProfit)}
                     </span>
                   </div>
@@ -194,36 +193,37 @@ export function DashboardView() {
         </Card>
       </div>
 
-      {/* Recent sales */}
+      {/* أحدث المبيعات */}
       <Card className="mt-5">
         <CardHeader>
-          <CardTitle>Recent sales</CardTitle>
-          <Button asChild variant="ghost" size="sm" trailingIcon={<ArrowRight size={14} />}>
-            <Link href="/products">All products</Link>
+          <CardTitle>أحدث المبيعات</CardTitle>
+          <Button asChild variant="ghost" size="sm" leadingIcon={<ArrowLeft size={14} />}>
+            <Link href="/products">كل المنتجات</Link>
           </Button>
         </CardHeader>
         <Table>
           <THead>
             <TR>
-              <TH>Product</TH>
-              <TH className="text-end">Qty</TH>
-              <TH className="text-end">Revenue</TH>
-              <TH className="text-end">Net profit</TH>
-              <TH className="text-end">Date</TH>
+              <TH>المنتج</TH>
+              <TH className="text-start">الكمية</TH>
+              <TH className="text-start">الإيراد</TH>
+              <TH className="text-start">صافي الربح</TH>
+              <TH className="text-start">التاريخ</TH>
             </TR>
           </THead>
           <TBody>
             {metrics.recentSales.map((s) => (
               <TR key={s.id}>
                 <TD className="font-medium">{s.productName}</TD>
-                <TD className="text-end font-mono tabular-nums text-muted">{s.quantity}</TD>
-                <TD className="text-end font-mono tabular-nums">{money(s.revenue)}</TD>
+                <TD className="text-start font-mono tabular-nums text-muted" dir="ltr">{s.quantity}</TD>
+                <TD className="text-start font-mono tabular-nums" dir="ltr">{money(s.revenue)}</TD>
                 <TD
-                  className={`text-end font-mono tabular-nums ${s.netProfit >= 0 ? "text-success" : "text-danger"}`}
+                  className={`text-start font-mono tabular-nums ${s.netProfit >= 0 ? "text-success" : "text-danger"}`}
+                  dir="ltr"
                 >
                   {money(s.netProfit)}
                 </TD>
-                <TD className="text-end text-muted">
+                <TD className="text-start text-muted">
                   {new Date(s.soldAt).toLocaleDateString(settings.locale, {
                     month: "short",
                     day: "numeric",

@@ -110,13 +110,13 @@ export class LocalPeriodRepository implements PeriodRepository {
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
-  currency: "USD",
-  locale: "en-US",
-  language: "en",
+  currency: "IQD",
+  locale: "ar-IQ",
+  language: "ar",
   defaultCosts: {
     marketplaceFeePercent: 0,
     paymentFeePercent: 2.9,
-    paymentFeeFixed: 0.3,
+    paymentFeeFixed: 0,
     taxPercent: 0,
   },
 };

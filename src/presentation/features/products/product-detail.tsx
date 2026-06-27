@@ -33,11 +33,11 @@ export function ProductDetail({ id }: { id: string }) {
   if (!product) {
     return (
       <EmptyState
-        title="Product not found"
-        description="This product may have been deleted."
+        title="المنتج غير موجود"
+        description="ربما تم حذف هذا المنتج."
         action={
           <Button asChild>
-            <Link href="/products">Back to products</Link>
+            <Link href="/products">العودة للمنتجات</Link>
           </Button>
         }
       />
@@ -58,30 +58,30 @@ export function ProductDetail({ id }: { id: string }) {
     <>
       <div className="mb-2">
         <Button asChild variant="ghost" size="sm" leadingIcon={<ArrowLeft size={16} />}>
-          <Link href="/products">Products</Link>
+          <Link href="/products">المنتجات</Link>
         </Button>
       </div>
       <PageHeader
         title={product.name}
-        description={product.sku ? `SKU ${product.sku}` : "Edit product details and costs."}
+        description={product.sku ? `SKU ${product.sku}` : "عدّل بيانات المنتج وتكاليفه."}
         actions={
           <>
             <Badge tone={product.status === "active" ? "accent" : "neutral"}>
-              {product.status}
+              {({ active: "نشط", draft: "مسودة", archived: "مؤرشف" } as Record<string, string>)[product.status] ?? product.status}
             </Badge>
             <Button
               variant="secondary"
               leadingIcon={<Plus size={16} />}
               onClick={() => setSaleOpen(true)}
             >
-              Record sale
+              تسجيل بيع
             </Button>
             <Button
               variant="ghost"
               leadingIcon={<Trash size={16} />}
               onClick={() => setConfirmDelete(true)}
             >
-              Delete
+              حذف
             </Button>
           </>
         }
@@ -94,20 +94,20 @@ export function ProductDetail({ id }: { id: string }) {
       <Dialog
         open={confirmDelete}
         onClose={() => setConfirmDelete(false)}
-        title="Delete product"
-        description={`This permanently removes "${product.name}". Existing sales are kept.`}
+        title="حذف المنتج"
+        description={`سيُحذف "${product.name}" نهائيًا. تبقى المبيعات المسجّلة.`}
         footer={
           <>
             <Button variant="ghost" onClick={() => setConfirmDelete(false)} disabled={deleting}>
               Cancel
             </Button>
             <Button variant="danger" onClick={onDelete} loading={deleting}>
-              Delete product
+              حذف المنتج
             </Button>
           </>
         }
       >
-        <p className="text-sm text-muted">Are you sure? This action cannot be undone.</p>
+        <p className="text-sm text-muted">هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.</p>
       </Dialog>
     </>
   );

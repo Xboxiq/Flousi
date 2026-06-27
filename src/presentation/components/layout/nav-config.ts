@@ -22,25 +22,25 @@ export interface NavGroup {
 /** Primary navigation, grouped per docs/IA-UX.md. */
 export const NAV_GROUPS: NavGroup[] = [
   {
-    label: "Overview",
-    items: [{ label: "Dashboard", href: "/dashboard", icon: House }],
+    label: "نظرة عامة",
+    items: [{ label: "لوحة التحكم", href: "/dashboard", icon: House }],
   },
   {
-    label: "Catalog",
+    label: "الكتالوج",
     items: [
-      { label: "Products", href: "/products", icon: Package },
-      { label: "Calculator", href: "/calculator", icon: Calculator },
+      { label: "المنتجات", href: "/products", icon: Package },
+      { label: "الحاسبة", href: "/calculator", icon: Calculator },
     ],
   },
   {
-    label: "Finance",
+    label: "المالية",
     items: [
-      { label: "Periods", href: "/periods", icon: CalendarCheck },
-      { label: "Reports", href: "/reports", icon: ChartBar },
+      { label: "الفترات", href: "/periods", icon: CalendarCheck },
+      { label: "التقارير", href: "/reports", icon: ChartBar },
     ],
   },
   {
-    label: "System",
-    items: [{ label: "Settings", href: "/settings", icon: Gear }],
+    label: "النظام",
+    items: [{ label: "الإعدادات", href: "/settings", icon: Gear }],
   },
 ];

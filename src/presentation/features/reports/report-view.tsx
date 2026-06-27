@@ -105,7 +105,7 @@ export function ReportView({ type }: { type: ReportType }) {
     <>
       <div className="mb-2">
         <Button asChild variant="ghost" size="sm" leadingIcon={<ArrowLeft size={16} />}>
-          <Link href="/reports">Reports</Link>
+          <Link href="/reports">التقارير</Link>
         </Button>
       </div>
       <PageHeader
@@ -117,7 +117,7 @@ export function ReportView({ type }: { type: ReportType }) {
       {!loaded ? (
         <Skeleton className="h-80 w-full" />
       ) : report.rows.length === 0 ? (
-        <EmptyState title="No data yet" description="Record some sales to populate this report." />
+        <EmptyState title="لا توجد بيانات بعد" description="سجّل بعض المبيعات لتعبئة هذا التقرير." />
       ) : (
         <Card>
           <Table>

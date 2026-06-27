@@ -121,9 +121,9 @@
 
 /* ---------------- Map to Tailwind ---------------- */
 @theme inline {
-  --font-sans: var(--font-sans-ibm), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-ar), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-ibm), ui-monospace, monospace;
-  --font-display: "Clash Display", var(--font-sans-ibm), ui-sans-serif, sans-serif;
+  --font-display: var(--font-display-ar), var(--font-ar), ui-sans-serif, sans-serif;
 
   --color-bg: var(--bg);
   --color-bg-tint: var(--bg-tint);

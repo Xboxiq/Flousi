@@ -16,9 +16,9 @@ interface Command {
 }
 
 const ACTIONS: Command[] = [
-  { label: "Add product", group: "Actions", href: "/products/new", keywords: "new create" },
-  { label: "Open calculator", group: "Actions", href: "/calculator", keywords: "calc profit" },
-  { label: "Close the month", group: "Actions", href: "/periods", keywords: "period lock" },
+  { label: "إضافة منتج", group: "إجراءات", href: "/products/new", keywords: "new create جديد" },
+  { label: "فتح الحاسبة", group: "إجراءات", href: "/calculator", keywords: "calc profit حساب" },
+  { label: "إغلاق الشهر", group: "إجراءات", href: "/periods", keywords: "period lock فترة" },
 ];
 
 export function CommandPalette() {
@@ -120,7 +120,7 @@ export function CommandPalette() {
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search or jump to…"
+                placeholder="ابحث أو انتقل…"
                 className="h-14 w-full bg-transparent text-base text-fg placeholder:text-subtle focus:outline-none"
               />
               <kbd className="hidden rounded-md border border-border bg-surface-2 px-1.5 py-0.5 font-mono text-[11px] text-subtle sm:block">
@@ -129,7 +129,7 @@ export function CommandPalette() {
             </div>
             <ul className="max-h-[52vh] overflow-y-auto p-2">
               {results.length === 0 && (
-                <li className="px-3 py-6 text-center text-sm text-muted">No matches.</li>
+                <li className="px-3 py-6 text-center text-sm text-muted">لا توجد نتائج.</li>
               )}
               {results.map((c, i) => (
                 <li key={c.href + c.label}>

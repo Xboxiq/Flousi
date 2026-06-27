@@ -84,14 +84,14 @@ export function Sidebar() {
       <button
         type="button"
         onClick={toggleSidebar}
-        aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        aria-label={sidebarCollapsed ? "توسيع الشريط الجانبي" : "طي الشريط الجانبي"}
         className="m-3 flex items-center justify-center gap-2 rounded-[var(--radius-md)] border border-border py-2 text-sm text-muted transition-colors hover:bg-surface-2 hover:text-fg"
       >
         <CaretLeft
           size={16}
           className={cn("transition-transform", sidebarCollapsed && "rotate-180")}
         />
-        {!sidebarCollapsed && "Collapse"}
+        {!sidebarCollapsed && "طيّ"}
       </button>
     </aside>
   );

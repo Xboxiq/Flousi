@@ -48,21 +48,21 @@ export function RecordSaleDialog({ product, open, onClose }: Props) {
     <Dialog
       open={open}
       onClose={onClose}
-      title="Record a sale"
+      title="تسجيل عملية بيع"
       description={product.name}
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={saving}>
-            Cancel
+            إلغاء
           </Button>
           <Button onClick={submit} loading={saving}>
-            Record sale
+            تسجيل البيع
           </Button>
         </>
       }
     >
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Quantity" htmlFor="qty">
+        <Field label="الكمية" htmlFor="qty">
           <Input
             id="qty"
             type="number"
@@ -71,7 +71,7 @@ export function RecordSaleDialog({ product, open, onClose }: Props) {
             onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
           />
         </Field>
-        <Field label="Unit price" htmlFor="unit">
+        <Field label="سعر الوحدة" htmlFor="unit">
           <Input
             id="unit"
             type="number"
@@ -82,7 +82,7 @@ export function RecordSaleDialog({ product, open, onClose }: Props) {
             onChange={(e) => setUnitPrice(parseFloat(e.target.value) || 0)}
           />
         </Field>
-        <Field label="Sale date" htmlFor="date" className="sm:col-span-2">
+        <Field label="تاريخ البيع" htmlFor="date" className="sm:col-span-2">
           <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         </Field>
       </div>

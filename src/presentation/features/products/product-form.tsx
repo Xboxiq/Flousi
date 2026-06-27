@@ -28,18 +28,19 @@ import { CostFields } from "./cost-fields";
 import { ProfitPanel } from "./profit-panel";
 
 const CURRENCY_OPTIONS = [
-  { label: "US Dollar (USD)", value: "USD" },
-  { label: "Euro (EUR)", value: "EUR" },
-  { label: "British Pound (GBP)", value: "GBP" },
-  { label: "Saudi Riyal (SAR)", value: "SAR" },
-  { label: "UAE Dirham (AED)", value: "AED" },
-  { label: "Egyptian Pound (EGP)", value: "EGP" },
+  { label: "دينار عراقي (IQD)", value: "IQD" },
+  { label: "دولار أمريكي (USD)", value: "USD" },
+  { label: "يورو (EUR)", value: "EUR" },
+  { label: "جنيه إسترليني (GBP)", value: "GBP" },
+  { label: "ريال سعودي (SAR)", value: "SAR" },
+  { label: "درهم إماراتي (AED)", value: "AED" },
+  { label: "جنيه مصري (EGP)", value: "EGP" },
 ];
 
 const STATUS_OPTIONS = [
-  { label: "Active", value: "active" },
-  { label: "Draft", value: "draft" },
-  { label: "Archived", value: "archived" },
+  { label: "نشط", value: "active" },
+  { label: "مسودة", value: "draft" },
+  { label: "مؤرشف", value: "archived" },
 ];
 
 interface Props {
@@ -93,8 +94,8 @@ export function ProductForm({ product }: Props) {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return setError("Product name is required.");
-    if (sellingPrice <= 0) return setError("Selling price must be greater than zero.");
+    if (!name.trim()) return setError("اسم المنتج مطلوب.");
+    if (sellingPrice <= 0) return setError("يجب أن يكون سعر البيع أكبر من صفر.");
     setError(null);
     setSaving(true);
     try {
@@ -125,15 +126,15 @@ export function ProductForm({ product }: Props) {
       <div className="flex flex-col gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Identity</CardTitle>
+            <CardTitle>البيانات الأساسية</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
-            <Field label="Product name" htmlFor="name" required className="sm:col-span-2">
+            <Field label="اسم المنتج" htmlFor="name" required className="sm:col-span-2">
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Linen Crossbody Tote"
+                placeholder="مثال: حقيبة كتان كروس"
               />
             </Field>
             <Field label="SKU" htmlFor="sku">
@@ -144,15 +145,15 @@ export function ProductForm({ product }: Props) {
                 placeholder="BAG-LIN-01"
               />
             </Field>
-            <Field label="Category" htmlFor="category">
+            <Field label="الفئة" htmlFor="category">
               <Input
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                placeholder="Bags"
+                placeholder="حقائب"
               />
             </Field>
-            <Field label="Status" htmlFor="status">
+            <Field label="الحالة" htmlFor="status">
               <Select
                 id="status"
                 value={status}
@@ -160,12 +161,12 @@ export function ProductForm({ product }: Props) {
                 onChange={(e) => setStatus(e.target.value as ProductStatus)}
               />
             </Field>
-            <Field label="Notes" htmlFor="notes" className="sm:col-span-2">
+            <Field label="ملاحظات" htmlFor="notes" className="sm:col-span-2">
               <Textarea
                 id="notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Internal notes…"
+                placeholder="ملاحظات داخلية…"
               />
             </Field>
           </CardContent>
@@ -173,10 +174,10 @@ export function ProductForm({ product }: Props) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Pricing</CardTitle>
+            <CardTitle>التسعير</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
-            <Field label="Selling price" htmlFor="price" required>
+            <Field label="سعر البيع" htmlFor="price" required>
               <Input
                 id="price"
                 type="number"
@@ -189,7 +190,7 @@ export function ProductForm({ product }: Props) {
                 placeholder="0.00"
               />
             </Field>
-            <Field label="Currency" htmlFor="currency">
+            <Field label="العملة" htmlFor="currency">
               <Select
                 id="currency"
                 value={currency}
@@ -202,7 +203,7 @@ export function ProductForm({ product }: Props) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Costs</CardTitle>
+            <CardTitle>التكاليف</CardTitle>
           </CardHeader>
           <CardContent>
             <CostFields costs={costs} currencySymbol={symbol} onChange={onCostChange} />
@@ -217,11 +218,11 @@ export function ProductForm({ product }: Props) {
 
         <div className="flex items-center gap-3">
           <Button type="submit" loading={saving} leadingIcon={<FloppyDisk size={16} />}>
-            {isEdit ? "Save changes" : "Create product"}
+            {isEdit ? "حفظ التغييرات" : "إنشاء المنتج"}
           </Button>
           {!isEdit && (
             <Button type="button" variant="ghost" onClick={reset} disabled={saving}>
-              Reset
+              تفريغ
             </Button>
           )}
         </div>

@@ -47,7 +47,7 @@ export function nextPeriodAfter(period: AccountingPeriod): { label: string; star
   const start = new Date(period.startDate);
   const next = new Date(start.getFullYear(), start.getMonth() + 1, 1);
   return {
-    label: new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(next),
+    label: new Intl.DateTimeFormat("ar", { month: "long", year: "numeric" }).format(next),
     startDate: next.toISOString(),
   };
 }
