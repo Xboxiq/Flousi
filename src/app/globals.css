@@ -1,136 +1,141 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   Flousi Design System — "Soft Premium" (built from the reference screens).
-   Light cool-gray canvas, large rounded white cards, soft diffuse shadows,
-   rounded display type, glossy 3D orbs, grainy blue→violet mesh gradients.
-   Arabic-first (RTL). Rubik (UI) + Baloo Bhaijaan 2 (display) + IBM Plex Mono.
+   Flousi Design System — grounded in the reference screens.
+   Apple HIG / Linear / Stripe DNA: a cool light-gray canvas, crisp white
+   cards with hairline borders + soft diffuse shadows, a clean geometric
+   grotesk (Cairo), big bold tabular numbers (IBM Plex Mono), vivid Apple
+   blue for intent, green/red finance deltas, glossy 3D orbs as accents, and
+   smooth grainy blue→indigo→violet gradients reserved for hero / bento / CTA.
+   Arabic-first (RTL). Restraint over ornament.
    ========================================================================== */
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  /* Accent — vivid system blue (from the stepper) */
-  --blue-700: #0a5fd8;
-  --blue-600: #0a84ff;
-  --blue-500: #2f95ff;
-  --blue-400: #5aa9ff;
-  --blue-300: #9cc8ff;
-  /* Mesh-only hues */
-  --violet: #7c5cff;
-  --indigo: #5b6cff;
+  /* Accent — Apple system blue scale */
+  --blue-700: #0a4fc4;
+  --blue-600: #0a6cff;
+  --blue-500: #2f86ff;
+  --blue-400: #5aa0ff;
+  --blue-300: #9cc4ff;
+  /* Secondary chip hues (used sparingly, as category accents) */
+  --violet: #6d5cff;
+  --indigo: #4f5dff;
   --rose: #ff4d6d;
-  --teal: #34c7e0;
+  --teal: #12b3a6;
+  --orange: #ff8a3d;
 
-  --green-600: #138a4a;
-  --green-500: #22b365;
-  --red-600: #e0322f;
-  --red-500: #ff453a;
+  --green-600: #0c9a52;
+  --green-500: #19b364;
+  --red-600: #e5322b;
+  --red-500: #ff463c;
   --amber-600: #d98a0b;
   --amber-500: #ffab2e;
 
-  /* Radius — large & soft */
-  --radius-sm: 12px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
-  --radius-xl: 30px;
+  /* Radius — generous, Apple-soft */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 30px;
   --radius-full: 9999px;
 
-  --motion-fast: 160ms;
-  --motion-base: 280ms;
-  --motion-slow: 440ms;
+  --motion-fast: 150ms;
+  --motion-base: 260ms;
+  --motion-slow: 420ms;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-spring: cubic-bezier(0.34, 1.5, 0.64, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
 
   /* ---------- Semantic (light) ---------- */
-  --bg: #eceef2;
-  --bg-tint: #f4f5f8;
+  --bg: #f4f4f6;
+  --bg-tint: #fafafb;
   --surface: #ffffff;
-  --surface-2: #f5f6f9;
-  --sunken: #e6e8ee;
-  --border: #e6e8ee;
-  --border-soft: #eef0f4;
-  --fg: #1b1c22;
-  --muted: #767b86;
-  --subtle: #a7acb6;
+  --surface-2: #f6f7f9;
+  --sunken: #eceef1;
+  --border: rgba(17, 18, 23, 0.08);
+  --border-soft: rgba(17, 18, 23, 0.05);
+  --fg: #14151a;
+  --muted: #6b7079;
+  --subtle: #a0a4ad;
 
-  --accent: #0a84ff;
-  --accent-strong: #0a5fd8;
+  --accent: #0a6cff;
+  --accent-strong: #0a4fc4;
   --accent-fg: #ffffff;
-  --accent-soft: #e7f1ff;
+  --accent-soft: #e9f1ff;
 
-  --success: #138a4a;
+  --success: #0c9a52;
   --success-soft: #e3f6ec;
-  --danger: #e0322f;
-  --danger-soft: #fdeaea;
+  --danger: #e5322b;
+  --danger-soft: #fdeae9;
   --warning: #d98a0b;
   --warning-soft: #fdf2dd;
-  --info: #0a84ff;
-  --info-soft: #e7f1ff;
-  --focus: #0a84ff;
+  --info: #0a6cff;
+  --info-soft: #e9f1ff;
+  --focus: #0a6cff;
 
-  --material: rgba(255, 255, 255, 0.7);
+  --material: rgba(255, 255, 255, 0.72);
 
-  /* Soft-UI ingredients */
-  --neu-hi: rgba(255, 255, 255, 0.95);
-  --neu-lo: rgba(28, 32, 48, 0.10);
+  /* Soft-UI ingredients (kept subtle — flat-first) */
+  --neu-hi: rgba(255, 255, 255, 0.9);
+  --neu-lo: rgba(17, 18, 23, 0.06);
 
-  /* Soft diffuse elevation (the reference look) */
-  --shadow-xs: 0 2px 6px -2px rgba(28, 32, 48, 0.08);
-  --shadow-sm: 0 6px 18px -8px rgba(28, 32, 48, 0.16), 0 2px 6px -4px rgba(28, 32, 48, 0.08);
-  --shadow-md: 0 20px 44px -18px rgba(28, 32, 48, 0.22), 0 6px 14px -8px rgba(28, 32, 48, 0.10);
-  --shadow-lg: 0 34px 70px -26px rgba(28, 32, 48, 0.26);
-  --shadow-xl: 0 50px 100px -36px rgba(28, 32, 48, 0.30);
-  --shadow-accent: 0 14px 32px -10px rgba(10, 132, 255, 0.45);
+  /* Soft diffuse elevation — layered, Apple-like */
+  --shadow-xs: 0 1px 2px rgba(17, 18, 23, 0.06), 0 1px 1px rgba(17, 18, 23, 0.04);
+  --shadow-sm: 0 2px 4px -1px rgba(17, 18, 23, 0.06), 0 6px 16px -6px rgba(17, 18, 23, 0.10);
+  --shadow-md: 0 4px 8px -2px rgba(17, 18, 23, 0.07), 0 16px 36px -12px rgba(17, 18, 23, 0.16);
+  --shadow-lg: 0 10px 20px -6px rgba(17, 18, 23, 0.10), 0 30px 60px -20px rgba(17, 18, 23, 0.22);
+  --shadow-xl: 0 24px 50px -12px rgba(17, 18, 23, 0.18), 0 48px 90px -30px rgba(17, 18, 23, 0.28);
+  --shadow-accent: 0 8px 20px -6px rgba(10, 108, 255, 0.40);
+
+  --grain-opacity: 0.08;
+}
+
+[data-theme="dark"] {
+  --bg: #0a0a0b;
+  --bg-tint: #0e0e10;
+  --surface: #161619;
+  --surface-2: #1d1d21;
+  --sunken: #0e0e11;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-soft: rgba(255, 255, 255, 0.06);
+  --fg: #f4f4f7;
+  --muted: #9a9ea8;
+  --subtle: #6a6e77;
+
+  --accent: #2f86ff;
+  --accent-strong: #0a6cff;
+  --accent-fg: #ffffff;
+  --accent-soft: rgba(47, 134, 255, 0.16);
+
+  --success: #1fc06e;
+  --success-soft: rgba(25, 179, 100, 0.16);
+  --danger: #ff5a52;
+  --danger-soft: rgba(255, 70, 60, 0.16);
+  --warning: #ffab2e;
+  --warning-soft: rgba(255, 171, 46, 0.16);
+  --info: #2f86ff;
+  --info-soft: rgba(47, 134, 255, 0.16);
+  --focus: #2f86ff;
+
+  --material: rgba(22, 22, 25, 0.72);
+  --neu-hi: rgba(255, 255, 255, 0.04);
+  --neu-lo: rgba(0, 0, 0, 0.5);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 2px 4px -1px rgba(0, 0, 0, 0.5), 0 6px 16px -6px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.55), 0 16px 36px -12px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 10px 20px -6px rgba(0, 0, 0, 0.6), 0 30px 60px -20px rgba(0, 0, 0, 0.75);
+  --shadow-xl: 0 24px 50px -12px rgba(0, 0, 0, 0.7), 0 48px 90px -30px rgba(0, 0, 0, 0.8);
+  --shadow-accent: 0 8px 22px -6px rgba(47, 134, 255, 0.5);
 
   --grain-opacity: 0.10;
 }
 
-[data-theme="dark"] {
-  --bg: #0a0a0c;
-  --bg-tint: #101013;
-  --surface: #16171b;
-  --surface-2: #1d1e24;
-  --sunken: #0e0e11;
-  --border: rgba(255, 255, 255, 0.10);
-  --border-soft: rgba(255, 255, 255, 0.06);
-  --fg: #f3f4f7;
-  --muted: #9ba0ab;
-  --subtle: #6b7078;
-
-  --accent: #2f95ff;
-  --accent-strong: #0a84ff;
-  --accent-fg: #ffffff;
-  --accent-soft: rgba(47, 149, 255, 0.16);
-
-  --success: #2bc46e;
-  --success-soft: rgba(34, 179, 101, 0.16);
-  --danger: #ff5a52;
-  --danger-soft: rgba(255, 69, 58, 0.16);
-  --warning: #ffab2e;
-  --warning-soft: rgba(255, 171, 46, 0.16);
-  --info: #2f95ff;
-  --info-soft: rgba(47, 149, 255, 0.16);
-  --focus: #2f95ff;
-
-  --material: rgba(22, 23, 27, 0.7);
-  --neu-hi: rgba(255, 255, 255, 0.05);
-  --neu-lo: rgba(0, 0, 0, 0.55);
-
-  --shadow-xs: 0 2px 6px -2px rgba(0, 0, 0, 0.5);
-  --shadow-sm: 0 6px 18px -8px rgba(0, 0, 0, 0.6), 0 2px 6px -4px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 22px 46px -18px rgba(0, 0, 0, 0.7), 0 6px 14px -8px rgba(0, 0, 0, 0.55);
-  --shadow-lg: 0 36px 72px -26px rgba(0, 0, 0, 0.75);
-  --shadow-xl: 0 52px 104px -36px rgba(0, 0, 0, 0.8);
-  --shadow-accent: 0 16px 36px -10px rgba(47, 149, 255, 0.5);
-
-  --grain-opacity: 0.12;
-}
-
 @theme inline {
-  --font-sans: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-cairo), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-ibm), ui-monospace, monospace;
-  --font-display: var(--font-baloo), var(--font-rubik), ui-sans-serif, sans-serif;
+  --font-display: var(--font-cairo), ui-sans-serif, system-ui, sans-serif;
 
   --color-bg: var(--bg);
   --color-bg-tint: var(--bg-tint);
@@ -162,6 +167,7 @@
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
 
   --shadow-xs: var(--shadow-xs);
   --shadow-sm: var(--shadow-sm);
@@ -178,10 +184,16 @@
     color: var(--fg);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
-  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.01em; }
-  .tnum, .font-mono { font-variant-numeric: tabular-nums; }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.005em;
+  }
+  /* Tabular figures everywhere numbers matter */
+  .tnum, .font-mono { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
   :focus-visible {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
@@ -191,73 +203,86 @@
 }
 
 @layer components {
+  /* Frosted chrome (top bar / floating nav) */
   .vibrancy {
     background-color: var(--material);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
   }
 
-  /* Soft-UI raised/inset (subtle, premium) */
-  .neu-raised { box-shadow: -5px -5px 12px var(--neu-hi), 6px 6px 16px var(--neu-lo); }
-  .neu-raised-sm { box-shadow: -3px -3px 7px var(--neu-hi), 3px 3px 9px var(--neu-lo); }
-  .neu-inset { box-shadow: inset 3px 3px 7px var(--neu-lo), inset -3px -3px 7px var(--neu-hi); }
+  /* "Soft-UI" kept intentionally flat & premium: a hairline + a soft drop
+     shadow rather than dual-light neumorphism. Existing usages upgrade for free. */
+  .neu-raised {
+    background-color: var(--surface);
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-sm);
+  }
+  .neu-raised-sm {
+    background-color: var(--surface);
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-xs);
+  }
+  .neu-inset {
+    background-color: var(--sunken);
+    box-shadow: inset 0 1px 2px rgba(17, 18, 23, 0.08);
+  }
 
   .bento-hover {
     transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out);
   }
-  .bento-hover:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .bento-hover:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
 
-  /* Grain overlay */
+  /* Grain overlay (kept very subtle — premium, not noisy) */
   .grainy { position: relative; isolation: isolate; }
   .grainy::after {
     content: "";
     position: absolute; inset: 0; border-radius: inherit;
     pointer-events: none; z-index: 1;
     opacity: var(--grain-opacity); mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* Grainy blue -> violet mesh (reference bento/hero) */
+  /* Smooth grainy blue → indigo → violet (reference bento / hero) */
   .mesh-aurora {
-    background-color: #2f6bff;
+    background-color: #1f5bff;
     background-image:
-      radial-gradient(75% 70% at 25% 18%, #5aa9ff 0%, transparent 55%),
-      radial-gradient(80% 75% at 85% 8%, #2f6bff 0%, transparent 55%),
-      linear-gradient(165deg, #2f6bff 0%, #5b6cff 45%, #7c5cff 100%);
+      radial-gradient(70% 80% at 20% 12%, #6aa6ff 0%, transparent 58%),
+      radial-gradient(75% 80% at 88% 6%, #2f6bff 0%, transparent 55%),
+      linear-gradient(160deg, #2f6bff 0%, #4f5dff 48%, #6d5cff 100%);
   }
-  /* Bento tile: gradient fades into the card surface at the bottom */
+  /* Bento tile: gradient blooms from the top, dissolves into the card */
   .mesh-bento {
     background-color: var(--surface);
     background-image:
-      radial-gradient(90% 80% at 30% 0%, #2f6bff 0%, transparent 60%),
-      radial-gradient(80% 70% at 90% 0%, #7c5cff 0%, transparent 55%),
-      linear-gradient(180deg, #5b6cff 0%, transparent 62%);
+      radial-gradient(95% 80% at 28% -8%, #2f6bff 0%, transparent 58%),
+      radial-gradient(80% 70% at 95% -10%, #6d5cff 0%, transparent 55%),
+      linear-gradient(180deg, #4f6dff 0%, transparent 60%);
   }
   /* Dark CTA glow rising from below */
   .mesh-night {
-    background-color: #0c0c10;
+    background-color: #0a0a0c;
     background-image:
-      radial-gradient(85% 70% at 50% 122%, rgba(124, 92, 255, 0.95) 0%, rgba(47, 107, 255, 0.6) 32%, transparent 68%),
-      radial-gradient(55% 50% at 18% 112%, rgba(47, 149, 255, 0.55) 0%, transparent 60%);
+      radial-gradient(85% 70% at 50% 122%, rgba(109, 92, 255, 0.95) 0%, rgba(47, 107, 255, 0.6) 32%, transparent 68%),
+      radial-gradient(55% 50% at 16% 112%, rgba(47, 134, 255, 0.55) 0%, transparent 60%);
   }
   .mesh-night-rose {
-    background-color: #0c0c10;
+    background-color: #0a0a0c;
     background-image: radial-gradient(85% 70% at 50% 122%, rgba(255, 77, 109, 0.95) 0%, rgba(150, 36, 60, 0.55) 32%, transparent 68%);
   }
 
-  /* Glossy 3D orbs */
+  /* Glossy 3D orbs — small premium accents (selection markers, logos, steps) */
   .orb { border-radius: var(--radius-full); position: relative; }
   .orb-blue {
-    background: radial-gradient(circle at 33% 25%, #cfe2ff 0%, #2f95ff 38%, #0a5fd8 100%);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -8px 14px rgba(0,30,90,0.45), 0 10px 22px rgba(10,132,255,0.5);
+    background: radial-gradient(circle at 33% 25%, #cfe2ff 0%, #2f86ff 38%, #0a4fc4 100%);
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -8px 14px rgba(0,30,90,0.45), 0 8px 18px rgba(10,108,255,0.5);
   }
   .orb-silver {
     background: radial-gradient(circle at 33% 25%, #ffffff 0%, #e1e3e9 42%, #b6bac3 100%);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.95), inset 0 -8px 14px rgba(30,34,50,0.16), 0 8px 16px rgba(28,32,48,0.18);
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.95), inset 0 -8px 14px rgba(30,34,50,0.16), 0 6px 14px rgba(17,18,23,0.16);
   }
   .orb-emerald {
-    background: radial-gradient(circle at 33% 25%, #b9f6d2 0%, #22b365 42%, #138a4a 100%);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.75), inset 0 -8px 14px rgba(0,50,25,0.4), 0 10px 22px rgba(34,179,101,0.45);
+    background: radial-gradient(circle at 33% 25%, #b9f6d2 0%, #19b364 42%, #0c9a52 100%);
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.75), inset 0 -8px 14px rgba(0,50,25,0.4), 0 8px 18px rgba(25,179,100,0.45);
   }
 }
 
@@ -266,7 +291,7 @@
     content: ""; position: absolute; inset: 0; border-radius: inherit;
     pointer-events: none; opacity: 0;
     transition: opacity var(--motion-base) var(--ease-out);
-    background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--accent) 14%, transparent), transparent 60%);
+    background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--accent) 12%, transparent), transparent 60%);
   }
   .spotlight:hover::before { opacity: 1; }
 

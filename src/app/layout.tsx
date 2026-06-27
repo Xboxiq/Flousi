@@ -1,27 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Rubik, Baloo_Bhaijaan_2, IBM_Plex_Mono } from "next/font/google";
+import { Cairo, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider, themeNoFlashScript } from "@/presentation/components/theme/theme-provider";
 
-// Soft-rounded Arabic-first type, matching the reference screens.
-const rubik = Rubik({
-  variable: "--font-rubik",
+/**
+ * Type system (grounded in the reference screens — Apple SF Pro / Linear / Stripe):
+ * Cairo is a precise geometric Arabic+Latin grotesk (the closest open equivalent
+ * to SF Pro Arabic) used for every UI and display weight. IBM Plex Mono carries
+ * the financial figures with tabular precision. Deliberately NOT a rounded/bubbly
+ * display face — restraint is what reads as senior, not playfulness.
+ */
+const cairo = Cairo({
+  variable: "--font-cairo",
   subsets: ["arabic", "latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const baloo = Baloo_Bhaijaan_2({
-  variable: "--font-baloo",
-  subsets: ["arabic", "latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
 const plexMono = IBM_Plex_Mono({
   variable: "--font-mono-ibm",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -37,8 +36,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f5f7" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f4f6" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0b" },
   ],
 };
 
@@ -51,7 +50,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${rubik.variable} ${baloo.variable} ${plexMono.variable} h-full`}
+      className={`${cairo.variable} ${plexMono.variable} h-full`}
       suppressHydrationWarning
     >
       <head>

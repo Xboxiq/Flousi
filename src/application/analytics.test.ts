@@ -72,7 +72,7 @@ describe("computeDashboard", () => {
   it("produces a continuous trailing monthly series", () => {
     const m = computeDashboard([product()], [sale()], { now, months: 6 });
     expect(m.monthly).toHaveLength(6);
-    expect(m.monthly[m.monthly.length - 1].label).toBe("Jun");
+    expect(m.monthly[m.monthly.length - 1].label).toBe("يونيو");
   });
 
   it("ranks top products by net profit", () => {

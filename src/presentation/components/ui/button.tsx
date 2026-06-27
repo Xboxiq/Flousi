@@ -9,12 +9,13 @@ export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    "text-white [background-image:linear-gradient(180deg,var(--blue-400),var(--accent-strong))] [box-shadow:inset_0_1px_0_rgba(255,255,255,0.35),var(--shadow-accent)] hover:brightness-[1.06]",
-  secondary: "neu-raised-sm bg-surface text-fg hover:brightness-[0.99]",
+    "bg-accent text-white [box-shadow:inset_0_1px_0_rgba(255,255,255,0.22),var(--shadow-accent)] hover:bg-accent-strong",
+  secondary:
+    "border border-border bg-surface text-fg shadow-xs hover:bg-surface-2",
   ghost: "text-muted hover:bg-surface-2 hover:text-fg",
-  outline: "border border-border bg-surface text-fg hover:bg-surface-2",
+  outline: "border border-border bg-transparent text-fg hover:bg-surface-2",
   danger:
-    "text-white [background-image:linear-gradient(180deg,#ff6b91,var(--danger))] [box-shadow:inset_0_1px_0_rgba(255,255,255,0.3),0_10px_24px_-8px_rgba(225,29,84,0.5)] hover:brightness-[1.06]",
+    "bg-danger text-white [box-shadow:inset_0_1px_0_rgba(255,255,255,0.22),0_8px_20px_-6px_rgba(229,50,43,0.45)] hover:brightness-[1.05]",
 };
 
 const SIZES: Record<ButtonSize, string> = {

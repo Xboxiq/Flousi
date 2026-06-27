@@ -41,7 +41,7 @@ const sales: Sale[] = [
 describe("buildReport", () => {
   it("builds a product report sorted by net profit", () => {
     const r = buildReport("product", products, sales);
-    expect(r.columns[0].label).toBe("Product");
+    expect(r.columns[0].label).toBe("المنتج");
     expect(r.rows[0][0]).toBe("Alpha");
     // 2 sales x (100 - 40 - 10) = 100 net profit
     const netProfitCol = r.columns.findIndex((c) => c.kind === "profit");
@@ -56,8 +56,8 @@ describe("buildReport", () => {
   it("aggregates expense report by cost line with shares", () => {
     const r = buildReport("expense", products, sales);
     const labels = r.rows.map((row) => row[0]);
-    expect(labels).toContain("Purchase cost");
-    expect(labels).toContain("Marketplace fees");
+    expect(labels).toContain("تكلفة الشراء");
+    expect(labels).toContain("رسوم المنصّة");
     // shares sum to ~1
     const shareCol = r.columns.findIndex((c) => c.kind === "percent");
     const sum = r.rows.reduce((acc, row) => acc + Number(row[shareCol]), 0);
@@ -68,7 +68,7 @@ describe("buildReport", () => {
 describe("toExportableTable", () => {
   it("flattens to columns + raw rows", () => {
     const table = toExportableTable(buildReport("yearly", products, sales));
-    expect(table.columns[0]).toBe("Year");
+    expect(table.columns[0]).toBe("السنة");
     expect(table.rows[0][0]).toBe("2026");
   });
 });

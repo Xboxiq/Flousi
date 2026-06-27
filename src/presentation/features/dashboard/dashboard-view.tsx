@@ -143,9 +143,15 @@ export function DashboardView() {
           value={money(metrics.monthRevenue)}
           deltaLabel={revenueDelta !== undefined ? formatSignedPercent(revenueDelta) : undefined}
           delta={revenueDelta}
-          icon={<Coins size={18} />}
+          accent="green"
+          icon={<Coins size={18} weight="bold" />}
         />
-        <Stat label="إجمالي التكاليف" value={money(metrics.totalCost)} icon={<Receipt size={18} />} />
+        <Stat
+          label="إجمالي التكاليف"
+          value={money(metrics.totalCost)}
+          accent="orange"
+          icon={<Receipt size={18} weight="bold" />}
+        />
       </div>
 
       {/* الرسم + أفضل المنتجات */}
