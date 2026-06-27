@@ -24,7 +24,7 @@ const ORDER: ReportType[] = ["monthly", "yearly", "product", "profit", "expense"
 export function ReportsHub() {
   return (
     <>
-      <PageHeader title="Reports" description="Generate and export financial reports." />
+      <PageHeader title="التقارير" description="أنشئ وصدّر التقارير المالية." />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {ORDER.map((type) => (
           <Link key={type} href={`/reports/${type}`} className="group">
@@ -35,7 +35,7 @@ export function ReportsHub() {
               <h3 className="mt-4 text-base font-semibold text-fg">{REPORT_META[type].title}</h3>
               <p className="mt-1 flex-1 text-sm text-muted">{REPORT_META[type].description}</p>
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-accent">
-                View report
+                عرض التقرير
                 <ArrowRight
                   size={14}
                   className="transition-transform group-hover:translate-x-0.5"

@@ -5,11 +5,11 @@ import { profitForSale } from "./analytics";
 export type ReportType = "monthly" | "yearly" | "product" | "profit" | "expense";
 
 export const REPORT_META: Record<ReportType, { title: string; description: string }> = {
-  monthly: { title: "Monthly report", description: "Revenue, cost and net profit per month." },
-  yearly: { title: "Yearly report", description: "Annual revenue, cost and net profit." },
-  product: { title: "Product report", description: "Units, revenue and profit by product." },
-  profit: { title: "Profit report", description: "Net profit and margin trend per month." },
-  expense: { title: "Expense report", description: "Total costs broken down by category." },
+  monthly: { title: "تقرير شهري", description: "الإيراد والتكلفة وصافي الربح لكل شهر." },
+  yearly: { title: "تقرير سنوي", description: "الإيراد والتكلفة وصافي الربح السنوي." },
+  product: { title: "تقرير المنتجات", description: "الوحدات والإيراد والربح لكل منتج." },
+  profit: { title: "تقرير الأرباح", description: "اتجاه صافي الربح والهامش شهريًا." },
+  expense: { title: "تقرير المصاريف", description: "إجمالي التكاليف مصنّفة حسب الفئة." },
 };
 
 /** How a column's raw value should be rendered/exported. */
@@ -29,27 +29,27 @@ export interface Report {
 }
 
 const MONTH_LABELS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
+  "يناير",
+  "فبراير",
+  "مارس",
+  "أبريل",
+  "مايو",
+  "يونيو",
+  "يوليو",
+  "أغسطس",
+  "سبتمبر",
+  "أكتوبر",
+  "نوفمبر",
+  "ديسمبر",
 ];
 const COST_LABELS: Record<string, string> = {
-  purchase: "Purchase cost",
-  shipping: "Shipping",
-  packaging: "Packaging",
-  marketplaceFees: "Marketplace fees",
-  paymentFees: "Payment fees",
-  taxes: "Taxes",
-  other: "Other",
+  purchase: "تكلفة الشراء",
+  shipping: "التوصيل",
+  packaging: "التغليف",
+  marketplaceFees: "رسوم المنصّة",
+  paymentFees: "رسوم الدفع",
+  taxes: "الضرائب",
+  other: "أخرى",
 };
 
 function round2(n: number): number {
@@ -88,13 +88,13 @@ export function buildReport(type: ReportType, products: Product[], sales: Sale[]
       type,
       title: REPORT_META.product.title,
       columns: [
-        { label: "Product", kind: "text" },
+        { label: "المنتج", kind: "text" },
         { label: "SKU", kind: "text" },
-        { label: "Units", kind: "number" },
-        { label: "Revenue", kind: "money" },
-        { label: "Total cost", kind: "money" },
-        { label: "Net profit", kind: "profit" },
-        { label: "Margin", kind: "percent" },
+        { label: "الوحدات", kind: "number" },
+        { label: "الإيراد", kind: "money" },
+        { label: "إجمالي التكلفة", kind: "money" },
+        { label: "صافي الربح", kind: "profit" },
+        { label: "الهامش", kind: "percent" },
       ],
       rows: [...agg.values()]
         .sort((a, b) => b.netProfit - a.netProfit)
@@ -131,9 +131,9 @@ export function buildReport(type: ReportType, products: Product[], sales: Sale[]
       type,
       title: REPORT_META.expense.title,
       columns: [
-        { label: "Cost line", kind: "text" },
-        { label: "Amount", kind: "money" },
-        { label: "Share", kind: "percent" },
+        { label: "بند التكلفة", kind: "text" },
+        { label: "المبلغ", kind: "money" },
+        { label: "النسبة", kind: "percent" },
       ],
       rows: COST_LINES.filter((l) => (totals[l] ?? 0) > 0).map((line) => [
         COST_LABELS[line],
@@ -164,9 +164,9 @@ export function buildReport(type: ReportType, products: Product[], sales: Sale[]
       type,
       title: REPORT_META.profit.title,
       columns: [
-        { label: "Period", kind: "text" },
-        { label: "Net profit", kind: "profit" },
-        { label: "Margin", kind: "percent" },
+        { label: "الفترة", kind: "text" },
+        { label: "صافي الربح", kind: "profit" },
+        { label: "الهامش", kind: "percent" },
       ],
       rows: ordered.map((b) => [b.label, round2(b.netProfit), margin(b)]),
     };
@@ -176,11 +176,11 @@ export function buildReport(type: ReportType, products: Product[], sales: Sale[]
     type,
     title: type === "yearly" ? REPORT_META.yearly.title : REPORT_META.monthly.title,
     columns: [
-      { label: type === "yearly" ? "Year" : "Month", kind: "text" },
-      { label: "Revenue", kind: "money" },
-      { label: "Total cost", kind: "money" },
-      { label: "Net profit", kind: "profit" },
-      { label: "Margin", kind: "percent" },
+      { label: type === "yearly" ? "السنة" : "الشهر", kind: "text" },
+      { label: "الإيراد", kind: "money" },
+      { label: "إجمالي التكلفة", kind: "money" },
+      { label: "صافي الربح", kind: "profit" },
+      { label: "الهامش", kind: "percent" },
     ],
     rows: ordered.map((b) => [
       b.label,
@@ -246,7 +246,7 @@ export function buildPeriodReport(
   );
   if (rows.length > 0) {
     rows.push([
-      "TOTAL",
+      "الإجمالي",
       "",
       totals.units,
       round2(totals.revenue),
@@ -258,15 +258,15 @@ export function buildPeriodReport(
 
   return {
     type: "product",
-    title: `${periodLabel} — net profit`,
+    title: `${periodLabel} — صافي الربح`,
     columns: [
-      { label: "Product", kind: "text" },
+      { label: "المنتج", kind: "text" },
       { label: "SKU", kind: "text" },
-      { label: "Units", kind: "number" },
-      { label: "Revenue", kind: "money" },
-      { label: "Total cost", kind: "money" },
-      { label: "Net profit", kind: "profit" },
-      { label: "Margin", kind: "percent" },
+      { label: "الوحدات", kind: "number" },
+      { label: "الإيراد", kind: "money" },
+      { label: "إجمالي التكلفة", kind: "money" },
+      { label: "صافي الربح", kind: "profit" },
+      { label: "الهامش", kind: "percent" },
     ],
     rows,
   };

@@ -21,6 +21,7 @@ import { CostFields } from "./cost-fields";
 import { ProfitPanel } from "./profit-panel";
 
 const CURRENCY_OPTIONS = [
+  { label: "IQD", value: "IQD" },
   { label: "USD", value: "USD" },
   { label: "EUR", value: "EUR" },
   { label: "GBP", value: "GBP" },
@@ -50,7 +51,7 @@ export function CalculatorView() {
     setSaving(true);
     try {
       const created = await createProduct({
-        name: name.trim() || "Untitled product",
+        name: name.trim() || "منتج بدون اسم",
         sellingPrice,
         currency,
         costs,
@@ -65,17 +66,17 @@ export function CalculatorView() {
   return (
     <>
       <PageHeader
-        title="Profit calculator"
-        description="Test pricing and costs instantly — no need to save."
+        title="حاسبة الأرباح"
+        description="جرّب التسعير والتكاليف فورًا، دون الحاجة للحفظ."
       />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Pricing</CardTitle>
+              <CardTitle>التسعير</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2">
-              <Field label="Selling price" htmlFor="price">
+              <Field label="سعر البيع" htmlFor="price">
                 <Input
                   id="price"
                   type="number"
@@ -87,7 +88,7 @@ export function CalculatorView() {
                   placeholder="0.00"
                 />
               </Field>
-              <Field label="Currency" htmlFor="cur">
+              <Field label="العملة" htmlFor="cur">
                 <Select
                   id="cur"
                   value={currency}
@@ -100,7 +101,7 @@ export function CalculatorView() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Costs</CardTitle>
+              <CardTitle>التكاليف</CardTitle>
             </CardHeader>
             <CardContent>
               <CostFields costs={costs} currencySymbol={symbol} onChange={onCostChange} />
@@ -109,15 +110,15 @@ export function CalculatorView() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Save as product</CardTitle>
+              <CardTitle>حفظ كمنتج</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-end">
-              <Field label="Product name" htmlFor="name" className="flex-1">
+              <Field label="اسم المنتج" htmlFor="name" className="flex-1">
                 <Input
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Optional"
+                  placeholder="اختياري"
                 />
               </Field>
               <Button
@@ -126,7 +127,7 @@ export function CalculatorView() {
                 disabled={sellingPrice <= 0}
                 leadingIcon={<FloppyDisk size={16} />}
               >
-                Save as product
+                حفظ كمنتج
               </Button>
             </CardContent>
           </Card>

@@ -34,12 +34,19 @@ import {
 } from "@/presentation/components/ui";
 import { cn } from "@/presentation/lib/cn";
 
-const CURRENCIES = ["USD", "EUR", "GBP", "SAR", "AED", "EGP"].map((c) => ({ label: c, value: c }));
+const CURRENCIES = [
+  { label: "دينار عراقي (IQD)", value: "IQD" },
+  { label: "دولار أمريكي (USD)", value: "USD" },
+  { label: "يورو (EUR)", value: "EUR" },
+  { label: "ريال سعودي (SAR)", value: "SAR" },
+  { label: "درهم إماراتي (AED)", value: "AED" },
+  { label: "جنيه مصري (EGP)", value: "EGP" },
+];
 const LOCALES = [
-  { label: "English (US)", value: "en-US" },
-  { label: "English (UK)", value: "en-GB" },
-  { label: "Arabic (Saudi Arabia)", value: "ar-SA" },
-  { label: "Arabic (Egypt)", value: "ar-EG" },
+  { label: "العراق (ar-IQ)", value: "ar-IQ" },
+  { label: "السعودية (ar-SA)", value: "ar-SA" },
+  { label: "مصر (ar-EG)", value: "ar-EG" },
+  { label: "الإنجليزية (en-US)", value: "en-US" },
 ];
 const LANGUAGES = [
   { label: "English", value: "en" },
@@ -47,9 +54,9 @@ const LANGUAGES = [
 ];
 
 const THEME_OPTIONS: { value: ThemePreference; label: string; icon: React.ReactNode }[] = [
-  { value: "light", label: "Light", icon: <Sun size={16} /> },
-  { value: "dark", label: "Dark", icon: <Moon size={16} /> },
-  { value: "system", label: "System", icon: <Desktop size={16} /> },
+  { value: "light", label: "فاتح", icon: <Sun size={16} /> },
+  { value: "dark", label: "داكن", icon: <Moon size={16} /> },
+  { value: "system", label: "تلقائي", icon: <Desktop size={16} /> },
 ];
 
 export function SettingsView() {
@@ -79,11 +86,11 @@ export function SettingsView() {
       importAll(JSON.parse(text));
       await reload();
       setDraft(useDataStore.getState().settings);
-      setMessage({ tone: "success", text: "Backup restored successfully." });
+      setMessage({ tone: "success", text: "تمت استعادة النسخة الاحتياطية بنجاح." });
     } catch (err) {
       setMessage({
         tone: "danger",
-        text: err instanceof Error ? err.message : "Could not restore backup.",
+        text: err instanceof Error ? err.message : "تعذّر استعادة النسخة الاحتياطية.",
       });
     }
   };
@@ -95,15 +102,15 @@ export function SettingsView() {
 
   return (
     <>
-      <PageHeader title="Settings" description="Preferences, defaults and data management." />
+      <PageHeader title="الإعدادات" description="التفضيلات والقيم الافتراضية وإدارة البيانات." />
 
       <div className="flex flex-col gap-6">
         {/* Appearance */}
         <Card>
           <CardHeader>
             <div>
-              <CardTitle>Appearance</CardTitle>
-              <CardDescription>Choose how Flousi looks.</CardDescription>
+              <CardTitle>المظهر</CardTitle>
+              <CardDescription>اختر شكل فلوسي.</CardDescription>
             </div>
           </CardHeader>
           <CardContent>
@@ -115,12 +122,12 @@ export function SettingsView() {
         <Card>
           <CardHeader>
             <div>
-              <CardTitle>Localization</CardTitle>
-              <CardDescription>Currency and language for the whole app.</CardDescription>
+              <CardTitle>اللغة والعملة</CardTitle>
+              <CardDescription>العملة واللغة لكامل التطبيق.</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-3">
-            <Field label="Currency" htmlFor="currency">
+            <Field label="العملة" htmlFor="currency">
               <Select
                 id="currency"
                 value={draft.currency}
@@ -128,7 +135,7 @@ export function SettingsView() {
                 onChange={(e) => setDraft({ ...draft, currency: e.target.value })}
               />
             </Field>
-            <Field label="Number/date locale" htmlFor="locale">
+            <Field label="تنسيق الأرقام/التاريخ" htmlFor="locale">
               <Select
                 id="locale"
                 value={draft.locale}
@@ -136,7 +143,7 @@ export function SettingsView() {
                 onChange={(e) => setDraft({ ...draft, locale: e.target.value })}
               />
             </Field>
-            <Field label="Language" htmlFor="language">
+            <Field label="اللغة" htmlFor="language">
               <Select
                 id="language"
                 value={draft.language}
@@ -151,12 +158,12 @@ export function SettingsView() {
         <Card>
           <CardHeader>
             <div>
-              <CardTitle>Default costs</CardTitle>
-              <CardDescription>Pre-filled into every new product to save time.</CardDescription>
+              <CardTitle>التكاليف الافتراضية</CardTitle>
+              <CardDescription>تُملأ تلقائيًا في كل منتج جديد لتوفير الوقت.</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Field label="Marketplace fee" htmlFor="mp">
+            <Field label="رسوم المنصّة" htmlFor="mp">
               <Input
                 id="mp"
                 type="number"
@@ -165,7 +172,7 @@ export function SettingsView() {
                 onChange={(e) => setCost("marketplaceFeePercent", parseFloat(e.target.value) || 0)}
               />
             </Field>
-            <Field label="Payment fee" htmlFor="pf">
+            <Field label="رسوم الدفع" htmlFor="pf">
               <Input
                 id="pf"
                 type="number"
@@ -174,7 +181,7 @@ export function SettingsView() {
                 onChange={(e) => setCost("paymentFeePercent", parseFloat(e.target.value) || 0)}
               />
             </Field>
-            <Field label="Payment fee (fixed)" htmlFor="pff">
+            <Field label="رسوم الدفع (ثابتة)" htmlFor="pff">
               <Input
                 id="pff"
                 type="number"
@@ -182,7 +189,7 @@ export function SettingsView() {
                 onChange={(e) => setCost("paymentFeeFixed", parseFloat(e.target.value) || 0)}
               />
             </Field>
-            <Field label="Tax" htmlFor="tax">
+            <Field label="الضريبة" htmlFor="tax">
               <Input
                 id="tax"
                 type="number"
@@ -196,17 +203,17 @@ export function SettingsView() {
 
         <div className="flex items-center gap-3">
           <Button onClick={onSave} leadingIcon={<FloppyDisk size={16} />}>
-            Save changes
+            حفظ التغييرات
           </Button>
-          {saved && <span className="text-sm text-success">Saved.</span>}
+          {saved && <span className="text-sm text-success">تم الحفظ.</span>}
         </div>
 
         {/* Data management */}
         <Card>
           <CardHeader>
             <div>
-              <CardTitle>Data</CardTitle>
-              <CardDescription>Your data is stored locally in this browser.</CardDescription>
+              <CardTitle>البيانات</CardTitle>
+              <CardDescription>بياناتك مخزّنة محليًا في هذا المتصفّح.</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
@@ -226,14 +233,14 @@ export function SettingsView() {
                 leadingIcon={<DownloadSimple size={16} />}
                 onClick={downloadBackup}
               >
-                Download backup
+                تنزيل نسخة احتياطية
               </Button>
               <Button
                 variant="secondary"
                 leadingIcon={<UploadSimple size={16} />}
                 onClick={() => fileRef.current?.click()}
               >
-                Restore backup
+                استعادة نسخة
               </Button>
               <input
                 ref={fileRef}
@@ -251,7 +258,7 @@ export function SettingsView() {
                 leadingIcon={<Warning size={16} />}
                 onClick={() => setConfirmReset(true)}
               >
-                Reset all data
+                تصفير كل البيانات
               </Button>
             </div>
           </CardContent>
@@ -261,21 +268,21 @@ export function SettingsView() {
       <Dialog
         open={confirmReset}
         onClose={() => setConfirmReset(false)}
-        title="Reset all data?"
-        description="This deletes all products, sales and periods in this browser and restores the demo data."
+        title="تصفير كل البيانات؟"
+        description="سيحذف هذا كل المنتجات والمبيعات والفترات في هذا المتصفّح ويعيد البيانات التجريبية."
         footer={
           <>
             <Button variant="ghost" onClick={() => setConfirmReset(false)}>
-              Cancel
+              إلغاء
             </Button>
             <Button variant="danger" onClick={onReset}>
-              Reset everything
+              تصفير الكل
             </Button>
           </>
         }
       >
         <p className="text-sm text-muted">
-          This cannot be undone. Consider downloading a backup first.
+          لا يمكن التراجع. يُفضّل تنزيل نسخة احتياطية أولًا.
         </p>
       </Dialog>
     </>

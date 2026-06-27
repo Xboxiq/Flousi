@@ -51,16 +51,16 @@ export function LandingPage() {
             <span className="text-lg font-semibold tracking-tight">Flousi</span>
           </Link>
           <nav className="hidden items-center gap-9 text-sm text-muted md:flex">
-            <a href="#features" className="transition-colors hover:text-fg">Features</a>
-            <a href="#how" className="transition-colors hover:text-fg">How it works</a>
-            <a href="#start" className="transition-colors hover:text-fg">Get started</a>
+            <a href="#features" className="transition-colors hover:text-fg">المزايا</a>
+            <a href="#how" className="transition-colors hover:text-fg">كيف يعمل</a>
+            <a href="#start" className="transition-colors hover:text-fg">ابدأ الآن</a>
           </nav>
           <Magnetic>
             <Link
               href="/dashboard"
               className="inline-flex h-10 items-center gap-1.5 rounded-full px-5 text-sm font-semibold text-white shadow-[var(--shadow-accent)] [background-image:linear-gradient(180deg,var(--blue-400),var(--accent-strong))] transition-[filter] hover:brightness-110"
             >
-              Open app <ArrowRight size={15} weight="bold" />
+              فتح التطبيق <ArrowRight size={15} weight="bold" />
             </Link>
           </Magnetic>
         </div>
@@ -76,20 +76,20 @@ export function LandingPage() {
               className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-medium text-muted shadow-sm"
             >
               <Sparkle size={13} weight="fill" className="text-accent" />
-              Profit clarity for online stores
+              وضوح الأرباح لمتاجرك الإلكترونية
             </motion.span>
             <motion.h1
               {...rise(0.06)}
               className="mt-6 font-display text-[clamp(3rem,7vw,5.5rem)] font-semibold leading-[0.92] tracking-[-0.02em]"
             >
-              Know your
+              اعرف
               <br />
               <span className="bg-[linear-gradient(110deg,var(--blue-500),var(--teal-500)_52%,var(--green-500))] bg-clip-text text-transparent">
-                real net profit.
+                صافي ربحك الحقيقي.
               </span>
             </motion.h1>
             <motion.p {...rise(0.12)} className="mt-6 max-w-[36ch] text-lg leading-relaxed text-muted md:text-xl">
-              Flousi turns price, fees and hidden costs into the one number that matters, instantly.
+              فلوسي يحوّل السعر والرسوم والتكاليف الخفية إلى الرقم الوحيد المهم، فورًا.
             </motion.p>
             <motion.div {...rise(0.18)} className="mt-8 flex flex-wrap items-center gap-3">
               <Magnetic strength={0.4}>
@@ -97,18 +97,18 @@ export function LandingPage() {
                   href="/dashboard"
                   className="inline-flex h-12 items-center gap-2 rounded-full px-7 text-base font-semibold text-white shadow-[var(--shadow-accent)] [background-image:linear-gradient(180deg,var(--blue-400),var(--accent-strong))] transition-[filter] hover:brightness-110"
                 >
-                  Open Flousi <ArrowRight size={18} weight="bold" />
+                  افتح فلوسي <ArrowRight size={18} weight="bold" />
                 </Link>
               </Magnetic>
               <a
                 href="#how"
                 className="inline-flex h-12 items-center gap-2 rounded-full border border-border bg-surface px-6 text-base font-medium text-fg shadow-sm transition-colors hover:bg-surface-2"
               >
-                See how it works
+                شاهد كيف يعمل
               </a>
             </motion.div>
             <motion.ul {...rise(0.24)} className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
-              {["7 cost factors", "Break-even & ROI", "Reports & export"].map((f) => (
+              {["7 بنود تكلفة", "التعادل والعائد", "تقارير وتصدير"].map((f) => (
                 <li key={f} className="inline-flex items-center gap-1.5">
                   <CheckCircle size={16} weight="fill" className="text-success" />
                   {f}
@@ -146,10 +146,10 @@ export function LandingPage() {
       <section className="mx-auto max-w-[1240px] px-5 py-16 md:px-8">
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           {[
-            { v: 7, s: "", l: "cost factors tracked" },
-            { v: 100, s: "%", l: "local & private" },
-            { v: 4, s: " formats", l: "PDF · Excel · CSV · print" },
-            { v: 0, s: "ms", l: "to recompute profit", pre: "~" },
+            { v: 7, s: "", l: "بند تكلفة مُتتبَّع" },
+            { v: 100, s: "%", l: "محلي وخاص" },
+            { v: 4, s: " صيغ", l: "PDF · Excel · CSV · طباعة" },
+            { v: 0, s: "ms", l: "لإعادة حساب الربح", pre: "~" },
           ].map((stat) => (
             <motion.div key={stat.l} {...reveal} className="text-center md:text-left">
               <div className="font-display text-4xl font-semibold tracking-tight md:text-5xl">
@@ -165,10 +165,10 @@ export function LandingPage() {
       <section id="features" className="mx-auto max-w-[1240px] px-5 pb-20 md:px-8">
         <motion.div {...reveal} className="mb-12 max-w-2xl">
           <h2 className="font-display text-[clamp(2.2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.02em]">
-            Everything that eats your margin, in one view.
+            كل ما يلتهم هامشك، في عرضٍ واحد.
           </h2>
           <p className="mt-4 text-lg text-muted">
-            Stop guessing. Flousi accounts for every fee so the profit you see is the profit you keep.
+            لا مزيد من التخمين. فلوسي يحتسب كل رسم، فالربح الذي تراه هو الربح الذي تحتفظ به.
           </p>
         </motion.div>
 
@@ -177,9 +177,9 @@ export function LandingPage() {
             <div className="flex h-full flex-col justify-between gap-6 md:flex-row md:items-center">
               <div className="max-w-sm">
                 <FeatureIcon><Calculator size={20} weight="bold" /></FeatureIcon>
-                <h3 className="mt-4 text-xl font-semibold">Live profit calculator</h3>
+                <h3 className="mt-4 text-xl font-semibold">حاسبة ربح فورية</h3>
                 <p className="mt-2 text-muted">
-                  Type a price and your costs. Net profit, margin, ROI and break-even update on every keystroke.
+                  أدخل السعر والتكاليف، فيتحدّث صافي الربح والهامش والعائد ونقطة التعادل مع كل حرف.
                 </p>
               </div>
               <CostToProfit />
@@ -194,15 +194,15 @@ export function LandingPage() {
               <div className="font-display text-4xl font-semibold tabular-nums">
                 <CountUp value={37.9} decimals={1} suffix="%" />
               </div>
-              <p className="mt-1 text-sm text-white/70">Average margin, surfaced automatically.</p>
+              <p className="mt-1 text-sm text-white/70">متوسط الهامش، يظهر تلقائيًا.</p>
             </div>
           </BentoDark>
 
           <Spot {...reveal}>
             <FeatureIcon><Lock size={20} weight="bold" /></FeatureIcon>
-            <h3 className="mt-4 text-lg font-semibold">Monthly closing</h3>
+            <h3 className="mt-4 text-lg font-semibold">الإغلاق الشهري</h3>
             <p className="mt-2 text-sm text-muted">
-              Lock a month, snapshot the report, start fresh. History stays read-only.
+              أغلق الشهر، احفظ لقطة التقرير، وابدأ من جديد. يبقى السجل للقراءة فقط.
             </p>
           </Spot>
 
@@ -210,9 +210,9 @@ export function LandingPage() {
             <div className="flex h-full flex-col justify-between gap-6 md:flex-row md:items-end">
               <div className="max-w-xs">
                 <FeatureIcon><FileArrowDown size={20} weight="bold" /></FeatureIcon>
-                <h3 className="mt-4 text-xl font-semibold">Reports &amp; export</h3>
+                <h3 className="mt-4 text-xl font-semibold">تقارير وتصدير</h3>
                 <p className="mt-2 text-muted">
-                  Monthly, yearly, product and expense reports. Export to PDF, Excel or CSV.
+                  تقارير شهرية وسنوية وللمنتجات والمصاريف. صدّرها إلى PDF أو Excel أو CSV.
                 </p>
               </div>
               <MiniBars />
@@ -225,9 +225,9 @@ export function LandingPage() {
       <section id="how" className="mx-auto max-w-[1240px] px-5 pb-20 md:px-8">
         <div className="grid gap-5 md:grid-cols-3">
           {[
-            { n: "01", t: "Add your product", d: "Selling price plus purchase, shipping, packaging, fees and tax." },
-            { n: "02", t: "See the truth instantly", d: "Net profit, margin, ROI and break-even, computed precisely." },
-            { n: "03", t: "Close, report, repeat", d: "Lock each month and export clean financial reports." },
+            { n: "01", t: "أضف منتجك", d: "سعر البيع مع الشراء والتوصيل والتغليف والرسوم والضريبة." },
+            { n: "02", t: "شاهد الحقيقة فورًا", d: "صافي الربح والهامش والعائد ونقطة التعادل، بحساب دقيق." },
+            { n: "03", t: "أغلق، صدّر، كرّر", d: "أغلق كل شهر وصدّر تقارير مالية نظيفة." },
           ].map((s, i) => (
             <motion.div
               key={s.n}
@@ -251,17 +251,17 @@ export function LandingPage() {
         >
           <div className="relative z-[2] mx-auto max-w-2xl">
             <h2 className="font-display text-[clamp(2.4rem,5vw,3.6rem)] font-semibold leading-[1] tracking-[-0.02em]">
-              Start with your real numbers.
+              ابدأ بأرقامك الحقيقية.
             </h2>
             <p className="mt-5 text-lg text-white/75">
-              Free, local-first, and ready in seconds. Your data never leaves your browser.
+              مجاني، محلي أولًا، وجاهز خلال ثوانٍ. بياناتك لا تغادر متصفّحك.
             </p>
             <Magnetic strength={0.5}>
               <Link
                 href="/dashboard"
                 className="mt-9 inline-flex h-12 items-center gap-2 rounded-full bg-white px-8 text-base font-semibold text-[#0b1220] transition-transform hover:scale-[1.02]"
               >
-                Open Flousi <ArrowUpRight size={18} weight="bold" />
+                افتح فلوسي <ArrowUpRight size={18} weight="bold" />
               </Link>
             </Magnetic>
           </div>
@@ -275,8 +275,8 @@ export function LandingPage() {
             <LogoMark />
             <span className="font-semibold text-fg">Flousi</span>
           </div>
-          <p>Real net profit for online stores and small businesses.</p>
-          <Link href="/dashboard" className="font-medium text-accent hover:underline">Open app</Link>
+          <p>صافي الربح الحقيقي للمتاجر الإلكترونية والأعمال الصغيرة.</p>
+          <Link href="/dashboard" className="font-medium text-accent hover:underline">فتح التطبيق</Link>
         </div>
       </footer>
     </div>
@@ -331,22 +331,22 @@ function HeroPreview() {
         <div className="grainy mesh-night relative overflow-hidden rounded-[var(--radius-lg)] p-5 text-white">
           <div className="relative z-[2]">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-white/75">Net profit · this month</span>
+              <span className="text-sm text-white/75">صافي الربح · هذا الشهر</span>
               <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-xs font-semibold backdrop-blur-sm">
                 <TrendUp size={12} weight="bold" /> +12.4%
               </span>
             </div>
             <div className="mt-2 font-mono text-4xl font-semibold tracking-tight tabular-nums">
-              <CountUp value={4820.5} prefix="$" decimals={2} />
+              <CountUp value={6300000} suffix=" د.ع" decimals={0} />
             </div>
             <Sparkline />
           </div>
         </div>
         <div className="mt-4 grid grid-cols-3 gap-3">
           {[
-            { l: "Revenue", v: "$18.3k" },
-            { l: "Costs", v: "$13.4k" },
-            { l: "Margin", v: "26.3%" },
+            { l: "الإيراد", v: "24.2M" },
+            { l: "التكاليف", v: "17.9M" },
+            { l: "الهامش", v: "26.3%" },
           ].map((s) => (
             <div key={s.l} className="rounded-[var(--radius-md)] border border-border-soft bg-surface-2 px-3 py-2.5">
               <div className="text-xs text-muted">{s.l}</div>
@@ -376,9 +376,9 @@ function Sparkline() {
 
 function CostToProfit() {
   const rows = [
-    { l: "Selling price", v: "$64.00", tone: "text-fg" },
-    { l: "Costs & fees", v: "-$45.80", tone: "text-danger" },
-    { l: "Net profit", v: "$18.20", tone: "text-success" },
+    { l: "سعر البيع", v: "85,000", tone: "text-fg" },
+    { l: "التكاليف والرسوم", v: "-46,300", tone: "text-danger" },
+    { l: "صافي الربح", v: "38,700", tone: "text-success" },
   ];
   return (
     <div className="w-full max-w-[220px] rounded-[var(--radius-lg)] border border-border-soft bg-surface-2 p-4">

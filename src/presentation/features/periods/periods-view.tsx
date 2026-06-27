@@ -74,7 +74,7 @@ export function PeriodsView() {
   const startFirstPeriod = async () => {
     const now = new Date();
     await openPeriod({
-      label: new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(now),
+      label: new Intl.DateTimeFormat("ar", { month: "long", year: "numeric" }).format(now),
       startDate: new Date(now.getFullYear(), now.getMonth(), 1).toISOString(),
       status: "open",
     });
@@ -95,22 +95,22 @@ export function PeriodsView() {
   return (
     <>
       <PageHeader
-        title="Accounting periods"
-        description="Close months and lock historical reports."
+        title="الفترات المحاسبية"
+        description="أغلق الأشهر واحفظ التقارير التاريخية للقراءة فقط."
       />
 
-      {/* Active period */}
+      {/* الفترة المفتوحة */}
       {active && liveSummary ? (
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               <CardTitle>{active.label}</CardTitle>
               <Badge tone="success" dot>
-                Open
+                مفتوحة
               </Badge>
             </div>
             <Button leadingIcon={<Lock size={16} />} onClick={() => setConfirmOpen(true)}>
-              Close period
+              إغلاق الفترة
             </Button>
           </CardHeader>
           <CardContent>
@@ -129,19 +129,19 @@ export function PeriodsView() {
       ) : (
         <EmptyState
           icon={<CalendarCheck size={24} />}
-          title="No open period"
-          description="Start a new accounting period to begin tracking this month."
-          action={<Button onClick={startFirstPeriod}>Start new period</Button>}
+          title="لا توجد فترة مفتوحة"
+          description="ابدأ فترة محاسبية جديدة لتتبّع أرباح هذا الشهر."
+          action={<Button onClick={startFirstPeriod}>بدء فترة جديدة</Button>}
         />
       )}
 
-      {/* History */}
+      {/* السجل */}
       <h2 className="mt-8 mb-3 text-sm font-medium uppercase tracking-wide text-subtle">
-        Closed periods
+        الفترات المغلقة
       </h2>
       {closed.length === 0 ? (
         <p className="text-sm text-muted">
-          No closed periods yet. Closed months will appear here, read-only.
+          لا توجد فترات مغلقة بعد. ستظهر الأشهر المغلقة هنا للقراءة فقط.
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -150,11 +150,11 @@ export function PeriodsView() {
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <CardTitle>{period.label}</CardTitle>
-                  <Badge tone="neutral">Locked</Badge>
+                  <Badge tone="neutral">مقفلة</Badge>
                 </div>
                 {period.closedAt && (
                   <span className="text-xs text-subtle">
-                    Closed {new Date(period.closedAt).toLocaleDateString(settings.locale)}
+                    أُغلقت {new Date(period.closedAt).toLocaleDateString(settings.locale)}
                   </span>
                 )}
               </CardHeader>
@@ -173,15 +173,15 @@ export function PeriodsView() {
       <Dialog
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
-        title={`Close ${active?.label ?? "period"}?`}
-        description="This locks the period. Its report becomes read-only and a new period opens."
+        title={`إغلاق ${active?.label ?? "الفترة"}؟`}
+        description="سيتم قفل الفترة. يصبح تقريرها للقراءة فقط وتُفتح فترة جديدة."
         footer={
           <>
             <Button variant="ghost" onClick={() => setConfirmOpen(false)} disabled={working}>
-              Cancel
+              إلغاء
             </Button>
             <Button onClick={onClose} loading={working} leadingIcon={<Lock size={16} />}>
-              Close & lock
+              إغلاق وقفل
             </Button>
           </>
         }
@@ -213,7 +213,7 @@ function ExportButtons({
   return (
     <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4">
       <span className="me-1 text-xs font-medium uppercase tracking-wide text-subtle">
-        Export month profit
+        تصدير أرباح الشهر
       </span>
       <Button variant="secondary" size="sm" leadingIcon={<FileCsv size={15} />} onClick={() => downloadReport("csv", table())}>
         CSV
@@ -225,7 +225,7 @@ function ExportButtons({
         PDF
       </Button>
       <Button variant="ghost" size="sm" leadingIcon={<Printer size={15} />} onClick={() => printReport(table())}>
-        Print
+        طباعة
       </Button>
     </div>
   );
@@ -250,40 +250,40 @@ function BreakdownTable({
   if (report.rows.length === 0) {
     return (
       <p className="mt-5 border-t border-border pt-4 text-sm text-muted">
-        No sales recorded in this period yet. Record sales from a product to build the month&apos;s profit.
+        لا توجد مبيعات مسجّلة في هذه الفترة بعد. سجّل مبيعات من صفحة المنتج لبناء أرباح الشهر.
       </p>
     );
   }
   return (
     <div className="mt-5 border-t border-border pt-4">
       <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-subtle">
-        Profit by product
+        الربح حسب المنتج
       </h3>
       <Table>
         <THead>
           <TR>
-            <TH>Product</TH>
-            <TH className="text-end">Units</TH>
-            <TH className="text-end">Revenue</TH>
-            <TH className="text-end">Cost</TH>
-            <TH className="text-end">Net profit</TH>
-            <TH className="text-end">Margin</TH>
+            <TH>المنتج</TH>
+            <TH className="text-start">الوحدات</TH>
+            <TH className="text-start">الإيراد</TH>
+            <TH className="text-start">التكلفة</TH>
+            <TH className="text-start">صافي الربح</TH>
+            <TH className="text-start">الهامش</TH>
           </TR>
         </THead>
         <TBody>
           {report.rows.map((row, i) => {
-            const isTotal = row[0] === "TOTAL";
+            const isTotal = row[0] === "الإجمالي";
             const net = Number(row[5]);
             return (
               <TR key={i} className={isTotal ? "font-semibold" : ""}>
                 <TD className={isTotal ? "font-semibold" : "font-medium"}>{String(row[0])}</TD>
-                <TD className="text-end font-mono tabular-nums text-muted">{String(row[2])}</TD>
-                <TD className="text-end font-mono tabular-nums">{money(Number(row[3]))}</TD>
-                <TD className="text-end font-mono tabular-nums">{money(Number(row[4]))}</TD>
-                <TD className={`text-end font-mono tabular-nums ${net >= 0 ? "text-success" : "text-danger"}`}>
+                <TD className="text-start font-mono tabular-nums text-muted" dir="ltr">{String(row[2])}</TD>
+                <TD className="text-start font-mono tabular-nums" dir="ltr">{money(Number(row[3]))}</TD>
+                <TD className="text-start font-mono tabular-nums" dir="ltr">{money(Number(row[4]))}</TD>
+                <TD className={`text-start font-mono tabular-nums ${net >= 0 ? "text-success" : "text-danger"}`} dir="ltr">
                   {money(net)}
                 </TD>
-                <TD className="text-end font-mono tabular-nums text-muted">
+                <TD className="text-start font-mono tabular-nums text-muted" dir="ltr">
                   {formatPercent(Number(row[6]), { locale })}
                 </TD>
               </TR>
@@ -315,14 +315,14 @@ function SummaryGrid({
   compact?: boolean;
 }) {
   const items = [
-    { label: live ? "Revenue (so far)" : "Revenue", value: money(summary.revenue) },
-    { label: "Total cost", value: money(summary.totalCost) },
+    { label: live ? "الإيراد (حتى الآن)" : "الإيراد", value: money(summary.revenue) },
+    { label: "إجمالي التكلفة", value: money(summary.totalCost) },
     {
-      label: "Net profit",
+      label: "صافي الربح",
       value: money(summary.netProfit),
       tone: summary.netProfit >= 0 ? "text-success" : "text-danger",
     },
-    { label: "Margin", value: formatPercent(summary.margin, { locale }) },
+    { label: "الهامش", value: formatPercent(summary.margin, { locale }) },
   ];
   return (
     <div className={compact ? "grid grid-cols-2 gap-3" : "grid grid-cols-2 gap-4 sm:grid-cols-4"}>
@@ -331,6 +331,7 @@ function SummaryGrid({
           <div className="text-xs text-muted">{it.label}</div>
           <div
             className={`mt-0.5 font-mono text-lg font-semibold tabular-nums ${it.tone ?? "text-fg"}`}
+            dir="ltr"
           >
             {it.value}
           </div>

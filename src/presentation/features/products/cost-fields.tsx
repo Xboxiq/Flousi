@@ -4,13 +4,13 @@ import { COST_LINES, type CostBreakdown, type CostLine } from "@/domain";
 import { Input } from "@/presentation/components/ui";
 
 const LABELS: Record<CostLine, string> = {
-  purchase: "Purchase cost",
-  shipping: "Shipping",
-  packaging: "Packaging",
-  marketplaceFees: "Marketplace fees",
-  paymentFees: "Payment fees",
-  taxes: "Taxes",
-  other: "Other",
+  purchase: "تكلفة الشراء",
+  shipping: "التوصيل",
+  packaging: "التغليف",
+  marketplaceFees: "رسوم المنصّة",
+  paymentFees: "رسوم الدفع",
+  taxes: "الضرائب",
+  other: "أخرى",
 };
 
 interface Props {
@@ -24,9 +24,9 @@ export function CostFields({ costs, currencySymbol, onChange }: Props) {
   return (
     <div className="flex flex-col gap-3">
       <div className="hidden grid-cols-[1fr_120px_120px] gap-3 px-1 text-xs font-medium uppercase tracking-wide text-subtle sm:grid">
-        <span>Cost line</span>
-        <span>Fixed</span>
-        <span>Percent</span>
+        <span>بند التكلفة</span>
+        <span>ثابت</span>
+        <span>نسبة</span>
       </div>
       {COST_LINES.map((line) => (
         <div
