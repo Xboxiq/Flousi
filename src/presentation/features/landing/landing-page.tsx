@@ -58,7 +58,7 @@ export function LandingPage() {
           <Magnetic>
             <Link
               href="/dashboard"
-              className="inline-flex h-10 items-center gap-1.5 rounded-full px-5 text-sm font-semibold text-white shadow-[var(--shadow-accent)] [background-image:linear-gradient(180deg,var(--blue-400),var(--accent-strong))] transition-[filter] hover:brightness-110"
+              className="inline-flex h-10 items-center gap-1.5 rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[var(--shadow-accent)] transition-colors hover:bg-accent-strong"
             >
               فتح التطبيق <ArrowRight size={15} weight="bold" />
             </Link>
@@ -84,7 +84,7 @@ export function LandingPage() {
             >
               اعرف
               <br />
-              <span className="bg-[linear-gradient(110deg,var(--blue-500),var(--teal-500)_52%,var(--green-500))] bg-clip-text text-transparent">
+              <span className="bg-[linear-gradient(110deg,var(--blue-500),var(--teal)_52%,var(--green-500))] bg-clip-text text-transparent">
                 صافي ربحك الحقيقي.
               </span>
             </motion.h1>
@@ -95,7 +95,7 @@ export function LandingPage() {
               <Magnetic strength={0.4}>
                 <Link
                   href="/dashboard"
-                  className="inline-flex h-12 items-center gap-2 rounded-full px-7 text-base font-semibold text-white shadow-[var(--shadow-accent)] [background-image:linear-gradient(180deg,var(--blue-400),var(--accent-strong))] transition-[filter] hover:brightness-110"
+                  className="inline-flex h-12 items-center gap-2 rounded-full bg-accent px-7 text-base font-semibold text-white shadow-[var(--shadow-accent)] transition-colors hover:bg-accent-strong"
                 >
                   افتح فلوسي <ArrowRight size={18} weight="bold" />
                 </Link>

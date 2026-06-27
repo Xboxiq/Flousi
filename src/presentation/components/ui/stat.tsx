@@ -2,6 +2,9 @@ import { cn } from "@/presentation/lib/cn";
 import { TrendUp, TrendDown } from "@phosphor-icons/react/dist/ssr";
 import { Card } from "./card";
 
+export type StatTone = "default" | "success" | "danger";
+export type StatAccent = "blue" | "green" | "violet" | "orange" | "neutral";
+
 export interface StatProps {
   label: string;
   /** Pre-formatted primary value (currency/number/percent). */
@@ -12,17 +15,27 @@ export interface StatProps {
   deltaLabel?: string;
   icon?: React.ReactNode;
   /** Force value color (e.g. profit positive/negative). */
-  tone?: "default" | "success" | "danger";
+  tone?: StatTone;
+  /** Colour of the icon chip. */
+  accent?: StatAccent;
   className?: string;
 }
 
-const VALUE_TONE = {
+const VALUE_TONE: Record<StatTone, string> = {
   default: "text-fg",
   success: "text-success",
   danger: "text-danger",
-} as const;
+};
 
-/** KPI tile: soft surface, label, large tabular value, optional trend delta. */
+const CHIP: Record<StatAccent, string> = {
+  blue: "bg-accent-soft text-accent",
+  green: "bg-success-soft text-success",
+  violet: "bg-[color-mix(in_oklab,var(--violet)_16%,transparent)] text-[var(--violet)]",
+  orange: "bg-[color-mix(in_oklab,var(--orange)_18%,transparent)] text-[var(--orange)]",
+  neutral: "bg-surface-2 text-muted",
+};
+
+/** KPI tile: clean white card, label, large tabular value, optional trend delta. */
 export function Stat({
   label,
   value,
@@ -30,6 +43,7 @@ export function Stat({
   deltaLabel,
   icon,
   tone = "default",
+  accent = "blue",
   className,
 }: StatProps) {
   const up = (delta ?? 0) >= 0;
@@ -38,29 +52,36 @@ export function Stat({
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-medium text-muted">{label}</span>
         {icon && (
-          <span className="neu-raised-sm inline-flex size-9 items-center justify-center rounded-full bg-surface text-accent">
+          <span
+            className={cn(
+              "inline-flex size-9 items-center justify-center rounded-[12px]",
+              CHIP[accent],
+            )}
+          >
             {icon}
           </span>
         )}
       </div>
       <div
         className={cn(
-          "mt-4 font-mono text-[26px] font-semibold leading-none tracking-tight tabular-nums",
+          "mt-4 font-mono text-[28px] font-bold leading-none tabular-nums",
           VALUE_TONE[tone],
         )}
       >
-        {value}
+        <bdi dir="ltr">{value}</bdi>
       </div>
       {deltaLabel && (
         <div
           className={cn(
-            "mt-2.5 inline-flex items-center gap-1 text-xs font-medium",
+            "mt-2.5 inline-flex items-center gap-1.5 text-xs font-semibold",
             up ? "text-success" : "text-danger",
           )}
         >
-          {up ? <TrendUp size={14} weight="bold" /> : <TrendDown size={14} weight="bold" />}
-          {deltaLabel}
-          <span className="text-subtle">vs last period</span>
+          <span className="inline-flex items-center gap-0.5">
+            {up ? <TrendUp size={14} weight="bold" /> : <TrendDown size={14} weight="bold" />}
+            {deltaLabel}
+          </span>
+          <span className="font-medium text-subtle">مقارنة بالشهر السابق</span>
         </div>
       )}
     </Card>
