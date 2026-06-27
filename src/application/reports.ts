@@ -200,3 +200,74 @@ export function toExportableTable(report: Report): ExportableTable {
     rows: report.rows,
   };
 }
+
+/**
+ * Per-period net-profit report: every product sold within the period with its
+ * units, revenue, total cost, net profit and margin, plus a TOTAL row.
+ * This is the document exported when closing / archiving a month.
+ */
+export function buildPeriodReport(
+  periodLabel: string,
+  periodId: string,
+  products: Product[],
+  sales: Sale[],
+): Report {
+  const productById = new Map(products.map((p) => [p.id, p]));
+  const periodSales = sales.filter((s) => s.periodId === periodId);
+
+  const agg = new Map<string, Bucket & { units: number; name: string; sku: string }>();
+  for (const sale of periodSales) {
+    const product = productById.get(sale.productId);
+    const sp = profitForSale(sale, product);
+    const cur =
+      agg.get(sale.productId) ??
+      ({ ...emptyBucket(), units: 0, name: product?.name ?? "Unknown", sku: product?.sku ?? "" });
+    cur.revenue += sp.revenue;
+    cur.totalCost += sp.totalCost;
+    cur.netProfit += sp.netProfit;
+    cur.units += sale.quantity;
+    agg.set(sale.productId, cur);
+  }
+
+  const rows: (string | number)[][] = [...agg.values()]
+    .sort((a, b) => b.netProfit - a.netProfit)
+    .map((r) => [r.name, r.sku || "—", r.units, round2(r.revenue), round2(r.totalCost), round2(r.netProfit), margin(r)]);
+
+  // TOTAL row
+  const totals = [...agg.values()].reduce(
+    (acc, r) => {
+      acc.revenue += r.revenue;
+      acc.totalCost += r.totalCost;
+      acc.netProfit += r.netProfit;
+      acc.units += r.units;
+      return acc;
+    },
+    { revenue: 0, totalCost: 0, netProfit: 0, units: 0 },
+  );
+  if (rows.length > 0) {
+    rows.push([
+      "TOTAL",
+      "",
+      totals.units,
+      round2(totals.revenue),
+      round2(totals.totalCost),
+      round2(totals.netProfit),
+      totals.revenue ? totals.netProfit / totals.revenue : 0,
+    ]);
+  }
+
+  return {
+    type: "product",
+    title: `${periodLabel} — net profit`,
+    columns: [
+      { label: "Product", kind: "text" },
+      { label: "SKU", kind: "text" },
+      { label: "Units", kind: "number" },
+      { label: "Revenue", kind: "money" },
+      { label: "Total cost", kind: "money" },
+      { label: "Net profit", kind: "profit" },
+      { label: "Margin", kind: "percent" },
+    ],
+    rows,
+  };
+}
