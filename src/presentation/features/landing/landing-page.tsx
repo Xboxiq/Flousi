@@ -14,6 +14,10 @@ import {
 } from "@phosphor-icons/react";
 import { LogoMark } from "@/presentation/components/layout/logo";
 import { GlossyOrb } from "@/presentation/components/ui";
+import { TiltCard } from "@/presentation/components/interactive/tilt-card";
+import { Magnetic } from "@/presentation/components/interactive/magnetic";
+import { SpotlightCard } from "@/presentation/components/interactive/spotlight-card";
+import { CountUp } from "@/presentation/components/interactive/count-up";
 import { cn } from "@/presentation/lib/cn";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -24,76 +28,78 @@ export function LandingPage() {
     reduce
       ? {}
       : {
-          initial: { opacity: 0, y: 24 },
+          initial: { opacity: 0, y: 28 },
           animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.7, ease, delay },
+          transition: { duration: 0.8, ease, delay },
         };
   const reveal = reduce
     ? {}
     : {
-        initial: { opacity: 0, y: 28 },
+        initial: { opacity: 0, y: 32 },
         whileInView: { opacity: 1, y: 0 },
         viewport: { once: true, amount: 0.3 },
-        transition: { duration: 0.7, ease },
+        transition: { duration: 0.8, ease },
       };
 
   return (
-    <div className="min-h-[100dvh] bg-bg text-fg">
+    <div className="min-h-[100dvh] overflow-x-clip bg-bg text-fg">
       {/* Nav */}
-      <header className="sticky top-0 z-40 border-b border-border-soft bg-bg/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5 md:px-8">
+      <header className="sticky top-0 z-40 border-b border-border-soft bg-bg/75 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-[1240px] items-center justify-between px-5 md:px-8">
           <Link href="/" className="flex items-center gap-2.5">
             <LogoMark />
             <span className="text-lg font-semibold tracking-tight">Flousi</span>
           </Link>
-          <nav className="hidden items-center gap-8 text-sm text-muted md:flex">
+          <nav className="hidden items-center gap-9 text-sm text-muted md:flex">
             <a href="#features" className="transition-colors hover:text-fg">Features</a>
             <a href="#how" className="transition-colors hover:text-fg">How it works</a>
-            <a href="#start" className="transition-colors hover:text-fg">Pricing</a>
+            <a href="#start" className="transition-colors hover:text-fg">Get started</a>
           </nav>
-          <Link
-            href="/dashboard"
-            className="inline-flex h-10 items-center gap-1.5 rounded-full px-5 text-sm font-semibold text-white shadow-[var(--shadow-accent)] [background-image:linear-gradient(180deg,var(--blue-400),var(--accent-strong))] transition-[filter] hover:brightness-110"
-          >
-            Open app
-            <ArrowRight size={15} weight="bold" />
-          </Link>
+          <Magnetic>
+            <Link
+              href="/dashboard"
+              className="inline-flex h-10 items-center gap-1.5 rounded-full px-5 text-sm font-semibold text-white shadow-[var(--shadow-accent)] [background-image:linear-gradient(180deg,var(--blue-400),var(--accent-strong))] transition-[filter] hover:brightness-110"
+            >
+              Open app <ArrowRight size={15} weight="bold" />
+            </Link>
+          </Magnetic>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        {/* ambient grainient glow */}
-        <div className="pointer-events-none absolute inset-x-0 -top-40 h-[480px] opacity-70 [background:radial-gradient(60%_60%_at_50%_0%,rgba(37,99,235,0.20),transparent_70%),radial-gradient(40%_50%_at_80%_10%,rgba(6,182,212,0.16),transparent_70%),radial-gradient(40%_50%_at_15%_15%,rgba(5,150,105,0.14),transparent_70%)]" />
-        <div className="relative mx-auto grid max-w-[1200px] items-center gap-12 px-5 pt-16 pb-20 md:px-8 lg:grid-cols-[1.05fr_1fr] lg:pt-24">
+      <section className="relative">
+        <div className="pointer-events-none absolute inset-x-0 -top-48 h-[560px] opacity-80 [background:radial-gradient(55%_60%_at_50%_0%,rgba(37,99,235,0.22),transparent_70%),radial-gradient(45%_55%_at_82%_8%,rgba(6,182,212,0.18),transparent_72%),radial-gradient(45%_55%_at_14%_14%,rgba(5,150,105,0.16),transparent_72%)]" />
+        <div className="relative mx-auto grid max-w-[1240px] items-center gap-12 px-5 pt-16 pb-16 md:px-8 lg:grid-cols-[1.08fr_1fr] lg:pt-24">
           <div>
             <motion.span
               {...rise(0)}
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted shadow-sm"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-medium text-muted shadow-sm"
             >
               <Sparkle size={13} weight="fill" className="text-accent" />
               Profit clarity for online stores
             </motion.span>
             <motion.h1
               {...rise(0.06)}
-              className="mt-5 text-[clamp(2.6rem,6vw,4.5rem)] font-semibold leading-[0.98] tracking-[-0.03em]"
+              className="mt-6 font-display text-[clamp(3rem,7vw,5.5rem)] font-semibold leading-[0.92] tracking-[-0.02em]"
             >
-              Know your{" "}
-              <span className="bg-[linear-gradient(120deg,var(--blue-500),var(--teal-500)_55%,var(--green-500))] bg-clip-text text-transparent">
+              Know your
+              <br />
+              <span className="bg-[linear-gradient(110deg,var(--blue-500),var(--teal-500)_52%,var(--green-500))] bg-clip-text text-transparent">
                 real net profit.
               </span>
             </motion.h1>
-            <motion.p {...rise(0.12)} className="mt-5 max-w-[34ch] text-lg leading-relaxed text-muted">
-              Flousi turns selling price, fees and hidden costs into the one number that matters, instantly.
+            <motion.p {...rise(0.12)} className="mt-6 max-w-[36ch] text-lg leading-relaxed text-muted md:text-xl">
+              Flousi turns price, fees and hidden costs into the one number that matters, instantly.
             </motion.p>
             <motion.div {...rise(0.18)} className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                href="/dashboard"
-                className="inline-flex h-12 items-center gap-2 rounded-full px-6 text-base font-semibold text-white shadow-[var(--shadow-accent)] [background-image:linear-gradient(180deg,var(--blue-400),var(--accent-strong))] transition-[transform,filter] hover:brightness-110 active:scale-[0.98]"
-              >
-                Open Flousi
-                <ArrowRight size={18} weight="bold" />
-              </Link>
+              <Magnetic strength={0.4}>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex h-12 items-center gap-2 rounded-full px-7 text-base font-semibold text-white shadow-[var(--shadow-accent)] [background-image:linear-gradient(180deg,var(--blue-400),var(--accent-strong))] transition-[filter] hover:brightness-110"
+                >
+                  Open Flousi <ArrowRight size={18} weight="bold" />
+                </Link>
+              </Magnetic>
               <a
                 href="#how"
                 className="inline-flex h-12 items-center gap-2 rounded-full border border-border bg-surface px-6 text-base font-medium text-fg shadow-sm transition-colors hover:bg-surface-2"
@@ -111,31 +117,63 @@ export function LandingPage() {
             </motion.ul>
           </div>
 
-          {/* Live product preview */}
           <motion.div
-            initial={reduce ? undefined : { opacity: 0, y: 36, rotateX: 8 }}
-            animate={reduce ? undefined : { opacity: 1, y: 0, rotateX: 0 }}
-            transition={{ duration: 0.9, ease, delay: 0.15 }}
-            className="relative [perspective:1200px]"
+            initial={reduce ? undefined : { opacity: 0, y: 40 }}
+            animate={reduce ? undefined : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.95, ease, delay: 0.15 }}
+            className="[perspective:1300px]"
           >
-            <HeroPreview />
+            <TiltCard className="will-change-transform">
+              <HeroPreview />
+            </TiltCard>
           </motion.div>
+        </div>
+
+        {/* Marquee */}
+        <div className="relative overflow-hidden border-y border-border-soft bg-surface/50 py-4 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
+          <div className="marquee-track gap-10 text-sm font-medium text-subtle">
+            {[...PHRASES, ...PHRASES].map((p, i) => (
+              <span key={i} className="inline-flex items-center gap-10">
+                {p}
+                <span className="size-1 rounded-full bg-border" />
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats band */}
+      <section className="mx-auto max-w-[1240px] px-5 py-16 md:px-8">
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          {[
+            { v: 7, s: "", l: "cost factors tracked" },
+            { v: 100, s: "%", l: "local & private" },
+            { v: 4, s: " formats", l: "PDF · Excel · CSV · print" },
+            { v: 0, s: "ms", l: "to recompute profit", pre: "~" },
+          ].map((stat) => (
+            <motion.div key={stat.l} {...reveal} className="text-center md:text-left">
+              <div className="font-display text-4xl font-semibold tracking-tight md:text-5xl">
+                <CountUp value={stat.v} prefix={stat.pre ?? ""} suffix={stat.s} />
+              </div>
+              <p className="mt-1.5 text-sm text-muted">{stat.l}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
       {/* Features bento */}
-      <section id="features" className="mx-auto max-w-[1200px] px-5 py-20 md:px-8">
-        <motion.div {...reveal} className="mb-10 max-w-2xl">
-          <h2 className="text-[clamp(1.9rem,3.5vw,2.75rem)] font-semibold tracking-tight">
+      <section id="features" className="mx-auto max-w-[1240px] px-5 pb-20 md:px-8">
+        <motion.div {...reveal} className="mb-12 max-w-2xl">
+          <h2 className="font-display text-[clamp(2.2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.02em]">
             Everything that eats your margin, in one view.
           </h2>
-          <p className="mt-3 text-lg text-muted">
+          <p className="mt-4 text-lg text-muted">
             Stop guessing. Flousi accounts for every fee so the profit you see is the profit you keep.
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          <BentoCard className="md:col-span-2" {...reveal}>
+          <Spot className="md:col-span-2" {...reveal}>
             <div className="flex h-full flex-col justify-between gap-6 md:flex-row md:items-center">
               <div className="max-w-sm">
                 <FeatureIcon><Calculator size={20} weight="bold" /></FeatureIcon>
@@ -146,27 +184,29 @@ export function LandingPage() {
               </div>
               <CostToProfit />
             </div>
-          </BentoCard>
+          </Spot>
 
           <BentoDark {...reveal}>
             <GlossyOrb tone="emerald" size={52}>
               <TrendUp size={24} weight="bold" />
             </GlossyOrb>
             <div className="mt-auto">
-              <div className="font-mono text-3xl font-semibold tabular-nums">37.9%</div>
+              <div className="font-display text-4xl font-semibold tabular-nums">
+                <CountUp value={37.9} decimals={1} suffix="%" />
+              </div>
               <p className="mt-1 text-sm text-white/70">Average margin, surfaced automatically.</p>
             </div>
           </BentoDark>
 
-          <BentoCard {...reveal}>
+          <Spot {...reveal}>
             <FeatureIcon><Lock size={20} weight="bold" /></FeatureIcon>
             <h3 className="mt-4 text-lg font-semibold">Monthly closing</h3>
             <p className="mt-2 text-sm text-muted">
               Lock a month, snapshot the report, start fresh. History stays read-only.
             </p>
-          </BentoCard>
+          </Spot>
 
-          <BentoCard className="md:col-span-2" {...reveal}>
+          <Spot className="md:col-span-2" {...reveal}>
             <div className="flex h-full flex-col justify-between gap-6 md:flex-row md:items-end">
               <div className="max-w-xs">
                 <FeatureIcon><FileArrowDown size={20} weight="bold" /></FeatureIcon>
@@ -177,12 +217,12 @@ export function LandingPage() {
               </div>
               <MiniBars />
             </div>
-          </BentoCard>
+          </Spot>
         </div>
       </section>
 
       {/* How it works */}
-      <section id="how" className="mx-auto max-w-[1200px] px-5 py-12 md:px-8">
+      <section id="how" className="mx-auto max-w-[1240px] px-5 pb-20 md:px-8">
         <div className="grid gap-5 md:grid-cols-3">
           {[
             { n: "01", t: "Add your product", d: "Selling price plus purchase, shipping, packaging, fees and tax." },
@@ -193,7 +233,7 @@ export function LandingPage() {
               key={s.n}
               {...reveal}
               transition={{ duration: 0.6, ease, delay: i * 0.08 }}
-              className="rounded-[var(--radius-lg)] border border-border-soft bg-surface p-6 shadow-sm"
+              className="rounded-[var(--radius-lg)] border border-border-soft bg-surface p-7 shadow-sm"
             >
               <span className="font-mono text-sm font-semibold text-accent">{s.n}</span>
               <h3 className="mt-3 text-lg font-semibold">{s.t}</h3>
@@ -204,45 +244,46 @@ export function LandingPage() {
       </section>
 
       {/* Dark glow CTA */}
-      <section id="start" className="mx-auto max-w-[1200px] px-5 py-20 md:px-8">
+      <section id="start" className="mx-auto max-w-[1240px] px-5 pb-24 md:px-8">
         <motion.div
           {...reveal}
-          className="grainy mesh-night relative overflow-hidden rounded-[var(--radius-xl)] px-8 py-16 text-center text-white shadow-xl md:py-24"
+          className="grainy mesh-night relative overflow-hidden rounded-[var(--radius-xl)] px-8 py-20 text-center text-white shadow-xl md:py-28"
         >
-          <div className="relative z-[2] mx-auto max-w-xl">
-            <h2 className="text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight">
+          <div className="relative z-[2] mx-auto max-w-2xl">
+            <h2 className="font-display text-[clamp(2.4rem,5vw,3.6rem)] font-semibold leading-[1] tracking-[-0.02em]">
               Start with your real numbers.
             </h2>
-            <p className="mt-4 text-lg text-white/75">
+            <p className="mt-5 text-lg text-white/75">
               Free, local-first, and ready in seconds. Your data never leaves your browser.
             </p>
-            <Link
-              href="/dashboard"
-              className="mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 text-base font-semibold text-[#0b1220] transition-transform hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Open Flousi
-              <ArrowUpRight size={18} weight="bold" />
-            </Link>
+            <Magnetic strength={0.5}>
+              <Link
+                href="/dashboard"
+                className="mt-9 inline-flex h-12 items-center gap-2 rounded-full bg-white px-8 text-base font-semibold text-[#0b1220] transition-transform hover:scale-[1.02]"
+              >
+                Open Flousi <ArrowUpRight size={18} weight="bold" />
+              </Link>
+            </Magnetic>
           </div>
         </motion.div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-border-soft">
-        <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-4 px-5 py-10 text-sm text-muted md:flex-row md:px-8">
+        <div className="mx-auto flex max-w-[1240px] flex-col items-center justify-between gap-4 px-5 py-10 text-sm text-muted md:flex-row md:px-8">
           <div className="flex items-center gap-2.5">
             <LogoMark />
             <span className="font-semibold text-fg">Flousi</span>
           </div>
           <p>Real net profit for online stores and small businesses.</p>
-          <Link href="/dashboard" className="font-medium text-accent hover:underline">
-            Open app
-          </Link>
+          <Link href="/dashboard" className="font-medium text-accent hover:underline">Open app</Link>
         </div>
       </footer>
     </div>
   );
 }
+
+const PHRASES = ["Shopify", "Etsy", "Amazon", "Instagram", "TikTok Shop", "Marketplaces"];
 
 /* ---------------- Building blocks ---------------- */
 
@@ -254,20 +295,16 @@ function FeatureIcon({ children }: { children: React.ReactNode }) {
   );
 }
 
-function BentoCard({
+function Spot({
   children,
   className,
   ...motionProps
 }: { children: React.ReactNode; className?: string } & React.ComponentProps<typeof motion.div>) {
   return (
-    <motion.div
-      {...motionProps}
-      className={cn(
-        "bento-hover rounded-[var(--radius-xl)] border border-border-soft bg-surface p-6 shadow-sm",
-        className,
-      )}
-    >
-      {children}
+    <motion.div {...motionProps} className={cn("bento-hover", className)}>
+      <SpotlightCard className="h-full rounded-[var(--radius-xl)] border border-border-soft bg-surface p-7 shadow-sm">
+        {children}
+      </SpotlightCard>
     </motion.div>
   );
 }
@@ -279,20 +316,18 @@ function BentoDark({
   return (
     <motion.div
       {...motionProps}
-      className="grainy mesh-night relative flex min-h-[200px] flex-col gap-4 overflow-hidden rounded-[var(--radius-xl)] p-6 text-white shadow-md"
+      className="grainy mesh-night relative flex min-h-[210px] flex-col gap-4 overflow-hidden rounded-[var(--radius-xl)] p-7 text-white shadow-md"
     >
       <div className="relative z-[2] flex h-full flex-col gap-4">{children}</div>
     </motion.div>
   );
 }
 
-/** A real, on-brand product preview (allowed by taste-skill: real component preview). */
 function HeroPreview() {
   return (
-    <div className="relative">
-      <div className="absolute -inset-6 -z-10 rounded-[32px] [background:radial-gradient(60%_60%_at_70%_20%,rgba(37,99,235,0.18),transparent_70%)]" />
+    <div className="relative" style={{ transform: "translateZ(40px)" }}>
+      <div className="absolute -inset-8 -z-10 rounded-[36px] [background:radial-gradient(60%_60%_at_70%_20%,rgba(37,99,235,0.20),transparent_70%)]" />
       <div className="rounded-[var(--radius-xl)] border border-border-soft bg-surface p-4 shadow-xl">
-        {/* mesh net-profit card */}
         <div className="grainy mesh-night relative overflow-hidden rounded-[var(--radius-lg)] p-5 text-white">
           <div className="relative z-[2]">
             <div className="flex items-center justify-between">
@@ -301,11 +336,12 @@ function HeroPreview() {
                 <TrendUp size={12} weight="bold" /> +12.4%
               </span>
             </div>
-            <div className="mt-2 font-mono text-4xl font-semibold tracking-tight tabular-nums">$4,820.50</div>
+            <div className="mt-2 font-mono text-4xl font-semibold tracking-tight tabular-nums">
+              <CountUp value={4820.5} prefix="$" decimals={2} />
+            </div>
             <Sparkline />
           </div>
         </div>
-        {/* stat tiles */}
         <div className="mt-4 grid grid-cols-3 gap-3">
           {[
             { l: "Revenue", v: "$18.3k" },

@@ -47,6 +47,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Clash Display (fontshare) — distinctive display face for the landing. */}
+        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&display=swap"
+          rel="stylesheet"
+        />
         <script dangerouslySetInnerHTML={{ __html: themeNoFlashScript }} />
       </head>
       <body className="min-h-full">
