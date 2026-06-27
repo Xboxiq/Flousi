@@ -3,12 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CaretLeft } from "@phosphor-icons/react";
+import { motion } from "motion/react";
 import { NAV_GROUPS } from "./nav-config";
 import { Logo } from "./logo";
 import { useUiStore } from "@/presentation/stores/ui-store";
 import { cn } from "@/presentation/lib/cn";
 
-export function SidebarNav({ collapsed = false }: { collapsed?: boolean }) {
+export function SidebarNav({
+  collapsed = false,
+  idPrefix = "nav",
+}: {
+  collapsed?: boolean;
+  idPrefix?: string;
+}) {
   const pathname = usePathname();
 
   return (
@@ -30,15 +37,22 @@ export function SidebarNav({ collapsed = false }: { collapsed?: boolean }) {
                 title={collapsed ? item.label : undefined}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "group flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition-colors",
+                  "group relative flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition-colors",
                   collapsed && "justify-center",
-                  active
-                    ? "bg-accent-soft text-accent"
-                    : "text-muted hover:bg-surface-2 hover:text-fg",
+                  active ? "text-accent" : "text-muted hover:bg-surface-2 hover:text-fg",
                 )}
               >
-                <Icon size={20} weight={active ? "fill" : "regular"} />
-                {!collapsed && item.label}
+                {active && (
+                  <motion.span
+                    layoutId={`${idPrefix}-active`}
+                    className="absolute inset-0 rounded-[var(--radius-md)] bg-accent-soft"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  />
+                )}
+                <span className={cn("relative z-[1] flex items-center gap-3", collapsed && "gap-0")}>
+                  <Icon size={20} weight={active ? "fill" : "regular"} />
+                  {!collapsed && item.label}
+                </span>
               </Link>
             );
           })}
@@ -66,7 +80,7 @@ export function Sidebar() {
       >
         <Logo collapsed={sidebarCollapsed} />
       </div>
-      <SidebarNav collapsed={sidebarCollapsed} />
+      <SidebarNav collapsed={sidebarCollapsed} idPrefix="desktop" />
       <button
         type="button"
         onClick={toggleSidebar}

@@ -9,6 +9,9 @@ interface UiState {
   /** Mobile: drawer open state. */
   mobileNavOpen: boolean;
   setMobileNavOpen: (open: boolean) => void;
+  /** Command palette (⌘K). */
+  commandOpen: boolean;
+  setCommandOpen: (open: boolean) => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
@@ -16,4 +19,6 @@ export const useUiStore = create<UiState>((set) => ({
   toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
   mobileNavOpen: false,
   setMobileNavOpen: (open) => set({ mobileNavOpen: open }),
+  commandOpen: false,
+  setCommandOpen: (open) => set({ commandOpen: open }),
 }));

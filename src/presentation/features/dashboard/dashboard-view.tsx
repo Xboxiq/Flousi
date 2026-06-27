@@ -33,7 +33,8 @@ import {
   THead,
   TR,
 } from "@/presentation/components/ui";
-import { formatCurrency, formatPercent, formatSignedPercent } from "@/presentation/lib/format";
+import { formatCurrency, formatPercent, formatSignedPercent, currencySymbol } from "@/presentation/lib/format";
+import { CountUp } from "@/presentation/components/interactive/count-up";
 
 export function DashboardView() {
   const loaded = useDataStore((s) => s.loaded);
@@ -124,7 +125,11 @@ export function DashboardView() {
           </div>
           <div>
             <div className="font-mono text-[44px] font-semibold leading-none tracking-tight tabular-nums">
-              {money(metrics.monthProfit)}
+              <CountUp
+                value={metrics.monthProfit}
+                prefix={currencySymbol(settings.currency, settings.locale)}
+                decimals={2}
+              />
             </div>
             <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-white/80">
               <span>Margin {formatPercent(metrics.margin, { locale: settings.locale })}</span>

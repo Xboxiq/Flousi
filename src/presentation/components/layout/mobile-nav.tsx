@@ -51,7 +51,7 @@ export function MobileNav() {
               </button>
             </div>
             <div onClick={() => setMobileNavOpen(false)} className="flex flex-1 flex-col">
-              <SidebarNav />
+              <SidebarNav idPrefix="mobile" />
             </div>
           </motion.aside>
         </div>
