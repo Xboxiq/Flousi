@@ -39,6 +39,10 @@ export function RingGauge({
   className,
 }: RingGaugeProps) {
   const pct = Math.max(0, Math.min(1, value));
+  // A round cap on a zero-length arc leaves a floating dot that reads as a bug:
+  // at or below zero the dial simply has no arc, and the hatched track is the
+  // whole reading.
+  const hasArc = pct > 0.002;
   const stroke = Math.max(7, Math.round(size * 0.1));
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
@@ -81,23 +85,31 @@ export function RingGauge({
             strokeWidth={stroke}
             opacity="0.95"
           />
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={r}
-            fill="none"
-            stroke={color}
-            strokeWidth={stroke}
-            strokeLinecap="round"
-            strokeDasharray={`${c * pct} ${c}`}
-            style={{
-              filter: `drop-shadow(0 2px 5px color-mix(in srgb, ${color} 45%, transparent))`,
-            }}
-          />
+          {hasArc && (
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={r}
+              fill="none"
+              stroke={color}
+              strokeWidth={stroke}
+              strokeLinecap="round"
+              strokeDasharray={`${c * pct} ${c}`}
+              style={{
+                filter: `drop-shadow(0 2px 5px color-mix(in srgb, ${color} 45%, transparent))`,
+              }}
+            />
+          )}
         </g>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <bdi dir="ltr" className="font-mono text-[15px] font-bold leading-none tabular-nums text-fg">
+        <bdi
+          dir="ltr"
+          className={cn(
+            "font-mono text-[15px] font-bold leading-none tabular-nums",
+            tone === "danger" ? "text-danger" : "text-fg",
+          )}
+        >
           {label}
         </bdi>
         {caption && (

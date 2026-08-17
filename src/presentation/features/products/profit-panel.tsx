@@ -2,22 +2,13 @@
 
 import { useMemo } from "react";
 import { TrendUp, TrendDown, Equals } from "@phosphor-icons/react";
-import { ProfitCalculator, type CostBreakdown } from "@/domain";
+import { ProfitCalculator, type CostBreakdown, type CostLine } from "@/domain";
 import { Money } from "@/presentation/components/ui";
 import { PriceColumn } from "@/presentation/components/objects/price-column";
 import { Odometer } from "@/presentation/components/objects/odometer";
 import { formatCurrency, formatPercent } from "@/presentation/lib/format";
 import { cn } from "@/presentation/lib/cn";
-
-const COST_LABELS: Record<string, string> = {
-  purchase: "تكلفة الشراء",
-  shipping: "التوصيل",
-  packaging: "التغليف",
-  marketplaceFees: "رسوم المنصّة",
-  paymentFees: "رسوم الدفع",
-  taxes: "الضرائب",
-  other: "أخرى",
-};
+import { COST_LINE_LABELS } from "@/presentation/lib/labels";
 
 interface Props {
   sellingPrice: number;
@@ -162,7 +153,7 @@ export function ProfitPanel({
             price={result.revenue}
             costs={Object.entries(result.costByLine).map(([line, amount]) => ({
               key: line,
-              label: COST_LABELS[line] ?? line,
+              label: COST_LINE_LABELS[line as CostLine] ?? line,
               amount,
             }))}
             netProfit={result.netProfit}
@@ -178,7 +169,7 @@ export function ProfitPanel({
               .filter(([, amount]) => amount > 0)
               .map(([line, amount]) => (
                 <li key={line} className="flex items-center justify-between text-sm">
-                  <span className="text-muted">{COST_LABELS[line] ?? line}</span>
+                  <span className="text-muted">{COST_LINE_LABELS[line as CostLine] ?? line}</span>
                   <Money className="text-fg">{money(amount)}</Money>
                 </li>
               ))}

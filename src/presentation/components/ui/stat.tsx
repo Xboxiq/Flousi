@@ -15,6 +15,8 @@ export interface StatProps {
   delta?: number;
   /** Formatted delta label, e.g. "+12.4%". */
   deltaLabel?: string;
+  /** A quiet second reading under the value (e.g. its share of revenue). */
+  caption?: React.ReactNode;
   icon?: React.ReactNode;
   /** Force value color (e.g. profit positive/negative). */
   tone?: StatTone;
@@ -41,6 +43,7 @@ export function Stat({
   value,
   delta,
   deltaLabel,
+  caption,
   icon,
   tone = "default",
   accent = "blue",
@@ -48,7 +51,9 @@ export function Stat({
 }: StatProps) {
   const up = (delta ?? 0) >= 0;
   return (
-    <Card className={cn("p-5", className)}>
+    /* A tile that is taller than its content (a matched pair beside a hero, say)
+       distributes: the label rides the top edge, the reading sits on the floor. */
+    <Card className={cn("flex flex-col justify-between gap-3 p-5", className)}>
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-medium text-muted">{label}</span>
         {icon && (
@@ -62,28 +67,26 @@ export function Stat({
           </span>
         )}
       </div>
-      <div
-        className={cn(
-          "mt-4 font-mono text-display font-bold tabular-nums",
-          VALUE_TONE[tone],
-        )}
-      >
-        <bdi dir="ltr">{value}</bdi>
-      </div>
-      {deltaLabel && (
-        <div
-          className={cn(
-            "mt-2.5 inline-flex items-center gap-1.5 text-xs font-semibold",
-            up ? "text-success" : "text-danger",
-          )}
-        >
-          <span className="inline-flex items-center gap-0.5">
-            {up ? <TrendUp size={14} weight="bold" /> : <TrendDown size={14} weight="bold" />}
-            {deltaLabel}
-          </span>
-          <span className="font-medium text-subtle">مقارنة بالشهر السابق</span>
+      <div>
+        <div className={cn("font-mono text-display font-bold tabular-nums", VALUE_TONE[tone])}>
+          <bdi dir="ltr">{value}</bdi>
         </div>
-      )}
+        {caption && <p className="mt-2 text-xs text-muted">{caption}</p>}
+        {deltaLabel && (
+          <div
+            className={cn(
+              "mt-2 inline-flex items-center gap-1.5 text-xs font-semibold",
+              up ? "text-success" : "text-danger",
+            )}
+          >
+            <span className="inline-flex items-center gap-0.5">
+              {up ? <TrendUp size={14} weight="bold" /> : <TrendDown size={14} weight="bold" />}
+              {deltaLabel}
+            </span>
+            <span className="font-medium text-subtle">مقارنة بالشهر السابق</span>
+          </div>
+        )}
+      </div>
     </Card>
   );
 }

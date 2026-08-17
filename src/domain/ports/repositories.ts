@@ -35,6 +35,11 @@ export interface AppSettings {
   currency: string;
   locale: string;
   language: "en" | "ar";
+  /**
+   * The merchant's own net-profit target for a month, in major units. 0 means
+   * "no target set" — readings then compare against their own average instead.
+   */
+  monthlyProfitTarget: number;
   /** Default cost values pre-filled into new product forms. */
   defaultCosts: {
     marketplaceFeePercent: number;

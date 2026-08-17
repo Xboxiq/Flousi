@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Coins,
@@ -11,6 +11,7 @@ import {
   ArrowLeft,
   TrendUp,
   Calculator,
+  ArrowsSplit,
 } from "@phosphor-icons/react";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { computeDashboard } from "@/application/analytics";
@@ -24,6 +25,7 @@ import {
   CardTitle,
   EmptyState,
   Money,
+  Segmented,
   Skeleton,
   Stat,
   Table,
@@ -37,6 +39,19 @@ import { formatCurrency, formatDate, formatPercent, formatSignedPercent } from "
 import { Odometer } from "@/presentation/components/objects/odometer";
 import { RingGauge } from "@/presentation/components/objects/ring-gauge";
 import { WeekBars } from "@/presentation/components/objects/week-bars";
+import {
+  DistributionBar,
+  type DistributionPart,
+} from "@/presentation/components/objects/distribution-bar";
+import { COST_LINE_LABELS } from "@/presentation/lib/labels";
+import { cn } from "@/presentation/lib/cn";
+
+/** The chart's window — a real filter, not a decorative range switch (R38). */
+const WINDOWS = [
+  { label: "3 أشهر", value: "3" },
+  { label: "6 أشهر", value: "6" },
+  { label: "سنة", value: "12" },
+] as const;
 
 export function DashboardView() {
   const loaded = useDataStore((s) => s.loaded);
@@ -44,13 +59,20 @@ export function DashboardView() {
   const sales = useDataStore((s) => s.sales);
   const settings = useDataStore((s) => s.settings);
 
+  const [window, setWindow] = useState<"3" | "6" | "12">("6");
+
   const metrics = useMemo(
-    () => computeDashboard(products, sales, { currency: settings.currency }),
-    [products, sales, settings.currency],
+    () =>
+      computeDashboard(products, sales, {
+        currency: settings.currency,
+        months: Number(window),
+      }),
+    [products, sales, settings.currency, window],
   );
 
   const money = (n: number) =>
     formatCurrency(n, { currency: settings.currency, locale: settings.locale });
+  const share = (n: number) => formatPercent(n, { locale: settings.locale, digits: 0 });
 
   const m = metrics.monthly;
   const last = m[m.length - 1];
@@ -75,10 +97,12 @@ export function DashboardView() {
     return (
       <>
         <PageHeader title="لوحة التحكم" description="أرباح متجرك في لمحة." />
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <Skeleton className="h-44 rounded-[var(--radius-xl)] sm:col-span-2" />
-          <Skeleton className="h-44 rounded-[var(--radius-lg)]" />
-          <Skeleton className="h-44 rounded-[var(--radius-lg)]" />
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <Skeleton className="h-64 rounded-[var(--radius-2xl)] sm:col-span-2" />
+          <div className="flex flex-col gap-5 sm:col-span-2 sm:flex-row lg:col-span-1 lg:flex-col">
+            <Skeleton className="h-[122px] flex-1 rounded-[var(--radius-xl)]" />
+            <Skeleton className="h-[122px] flex-1 rounded-[var(--radius-xl)]" />
+          </div>
         </div>
         <Skeleton className="mt-5 h-72 w-full rounded-[var(--radius-lg)]" />
       </>
@@ -105,12 +129,64 @@ export function DashboardView() {
 
   const profitUp = (profitDelta ?? 0) >= 0;
 
+  // The level this month is measured against: the merchant's own target when they
+  // set one, otherwise their average over the window — never a round number
+  // chosen because it looks tidy (RECIPES R35).
+  const target = settings.monthlyProfitTarget;
+  const threshold = target
+    ? { value: target, met: metrics.monthProfit >= target, isTarget: true }
+    : metrics.averageMonthProfit > 0
+      ? {
+          value: metrics.averageMonthProfit,
+          met: metrics.monthProfit >= metrics.averageMonthProfit,
+          isTarget: false,
+        }
+      : undefined;
+
+  // «وين راح المال»: this month's revenue taken apart. Costs first, largest to
+  // smallest, then whatever survived as the merchant's own.
+  const spent = metrics.monthTotalCost;
+  const kept = metrics.monthProfit;
+  const distributionTotal = Math.max(metrics.monthRevenue, spent);
+  // Lines under 4% become one plate: six slivers of different texture side by
+  // side read as stripes, not as a composition. They stay named in its tooltip,
+  // and the product screen keeps the full breakdown.
+  const MINOR = 0.04;
+  const major = metrics.monthCostLines.filter((c) => c.share >= MINOR);
+  const minor = metrics.monthCostLines.filter((c) => c.share < MINOR);
+  const minorTotal = minor.reduce((sum, c) => sum + c.amount, 0);
+  const parts: DistributionPart[] = [
+    ...major.map((c) => ({
+      id: c.line,
+      label: COST_LINE_LABELS[c.line],
+      amount: c.amount,
+      kind: "spend" as const,
+    })),
+    ...(minorTotal > 0
+      ? [
+          {
+            id: "minor",
+            label: `بنود أخرى (${minor.length})`,
+            hint: minor.map((c) => COST_LINE_LABELS[c.line]).join(" · "),
+            amount: minorTotal,
+            kind: "spend" as const,
+          },
+        ]
+      : []),
+    ...(kept >= 0
+      ? [{ id: "keep", label: "صافي ربحك", amount: kept, kind: "keep" as const }]
+      : []),
+  ];
+  // A losing month: the whole becomes the costs, and the part revenue never
+  // covered is marked across them instead of being added as an extra plate.
+  const overrun = kept < 0 ? { amount: -kept, label: "تجاوز التكاليف" } : undefined;
+
   return (
     <>
       <PageHeader title="لوحة التحكم" description="أرباح متجرك في لمحة." actions={actions} />
 
-      {/* شبكة المؤشرات */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {/* شبكة المؤشرات — البطل يقود الصف، والمؤشران يقفان بجانبه بحجمهما الطبيعي */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {/* The month's headline, printed on halftone ink: the figure rolls on
             drums, the margin sits on a dial, and the week stands beside it as
             seven capsules (client feedback batch → RECIPES R17/R21/R22). */}
@@ -126,7 +202,11 @@ export function DashboardView() {
                   value={metrics.monthProfit}
                   format={money}
                   drumHeight={1.3}
-                  className="text-[26px] font-bold leading-none sm:text-[42px]"
+                  className={cn(
+                    "text-[26px] font-bold leading-none sm:text-[42px]",
+                    // colour is code: a month that lost money says so in the figure
+                    metrics.monthProfit < 0 && "text-danger",
+                  )}
                 />
               </div>
               {profitDelta !== undefined && (
@@ -149,15 +229,15 @@ export function DashboardView() {
           </div>
 
           <div className="mt-6 rounded-[var(--radius-lg)] bg-surface/70 p-3 backdrop-blur-[2px]">
-            <div className="flex items-baseline justify-between px-1">
-              <span className="text-[11px] font-semibold text-fg/70">آخر 7 أيام</span>
-              <span className="text-[11px] text-fg/55">
-                اليوم <bdi dir="ltr" className="font-mono tabular-nums">{money(metrics.todayProfit)}</bdi>
-              </span>
-            </div>
+            <span className="px-1 text-[11px] font-semibold text-fg/70">آخر 7 أيام</span>
+            {/* today is the reading: it stays solid and carries its own figure, so
+                the header above no longer repeats the number (R37) */}
             <WeekBars
-              className="mt-2"
+              className="mt-7"
               height={68}
+              activeIndex={metrics.week.length - 1}
+              activeLabel={money(metrics.todayProfit)}
+              activeCaption="اليوم"
               days={metrics.week.map((d) => ({
                 mark: d.mark,
                 value: d.netProfit,
@@ -167,34 +247,75 @@ export function DashboardView() {
           </div>
         </div>
 
-        <Stat
-          label="الإيراد (هذا الشهر)"
-          value={money(metrics.monthRevenue)}
-          deltaLabel={revenueDelta !== undefined ? formatSignedPercent(revenueDelta) : undefined}
-          delta={revenueDelta}
-          accent="green"
-          icon={<Coins size={18} weight="bold" />}
-        />
-        <Stat
-          label="إجمالي التكاليف"
-          value={money(metrics.totalCost)}
-          accent="neutral"
-          icon={<Receipt size={18} weight="bold" />}
-        />
+        {/* the pair stands in one column at its own height instead of being
+            stretched to the hero's — matched widgets, not stretched panels */}
+        <div className="flex flex-col gap-5 sm:col-span-2 sm:flex-row lg:col-span-1 lg:flex-col">
+          <Stat
+            className="flex-1"
+            label="الإيراد (هذا الشهر)"
+            value={money(metrics.monthRevenue)}
+            deltaLabel={revenueDelta !== undefined ? formatSignedPercent(revenueDelta) : undefined}
+            delta={revenueDelta}
+            accent="green"
+            icon={<Coins size={18} weight="bold" />}
+          />
+          {/* the same month as the card above it — a total from a different period
+              beside it invited a comparison that was never true */}
+          <Stat
+            className="flex-1"
+            label="تكاليف هذا الشهر"
+            value={money(metrics.monthTotalCost)}
+            caption={
+              metrics.monthRevenue > 0 ? (
+                <>
+                  <bdi dir="ltr" className="font-mono font-semibold tabular-nums text-fg">
+                    {share(metrics.monthTotalCost / metrics.monthRevenue)}
+                  </bdi>{" "}
+                  من الإيراد
+                </>
+              ) : undefined
+            }
+            accent="neutral"
+            icon={<Receipt size={18} weight="bold" />}
+          />
+        </div>
       </div>
 
       {/* الرسم + أفضل المنتجات */}
       <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>الإيراد وصافي الربح</CardTitle>
-            <div className="flex items-center gap-4 text-xs text-muted">
-              <Legend color="var(--accent)" label="الإيراد" />
-              <Legend color="var(--success)" label="صافي الربح" />
+          <CardHeader className="flex-col items-stretch gap-3 sm:flex-row sm:items-start">
+            <div className="min-w-0">
+              <CardTitle>الإيراد وصافي الربح</CardTitle>
+              <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted">
+                <Legend color="var(--accent)" label="الإيراد" />
+                <Legend color="var(--success)" label="صافي الربح" />
+                {threshold && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="h-0 w-4 border-t-[1.5px] border-dashed border-success/70" />
+                    {threshold.isTarget ? "الهدف" : "معدّلك"}
+                    <bdi dir="ltr" className="font-mono tabular-nums text-fg">
+                      {money(threshold.value)}
+                    </bdi>
+                  </span>
+                )}
+              </div>
             </div>
+            {/* the window actually changes what is aggregated (R38) */}
+            <Segmented
+              className="self-start"
+              options={WINDOWS.map((w) => ({ label: w.label, value: w.value }))}
+              value={window}
+              onChange={(v) => setWindow(v)}
+            />
           </CardHeader>
           <CardContent>
-            <ProfitAreaChart data={metrics.monthly} currency={settings.currency} locale={settings.locale} />
+            <ProfitAreaChart
+              data={metrics.monthly}
+              currency={settings.currency}
+              locale={settings.locale}
+              threshold={threshold}
+            />
           </CardContent>
         </Card>
 
@@ -205,9 +326,12 @@ export function DashboardView() {
           </CardHeader>
           <CardContent className="flex flex-col gap-3.5">
             {metrics.topProducts.map((p) => {
-              const max = metrics.topProducts[0]?.netProfit || 1;
-              const share = Math.max(0.06, p.netProfit / max);
+              // Measured against the largest MAGNITUDE, so a month of losses draws
+              // real bars instead of dividing two negatives into a full rail.
+              const max = Math.max(...metrics.topProducts.map((t) => Math.abs(t.netProfit)), 1);
+              const share = Math.max(0.06, Math.abs(p.netProfit) / max);
               const pct = Math.round(share * 100);
+              const losing = p.netProfit < 0;
               return (
                 <div key={p.productId} className="flex flex-col gap-2">
                   <div className="flex items-center justify-between text-sm">
@@ -220,7 +344,10 @@ export function DashboardView() {
                       reports its own value instead of needing a legend */}
                   <div className="rail relative h-6 overflow-hidden rounded-full">
                     <div
-                      className="rail-fill absolute inset-y-0 start-0 rounded-full bg-accent"
+                      className={cn(
+                        "rail-fill absolute inset-y-0 start-0 rounded-full",
+                        losing ? "bg-danger" : "bg-accent",
+                      )}
                       style={{ width: `${pct}%` }}
                     />
                     <span
@@ -238,6 +365,33 @@ export function DashboardView() {
           </CardContent>
         </Card>
       </div>
+
+      {/* وين راح المال — الشهر ككل واحد مقسوم */}
+      {parts.length > 0 && (
+        <Card className="mt-5">
+          <CardHeader className="flex-col items-stretch gap-1 sm:flex-row sm:items-center">
+            <div className="flex items-center gap-2">
+              <ArrowsSplit size={18} className="text-subtle" />
+              <CardTitle>وين راح المال؟</CardTitle>
+            </div>
+            <span className="text-xs text-muted">
+              {overrun ? "من تكاليف هذا الشهر" : "من إيراد هذا الشهر"}{" "}
+              <bdi dir="ltr" className="font-mono font-semibold tabular-nums text-fg">
+                {money(overrun ? spent : metrics.monthRevenue)}
+              </bdi>
+            </span>
+          </CardHeader>
+          <CardContent>
+            <DistributionBar
+              parts={parts}
+              total={distributionTotal}
+              overrun={overrun}
+              format={money}
+              formatShare={share}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       {/* أحدث المبيعات */}
       <Card className="mt-5">

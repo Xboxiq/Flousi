@@ -309,6 +309,44 @@ in both directions — the rail reports its own value with no legend.
 The hovered point becomes a filled disc with a surface-coloured collar and a dashed
 line dropping to its axis: a measurement marked on paper, not a hover glow.
 
+## R35–R39 — from the fourth visual-feedback batch (2026-08-17) — R35–R38 BUILT
+
+Batch read: dark fintech dashboards carried by a single high-energy accent · a bar
+chart with a **dashed threshold line ending in a value chip** · **tick-comb** category
+charts (label + amount above a comb of hairlines) · a **segmented distribution bar
+with a tick ruler and a legend** (50/30/20) · a **dot-matrix** magnitude chart · a
+**pill filter row with exactly one filled chip** · circular black/accent actions and
+dock FABs · **patterned bars with one solid active bar carrying its value** · an
+outline-vs-filled icon pair language.
+
+**R35 — Threshold line with a value chip** *(built: `ReferenceLine` + `ThresholdChip` in `charts/profit-area-chart.tsx`, fed by `settings.monthlyProfitTarget` with the window average as fallback)*
+A dashed horizontal rule across the plot at a level that MEANS something (target,
+break-even, average), ending in a small rounded chip carrying that level's figure.
+The chip's tone reports the verdict — met or short — so the line is a sentence, not
+a decoration. Never draw it at a round number chosen for looks.
+
+**R36 — Distribution bar with a tick ruler** *(built: `objects/distribution-bar.tsx` + `.dist-*` / `.seg-*` + `--plate-N` tokens, on the dashboard as «وين راح المال»)*
+One horizontal bar = one whole (a month's revenue). Segments are the parts, split by
+hairline seams; a ruler under the bar drops a tick at each boundary with its share, and
+a legend names each part with its amount. Parts are distinguished by **material
+texture** (solid / dots / hatch), not by a hue per part — hue stays reserved for
+meaning (the merchant's keep is `--success`; everything spent is graded neutral).
+
+**R37 — One solid reading in a patterned set** *(built: `WeekBars activeIndex` + `.capsule-fill-quiet` + `.reading-chip`/`.reading-notch`)*
+In a set of bars, the one being reported is solid and carries its figure above it;
+the rest keep their hue but drop to a patterned fill and recede. Marking the reading
+inside the chart removes the duplicate label from the card header.
+
+**R38 — Pill filter row, one filled chip** *(built: `ui/segmented.tsx` active chip is now a moulded accent body; drives `computeDashboard({months})` on the dashboard)*
+An inset track of pills where the active one is a filled accent body and the others
+are text with a hit area. It must actually filter — a decorative range switch is
+worse than no switch.
+
+**R39 — Circular action with a raised primary** *(queued: the dock FAB — the dock already carries five keys at 360px, so this waits for the reps screen)*
+Round actions in a row, all one neutral material except the primary, which is an
+accent body raised above the rail. Round is for a single verb; anything needing two
+words stays a pill.
+
 ---
 Also adopt from nova (not recipes but structure): glass tokens as a paired set
 (`--glass/-strong/-edge/-edge-shade/-specular/-caustic`), material depth as a

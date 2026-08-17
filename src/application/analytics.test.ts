@@ -90,6 +90,45 @@ describe("computeDashboard", () => {
     expect(m.week.every((d) => d.mark.length > 0)).toBe(true);
   });
 
+  it("takes this month's revenue apart into cost lines that sum back to it", () => {
+    // 3 cost lines on purpose, one of them percentage-based, plus a month that
+    // must be ignored entirely.
+    const p = product({
+      costs: makeCostBreakdown({
+        purchase: { fixed: 40, percent: 0 },
+        shipping: { fixed: 10, percent: 0 },
+        paymentFees: { fixed: 0, percent: 3 },
+      }),
+    });
+    const m = computeDashboard(
+      [p],
+      [
+        sale({ soldAt: "2026-06-05T12:00:00.000Z", quantity: 2 }),
+        sale({ id: "s2", soldAt: "2026-04-05T12:00:00.000Z" }),
+      ],
+      { now },
+    );
+
+    expect(m.monthRevenue).toBe(200);
+    expect(m.monthTotalCost).toBe(106); // (40 + 10 + 3) × 2
+    expect(m.monthProfit).toBe(94);
+
+    // Only lines that actually spent something, largest first.
+    expect(m.monthCostLines.map((c) => c.line)).toEqual(["purchase", "shipping", "paymentFees"]);
+    expect(m.monthCostLines.map((c) => c.amount)).toEqual([80, 20, 6]);
+
+    // The identity the distribution bar depends on: the parts ARE the whole.
+    const spent = m.monthCostLines.reduce((s, c) => s + c.amount, 0);
+    expect(spent + m.monthProfit).toBeCloseTo(m.monthRevenue, 5);
+    expect(m.monthCostLines[0].share).toBeCloseTo(0.4, 5);
+  });
+
+  it("averages net profit across the window for the chart's fallback threshold", () => {
+    const m = computeDashboard([product()], [sale(), sale({ id: "s2" })], { now, months: 6 });
+    // 120 of profit spread over a 6-month window.
+    expect(m.averageMonthProfit).toBe(20);
+  });
+
   it("ranks top products by net profit", () => {
     const a = product({
       id: "a",

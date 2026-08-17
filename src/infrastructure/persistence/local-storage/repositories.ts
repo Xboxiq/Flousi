@@ -113,6 +113,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   currency: "IQD",
   locale: "ar-IQ",
   language: "ar",
+  monthlyProfitTarget: 2_500_000,
   defaultCosts: {
     marketplaceFeePercent: 0,
     paymentFeePercent: 2.9,
@@ -123,7 +124,14 @@ export const DEFAULT_SETTINGS: AppSettings = {
 
 export class LocalSettingsRepository implements SettingsRepository {
   async get(): Promise<AppSettings> {
-    return storage.get<AppSettings>(STORAGE_KEYS.settings, DEFAULT_SETTINGS);
+    // Merged over the defaults so a browser holding an older settings object
+    // gains new keys instead of returning them undefined.
+    const stored = storage.get<Partial<AppSettings>>(STORAGE_KEYS.settings, DEFAULT_SETTINGS);
+    return {
+      ...DEFAULT_SETTINGS,
+      ...stored,
+      defaultCosts: { ...DEFAULT_SETTINGS.defaultCosts, ...stored.defaultCosts },
+    };
   }
   async save(settings: AppSettings): Promise<AppSettings> {
     storage.set(STORAGE_KEYS.settings, settings);

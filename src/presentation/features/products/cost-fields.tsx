@@ -2,16 +2,7 @@
 
 import { COST_LINES, type CostBreakdown, type CostLine } from "@/domain";
 import { Input } from "@/presentation/components/ui";
-
-const LABELS: Record<CostLine, string> = {
-  purchase: "تكلفة الشراء",
-  shipping: "التوصيل",
-  packaging: "التغليف",
-  marketplaceFees: "رسوم المنصّة",
-  paymentFees: "رسوم الدفع",
-  taxes: "الضرائب",
-  other: "أخرى",
-};
+import { COST_LINE_LABELS } from "@/presentation/lib/labels";
 
 interface Props {
   costs: CostBreakdown;
@@ -37,7 +28,7 @@ export function CostFields({ costs, currencySymbol, onChange }: Props) {
             className="col-span-2 text-sm font-medium text-fg sm:col-span-1"
             htmlFor={`${line}-fixed`}
           >
-            {LABELS[line]}
+            {COST_LINE_LABELS[line]}
           </label>
           <Input
             id={`${line}-fixed`}

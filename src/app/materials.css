@@ -361,6 +361,189 @@
     background-image: linear-gradient(180deg, color-mix(in oklab, var(--accent), white 34%), var(--accent));
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 -1px 3px rgba(18, 26, 38, 0.2);
   }
+  /* One solid reading in a patterned set (R37): the day being reported keeps the
+     solid plunger; the others keep their hue but drop to a dot screen and recede.
+     App-wide grammar: diagonal HATCH = an unfilled remainder (§11), DOTS = a
+     reading that has been quieted. */
+  .capsule-fill-quiet::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.85) 0.9px, transparent 1px);
+    background-size: 4px 4px;
+    opacity: 0.75;
+  }
+  /* the chip that carries a reading, with a notch that points at the object it
+     belongs to — otherwise a floating figure looks like it labels its neighbour */
+  .reading-chip {
+    position: absolute;
+    border-radius: 999px;
+    background-image: linear-gradient(180deg, color-mix(in srgb, var(--surface) 96%, white), var(--surface));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 1px 2px rgba(18, 26, 38, 0.2),
+      0 8px 16px -8px rgba(18, 26, 38, 0.35);
+  }
+  [data-theme="dark"] .reading-chip {
+    background-image: linear-gradient(180deg, #2c3037, var(--surface));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 2px 6px rgba(0, 0, 0, 0.6);
+  }
+  /* The notch is a sibling, not a pseudo-element: it is centred on the OBJECT
+     the chip reports, which the chip itself is not (it hugs the strip's edge). */
+  .reading-notch {
+    position: absolute;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    margin-left: -4.5px;
+    transform: rotate(45deg);
+    border-bottom-right-radius: 2px;
+    background-color: var(--surface);
+    box-shadow: 1.5px 1.5px 2px rgba(18, 26, 38, 0.14);
+  }
+  [data-theme="dark"] .reading-notch {
+    background-color: var(--surface);
+    box-shadow: 1.5px 1.5px 3px rgba(0, 0, 0, 0.6);
+  }
+  .capsule-active {
+    box-shadow:
+      inset 0 1px 3px rgba(18, 26, 38, 0.24),
+      inset 0 -1px 0 var(--neu-hi),
+      0 0 0 2px color-mix(in srgb, var(--fg) 34%, transparent),
+      0 2px 6px -2px rgba(18, 26, 38, 0.3);
+  }
+
+  /* ---- DISTRIBUTION BAR (R36): «وين راح المال» in one whole ------------------
+     One bar = one month's revenue. Every part is the same milled plate under an
+     overhead light; what tells them apart is the TEXTURE and the JOINT, never a
+     hue per part — colour stays reserved for meaning, and the only coloured
+     plate is the one the merchant keeps (VISUAL-LAW §5 §13). */
+  .dist-track {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    border-radius: 11px;
+    background-color: var(--sunken);
+    box-shadow:
+      inset 0 2px 5px rgba(18, 26, 38, 0.22),
+      inset 0 -1px 0 var(--neu-hi),
+      0 1px 0 var(--neu-hi);
+  }
+  [data-theme="dark"] .dist-track {
+    box-shadow:
+      inset 0 2px 6px rgba(0, 0, 0, 0.8),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .dist-seg {
+    position: relative;
+    min-width: 3px;
+    /* the joint: an occluded seam with a lit lip on its far side */
+    box-shadow:
+      inset -1px 0 0 rgba(18, 26, 38, 0.45),
+      inset 1px 0 0 rgba(255, 255, 255, 0.28);
+  }
+  .dist-seg:last-child { box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.28); }
+  /* the lit top face of the plate — shared by the bar and its legend swatches */
+  .dist-seg::before,
+  .dist-chip::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.06) 46%,
+      rgba(18, 26, 38, 0.16)
+    );
+  }
+  /* in the dark room the same plate catches far less light */
+  [data-theme="dark"] .dist-seg::before,
+  [data-theme="dark"] .dist-chip::before {
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.16),
+      rgba(255, 255, 255, 0.02) 46%,
+      rgba(0, 0, 0, 0.3)
+    );
+  }
+  /* the texture that names the part */
+  .dist-seg::after,
+  .dist-chip::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.9;
+  }
+  .seg-solid::after { background-image: none; }
+  .seg-dots::after {
+    background-image: radial-gradient(var(--seg-ink) 1px, transparent 1.2px);
+    background-size: 5px 5px;
+  }
+  .seg-hatch::after {
+    background-image: repeating-linear-gradient(45deg, var(--seg-ink) 0 1.5px, transparent 1.5px 6px);
+  }
+  .seg-grid::after {
+    background-image:
+      repeating-linear-gradient(0deg, var(--seg-ink) 0 1px, transparent 1px 5px),
+      repeating-linear-gradient(90deg, var(--seg-ink) 0 1px, transparent 1px 5px);
+  }
+  .seg-dense::after {
+    background-image: repeating-linear-gradient(135deg, var(--seg-ink) 0 2px, transparent 2px 4px);
+  }
+  /* the plate that is the merchant's to keep — the one part allowed a hue */
+  .seg-keep::before {
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.45),
+      rgba(255, 255, 255, 0.04) 48%,
+      rgba(4, 40, 22, 0.2)
+    );
+  }
+  /* The tail of the cost bar that revenue never reached: a hatched region laid
+     over the plates it swallowed, with a scribe line where the money ran out.
+     Logical inset + logical border, so the mirror keeps the meaning. */
+  .seg-overrun-region {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    border-inline-start: 2px solid color-mix(in oklab, var(--danger), white 12%);
+    background-color: color-mix(in srgb, var(--danger) 74%, transparent);
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.55) 0 2px,
+      transparent 2px 7px
+    );
+  }
+  /* costs that ran past the revenue: hatched, because the excess is data (§11) */
+  .seg-overrun::after {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.55) 0 2px,
+      transparent 2px 7px
+    );
+  }
+  /* the ruler under the bar: a tick per boundary, scribed into the card */
+  .dist-tick {
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 6px;
+    background-color: color-mix(in srgb, var(--fg) 38%, transparent);
+    box-shadow: 1px 0 0 var(--neu-hi);
+  }
+  /* legend swatch: the same plate, shrunk */
+  .dist-chip {
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      inset 0 -2px 3px -1px rgba(18, 26, 38, 0.35),
+      0 1px 1px rgba(18, 26, 38, 0.2);
+  }
 
   /* ---- MOULDED CONTROLS (feedback: the Add Money / Withdraw pills) ----------
      A pressable is a moulded body, not a filled rectangle: a lighter RIM around

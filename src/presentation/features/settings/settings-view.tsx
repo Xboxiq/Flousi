@@ -154,6 +154,32 @@ export function SettingsView() {
           </CardContent>
         </Card>
 
+        {/* Target — the level every profit reading is measured against */}
+        <Card>
+          <CardHeader>
+            <div>
+              <CardTitle>الهدف</CardTitle>
+              <CardDescription>
+                هدف صافي الربح الشهري. يُرسَم كخط على منحنى الأرباح، واتركه صفرًا لمقارنة
+                الشهر بمعدّلك بدلًا من هدف.
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-2">
+            <Field label="هدف الربح الشهري" htmlFor="target">
+              <Input
+                id="target"
+                type="number"
+                trailing={draft.currency}
+                value={draft.monthlyProfitTarget || ""}
+                onChange={(e) =>
+                  setDraft({ ...draft, monthlyProfitTarget: parseFloat(e.target.value) || 0 })
+                }
+              />
+            </Field>
+          </CardContent>
+        </Card>
+
         {/* Default costs */}
         <Card>
           <CardHeader>

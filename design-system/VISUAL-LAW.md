@@ -55,6 +55,21 @@ the counterweight, the composition isn't done.
 The empty part of a meter/target arc is structural (hairline hatch or carved
 groove), never a soft decorative gradient.
 
+**§11a قواعد النقش — one grammar for texture (added 2026-08-17):** a texture is
+vocabulary, so it may mean only one thing across the product.
+`hatch (diagonal)` = **a remainder / an amount not covered** · `dots` = **a
+reading that has been quieted** (present, but not the one being reported) ·
+`grid / dense hatch` = **a named part inside a whole** (the distribution bar's
+plates). Never use the diagonal hatch to decorate a filled value, and never use a
+hue where a texture is what distinguishes two things of the same kind.
+
+**§11b الكل يساوي كلّه — a part-to-whole object must sum to its own whole:** if a
+bar says "this is the month", the parts drawn inside it add to 100% of that month.
+An excess (costs past revenue) is drawn as a **region across the parts it
+swallowed**, with a scribe line where the money ran out — never as an extra
+segment appended to the bar, which silently pushes the composition past its own
+frame and clips the truth.
+
 ## §12 توهج الحافة يحتاج موقعاً وحالة — Edge leaks need position + state
 A light-leak/glow must name the state it reports ("تمت التسوية", "الهدف تحقق")
 and where it leaks from. A permanent glow is atmospheric wash in disguise.
@@ -82,4 +97,7 @@ appearing twice is not an argument for accepting it.
 | Flat corporate illustration | بلا جسم ولا ضوء — يسقط §1 |
 | Pastel per-icon tiles | لون بلا معنى — يسقط §13 |
 | Side-lit objects | تنقلب فيزياؤها بالمرآة RTL — يسقط §2 |
+| **استيراد لوحة «lime على أسود» من تغذية 2026-08-17** | المراجع الأربعة داكنة بلون واحد حاد. الدرس الحقيقي هو **التوزيع**: أرضية هادئة ولون واحد فقط مسموح له أن يشير — وهذا قانوننا أصلاً (§6 §13). أُخذ الدرس وطُبّق على أكسنت Flousi؛ استيراد الـ hue نفسه مرفوض. |
+| مخطط النقاط (dot-matrix) لمقارنة مبالغ | شبكة نقاط أسوأ قراءةً من قضيب لسؤال «أي منتج ربح أكثر»؛ مؤجّل لشاشة المندوبين حيث الوحدة شخص لا مبلغ |
+| شريط أجزاء يزيد مجموعه على كلّه (التجاوز كقطعة مضافة) | ضُبط في هذه الدفعة: كان الشريط يتجاوز 100% فيُقصّ من طرفه؛ صار التجاوز منطقةً محزّزة فوق الأجزاء التي أكلها (§11b) |
 | Purple/violet hues from nova's legacy HTML | يخالف بوابة السلوب؛ نأخذ التقنية ونعيد ربط الألوان بتوكنات Flousi |

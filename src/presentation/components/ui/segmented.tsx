@@ -8,7 +8,12 @@ export interface SegmentedOption<T extends string> {
   icon?: React.ReactNode;
 }
 
-/** Soft-UI segmented control: an inset track with a raised, glossy active pill. */
+/**
+ * A pill filter row: an inset track where exactly one chip is a filled accent
+ * body and the rest are text with a hit area (RECIPES R38, fourth feedback
+ * batch). The filled chip is the only place accent appears in the row, so "which
+ * one is on" is answered before anything is read.
+ */
 export function Segmented<T extends string>({
   options,
   value,
@@ -33,7 +38,7 @@ export function Segmented<T extends string>({
             className={cn(
               "inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-[color,background-color,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-out)]",
               active
-                ? "bg-surface text-fg shadow-sm"
+                ? "molded molded-accent font-semibold text-white"
                 : "text-muted hover:text-fg",
             )}
           >

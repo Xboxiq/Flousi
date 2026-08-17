@@ -6,6 +6,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -18,6 +19,63 @@ interface Props {
   data: MonthlyPoint[];
   currency: string;
   locale: string;
+  /** The level worth drawing: the merchant's target, or their own average. */
+  threshold?: { value: number; met: boolean };
+}
+
+/**
+ * The threshold's own figure, carried on a chip at the head of its dashed rule
+ * (RECIPES R35). Green only when the level is actually met — the line is a level,
+ * the chip is the verdict (VISUAL-LAW §12 §13).
+ */
+function ThresholdChip({
+  viewBox,
+  text,
+  met,
+}: {
+  viewBox?: { x?: number; y?: number; width?: number; height?: number };
+  text: string;
+  met: boolean;
+}) {
+  if (!viewBox || viewBox.x == null || viewBox.y == null) return null;
+  const w = text.length * 7.6 + 16;
+  const h = 19;
+  const x = viewBox.x + 4;
+  const y = viewBox.y - h - 3;
+  return (
+    <g pointerEvents="none">
+      <rect
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        rx={6}
+        fill={met ? "var(--success)" : "var(--surface)"}
+        stroke={met ? "var(--success)" : "var(--border)"}
+        strokeWidth={1}
+        filter="drop-shadow(0 1px 2px rgba(18,26,38,0.22))"
+      />
+      <text
+        x={x + w / 2}
+        y={y + h / 2 + 4}
+        textAnchor="middle"
+        fontSize={11}
+        fontWeight={700}
+        fill={met ? "#ffffff" : "var(--fg)"}
+        style={{ fontVariantNumeric: "tabular-nums" }}
+      >
+        {text}
+      </text>
+    </g>
+  );
+}
+
+/** Magnitude only: the card title already says these are money. */
+function magnitude(v: number, locale: string): string {
+  const abs = Math.abs(v);
+  if (abs >= 1_000_000) return `${formatNumber(v / 1_000_000, { locale, digits: 1 })}م`;
+  if (abs >= 1000) return `${formatNumber(v / 1000, { locale, digits: 0 })}ألف`;
+  return formatNumber(v, { locale, digits: 0 });
 }
 
 /**
@@ -25,7 +83,7 @@ interface Props {
  * not move — one mount-only reveal (350ms ease-out, 80ms series stagger),
  * disabled on data/filter re-renders and under prefers-reduced-motion.
  */
-export function ProfitAreaChart({ data, currency, locale }: Props) {
+export function ProfitAreaChart({ data, currency, locale, threshold }: Props) {
   const reduce = useReducedMotion();
   const [animate, setAnimate] = useState(!reduce);
   const mounted = useRef(false);
@@ -33,7 +91,6 @@ export function ProfitAreaChart({ data, currency, locale }: Props) {
   useEffect(() => {
     if (mounted.current) {
       // Any later data change re-renders without motion.
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time flip after mount reveal
       setAnimate(false);
       return;
     }
@@ -73,12 +130,24 @@ export function ProfitAreaChart({ data, currency, locale }: Props) {
             width={46}
             /* Ticks carry magnitude, not currency — the card title already says
                these are money, and a full figure here collides with the plot. */
-            tickFormatter={(v: number) => {
-              if (v >= 1_000_000) return `${formatNumber(v / 1_000_000, { locale, digits: 1 })}م`;
-              if (v >= 1000) return `${formatNumber(v / 1000, { locale, digits: 0 })}ألف`;
-              return formatNumber(v, { locale, digits: 0 });
-            }}
+            tickFormatter={(v: number) => magnitude(v, locale)}
           />
+          {threshold && threshold.value > 0 && (
+            /* The level the month is measured against — dashed, because it is a
+               rule and not a series, and it carries its own figure (R35). */
+            <ReferenceLine
+              y={threshold.value}
+              /* the level belongs to the PROFIT series, so it is drawn in that
+                 series' colour — a neutral rule read as if it bounded revenue */
+              stroke="var(--success)"
+              strokeOpacity={0.6}
+              strokeWidth={1.5}
+              strokeDasharray="6 5"
+              label={
+                <ThresholdChip text={magnitude(threshold.value, locale)} met={threshold.met} />
+              }
+            />
+          )}
           <Tooltip
             /* the hovered month gets a dashed drop line to its axis, the way a
                measured reading is marked on paper */

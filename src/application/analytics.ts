@@ -1,4 +1,4 @@
-import { ProfitCalculator, type Product, type Sale } from "@/domain";
+import { COST_LINES, ProfitCalculator, type CostLine, type Product, type Sale } from "@/domain";
 
 export interface SaleProfit {
   sale: Sale;
@@ -7,6 +7,16 @@ export interface SaleProfit {
   totalCost: number;
   netProfit: number;
   margin: number;
+  /** Per-cost-line totals for this sale (major units). */
+  costByLine: Record<string, number>;
+}
+
+/** One part of «وين راح المال»: a cost line's total and its share of revenue. */
+export interface CostLineTotal {
+  line: CostLine;
+  amount: number;
+  /** Share of the period's revenue, 0..1. */
+  share: number;
 }
 
 /** One day of the trailing week — the capsule strip on the dashboard. */
@@ -53,6 +63,15 @@ export interface DashboardMetrics {
   margin: number;
   monthProfit: number;
   monthRevenue: number;
+  monthTotalCost: number;
+  /**
+   * This month's revenue taken apart: every cost line that actually spent
+   * something, largest first. Together with `monthProfit` these sum to
+   * `monthRevenue` — that identity is what makes the distribution bar honest.
+   */
+  monthCostLines: CostLineTotal[];
+  /** Mean net profit across the monthly window — the chart's fallback threshold. */
+  averageMonthProfit: number;
   todayProfit: number;
   saleCount: number;
   monthly: MonthlyPoint[];
@@ -76,7 +95,7 @@ function round2(n: number): number {
 /** Compute profit for a single sale using the product's cost structure. */
 export function profitForSale(sale: Sale, product: Product | undefined): SaleProfit {
   if (!product) {
-    return { sale, product, revenue: 0, totalCost: 0, netProfit: 0, margin: 0 };
+    return { sale, product, revenue: 0, totalCost: 0, netProfit: 0, margin: 0, costByLine: {} };
   }
   const r = ProfitCalculator.calculate({
     sellingPrice: sale.unitPrice,
@@ -91,6 +110,7 @@ export function profitForSale(sale: Sale, product: Product | undefined): SalePro
     totalCost: r.totalCost,
     netProfit: r.netProfit,
     margin: r.margin,
+    costByLine: r.costByLine,
   };
 }
 
@@ -128,7 +148,9 @@ export function computeDashboard(
   let netProfit = 0;
   let monthProfit = 0;
   let monthRevenue = 0;
+  let monthTotalCost = 0;
   let todayProfit = 0;
+  const monthCostMap = new Map<CostLine, number>();
 
   const monthlyMap = new Map<string, MonthlyPoint>();
   const productAgg = new Map<string, TopProduct>();
@@ -169,6 +191,11 @@ export function computeDashboard(
     if (d.getMonth() === thisMonth && d.getFullYear() === thisYear) {
       monthProfit += sp.netProfit;
       monthRevenue += sp.revenue;
+      monthTotalCost += sp.totalCost;
+      for (const line of COST_LINES) {
+        const amount = sp.costByLine[line] ?? 0;
+        if (amount) monthCostMap.set(line, (monthCostMap.get(line) ?? 0) + amount);
+      }
     }
     const wk = weekMap.get(dayKey(d));
     if (wk) wk.netProfit = round2(wk.netProfit + sp.netProfit);
@@ -210,6 +237,21 @@ export function computeDashboard(
     .sort((a, b) => b.netProfit - a.netProfit)
     .slice(0, 5);
 
+  // Largest spend first: the merchant reads down until the answer to «وين راح
+  // المال» stops being interesting.
+  const monthCostLines: CostLineTotal[] = [...monthCostMap.entries()]
+    .map(([line, amount]) => ({
+      line,
+      amount: round2(amount),
+      share: monthRevenue ? amount / monthRevenue : 0,
+    }))
+    .sort((a, b) => b.amount - a.amount);
+
+  const monthlyPoints = [...monthlyMap.values()];
+  const averageMonthProfit = monthlyPoints.length
+    ? round2(monthlyPoints.reduce((sum, p) => sum + p.netProfit, 0) / monthlyPoints.length)
+    : 0;
+
   return {
     currency,
     revenue: round2(revenue),
@@ -218,9 +260,12 @@ export function computeDashboard(
     margin: revenue ? netProfit / revenue : 0,
     monthProfit: round2(monthProfit),
     monthRevenue: round2(monthRevenue),
+    monthTotalCost: round2(monthTotalCost),
+    monthCostLines,
+    averageMonthProfit,
     todayProfit: round2(todayProfit),
     saleCount: sales.length,
-    monthly: [...monthlyMap.values()],
+    monthly: monthlyPoints,
     week: [...weekMap.values()],
     topProducts,
     recentSales,
