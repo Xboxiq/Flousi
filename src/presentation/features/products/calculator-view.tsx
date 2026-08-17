@@ -27,7 +27,7 @@ const CURRENCY_OPTIONS = [
 /**
  * الحاسبة as a lit scene (MASTER v4 · VISUAL-LAW §7): a mesh field carrying a
  * faded technical grid (plane: field), carved clay panels the merchant works in
- * (plane: mid), and the glass result panel crowned by the Coin (plane: focal).
+ * (plane: mid), and the glass result over the price column (plane: focal).
  * One orchestrated entrance ≤ 700ms, then everything is still — the only motion
  * left is the merchant's own numbers responding.
  */
@@ -147,7 +147,7 @@ export function CalculatorView() {
             </motion.section>
           </div>
 
-          {/* ---- plane: focal — the coin over the glass result ---- */}
+          {/* ---- plane: focal — the glass result + the price column ---- */}
           <motion.div
             {...step(0)}
             /* The answer leads on a phone; on desktop the grid already places it
@@ -160,7 +160,7 @@ export function CalculatorView() {
               costs={costs}
               currency={currency}
               locale={settings.locale}
-              withCoin
+              withColumn
             />
           </motion.div>
         </div>

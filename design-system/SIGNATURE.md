@@ -12,8 +12,13 @@
    figure the user is actively shaping (calculator, product form); read-only
    figures stay static `Money`.
    `src/presentation/components/interactive/living-number.tsx`
-2. **العملة The Coin** — the brand object (glossy dinar). Dashboard hero,
-   loading, landing. *(D1)*
+2. **عمود السعر The Price Column** — the focal object: the selling price is a
+   fixed dashed line, every cost is a milled plate stacked toward it, and what
+   remains beneath the line is the merchant's green plate. Costs that pass the
+   line keep stacking above it as a hatched red plate, so an overrun is watched
+   rather than read. It carries the breakdown, so no separate cost list exists.
+   `src/presentation/components/objects/price-column.tsx`
+   *(Replaces the rejected coin — see the rejection log in VISUAL-LAW.md.)*
 3. **Orb family v2** — selection/progression/status markers, danger variant. Used
    wherever a real state is marked. `ui/glossy-orb.tsx` *(v2 in D1)*
 4. **الخزنة The Vault** — the closing ritual object: months lock physically.

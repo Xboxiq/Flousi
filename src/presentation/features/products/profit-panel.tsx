@@ -5,7 +5,7 @@ import { TrendUp, TrendDown, Equals } from "@phosphor-icons/react";
 import { ProfitCalculator, type CostBreakdown } from "@/domain";
 import { Money } from "@/presentation/components/ui";
 import { LivingNumber } from "@/presentation/components/interactive/living-number";
-import { Coin } from "@/presentation/components/objects/coin";
+import { PriceColumn } from "@/presentation/components/objects/price-column";
 import { formatCurrency, formatPercent } from "@/presentation/lib/format";
 import { cn } from "@/presentation/lib/cn";
 
@@ -25,8 +25,8 @@ interface Props {
   currency: string;
   locale: string;
   quantity?: number;
-  /** Show the Coin as the panel's focal object (scene surfaces only). */
-  withCoin?: boolean;
+  /** Render the price column — the panel's focal object (scene surfaces only). */
+  withColumn?: boolean;
   className?: string;
 }
 
@@ -50,7 +50,7 @@ export function ProfitPanel({
   currency,
   locale,
   quantity = 1,
-  withCoin = false,
+  withColumn = false,
   className,
 }: Props) {
   const result = useMemo(
@@ -65,16 +65,8 @@ export function ProfitPanel({
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
-      {/* Focal object: the struck coin sits above its own shadow, overlapping
-          the glass panel below it — three planes, nothing floating alone (§7). */}
-      {withCoin && (
-        <div className="relative z-[2] -mb-10 flex justify-center">
-          <Coin size={132} polarity={result.netProfit} />
-        </div>
-      )}
-
       <div
-        className="glass relative overflow-hidden rounded-[var(--radius-2xl)] px-6 pt-12 pb-6"
+        className="glass relative overflow-hidden rounded-[var(--radius-2xl)] px-6 pt-6 pb-6"
         data-part="focal-panel"
       >
         {/* the light this panel sits in — crossfaded, never swapped.
@@ -138,22 +130,44 @@ export function ProfitPanel({
         />
       </div>
 
-      <div className="clay p-5">
-        <span className="text-xs font-semibold text-subtle">تفصيل التكاليف</span>
-        <ul className="mt-3 flex flex-col gap-2">
-          {Object.entries(result.costByLine)
-            .filter(([, amount]) => amount > 0)
-            .map(([line, amount]) => (
-              <li key={line} className="flex items-center justify-between text-sm">
-                <span className="text-muted">{COST_LABELS[line] ?? line}</span>
-                <Money className="text-fg">{money(amount)}</Money>
-              </li>
-            ))}
-          {Object.values(result.costByLine).every((a) => a === 0) && (
-            <li className="text-sm text-subtle">لم تُدخل أي تكاليف بعد.</li>
-          )}
-        </ul>
-      </div>
+      {/* The focal object. It replaces the old flat cost list: the breakdown is
+          the object now — each slab's height is its share of the price (§8). */}
+      {withColumn ? (
+        <div className="clay px-4 pt-4 pb-2" data-part="focal-object">
+          <div className="flex items-baseline justify-between px-1">
+            <span className="text-xs font-semibold text-subtle">من السعر إلى الربح</span>
+            <span className="text-[11px] text-subtle">ارتفاع كل طبقة = حصتها</span>
+          </div>
+          <PriceColumn
+            price={result.revenue}
+            costs={Object.entries(result.costByLine).map(([line, amount]) => ({
+              key: line,
+              label: COST_LABELS[line] ?? line,
+              amount,
+            }))}
+            netProfit={result.netProfit}
+            format={money}
+            className="mt-2"
+          />
+        </div>
+      ) : (
+        <div className="clay p-5">
+          <span className="text-xs font-semibold text-subtle">تفصيل التكاليف</span>
+          <ul className="mt-3 flex flex-col gap-2">
+            {Object.entries(result.costByLine)
+              .filter(([, amount]) => amount > 0)
+              .map(([line, amount]) => (
+                <li key={line} className="flex items-center justify-between text-sm">
+                  <span className="text-muted">{COST_LABELS[line] ?? line}</span>
+                  <Money className="text-fg">{money(amount)}</Money>
+                </li>
+              ))}
+            {Object.values(result.costByLine).every((a) => a === 0) && (
+              <li className="text-sm text-subtle">لم تُدخل أي تكاليف بعد.</li>
+            )}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
