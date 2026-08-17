@@ -36,6 +36,22 @@ Round 2: the first focal object (a coin) was rejected by the client and replaced
   every cost, distinguished by the joint, never by hue (§5 §13). It absorbed the
   old flat cost list, so the breakdown has no duplicate.
 
+- [x] G3b: the hero figure is an INSTRUMENT, per the client's visual-feedback batch
+  CHECK: grep -o 'data-part="[a-z-]*"' src/presentation/features/products/profit-panel.tsx | sort -u
+  EXPECT: focal-panel AND display AND lamp
+  EVIDENCE: display · focal-panel · focal-object · lamp. Round 3 applied the
+  feedback batch (matte 3D utility renders, kWh meters with digit drums, clipped
+  photo stacks, pill docks) as five new documented recipes R16–R20: the result
+  panel became a **moulded device shell** (`.device` — lit top face, equal side
+  rims, shaded lower face) with the figure **sunk into a recessed display window**
+  (`.display-window` — dark bay, inner shadow, one specular sweep, state-bound
+  glow from below), and the figure itself is now a **mechanical counter**
+  (`objects/odometer.tsx` — one masked drum per digit, rolling with a 22ms cascade
+  so the rightmost place leads; separators and the currency mark are struck on the
+  housing and never spin; reduced motion drops the roll, not the reading). The
+  polarity badge carries a moulded **lamp** that only glows when there is
+  something to report — grey and unlit at break-even.
+
 - [x] G4: glass obeys the two-lip edge law and ships the reduced-transparency fallback
   CHECK: grep -c "prefers-reduced-transparency" src/app/globals.css src/app/materials.css
   EXPECT: both ≥ 2
@@ -114,7 +130,7 @@ Round 2: the first focal object (a coin) was rejected by the client and replaced
 - [x] G13: slop scan not regressed (≤ 84 hits) and new suppressions justified
   CHECK: node .claude/skills/kill-ai-slop/scripts/scan.mjs src 2>&1 | grep groups
   EXPECT: hits ≤ 84 or every new hit justified in one sentence
-  EVIDENCE: 84 → 114 → 99 → **91** after the material layer was extracted into
+  EVIDENCE: 84 → 114 → 99 → 91 → **92** (+1 from the instrument's recessed bay) after the material layer was extracted into
   `src/app/materials.css` with a file-scoped, justified `deslop-ignore-file 06 19 20`
   header (the four load-bearing lines also carry their own reasons inline). The
   remaining 99 are the Phase-1 triage set (mono figures, mesh signature, landing

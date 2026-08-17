@@ -210,6 +210,111 @@
   }
   .scene-field > * { position: relative; z-index: 1; }
 
+  /* ---- DEVICE: a matte moulded body with a recessed display -----------------
+     From the client's visual feedback (utility-meter renders, chunky 3D icon
+     bodies): objects are moulded shells with a lit top face, shaded side rims
+     and instruments sunk INTO them. Nothing is printed on a flat rectangle. */
+  .device {
+    position: relative;
+    isolation: isolate;
+    border-radius: 26px;
+    background-image:
+      linear-gradient(178deg, #ffffff 0%, var(--surface) 30%, color-mix(in srgb, var(--surface) 78%, var(--sunken)) 100%);
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 1),
+      inset 10px 0 20px -14px rgba(18, 26, 38, 0.35),
+      inset -10px 0 20px -14px rgba(18, 26, 38, 0.35),
+      inset 0 -3px 6px -2px rgba(18, 26, 38, 0.1),
+      var(--shadow-occlusion),
+      0 2px 3px rgba(18, 26, 38, 0.14),
+      0 26px 44px -20px rgba(18, 26, 38, 0.34);
+  }
+  [data-theme="dark"] .device {
+    background-image:
+      linear-gradient(178deg, #2b3038 0%, var(--surface) 34%, #101216 100%);
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 0.1),
+      inset 10px 0 20px -14px rgba(0, 0, 0, 0.85),
+      inset -10px 0 20px -14px rgba(0, 0, 0, 0.85),
+      var(--shadow-occlusion),
+      0 2px 4px rgba(0, 0, 0, 0.6),
+      0 28px 48px -22px rgba(0, 0, 0, 0.8);
+  }
+  /* the instrument window: sunk into the shell, glass over a dark drum bay */
+  .display-window {
+    position: relative;
+    border-radius: 14px;
+    background-image: linear-gradient(180deg, #15181e, #23282f 62%, #1a1e24);
+    box-shadow:
+      inset 0 3px 8px rgba(0, 0, 0, 0.7),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.09),
+      0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+  [data-theme="dark"] .display-window {
+    box-shadow:
+      inset 0 3px 8px rgba(0, 0, 0, 0.85),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.07),
+      0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+  /* the glass over the window — one specular sweep, no blur needed */
+  .display-window::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background-image: linear-gradient(
+      104deg,
+      rgba(255, 255, 255, 0.16) 0 18%,
+      transparent 42%,
+      rgba(255, 255, 255, 0.06) 78%,
+      transparent
+    );
+  }
+
+  /* ---- DIGIT DRUMS: the mechanical counter (client feedback: kWh meters) ---- */
+  .odo {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+  }
+  .odo-wheel {
+    position: relative;
+    display: inline-block;
+    width: 0.62em;
+    height: var(--odo-h);
+    overflow: hidden;
+    /* depth of field, exactly like a physical drum bay */
+    mask-image: linear-gradient(transparent, black 26%, black 74%, transparent);
+  }
+  .odo-strip {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    transition: transform var(--motion-modal) var(--ease-out);
+  }
+  .odo-digit {
+    display: flex;
+    height: var(--odo-h);
+    align-items: center;
+    justify-content: center;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .odo-strip { transition: none; }
+  }
+
+  /* ---- LAMP: an indicator that only glows when it has something to report ---- */
+  .lamp {
+    position: relative;
+    border-radius: 50%;
+    background-image: radial-gradient(circle at 38% 30%, rgba(255, 255, 255, 0.9), transparent 46%),
+      radial-gradient(circle at 50% 60%, var(--lamp-color, var(--subtle)), color-mix(in srgb, var(--lamp-color, var(--subtle)) 55%, black));
+    box-shadow:
+      inset 0 -1px 2px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(18, 26, 38, 0.18),
+      0 0 12px var(--lamp-glow, transparent);
+  }
+
   /* ---- SLABS: milled plates for the price column ----------------------------
      One material for every cost, exactly as a stack of identical plates would
      be — what distinguishes them is the JOINT, not a colour (VISUAL-LAW §5 §13).

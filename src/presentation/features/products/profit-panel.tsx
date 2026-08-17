@@ -4,8 +4,8 @@ import { useMemo } from "react";
 import { TrendUp, TrendDown, Equals } from "@phosphor-icons/react";
 import { ProfitCalculator, type CostBreakdown } from "@/domain";
 import { Money } from "@/presentation/components/ui";
-import { LivingNumber } from "@/presentation/components/interactive/living-number";
 import { PriceColumn } from "@/presentation/components/objects/price-column";
+import { Odometer } from "@/presentation/components/objects/odometer";
 import { formatCurrency, formatPercent } from "@/presentation/lib/format";
 import { cn } from "@/presentation/lib/cn";
 
@@ -65,61 +65,81 @@ export function ProfitPanel({
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
-      <div
-        className="glass relative overflow-hidden rounded-[var(--radius-2xl)] px-6 pt-6 pb-6"
-        data-part="focal-panel"
-      >
-        {/* the light this panel sits in — crossfaded, never swapped.
-            Break-even is genuinely neutral: no glow at all. */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 transition-opacity duration-[var(--motion-modal)] ease-[var(--ease-out)]"
-          style={{
-            opacity: polarity === "profit" ? 1 : 0,
-            backgroundImage:
-              "radial-gradient(78% 62% at 50% 118%, color-mix(in srgb, var(--success) 55%, transparent), transparent 66%)",
-          }}
-        />
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 transition-opacity duration-[var(--motion-modal)] ease-[var(--ease-out)]"
-          style={{
-            opacity: isLoss ? 1 : 0,
-            backgroundImage:
-              "radial-gradient(78% 62% at 50% 118%, color-mix(in srgb, var(--danger) 52%, transparent), transparent 66%)",
-          }}
-        />
-
-        <div className="relative z-[1]">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-muted">صافي الربح</span>
-            <span
-              className={cn(
-                "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
-                polarity === "profit" && "bg-success-soft text-success",
-                polarity === "loss" && "bg-danger-soft text-danger",
-                polarity === "even" && "bg-surface-2 text-muted",
-              )}
-            >
-              {POLARITY[polarity].icon}
-              {POLARITY[polarity].word}
-            </span>
-          </div>
-
-          <div
-            className="mt-3 text-kpi font-semibold tracking-tight text-fg"
-            aria-live="polite"
-            aria-atomic="true"
+      {/* The instrument: a moulded body with the counter sunk into it. */}
+      <div className="device relative px-5 pt-4 pb-5" data-part="focal-panel">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-muted">صافي الربح</span>
+          <span
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold",
+              polarity === "profit" && "bg-success-soft text-success",
+              polarity === "loss" && "bg-danger-soft text-danger",
+              polarity === "even" && "bg-surface-2 text-muted",
+            )}
           >
-            <LivingNumber value={result.netProfit} format={money} />
-          </div>
-          <div className="mt-2 text-sm text-muted">
-            الهامش {formatPercent(result.margin, { locale })}
-          </div>
+            {/* the lamp only glows when it has something to report (§12) */}
+            <span
+              aria-hidden
+              data-part="lamp"
+              className="lamp size-[9px]"
+              style={
+                {
+                  "--lamp-color":
+                    polarity === "profit"
+                      ? "var(--success)"
+                      : polarity === "loss"
+                        ? "var(--danger)"
+                        : "var(--subtle)",
+                  "--lamp-glow":
+                    polarity === "even"
+                      ? "transparent"
+                      : `color-mix(in srgb, ${isLoss ? "var(--danger)" : "var(--success)"} 65%, transparent)`,
+                } as React.CSSProperties
+              }
+            />
+            {POLARITY[polarity].word}
+          </span>
+        </div>
+
+        {/* the drum bay: figures roll inside the housing, behind its glass */}
+        <div
+          className="display-window mt-3 overflow-hidden px-4 py-3.5"
+          data-part="display"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 transition-opacity duration-[var(--motion-modal)] ease-[var(--ease-out)]"
+            style={{
+              opacity: polarity === "even" ? 0 : 1,
+              backgroundImage: `radial-gradient(88% 120% at 50% 128%, color-mix(in srgb, ${
+                isLoss ? "var(--danger)" : "var(--success)"
+              } 40%, transparent), transparent 70%)`,
+            }}
+          />
+          <Odometer
+            value={result.netProfit}
+            format={money}
+            drumHeight={1.32}
+            className={cn(
+              "relative text-[38px] font-semibold leading-none",
+              polarity === "profit" && "text-[#7ef0b0]",
+              polarity === "loss" && "text-[#ff9a93]",
+              polarity === "even" && "text-white/70",
+            )}
+          />
+        </div>
+
+        <div className="mt-3 flex items-center justify-between text-sm">
+          <span className="text-muted">
+            الهامش <bdi dir="ltr" className="font-mono tabular-nums text-fg">{formatPercent(result.margin, { locale })}</bdi>
+          </span>
+          <span className="text-subtle text-xs">لكل وحدة مبيعة</span>
         </div>
       </div>
 
-      {/* Metric tiles — clay, carved, quiet next to the focal glass */}
+      {/* Metric tiles — carved, quiet next to the instrument */}
       <div className="grid grid-cols-2 gap-3">
         <Metric label="الإيراد" value={money(result.revenue)} />
         <Metric label="إجمالي التكلفة" value={money(result.totalCost)} />

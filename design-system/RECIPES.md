@@ -195,6 +195,43 @@ not in a side toast). Shards = the celebratory stamp. Donut gauge without SVG.
 .donut::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--surface)}
 ```
 
+## R16–R20 — from the client's visual feedback batch (2026-08-17)
+
+The batch (matte 3D utility-icon renders, kWh meters with digit drums, a travel
+journal built from clipped/stacked photo cards, floating pill docks) sets a
+clear language: **objects are moulded shells, instruments are sunk into them,
+collections are physical stacks, and attachments mark state.**
+
+**R16 — Device shell** *(built: `.device` in materials.css)*
+A moulded body, not a card: lit top face, both side rims shaded equally, a
+shaded lower face, and a contact + cast shadow pair. Instruments are recessed
+into it; nothing is printed on a flat plane.
+Target: the profit instrument, settlement terminal, report covers.
+
+**R17 — Digit drums** *(built: `.odo*` + `objects/odometer.tsx`)*
+Each digit is a drum in a masked bay; the strip translates by `-digit × drumH`
+with a 22ms cascade delay per place so the rightmost leads, exactly like a
+utility counter. Separators and the currency mark are struck on the housing and
+never spin. Reduced motion drops the transition, not the reading.
+Target: net profit, rep balances, period totals.
+
+**R18 — Recessed display window** *(built: `.display-window`)*
+Dark bay + inner shadow + a single specular sweep for the glass + a state-bound
+glow rising from below (green profit / red loss / none at break-even).
+Target: every hero figure that reports a live state.
+
+**R19 — Indicator lamp** *(built: `.lamp`)*
+A moulded lens: specular highlight, body radial, inner shade, and a glow that
+exists ONLY when there is something to report (§12). Grey and unlit at neutral.
+Target: polarity, sync state, period open/closed.
+
+**R20 — Clipped stacks** *(to build in D1/D3)*
+Collections as physical stacks: cards rotated 2–5° (no two angles equal, §4),
+white photo borders, a paperclip or stamp that appears only when the state
+warrants it (`filed`, `closed`, `settled` — §8), memoji-style avatar circles
+with white rings for people, and a floating pill dock for mobile navigation.
+Target: products, closed periods (clipped + stamped), report archive, rep cards.
+
 ---
 Also adopt from nova (not recipes but structure): glass tokens as a paired set
 (`--glass/-strong/-edge/-edge-shade/-specular/-caustic`), material depth as a
