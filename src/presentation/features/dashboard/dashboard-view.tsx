@@ -24,6 +24,7 @@ import {
   CardTitle,
   EmptyState,
   MeshSurface,
+  Money,
   Skeleton,
   Stat,
   Table,
@@ -33,7 +34,7 @@ import {
   THead,
   TR,
 } from "@/presentation/components/ui";
-import { formatCurrency, formatPercent, formatSignedPercent, currencySymbol } from "@/presentation/lib/format";
+import { formatCurrency, formatDate, formatPercent, formatSignedPercent, currencySymbol } from "@/presentation/lib/format";
 import { CountUp } from "@/presentation/components/interactive/count-up";
 
 export function DashboardView() {
@@ -123,11 +124,12 @@ export function DashboardView() {
             )}
           </div>
           <div>
-            <div className="font-mono text-kpi font-semibold tracking-tight tabular-nums" dir="ltr">
+            <div className="font-mono text-display font-semibold tracking-tight tabular-nums sm:text-kpi" dir="ltr">
               <CountUp
                 value={metrics.monthProfit}
                 prefix={currencySymbol(settings.currency, settings.locale) + " "}
                 decimals={settings.currency === "IQD" ? 0 : 2}
+                locale={settings.locale}
               />
             </div>
             <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-white/80">
@@ -182,13 +184,13 @@ export function DashboardView() {
                 <div key={p.productId} className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between text-sm">
                     <span className="truncate font-medium text-fg">{p.name}</span>
-                    <span className="ms-3 shrink-0 font-mono tabular-nums text-success" dir="ltr">
+                    <Money polarity={p.netProfit} className="ms-3 shrink-0">
                       {money(p.netProfit)}
-                    </span>
+                    </Money>
                   </div>
-                  <div className="neu-inset h-2 overflow-hidden rounded-full bg-sunken">
+                  <div className="h-2 overflow-hidden rounded-full bg-sunken">
                     <div
-                      className="h-full rounded-full [background-image:linear-gradient(90deg,var(--blue-400),var(--accent-strong))]"
+                      className="h-full rounded-full bg-accent"
                       style={{ width: `${width}%` }}
                     />
                   </div>
@@ -220,20 +222,14 @@ export function DashboardView() {
           <TBody>
             {metrics.recentSales.map((s) => (
               <TR key={s.id}>
-                <TD className="font-medium">{s.productName}</TD>
-                <TD className="text-start font-mono tabular-nums text-muted" dir="ltr">{s.quantity}</TD>
-                <TD className="text-start font-mono tabular-nums" dir="ltr">{money(s.revenue)}</TD>
-                <TD
-                  className={`text-start font-mono tabular-nums ${s.netProfit >= 0 ? "text-success" : "text-danger"}`}
-                  dir="ltr"
-                >
-                  {money(s.netProfit)}
+                <TD className="whitespace-nowrap font-medium">{s.productName}</TD>
+                <TD className="text-start"><Money className="text-muted">{s.quantity}</Money></TD>
+                <TD className="text-start"><Money>{money(s.revenue)}</Money></TD>
+                <TD className="text-start">
+                  <Money polarity={s.netProfit}>{money(s.netProfit)}</Money>
                 </TD>
                 <TD className="text-start text-muted">
-                  {new Date(s.soldAt).toLocaleDateString(settings.locale, {
-                    month: "short",
-                    day: "numeric",
-                  })}
+                  {formatDate(s.soldAt, { locale: settings.locale, month: "short", day: "numeric" })}
                 </TD>
               </TR>
             ))}

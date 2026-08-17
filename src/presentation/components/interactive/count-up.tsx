@@ -12,6 +12,7 @@ export function CountUp({
   suffix = "",
   decimals = 0,
   duration = 1200,
+  locale,
   className,
 }: {
   value: number;
@@ -19,6 +20,8 @@ export function CountUp({
   suffix?: string;
   decimals?: number;
   duration?: number;
+  /** BCP-47 locale for digit grouping; defaults to the browser locale. */
+  locale?: string;
   className?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -48,7 +51,11 @@ export function CountUp({
   return (
     <span ref={ref} className={className}>
       {prefix}
-      {n.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
+      {n.toLocaleString(locale, {
+        numberingSystem: "latn",
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      })}
       {suffix}
     </span>
   );

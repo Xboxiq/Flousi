@@ -26,7 +26,7 @@ import {
   TR,
 } from "@/presentation/components/ui";
 import type { Product, Sale } from "@/domain";
-import { formatCurrency, formatPercent } from "@/presentation/lib/format";
+import { formatCurrency, formatDate, formatPercent } from "@/presentation/lib/format";
 
 export function PeriodsView() {
   const loaded = useDataStore((s) => s.loaded);
@@ -85,8 +85,8 @@ export function PeriodsView() {
     return (
       <>
         <PageHeader
-          title="Accounting periods"
-          description="Close months and lock historical reports."
+          title="الفترات المحاسبية"
+          description="أغلق الأشهر واحفظ التقارير التاريخية للقراءة فقط."
         />
         <Skeleton className="h-48 w-full" />
       </>
@@ -155,7 +155,7 @@ export function PeriodsView() {
                 </div>
                 {period.closedAt && (
                   <span className="text-xs text-subtle">
-                    أُغلقت {new Date(period.closedAt).toLocaleDateString(settings.locale)}
+                    أُغلقت {formatDate(period.closedAt, { locale: settings.locale })}
                   </span>
                 )}
               </CardHeader>
