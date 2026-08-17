@@ -3,8 +3,9 @@
 import { useMemo } from "react";
 import { TrendUp, TrendDown, Equals } from "@phosphor-icons/react";
 import { ProfitCalculator, type CostBreakdown } from "@/domain";
-import { MeshSurface, Money } from "@/presentation/components/ui";
+import { Money } from "@/presentation/components/ui";
 import { LivingNumber } from "@/presentation/components/interactive/living-number";
+import { Coin } from "@/presentation/components/objects/coin";
 import { formatCurrency, formatPercent } from "@/presentation/lib/format";
 import { cn } from "@/presentation/lib/cn";
 
@@ -24,20 +25,34 @@ interface Props {
   currency: string;
   locale: string;
   quantity?: number;
+  /** Show the Coin as the panel's focal object (scene surfaces only). */
+  withCoin?: boolean;
   className?: string;
 }
 
 type Polarity = "profit" | "loss" | "even";
 
-/** State is carried in words + icon first; color (the mesh) reinforces it. */
+/** State is carried in words + icon first; light and color reinforce it. */
 const POLARITY: Record<Polarity, { word: string; icon: React.ReactNode }> = {
   profit: { word: "رابح", icon: <TrendUp size={13} weight="bold" /> },
   loss: { word: "خسارة", icon: <TrendDown size={13} weight="bold" /> },
   even: { word: "تعادل", icon: <Equals size={13} weight="bold" /> },
 };
 
-/** Instant profit results: the Living Number over quiet metric tiles. */
-export function ProfitPanel({ sellingPrice, costs, currency, locale, quantity = 1, className }: Props) {
+/**
+ * The profit result as a glass object over its own light (VISUAL-LAW §1 §5 §12).
+ * Polarity does not swap a class — two glow layers crossfade, so profit → loss
+ * is a change in the light falling on the panel, not a repaint.
+ */
+export function ProfitPanel({
+  sellingPrice,
+  costs,
+  currency,
+  locale,
+  quantity = 1,
+  withCoin = false,
+  className,
+}: Props) {
   const result = useMemo(
     () => ProfitCalculator.calculate({ sellingPrice, costs, currency, quantity }),
     [sellingPrice, costs, currency, quantity],
@@ -46,31 +61,73 @@ export function ProfitPanel({ sellingPrice, costs, currency, locale, quantity = 
   const money = (n: number) => formatCurrency(n, { currency, locale });
   const polarity: Polarity =
     result.netProfit > 0 ? "profit" : result.netProfit < 0 ? "loss" : "even";
+  const isLoss = polarity === "loss";
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
-      {/* Net profit hero — signature device #1 (the Living Number) on the
-          screen's single mesh moment. Loss switches to the semantic danger mesh. */}
-      <MeshSurface
-        variant={polarity === "loss" ? "night-danger" : "night"}
-        className="rounded-[var(--radius-xl)] p-6 text-white shadow-md"
-      >
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-white/75">صافي الربح</span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 text-xs font-semibold">
-            {POLARITY[polarity].icon}
-            {POLARITY[polarity].word}
-          </span>
+      {/* Focal object: the struck coin sits above its own shadow, overlapping
+          the glass panel below it — three planes, nothing floating alone (§7). */}
+      {withCoin && (
+        <div className="relative z-[2] -mb-10 flex justify-center">
+          <Coin size={132} polarity={result.netProfit} />
         </div>
-        <div className="mt-3 text-kpi font-semibold tracking-tight" aria-live="polite" aria-atomic="true">
-          <LivingNumber value={result.netProfit} format={money} />
-        </div>
-        <div className="mt-2 text-sm text-white/75">
-          الهامش {formatPercent(result.margin, { locale })}
-        </div>
-      </MeshSurface>
+      )}
 
-      {/* Metric tiles — deliberately quiet (elevation declared once) */}
+      <div
+        className="glass relative overflow-hidden rounded-[var(--radius-2xl)] px-6 pt-12 pb-6"
+        data-part="focal-panel"
+      >
+        {/* the light this panel sits in — crossfaded, never swapped.
+            Break-even is genuinely neutral: no glow at all. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 transition-opacity duration-[var(--motion-modal)] ease-[var(--ease-out)]"
+          style={{
+            opacity: polarity === "profit" ? 1 : 0,
+            backgroundImage:
+              "radial-gradient(78% 62% at 50% 118%, color-mix(in srgb, var(--success) 55%, transparent), transparent 66%)",
+          }}
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 transition-opacity duration-[var(--motion-modal)] ease-[var(--ease-out)]"
+          style={{
+            opacity: isLoss ? 1 : 0,
+            backgroundImage:
+              "radial-gradient(78% 62% at 50% 118%, color-mix(in srgb, var(--danger) 52%, transparent), transparent 66%)",
+          }}
+        />
+
+        <div className="relative z-[1]">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-muted">صافي الربح</span>
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
+                polarity === "profit" && "bg-success-soft text-success",
+                polarity === "loss" && "bg-danger-soft text-danger",
+                polarity === "even" && "bg-surface-2 text-muted",
+              )}
+            >
+              {POLARITY[polarity].icon}
+              {POLARITY[polarity].word}
+            </span>
+          </div>
+
+          <div
+            className="mt-3 text-kpi font-semibold tracking-tight text-fg"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <LivingNumber value={result.netProfit} format={money} />
+          </div>
+          <div className="mt-2 text-sm text-muted">
+            الهامش {formatPercent(result.margin, { locale })}
+          </div>
+        </div>
+      </div>
+
+      {/* Metric tiles — clay, carved, quiet next to the focal glass */}
       <div className="grid grid-cols-2 gap-3">
         <Metric label="الإيراد" value={money(result.revenue)} />
         <Metric label="إجمالي التكلفة" value={money(result.totalCost)} />
@@ -81,8 +138,7 @@ export function ProfitPanel({ sellingPrice, costs, currency, locale, quantity = 
         />
       </div>
 
-      {/* Cost breakdown */}
-      <div className="rounded-[var(--radius-lg)] bg-surface p-5 shadow-card">
+      <div className="clay p-5">
         <span className="text-xs font-semibold text-subtle">تفصيل التكاليف</span>
         <ul className="mt-3 flex flex-col gap-2">
           {Object.entries(result.costByLine)
@@ -104,7 +160,7 @@ export function ProfitPanel({ sellingPrice, costs, currency, locale, quantity = 
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[var(--radius-lg)] bg-surface px-4 py-3 shadow-card">
+    <div className="clay px-4 py-3">
       <div className="text-xs text-muted">{label}</div>
       <div className="mt-1 text-base font-semibold text-fg">
         <Money>{value}</Money>

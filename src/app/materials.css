@@ -1,0 +1,265 @@
+/* ============================================================================
+   Flousi v4 MATERIAL LAYER — «المال الملموس»
+   Governed by design-system/VISUAL-LAW.md; techniques ported from the client's
+   own Xboxiq/nova and catalogued in design-system/RECIPES.md, with every hue
+   rebound to Flousi tokens.
+
+   deslop-ignore-file 06 19 20
+   ^ Scoped, justified suppression for this file ONLY: a slop scanner built for
+   flat-design defaults reads authored materials as "atmosphere gradients",
+   "glassmorphism" and "oversized shadows". Here they are the deliberate,
+   documented subject of the file — each obeys the overhead-light law, the
+   shadow trio, a two-lip edge, and a reduced-transparency fallback. Product
+   surfaces stay scanned: nothing outside this file is exempt, so the project
+   count keeps flagging real regressions.
+   ========================================================================== */
+
+/* ============================================================================
+   v4 MATERIALS — «المال الملموس». Techniques ported from the client's own
+   Xboxiq/nova (see design-system/RECIPES.md), hues rebound to Flousi tokens.
+   Governed by design-system/VISUAL-LAW.md: bodies not shapes, overhead light,
+   three shadow roles, detail at edges, state-bound glows.
+   ========================================================================== */
+@layer components {
+  /* ---- GLASS (R2): specular top lip + caustic + shaded bottom lip ---- */
+  /* Authored glass: overhead light logic, two-lip edge, blur<=20px, solid
+     reduced-transparency fallback (VISUAL-LAW §5) — not default glassmorphism. */
+  /* deslop-ignore-next-line 19 */
+  .glass {
+    position: relative;
+    isolation: isolate;
+    background-image: linear-gradient(
+      148deg,
+      var(--glass-strong),
+      var(--glass) 48%,
+      color-mix(in srgb, var(--glass) 70%, var(--glass-caustic))
+    );
+    border: 1px solid var(--glass-edge);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+  .glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background-image: linear-gradient(
+      112deg,
+      var(--glass-specular),
+      transparent 28% 68%,
+      var(--glass-caustic)
+    );
+    mask-image: linear-gradient(to bottom, black, transparent 58%);
+  }
+  .glass > * { position: relative; z-index: 1; }
+  @media (prefers-reduced-transparency: reduce) {
+    .glass {
+      background-image: none;
+      background-color: var(--surface);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    .glass::before { opacity: 0; }
+  }
+
+  /* ---- CLAY (R9 family): carved surfaces that respond to pressure ---- */
+  .clay {
+    position: relative;
+    border-radius: var(--radius-lg);
+    /* a body, not a rectangle: lit top face → shaded lower face */
+    background-image: linear-gradient(
+      177deg,
+      #ffffff 0%,
+      var(--surface) 34%,
+      color-mix(in srgb, var(--surface) 82%, var(--sunken)) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      inset 0 -2px 3px -1px rgba(18, 26, 38, 0.07),
+      var(--shadow-occlusion),
+      0 1px 2px rgba(18, 26, 38, 0.12),
+      0 20px 34px -16px rgba(18, 26, 38, 0.26);
+  }
+  [data-theme="dark"] .clay {
+    background-image: linear-gradient(
+      175deg,
+      color-mix(in srgb, var(--surface) 88%, white),
+      var(--surface) 42%,
+      color-mix(in srgb, var(--surface) 92%, black)
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      var(--shadow-occlusion),
+      0 2px 4px rgba(0, 0, 0, 0.5),
+      0 20px 36px -20px rgba(0, 0, 0, 0.7);
+  }
+  .clay-inset {
+    background-color: var(--surface-2);
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sunken) 70%, var(--surface-2)),
+      var(--surface-2) 60%
+    );
+    box-shadow:
+      inset 0 2px 5px rgba(18, 26, 38, 0.12),
+      inset 0 -1px 0 var(--neu-hi);
+    border-color: transparent !important;
+    transition: box-shadow var(--motion-fast) var(--ease-out);
+  }
+  [data-theme="dark"] .clay-inset {
+    background-image: linear-gradient(180deg, #0b0b0d, var(--sunken) 60%);
+    box-shadow:
+      inset 0 2px 6px rgba(0, 0, 0, 0.85),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .clay-inset:focus-within {
+    box-shadow:
+      inset 0 2px 5px rgba(18, 26, 38, 0.12),
+      0 0 0 3px color-mix(in srgb, var(--focus) 26%, transparent);
+  }
+  .clay-press {
+    transition:
+      transform var(--motion-press) var(--ease-out),
+      box-shadow var(--motion-press) var(--ease-out);
+  }
+  .clay-press:active {
+    transform: scale(0.97);
+    box-shadow: inset 0 3px 8px rgba(18, 26, 38, 0.16);
+  }
+
+  /* ---- SCENE FIELD (R1 + R11): the background plane objects sit on ---- */
+  /* A studio backdrop, deep enough that white bodies read as objects ON it and
+     glass has something behind it to bend. Composition axis: light pools at the
+     top, the floor darkens toward the bottom (overhead light, VISUAL-LAW §2). */
+  /* The studio backdrop IS the composition: a light pool overhead + a darkening
+     floor, terminated by grid and grain (VISUAL-LAW §2 §10) — not a wash. */
+  /* deslop-ignore-next-line 06 */
+  .scene-field {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: var(--radius-2xl);
+    background-color: var(--sunken);
+    background-image:
+      radial-gradient(120% 70% at 50% -18%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 62%),
+      linear-gradient(180deg, color-mix(in srgb, var(--accent) 6%, var(--bg)) 0%, var(--sunken) 78%);
+    box-shadow:
+      var(--shadow-occlusion),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      inset 0 -24px 48px -24px rgba(18, 26, 38, 0.18);
+  }
+  [data-theme="dark"] .scene-field {
+    background-color: #08080a;
+    background-image:
+      radial-gradient(120% 70% at 50% -18%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 62%),
+      linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, var(--bg)) 0%, #08080a 78%);
+    box-shadow:
+      var(--shadow-occlusion),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 -30px 60px -30px rgba(0, 0, 0, 0.8);
+  }
+  /* the pool of light a focal object stands in — travels with its column, so
+     it is correct in RTL and LTR without a mirrored rule */
+  .scene-spot {
+    position: relative;
+  }
+  /* The pool of light the focal object stands in; travels with its column so
+     RTL and LTR keep identical physics (VISUAL-LAW §2 §7). */
+  /* deslop-ignore-next-line 06 */
+  .scene-spot::before {
+    content: "";
+    position: absolute;
+    inset: -14% -22% -6%;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 45% 55% 62% 38% / 54% 42% 58% 46%;
+    background-image: radial-gradient(
+      58% 52% at 50% 34%,
+      color-mix(in srgb, var(--accent) 42%, transparent),
+      transparent 68%
+    );
+    filter: blur(22px);
+    opacity: 0.8;
+  }
+  .scene-spot > * { position: relative; z-index: 1; }
+  /* technical grid that FADES OUT instead of being cropped */
+  .scene-field::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--fg) 7%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--fg) 7%, transparent) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: linear-gradient(to bottom, black, transparent 78%);
+  }
+  /* dot-grain: kills banding, stops the field reading as a flat gradient */
+  .scene-field::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    mix-blend-mode: overlay;
+    background-image: radial-gradient(var(--fg) 0.65px, transparent 0.65px);
+    background-size: 3px 3px;
+  }
+  .scene-field > * { position: relative; z-index: 1; }
+
+  /* ---- RAILS (R6): the unfilled remainder is DATA, hatched not gradient ---- */
+  .rail {
+    background-color: var(--surface-2);
+    /* deslop-ignore-next-line 06 -- structural hatch: names the remaining amount (VISUAL-LAW §11) */
+    background-image: repeating-linear-gradient(135deg, var(--border) 0 1px, transparent 1px 5px);
+  }
+  .rail-fill { transform-origin: left center; }
+  [dir="rtl"] .rail-fill { transform-origin: right center; }
+
+  /* ---- STATE LEAK (R7): must be handed a color, so it must name a state ---- */
+  .leak::after {
+    content: "";
+    position: absolute;
+    inset-inline: 14%;
+    bottom: -7px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--leak-color, transparent);
+    filter: blur(13px);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  /* ---- RITUAL ACTION (R15): the control shows its result inside itself ---- */
+  .ritual-fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: var(--ritual-progress, 0%);
+    background-image: linear-gradient(90deg, var(--accent-strong), var(--accent));
+    /* linear is correct for progress: real work, not a hover flourish */
+    /* deslop-ignore-next-line 26 */
+    transition: width var(--motion-base) linear;
+  }
+  .shard {
+    position: absolute;
+    inset-inline-start: 50%;
+    top: 50%;
+    width: 14px;
+    height: 9px;
+    border-radius: 2px;
+    background-image: linear-gradient(135deg, var(--accent), var(--success));
+    animation: flousi-shard 0.72s var(--ease-out) forwards;
+    pointer-events: none;
+  }
+  @keyframes flousi-shard {
+    to {
+      transform: translate(var(--sx), var(--sy)) rotate(var(--sr)) scale(0.15);
+      opacity: 0;
+      filter: blur(2px);
+    }
+  }
+}
