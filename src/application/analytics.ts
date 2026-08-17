@@ -9,6 +9,15 @@ export interface SaleProfit {
   margin: number;
 }
 
+/** One day of the trailing week — the capsule strip on the dashboard. */
+export interface DayPoint {
+  /** ISO date (yyyy-mm-dd) of the day. */
+  key: string;
+  /** Single-letter Arabic weekday mark. */
+  mark: string;
+  netProfit: number;
+}
+
 export interface MonthlyPoint {
   /** Sort key, e.g. "2026-06". */
   key: string;
@@ -47,8 +56,17 @@ export interface DashboardMetrics {
   todayProfit: number;
   saleCount: number;
   monthly: MonthlyPoint[];
+  /** Trailing 7 days, oldest first. */
+  week: DayPoint[];
   topProducts: TopProduct[];
   recentSales: RecentSale[];
+}
+
+/** Arabic single-letter weekday marks, Sunday-first to match Intl's getDay(). */
+const DAY_MARKS = ["ح", "ن", "ث", "ر", "خ", "ج", "س"];
+
+function dayKey(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
 function round2(n: number): number {
@@ -122,6 +140,13 @@ export function computeDashboard(
     monthlyMap.set(key, { key, label: MONTH_LABELS[d.getMonth()], revenue: 0, netProfit: 0 });
   }
 
+  // Seed the trailing week so an empty day still shows its track.
+  const weekMap = new Map<string, DayPoint>();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    weekMap.set(dayKey(d), { key: dayKey(d), mark: DAY_MARKS[d.getDay()], netProfit: 0 });
+  }
+
   const todayKey = now.toDateString();
   const thisMonth = now.getMonth();
   const thisYear = now.getFullYear();
@@ -145,6 +170,9 @@ export function computeDashboard(
       monthProfit += sp.netProfit;
       monthRevenue += sp.revenue;
     }
+    const wk = weekMap.get(dayKey(d));
+    if (wk) wk.netProfit = round2(wk.netProfit + sp.netProfit);
+
     if (d.toDateString() === todayKey) todayProfit += sp.netProfit;
 
     if (sp.product) {
@@ -193,6 +221,7 @@ export function computeDashboard(
     todayProfit: round2(todayProfit),
     saleCount: sales.length,
     monthly: [...monthlyMap.values()],
+    week: [...weekMap.values()],
     topProducts,
     recentSales,
   };

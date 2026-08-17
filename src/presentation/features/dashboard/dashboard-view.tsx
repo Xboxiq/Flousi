@@ -23,7 +23,6 @@ import {
   CardHeader,
   CardTitle,
   EmptyState,
-  MeshSurface,
   Money,
   Skeleton,
   Stat,
@@ -34,8 +33,10 @@ import {
   THead,
   TR,
 } from "@/presentation/components/ui";
-import { formatCurrency, formatDate, formatPercent, formatSignedPercent, currencySymbol } from "@/presentation/lib/format";
-import { CountUp } from "@/presentation/components/interactive/count-up";
+import { formatCurrency, formatDate, formatPercent, formatSignedPercent } from "@/presentation/lib/format";
+import { Odometer } from "@/presentation/components/objects/odometer";
+import { RingGauge } from "@/presentation/components/objects/ring-gauge";
+import { WeekBars } from "@/presentation/components/objects/week-bars";
 
 export function DashboardView() {
   const loaded = useDataStore((s) => s.loaded);
@@ -110,35 +111,61 @@ export function DashboardView() {
 
       {/* شبكة المؤشرات */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <MeshSurface
-          variant="aurora"
-          className="flex min-h-[200px] flex-col justify-between rounded-[var(--radius-xl)] p-6 text-white shadow-md sm:col-span-2"
+        {/* The month's headline, printed on halftone ink: the figure rolls on
+            drums, the margin sits on a dial, and the week stands beside it as
+            seven capsules (client feedback batch → RECIPES R17/R21/R22). */}
+        <div
+          className="halftone flex flex-col justify-between rounded-[var(--radius-2xl)] p-6 shadow-card sm:col-span-2"
+          data-part="hero"
         >
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-white/80">صافي الربح · هذا الشهر</span>
-            {profitDelta !== undefined && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 text-xs font-semibold text-white">
-                <TrendUp size={13} weight="bold" className={profitUp ? "" : "rotate-180"} />
-                {formatSignedPercent(profitDelta)}
+          <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-4">
+            <div className="min-w-0">
+              <span className="text-sm font-semibold text-fg/70">صافي الربح · هذا الشهر</span>
+              <div className="mt-2 text-fg" aria-live="polite" aria-atomic="true">
+                <Odometer
+                  value={metrics.monthProfit}
+                  format={money}
+                  drumHeight={1.3}
+                  className="text-[26px] font-bold leading-none sm:text-[42px]"
+                />
+              </div>
+              {profitDelta !== undefined && (
+                <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-surface/85 px-2.5 py-1 text-xs font-bold text-fg shadow-sm">
+                  <TrendUp size={13} weight="bold" className={profitUp ? "" : "rotate-180"} />
+                  <bdi dir="ltr" className="font-mono tabular-nums">
+                    {formatSignedPercent(profitDelta)}
+                  </bdi>
+                  <span className="font-medium text-fg/60">مقابل الشهر السابق</span>
+                </span>
+              )}
+            </div>
+            <RingGauge
+              value={metrics.margin}
+              label={formatPercent(metrics.margin, { locale: settings.locale })}
+              caption="الهامش"
+              size={76}
+              tone={metrics.margin >= 0.2 ? "success" : metrics.margin > 0 ? "accent" : "danger"}
+            />
+          </div>
+
+          <div className="mt-6 rounded-[var(--radius-lg)] bg-surface/70 p-3 backdrop-blur-[2px]">
+            <div className="flex items-baseline justify-between px-1">
+              <span className="text-[11px] font-semibold text-fg/70">آخر 7 أيام</span>
+              <span className="text-[11px] text-fg/55">
+                اليوم <bdi dir="ltr" className="font-mono tabular-nums">{money(metrics.todayProfit)}</bdi>
               </span>
-            )}
-          </div>
-          <div>
-            <div className="font-mono text-display font-semibold tracking-tight tabular-nums sm:text-kpi" dir="ltr">
-              <CountUp
-                value={metrics.monthProfit}
-                prefix={currencySymbol(settings.currency, settings.locale) + " "}
-                decimals={settings.currency === "IQD" ? 0 : 2}
-                locale={settings.locale}
-              />
             </div>
-            <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-white/80">
-              <span>الهامش {formatPercent(metrics.margin, { locale: settings.locale })}</span>
-              <span>الإيراد {money(metrics.monthRevenue)}</span>
-              <span>اليوم {money(metrics.todayProfit)}</span>
-            </div>
+            <WeekBars
+              className="mt-2"
+              height={68}
+              days={metrics.week.map((d) => ({
+                mark: d.mark,
+                value: d.netProfit,
+                title: `${d.key}: ${money(d.netProfit)}`,
+              }))}
+            />
           </div>
-        </MeshSurface>
+        </div>
 
         <Stat
           label="الإيراد (هذا الشهر)"

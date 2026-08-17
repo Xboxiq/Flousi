@@ -232,6 +232,64 @@ warrants it (`filed`, `closed`, `settled` — §8), memoji-style avatar circles
 with white rings for people, and a floating pill dock for mobile navigation.
 Target: products, closed periods (clipped + stamped), report archive, rep cards.
 
+## R21–R30 — from the client's second visual-feedback batch (2026-08-17)
+
+Batch read: dashboard cards with dials and coloured rails · a widget family shipped
+in matched light AND dark pairs · a dithered halftone net-income card · gradient-faded
+big digits · raised pill docks (soft-UI and liquid-glass) · modals with a gradient art
+header · a dark tips card with faint line-art · an Arabic RTL dashboard with a
+connected horizontal stepper and ring gauges · quick-action circles · slide-to-send ·
+a gradient speed slider with a hatched "usual range" · sparkline tiles fused to list
+rows · a 3D folder with documents peeking out for report downloads.
+
+**R21 — Halftone hero** *(built: `.halftone`)*
+A gradient whose noise is a visible 4px dot screen (`radial-gradient` dots at
+`mix-blend-mode: overlay`, `soft-light` on dark). Reads as printed ink instead of
+a CSS gradient and cannot band. Dark variant is a deep ink, not the light card
+inverted. Target: month headline, landing hero, report covers.
+
+**R22 — Capsule week** *(built: `.capsule-track/.capsule-fill` + `objects/week-bars.tsx`)*
+Seven carved capsule tracks with a plunger at each day's level; an empty day still
+shows its track because the remainder is part of the reading (§11). Capped narrower
+than tall so capsules stay capsules on wide cards. Never animated — data being read.
+
+**R23 — Ring dial** *(built: `objects/ring-gauge.tsx`)*
+SVG dial: sunken track + a hatched remainder + a round-capped arc with a matched
+drop shadow, figure struck in the middle. Direction-neutral, so RTL needs no rule.
+Target: margin, target progress, rep achievement.
+
+**R24 — Floating dock** *(built: `.dock/.dock-active` + `layout/mobile-dock.tsx`)*
+A raised pill rail where the active destination sits in its OWN lifted capsule —
+selection is a physical position, not a colour swap. The content column reserves
+its height so no row is trapped underneath.
+
+**R25 — Slide to commit** *(to build: periods)*
+A committing action that requires a deliberate drag ("اسحب للإغلاق") with a
+circular handle in a white rail. For irreversible money events — closing a period,
+paying a settlement — where a tap is too cheap.
+
+**R26 — Quick-action circles** *(to build: dashboard)*
+Four soft-tinted circular tiles with a bare icon and a word beneath. Only for
+actions that are genuinely daily; each tile's tint is its semantic (income green,
+expense red, invoice accent).
+
+**R27 — Sparkline row tile** *(to build: products, reps)*
+A dark mini-tile fused to the leading edge of a list row carrying that item's
+trend + its value. Turns a flat list into a scannable comparison.
+
+**R28 — Range slider with a usual band** *(to build: pricing)*
+A gradient rail with a hatched zone marking "your usual range" and an explicit
+label when the handle passes it. Compares the current choice to the merchant's own
+history instead of an abstract scale.
+
+**R29 — Sheet with an art header** *(to build: dialogs)*
+Modal = a gradient/halftone art strip + a white sheet + an inner bordered detail
+card + one full-width dark CTA. Keeps confirmations calm and legible.
+
+**R30 — Document folder object** *(to build: reports/export)*
+An extruded folder with document sheets peeking out at unequal angles (§4), used
+as the export affordance. The sheets only appear when there is something to export.
+
 ---
 Also adopt from nova (not recipes but structure): glass tokens as a paired set
 (`--glass/-strong/-edge/-edge-shade/-specular/-caustic`), material depth as a

@@ -75,6 +75,21 @@ describe("computeDashboard", () => {
     expect(m.monthly[m.monthly.length - 1].label).toBe("يونيو");
   });
 
+  it("produces a 7-day series where empty days keep their slot", () => {
+    // `now` is 2026-06-26; this sale lands two days earlier, inside the window.
+    const m = computeDashboard([product()], [sale({ soldAt: "2026-06-24T09:00:00.000Z" })], {
+      now,
+    });
+    expect(m.week).toHaveLength(7);
+    expect(m.week[m.week.length - 1].key).toBe("2026-06-26");
+    const day = m.week.find((d) => d.key === "2026-06-24");
+    expect(day?.netProfit).toBe(60);
+    // Days without sales are present and zero — the empty track is data.
+    expect(m.week.filter((d) => d.netProfit === 0)).toHaveLength(6);
+    // Every day carries its Arabic weekday mark.
+    expect(m.week.every((d) => d.mark.length > 0)).toBe(true);
+  });
+
   it("ranks top products by net profit", () => {
     const a = product({
       id: "a",

@@ -303,6 +303,96 @@
     .odo-strip { transition: none; }
   }
 
+  /* ---- HALFTONE HERO (feedback: the dithered net-income card) ----------------
+     A grainy gradient whose noise is a visible dot screen, not a blur. Reads as
+     printed ink rather than a CSS gradient, and the dots kill all banding. */
+  .halftone {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background-color: color-mix(in srgb, var(--accent) 16%, var(--surface));
+    background-image:
+      radial-gradient(72% 82% at 12% 18%, color-mix(in srgb, var(--success) 60%, transparent), transparent 58%),
+      radial-gradient(66% 78% at 88% 78%, color-mix(in srgb, var(--accent) 70%, transparent), transparent 60%),
+      linear-gradient(146deg, color-mix(in srgb, var(--accent) 22%, white), color-mix(in srgb, var(--success) 18%, white));
+  }
+  [data-theme="dark"] .halftone {
+    background-color: color-mix(in srgb, var(--accent) 26%, #0d1017);
+    background-image:
+      radial-gradient(72% 82% at 12% 18%, color-mix(in srgb, var(--success) 48%, transparent), transparent 58%),
+      radial-gradient(66% 78% at 88% 78%, color-mix(in srgb, var(--accent) 62%, transparent), transparent 60%),
+      linear-gradient(146deg, color-mix(in srgb, var(--accent) 34%, #0d1017), color-mix(in srgb, var(--success) 22%, #0d1017));
+  }
+  .halftone::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: overlay;
+    background-image: radial-gradient(var(--fg) 42%, transparent 44%);
+    background-size: 4px 4px;
+  }
+  [data-theme="dark"] .halftone::before {
+    opacity: 0.34;
+    mix-blend-mode: soft-light;
+    background-image: radial-gradient(#ffffff 42%, transparent 44%);
+  }
+  .halftone > * { position: relative; z-index: 1; }
+
+  /* ---- CAPSULE BARS (feedback: the M T W T F S S widget) --------------------
+     A week as capsules: each is a carved track with a filled cap that reads as
+     a plunger sitting at its level. Height is the value; the track is the rest. */
+  .capsule-track {
+    position: relative;
+    overflow: hidden;
+    border-radius: 999px;
+    background-color: var(--sunken);
+    box-shadow: inset 0 1px 3px rgba(18, 26, 38, 0.16), inset 0 -1px 0 var(--neu-hi);
+  }
+  .capsule-fill {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    border-radius: 999px;
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--accent), white 34%), var(--accent));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 -1px 3px rgba(18, 26, 38, 0.2);
+  }
+
+  /* ---- FLOATING DOCK (feedback: the soft pill nav + liquid-glass dock) ------
+     A raised pill rail; the active item sits in its own lifted capsule. */
+  .dock {
+    border-radius: 999px;
+    background-image: linear-gradient(180deg, color-mix(in srgb, var(--surface) 94%, white), var(--surface));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      var(--shadow-occlusion),
+      0 2px 4px rgba(18, 26, 38, 0.12),
+      0 18px 32px -12px rgba(18, 26, 38, 0.3);
+  }
+  [data-theme="dark"] .dock {
+    background-image: linear-gradient(180deg, #23262c, var(--surface));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.09),
+      var(--shadow-occlusion),
+      0 2px 6px rgba(0, 0, 0, 0.6),
+      0 20px 36px -14px rgba(0, 0, 0, 0.8);
+  }
+  .dock-active {
+    border-radius: 999px;
+    background-color: var(--surface);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      0 1px 2px rgba(18, 26, 38, 0.14),
+      0 6px 14px -6px rgba(18, 26, 38, 0.3);
+  }
+  [data-theme="dark"] .dock-active {
+    background-color: #2c3037;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 2px 6px rgba(0, 0, 0, 0.6);
+  }
+
   /* ---- LAMP: an indicator that only glows when it has something to report ---- */
   .lamp {
     position: relative;
