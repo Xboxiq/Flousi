@@ -37,6 +37,12 @@ glass edge needs TWO insets: bright top lip + dark bottom lip.
 ## §6+§9 الحاوية محايدة واللون من المحتوى — Neutral container, color from content
 Test: remove all color but one spot — which spot deserves it? That spot gets it.
 
+**§6a أكسنت واحد لكل ريل — one accent per rail (added 2026-08-17, batch 5):** when a
+coloured PRIMARY and a coloured STATE sit on the same rail, neither points any more.
+The dock proved it: an accent label for "you are here" beside an accent add-button
+made two claims on the eye. Position and elevation say where you are — the raised,
+rimmed capsule with a filled icon; the accent stays with the verb.
+
 ## §7 لا شيء يطفو وحده — Nothing floats alone
 A composed scene has at least three objects on three depth planes (field / mid /
 focal). One floating card on a flat page is a decal.
@@ -97,6 +103,8 @@ appearing twice is not an argument for accepting it.
 | Flat corporate illustration | بلا جسم ولا ضوء — يسقط §1 |
 | Pastel per-icon tiles | لون بلا معنى — يسقط §13 |
 | Side-lit objects | تنقلب فيزياؤها بالمرآة RTL — يسقط §2 |
+| **«الصرف حبر عادي والإيراد فقط ملوّن» (من محفظة استهلاكية، تغذية 5)** | صحيح في محفظة شخصية حيث الصرف طبيعي؛ فلوسي موجود ليقول إن هذه البيعة **خسرت**، فالربح السالب يبقى بالأحمر. الدرس المأخوذ: ليس كل سالب يستحق اللون — الكميات والتكاليف حبر محايد، والقطبية للربح وحده |
+| صبغ الألواح بألوان باستيل حسب الدور (نعناعي/بنفشي/مرجاني) | نأخذ فكرة أن اللوح قد يُصبغ بدوره، لا الأصباغ نفسها؛ ألوانها ليست ألواننا |
 | **استيراد لوحة «lime على أسود» من تغذية 2026-08-17** | المراجع الأربعة داكنة بلون واحد حاد. الدرس الحقيقي هو **التوزيع**: أرضية هادئة ولون واحد فقط مسموح له أن يشير — وهذا قانوننا أصلاً (§6 §13). أُخذ الدرس وطُبّق على أكسنت Flousi؛ استيراد الـ hue نفسه مرفوض. |
 | مخطط النقاط (dot-matrix) لمقارنة مبالغ | شبكة نقاط أسوأ قراءةً من قضيب لسؤال «أي منتج ربح أكثر»؛ مؤجّل لشاشة المندوبين حيث الوحدة شخص لا مبلغ |
 | شريط أجزاء يزيد مجموعه على كلّه (التجاوز كقطعة مضافة) | ضُبط في هذه الدفعة: كان الشريط يتجاوز 100% فيُقصّ من طرفه؛ صار التجاوز منطقةً محزّزة فوق الأجزاء التي أكلها (§11b) |

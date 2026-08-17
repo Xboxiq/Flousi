@@ -347,6 +347,66 @@ Round actions in a row, all one neutral material except the primary, which is an
 accent body raised above the rail. Round is for a single verb; anything needing two
 words stays a pill.
 
+## R40–R48 — from the fifth visual-feedback batch (2026-08-17)
+
+Batch read: a light neumorphic wallet (masked account chip · balance with grey cents ·
+one labelled green pill beside three icon-only graphite pills · activity rows where
+**spend is neutral ink and only income is green** · a dock whose active key is a
+rimmed capsule with a FILLED icon) · extruded pill studies showing the rim as a
+lighter mix of the body's own hue · a report screen with a **tick-comb ruler band**,
+**patterned stacked bars with avatars under them**, and tiny **delta chips with a
+triangle** · a type-specimen card (overlapping surfaces + frosted sheet + hex
+swatches) · a coral dashboard with a **black donut carrying one accent arc**,
+**concentric magnitude rings**, a dot-matrix duration widget and removable filter
+chips · a dock with a **black circular FAB** · Iconly's **outline/filled icon pairs**
+and a dock that labels ONLY the active key · a bento wallet with **segmented
+tick-comb meters**, a thin multi-colour distribution bar with a dot legend, and huge
+figures whose currency sign is set small and leading · a currency-exchange card whose
+**swap circle straddles the seam between the two rows**.
+
+**R40 — Tick-comb meter** *(built: `objects/tick-meter.tsx` + `.comb-*`)*
+A share drawn as a row of discrete ticks — filled ticks up to the value, carved empty
+ticks for the rest. It quantises the reading (you can count it), and the remainder is
+structural by construction (§11). Beats a smooth bar wherever the number matters more
+than the sweep.
+
+**R41 — Scale contrast inside one figure** *(built: `Stat` now renders through `Money`)*
+One figure, three sizes: the whole part loud, the fraction quieter, the unit smallest.
+The references set the currency sign at roughly half the numeral height. No figure in
+the product is allowed to print its unit at full size again.
+
+**R42 — Labelled primary + icon-only siblings** *(built: dashboard quick actions)*
+An action row is ONE labelled primary in the accent material beside N icon-only
+pills of the same height in neutral graphite. The icon-only siblings must carry
+`aria-label` and a tooltip — an icon alone is a label only for the eye.
+
+**R43 — Delta chip with a caret** *(built: `ui/delta.tsx`)*
+A tiny pill on the soft tint of its own tone, a caret glyph, the percentage in mono.
+Never a bare coloured number: the pill is what makes it scannable in a grid.
+
+**R44 — Label only where you are** *(built: `layout/mobile-dock.tsx`)*
+In a compact dock the active key shows a filled icon AND its label inside a raised
+capsule; the others show an outline icon only, with the name still exposed to
+assistive tech. Outline ⇄ filled is the state grammar — never two different icons.
+
+**R45 — Raised circular primary at the dock's end** *(built: the dock FAB)*
+The one verb worth a permanent button is a circle, larger than the rail's keys,
+raised above it in the accent material. Round is for a single verb only.
+
+**R46 — Swap straddling the seam** *(queued: settlements, P1)*
+Two stacked inset rows (from / to) with a circular swap control centred on the seam
+between them. The control belongs to the JOINT, which is why it reads as reversing
+the pair rather than acting on one row.
+
+**R47 — Concentric magnitude rings** *(queued: reports)*
+Nested circles sized by √value so AREA carries the magnitude. Only legitimate when
+the values genuinely contain one another (revenue ⊃ costs ⊃ profit); for a partition
+use the distribution bar instead.
+
+**R48 — The specimen surface** *(built: `/styleguide` instruments study)*
+Every instrument shown at reading size beside what it measures and the law it obeys.
+A design system that cannot be read on one page is folklore.
+
 ---
 Also adopt from nova (not recipes but structure): glass tokens as a paired set
 (`--glass/-strong/-edge/-edge-shade/-specular/-caustic`), material depth as a

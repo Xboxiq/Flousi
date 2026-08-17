@@ -545,6 +545,53 @@
       0 1px 1px rgba(18, 26, 38, 0.2);
   }
 
+  /* ---- TICK-COMB METER (R40) -------------------------------------------------
+     A share you can count: discrete ticks, filled up to the value, the rest left
+     as carved empty slots. The remainder is structural by construction, so this
+     obeys §11 without needing a hatch, and the quantising makes "about two
+     thirds" readable without a label. */
+  .comb {
+    display: flex;
+    align-items: stretch;
+    gap: 3px;
+  }
+  /* narrow and taller than wide — a tick, not a block. Capped so a wide card
+     cannot inflate them into squares (the same cap the week capsules use). */
+  .comb-tick {
+    flex: 1 1 0;
+    max-width: 7px;
+    border-radius: 3px;
+    background-color: var(--sunken);
+    box-shadow:
+      inset 0 1px 2px rgba(18, 26, 38, 0.16),
+      inset 0 -1px 0 var(--neu-hi);
+  }
+  [data-theme="dark"] .comb-tick {
+    background-color: #0b0b0d;
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.8),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  }
+  /* a filled tick is a small body: lit top, its own hue, a contact shadow */
+  .comb-tick[data-on="true"] {
+    background-color: var(--comb-color, var(--accent));
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--comb-color, var(--accent)), white 26%),
+      var(--comb-color, var(--accent))
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 1px 2px -1px color-mix(in srgb, var(--comb-color, var(--accent)) 60%, transparent);
+  }
+  /* the tick the value actually lands on gets the edge detail (§5) */
+  .comb-tick[data-edge="true"] {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 0 0 1.5px color-mix(in srgb, var(--comb-color, var(--accent)) 45%, transparent),
+      0 2px 4px -2px color-mix(in srgb, var(--comb-color, var(--accent)) 70%, transparent);
+  }
+
   /* ---- MOULDED CONTROLS (feedback: the Add Money / Withdraw pills) ----------
      A pressable is a moulded body, not a filled rectangle: a lighter RIM around
      the fill, a lit top edge inside it, a shaded lower lip, and a drop shadow
@@ -587,6 +634,35 @@
       0 3px 0 color-mix(in oklab, var(--danger), black 16%),
       0 8px 16px -6px color-mix(in srgb, var(--danger) 48%, transparent);
   }
+  /* the graphite sibling (feedback: the dark icon pills beside the green one).
+     A neutral DARK pressable — the material an icon-only action wears so the one
+     labelled accent action in the row keeps the eye. */
+  .molded-graphite {
+    background-image: linear-gradient(180deg, #5a6068, #3c4148);
+    box-shadow:
+      0 0 0 1.5px #6c727b,
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.45),
+      0 3px 0 #23262b,
+      0 8px 16px -6px rgba(18, 26, 38, 0.5);
+  }
+  .molded-graphite:hover { background-image: linear-gradient(180deg, #666c75, #454a52); }
+  [data-theme="dark"] .molded-graphite {
+    background-image: linear-gradient(180deg, #40454d, #2a2e34);
+    box-shadow:
+      0 0 0 1.5px rgba(255, 255, 255, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.6),
+      0 3px 0 rgba(0, 0, 0, 0.6),
+      0 8px 16px -6px rgba(0, 0, 0, 0.7);
+  }
+  .molded-graphite:active:not(:disabled) {
+    box-shadow:
+      0 0 0 1.5px #6c727b,
+      inset 0 2px 5px rgba(0, 0, 0, 0.5),
+      0 1px 0 rgba(0, 0, 0, 0.3);
+  }
+
   /* the quiet twin: same body language, neutral material */
   .molded-quiet {
     background-image: linear-gradient(180deg, #ffffff, var(--surface-2));
@@ -654,10 +730,13 @@
       0 2px 6px rgba(0, 0, 0, 0.6),
       0 20px 36px -14px rgba(0, 0, 0, 0.8);
   }
+  /* The seated key: a real rim is what makes it read as a body dropped into the
+     rail rather than a lighter patch of it (feedback batch 5, images 1/3/9). */
   .dock-active {
     border-radius: 999px;
     background-color: var(--surface);
     box-shadow:
+      0 0 0 1.5px color-mix(in srgb, var(--fg) 22%, transparent),
       inset 0 1px 0 rgba(255, 255, 255, 0.95),
       0 1px 2px rgba(18, 26, 38, 0.14),
       0 6px 14px -6px rgba(18, 26, 38, 0.3);

@@ -1,6 +1,8 @@
 import { cn } from "@/presentation/lib/cn";
-import { TrendUp, TrendDown } from "@phosphor-icons/react/dist/ssr";
 import { Card } from "./card";
+import { Delta } from "./delta";
+import { Money } from "./money";
+import { TickMeter } from "../objects/tick-meter";
 
 export type StatTone = "default" | "success" | "danger";
 /** Accent hues are locked to the semantic set: blue (interactive/brand),
@@ -17,6 +19,11 @@ export interface StatProps {
   deltaLabel?: string;
   /** A quiet second reading under the value (e.g. its share of revenue). */
   caption?: React.ReactNode;
+  /**
+   * A share this tile also reports (0..1), drawn as a comb of ticks under the
+   * figure. Only pass it when the share is a real reading, not decoration.
+   */
+  meter?: { value: number; label: string; tone?: "accent" | "success" | "danger" };
   icon?: React.ReactNode;
   /** Force value color (e.g. profit positive/negative). */
   tone?: StatTone;
@@ -37,22 +44,27 @@ const CHIP: Record<StatAccent, string> = {
   neutral: "bg-surface-2 text-muted",
 };
 
-/** KPI tile: clean white card, label, large tabular value, optional trend delta. */
+/**
+ * KPI tile: label on the top edge, the reading on the floor.
+ *
+ * The figure goes through `Money`, so it carries the same scale contrast as
+ * every other figure in the product — whole part loud, fraction quieter, unit
+ * quietest (RECIPES R41). A tile taller than its content (a matched pair beside
+ * a hero) distributes instead of padding its bottom.
+ */
 export function Stat({
   label,
   value,
   delta,
   deltaLabel,
   caption,
+  meter,
   icon,
   tone = "default",
   accent = "blue",
   className,
 }: StatProps) {
-  const up = (delta ?? 0) >= 0;
   return (
-    /* A tile that is taller than its content (a matched pair beside a hero, say)
-       distributes: the label rides the top edge, the reading sits on the floor. */
     <Card className={cn("flex flex-col justify-between gap-3 p-5", className)}>
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-medium text-muted">{label}</span>
@@ -68,23 +80,25 @@ export function Stat({
         )}
       </div>
       <div>
-        <div className={cn("font-mono text-display font-bold tabular-nums", VALUE_TONE[tone])}>
-          <bdi dir="ltr">{value}</bdi>
-        </div>
+        <Money className={cn("block text-display font-bold", VALUE_TONE[tone])}>{value}</Money>
+        {meter && (
+          <TickMeter
+            className="mt-3"
+            value={meter.value}
+            label={meter.label}
+            tone={meter.tone ?? "accent"}
+            height={16}
+            ticks={18}
+          />
+        )}
         {caption && <p className="mt-2 text-xs text-muted">{caption}</p>}
         {deltaLabel && (
-          <div
-            className={cn(
-              "mt-2 inline-flex items-center gap-1.5 text-xs font-semibold",
-              up ? "text-success" : "text-danger",
-            )}
-          >
-            <span className="inline-flex items-center gap-0.5">
-              {up ? <TrendUp size={14} weight="bold" /> : <TrendDown size={14} weight="bold" />}
-              {deltaLabel}
-            </span>
-            <span className="font-medium text-subtle">مقارنة بالشهر السابق</span>
-          </div>
+          <Delta
+            className="mt-2"
+            value={delta ?? 0}
+            label={deltaLabel}
+            against="مقارنة بالشهر السابق"
+          />
         )}
       </div>
     </Card>

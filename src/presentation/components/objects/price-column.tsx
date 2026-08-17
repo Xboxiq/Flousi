@@ -200,13 +200,23 @@ function Slab({
             </bdi>
           </div>
         ) : (
-          height >= 15 && (
-            /* too thin for a name, thick enough for its number */
-            <div className="relative flex h-full items-center justify-end px-3">
+          height >= SLAB_MIN && (
+            /* Too thin for the two-column line, so both parts are set tight on
+               ONE line: an amount without its name is a riddle, and a name
+               without its amount is not a reading (§8). */
+            <div className="relative flex h-full items-center justify-between gap-1.5 px-2.5">
+              <span
+                className={cn(
+                  "truncate text-[9px] font-semibold",
+                  onMetal ? "text-fg/70" : "text-white/90",
+                )}
+              >
+                {label}
+              </span>
               <bdi
                 dir="ltr"
                 className={cn(
-                  "font-mono text-[10px] tabular-nums",
+                  "font-mono text-[9px] tabular-nums",
                   onMetal ? "text-fg/60" : "text-white/85",
                 )}
               >

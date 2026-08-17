@@ -4,7 +4,7 @@ import { cloneElement, forwardRef, isValidElement } from "react";
 import { cn } from "@/presentation/lib/cn";
 import { Spinner } from "./spinner";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "danger";
+export type ButtonVariant = "primary" | "secondary" | "graphite" | "ghost" | "outline" | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 /**
@@ -16,6 +16,7 @@ export type ButtonSize = "sm" | "md" | "lg" | "icon";
 const VARIANTS: Record<ButtonVariant, string> = {
   primary: "molded molded-accent text-white",
   secondary: "molded molded-quiet text-fg",
+  graphite: "molded molded-graphite text-white",
   ghost: "text-muted hover:bg-surface-2 hover:text-fg",
   outline: "border border-border bg-transparent text-fg hover:bg-surface-2",
   danger: "molded molded-danger text-white",
@@ -25,7 +26,9 @@ const SIZES: Record<ButtonSize, string> = {
   sm: "h-9 px-3.5 text-sm gap-1.5 rounded-full",
   md: "h-11 px-5 text-sm gap-2 rounded-full",
   lg: "h-12 px-6 text-base gap-2 rounded-full",
-  icon: "size-11 rounded-full",
+  /* A key, not a bubble: the reference action rows set icon-only actions as
+     squircles slightly wider than tall, so they read as siblings of the pill. */
+  icon: "h-11 w-[54px] rounded-[18px]",
 };
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

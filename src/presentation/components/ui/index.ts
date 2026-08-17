@@ -14,6 +14,8 @@ export type { BadgeTone } from "./badge";
 export { Stat } from "./stat";
 export type { StatProps } from "./stat";
 export { Money } from "./money";
+export { Delta } from "./delta";
+export type { DeltaProps } from "./delta";
 export type { MoneyProps } from "./money";
 export { Skeleton } from "./skeleton";
 export { Spinner } from "./spinner";

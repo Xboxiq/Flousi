@@ -9,13 +9,13 @@ import {
   Package,
   Plus,
   ArrowLeft,
-  TrendUp,
-  Calculator,
   ArrowsSplit,
 } from "@phosphor-icons/react";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { computeDashboard } from "@/application/analytics";
 import { PageHeader } from "@/presentation/components/layout/page-header";
+import { QuickActions } from "./quick-actions";
+import { SaleRows } from "./sale-rows";
 import { ProfitAreaChart } from "@/presentation/components/charts/profit-area-chart";
 import {
   Button,
@@ -23,6 +23,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Delta,
   EmptyState,
   Money,
   Segmented,
@@ -82,16 +83,6 @@ export function DashboardView() {
   const revenueDelta =
     prev && prev.revenue ? (last.revenue - prev.revenue) / Math.abs(prev.revenue) : undefined;
 
-  const actions = (
-    <>
-      <Button asChild variant="secondary" leadingIcon={<Calculator size={16} />}>
-        <Link href="/calculator">حاسبة سريعة</Link>
-      </Button>
-      <Button asChild leadingIcon={<Plus size={16} weight="bold" />}>
-        <Link href="/products/new">إضافة منتج</Link>
-      </Button>
-    </>
-  );
 
   if (!loaded) {
     return (
@@ -127,7 +118,6 @@ export function DashboardView() {
     );
   }
 
-  const profitUp = (profitDelta ?? 0) >= 0;
 
   // The level this month is measured against: the merchant's own target when they
   // set one, otherwise their average over the window — never a round number
@@ -146,6 +136,7 @@ export function DashboardView() {
   // «وين راح المال»: this month's revenue taken apart. Costs first, largest to
   // smallest, then whatever survived as the merchant's own.
   const spent = metrics.monthTotalCost;
+  const costRatio = metrics.monthRevenue > 0 ? spent / metrics.monthRevenue : 0;
   const kept = metrics.monthProfit;
   const distributionTotal = Math.max(metrics.monthRevenue, spent);
   // Lines under 4% become one plate: six slivers of different texture side by
@@ -183,7 +174,11 @@ export function DashboardView() {
 
   return (
     <>
-      <PageHeader title="لوحة التحكم" description="أرباح متجرك في لمحة." actions={actions} />
+      <PageHeader
+        title="لوحة التحكم"
+        description="أرباح متجرك في لمحة."
+        actions={<QuickActions />}
+      />
 
       {/* شبكة المؤشرات — البطل يقود الصف، والمؤشران يقفان بجانبه بحجمهما الطبيعي */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -210,12 +205,9 @@ export function DashboardView() {
                 />
               </div>
               {profitDelta !== undefined && (
-                <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-surface/85 px-2.5 py-1 text-xs font-bold text-fg shadow-sm">
-                  <TrendUp size={13} weight="bold" className={profitUp ? "" : "rotate-180"} />
-                  <bdi dir="ltr" className="font-mono tabular-nums">
-                    {formatSignedPercent(profitDelta)}
-                  </bdi>
-                  <span className="font-medium text-fg/60">مقابل الشهر السابق</span>
+                <span className="mt-3 flex items-center gap-2">
+                  <Delta value={profitDelta} label={formatSignedPercent(profitDelta)} />
+                  <span className="text-xs font-medium text-fg/70">مقابل الشهر السابق</span>
                 </span>
               )}
             </div>
@@ -261,15 +253,26 @@ export function DashboardView() {
           />
           {/* the same month as the card above it — a total from a different period
               beside it invited a comparison that was never true */}
+          {/* the share is a real reading, so it gets an instrument: a comb of
+              ticks you can count, with the rest left as carved slots (R40) */}
           <Stat
             className="flex-1"
             label="تكاليف هذا الشهر"
             value={money(metrics.monthTotalCost)}
+            meter={
+              metrics.monthRevenue > 0
+                ? {
+                    value: metrics.monthTotalCost / metrics.monthRevenue,
+                    label: `التكاليف ${share(metrics.monthTotalCost / metrics.monthRevenue)} من الإيراد`,
+                    tone: costRatio > 1 ? "danger" : "accent",
+                  }
+                : undefined
+            }
             caption={
               metrics.monthRevenue > 0 ? (
                 <>
                   <bdi dir="ltr" className="font-mono font-semibold tabular-nums text-fg">
-                    {share(metrics.monthTotalCost / metrics.monthRevenue)}
+                    {share(costRatio)}
                   </bdi>{" "}
                   من الإيراد
                 </>
@@ -401,7 +404,18 @@ export function DashboardView() {
             <Link href="/products">كل المنتجات</Link>
           </Button>
         </CardHeader>
-        <Table>
+        {/* phones get rows, not a clipped five-column table */}
+        <SaleRows
+          rows={metrics.recentSales.map((s) => ({
+            id: s.id,
+            productName: s.productName,
+            meta: `${formatDate(s.soldAt, { locale: settings.locale, month: "short", day: "numeric" })} · ${s.quantity} قطعة`,
+            revenue: money(s.revenue),
+            netProfit: money(s.netProfit),
+            polarity: s.netProfit,
+          }))}
+        />
+        <Table className="hidden sm:table">
           <THead>
             <TR>
               <TH>المنتج</TH>
