@@ -75,6 +75,9 @@ Order by impact; each screen = gates file → build → 4 passes → anti-slop m
 | D3.5 | **Reports** | The archive: report covers with chart-block objects, one featured mesh cover, export bar with real affordances, print stays ink-pure. |
 | D3.6 | **Settings** | The back office: grouped clay panels, orb radio for theme, danger zone with ember material + worded confirm. |
 | D3.7 | **App shell** | The stage: glass top chrome, sidebar with depth-lit active state, page transitions direction-aware. |
+| D3.8 | **الفريق Reps** (`docs/PRODUCT-PLAN.md`) | The partners' table: rep cards with orb status, Living-Money balances, metal target arcs; top seller holds the Coin. |
+| D3.9 | **التسويات Settlements** | The receipt ritual: paying a rep pours the balance into a stamped receipt; history as sealed receipts. |
+| D3.10 | **الأهداف + دفتر الحركة** | Target arcs (no default progress bars) + the calm ink ledger: every dinar's story — what happened, who, where it went. |
 
 ## Phase D4 — صفحة الهبوط (The showpiece)
 
@@ -126,3 +129,8 @@ direction earns shares.
 - Client reference design-system files (Apple etc.), when attached, feed the
   material/light language through the same intake protocol
   (`references/design-systems/` + delta memos) — they refine v4, not resurrect v3.
+- **Product track:** the roles/reps/profit-sharing system is specified in
+  `docs/PRODUCT-PLAN.md` (P1 engine+team → P2 targets/ledger/settlements →
+  P3 cloud access). P1 builds directly in v4 language; the split-preview at
+  sale time is that flow's designed ritual. Sequencing: D0 → P1 ∥ D1–D2 →
+  P2 + D3 → D4 → D5 → P3.
