@@ -1,165 +1,157 @@
-# Flousi — Design System MASTER v3 (source of truth)
+# Flousi — Design Direction MASTER v4 (source of truth)
 
-> **v3 — "Precision Capital".** Reconciles the implemented Apple-grade system
-> (`src/app/globals.css`, Cairo + IBM Plex Mono, flat crisp surfaces, single Apple-blue
-> accent) with the full skill audit of 2026-08-17 (impeccable, frontend-design,
-> emilkowalski, jakubkrehel/interfaces, ui-ux-pro-max, kill-ai-slop, taste-skill,
-> baseline-ui, unlazy). This file overrides taste and overrides older docs
-> (`docs/DESIGN-SYSTEM.md` = v2 history). When building a page: read this, then run
-> `.claude/skills/flousi-anti-slop-gate/`.
+> **v4 — "المال الملموس / Tangible Capital".** Direction pivot ordered by the client
+> 2026-08-17: v3's restraint read as plain. The new direction is **rich, dimensional
+> and cinematic** — 3D objects, physical motion, layered materials, crafted imagery —
+> bounded by exactly ONE law: the anti-slop gate
+> (`.claude/skills/flousi-anti-slop-gate/`). Every restraint-era cap that isn't
+> slop-prevention or an accessibility/RTL floor is REPEALED (see §9).
 >
-> Pending input: the client will attach external design-system files (Apple and
-> others). Process them via the Reference Intake Protocol in `docs/DESIGN-PLAN.md`
-> §Phase 0 before changing any lock below.
+> v3 (Precision Capital) is preserved in git history; its token infrastructure
+> (semantic colors, type roles, motion curves, formatters, Money/LivingNumber)
+> carries forward as plumbing — the aesthetics on top change.
 
-## 0. Identity
+## 0. الأطروحة — The thesis
 
-- Product: Arabic-first (RTL) premium fintech SaaS — net-profit engine for online stores.
-- DNA: Apple HIG restraint × Linear density × Stripe trust. Reference screens in
-  `references/` (cataloged in `.kiro/steering/visual-references.md`).
-- Voice: precise, calm, financial. Restraint over ornament. Numbers are the heroes.
-- **Signature devices (the non-generic identity):** the live ProfitPanel (numbers that
-  respond as you type), glossy 3D orbs as selection/step markers (reference 234741/234742),
-  connected vertical steppers, one grainy blue mesh on hero/CTA surfaces only.
-- Anti-identity: everything in `.claude/skills/flousi-anti-slop-gate/SKILL.md`.
+**Money in Flousi is a physical thing.** Coins have weight and shine, receipts
+fold, a closed month locks inside a vault, profit glows. The interface is not a
+page of cards — it is a **scene**: objects sit on materials, one consistent light
+source falls across them, and motion behaves like physics (mass, springs,
+parallax), not like CSS. The craft target is the reference DNA in `references/`
+(glossy 3D steppers 234741/234742, dark glow analytics 204344/204346, grainy
+mesh bentos 205718, 3D spot-illustration sets 210425) executed at product grade.
 
-## 1. Color (locked)
+Anti-slop still rules: maximalism must be **authored** — every object, gradient
+and motion choreographed and justifiable; elaborate execution, never template
+noise. "Maximalist directions need elaborate execution" (frontend-design).
 
-- **Interactive accent — exactly one:** Apple system blue. Light `#0a6cff` / hover
-  `#0a4fc4`; dark `#2f86ff` / hover `#0a6cff`. Nav-active, primary buttons, focus, links.
-- **Profit polarity (semantic only, never decorative):** profit `#0c9a52` (dark `#1fc06e`),
-  loss `#e5322b` (dark `#ff5a52`), break-even = muted ink. Polarity is always color + word
-  + sign, never color alone.
-- Neutrals: cool gray ramp, off-white `#f4f4f6` page / `#ffffff` card (light);
-  `#0a0a0b` page / `#161619` card (dark). No pure black/white anywhere.
-- **Mesh discipline:** grainy gradients live ONLY on hero / CTA / bento-accent tiles,
-  blue family capped at hue 265° (blue → deep indigo). No violet/magenta/pink — a
-  HIGH-severity fintech anti-pattern. Grain overlay ≤ 0.08 opacity, static surfaces only.
-- Semantic tokens as implemented in `globals.css` (`--bg`, `--surface`, `--surface-2`,
-  `--sunken`, `--border`/`--border-soft`, `--fg`/`--muted`/`--subtle`, `--accent*`,
-  `--success/danger/warning/info` + `-soft`). Components never touch primitives or raw hex.
-- Dark mode is composed, not inverted: accent desaturated one step, ramp separation
-  widened at the dark end, every pair re-measured. One switching mechanism only
-  (`[data-theme]` + no-flash script — already implemented; never mix with `.dark` class).
+## 1. The material system (expanded — caps repealed)
 
-## 2. Typography (locked)
+All materials share the grain (≤0.10) and the light logic (§3).
 
-- **Cairo** (Arabic+Latin geometric grotesk — the open SF-Pro-Arabic equivalent): all UI
-  and display. **IBM Plex Mono:** every number, currency, SKU, table figure.
-  (Evaluated alternative: IBM Plex Sans Arabic, to be revisited only during Phase 0
-  reference intake.)
-- Role ramp (px / lh / weight) — one decision per role, steps ≥ 1.2×:
-  `micro 11/1.4/500 (non-interactive only)` · `caption 12/1.4/400` · `ui 14/1.45/400`
-  · `body 16/1.55/400` · `heading 18/1.35/600` · `title 22/1.25/700`
-  · `display 28/1.15/700` · `kpi 40–48/1.1/700 (mono, tabular)`.
-- Interactive text never below 11px; inputs ≥ 16px on mobile (iOS zoom).
-- Emphasis = one weight step (400→500/600), never a size change mid-hierarchy.
-- Tracking: −0.02em on display sizes only; ~0 on body; positive tracking only on short
-  uppercase Latin labels (rare in an Arabic UI). Floor −0.04em.
-- `font-variant-numeric: tabular-nums` + `slashed-zero` wherever a digit can change.
-- `text-wrap: balance` on headings; `text-align: start` always (never justify, never
-  physical left/right).
-- Arabic copy: 30–40% expansion budget; no fixed-width text containers; buttons size
-  from `padding-inline`.
+| Material | What | Where |
+|---|---|---|
+| **Mesh** (aurora / dawn / night / ember) | grainy blue-family gradients, light + dark variants, ember = danger/loss | heroes, bento cells, CTAs, section fields — as many per screen as the composition needs, provided each is doing compositional work |
+| **Glass** | real translucency: blur ≤ 20px + specular top edge + inner light; solid fallback under `prefers-reduced-transparency` | floating panels, top chrome, overlays, hero cards |
+| **Clay** (soft-UI evolved) | the neumorphic reference DNA: soft dual shadows, pressed/raised states with real depth response | steppers, segmented controls, inputs on light scenes |
+| **Metal** | polished radial speculars (the orb rendering technique, generalized) | coins, orbs, markers, premium accents |
+| **Ink on paper** | calm data surfaces — tables and forms stay highly legible | data tables, report bodies, print/export |
 
-## 3. Space, radius, layout (locked)
+Color: blue family remains the brand spectrum (Apple blue → deep indigo `#4f5dff`),
+green/red remain profit/loss semantics. **No purple/magenta/pink, no beige-brass,
+no default-rainbow semantics** — that's slop law, not taste law.
 
-- 4px base scale: 4/8/12/16/24/32/48/64/96. Space by relationship: between-group gap
-  ≥ 2× within-group gap; more space above a heading than below.
-- Radius: `sm 10 · md 14 · lg 18 · xl 24 · 2xl 30 · full`. Cards 14–18, large panels
-  24, controls 10–14, pills only for small controls. Nested radius = outer − padding.
-- Page: `max-w-[1400px]`, padding-inline 16 → 24 → 32. App shell: collapsible sidebar
-  (72/240px) + content. KPI band: bento (varied spans) — bento NEVER for data tables.
-  Tables/reports: quiet 12-col grid, row height 40–44px, chrome type 12–13px.
-- Padding inside any bordered container ≥ 12px. 12px between adjacent bordered
-  controls; ≥ 24px clearance around borderless icon buttons.
-- Hit areas: 24×24 floor, 40px desktop comfort, 44px primary touch.
-- CSS Grid over flex math; `min-h-[100dvh]`; breakpoints from content (Tailwind
-  defaults as starting grid: 640/768/1024/1280/1536).
+## 2. The object system (3D)
 
-## 4. Elevation (locked)
+Flousi owns a cast of physical objects, built in this order of preference:
+1. **CSS/SVG-rendered 3D** (layered radial gradients + speculars + cast shadows —
+   the current orb technique, generalized). Crisp at any scale, themable, tiny.
+2. **Layered SVG illustrations** (the 210425 spot-illustration style: extruded
+   shapes, gradient light, floating fragments).
+3. **Generated renders** (Midjourney/Kling per the client toolkit) — exported to
+   `public/assets/3d/` as WebP ≤ 200KB, prompt + license recorded in
+   `design-system/ASSETS.md`.
 
-- **Declare elevation once per element: border OR shadow.** The hairline + wide diffuse
-  shadow "ghost card" is banned.
-- Light theme card recipe (shadow-as-border):
-  `0 0 0 1px oklch(0 0 0/.06), 0 1px 2px -1px oklch(0 0 0/.06), 0 2px 4px 0 oklch(0 0 0/.04)`;
-  hover bumps opacities to .08/.08/.06.
-- Dark theme: layered shadows are invisible — collapse to a single ring
-  `0 0 0 1px oklch(1 0 0/.08)` (hover .13) + optional soft top inner highlight.
-- Existing `--shadow-xs..xl` stay for overlays (menus/dialogs); cards migrate to the
-  recipes above during Phase 1.
-- Vibrancy (`backdrop-blur` chrome) is sanctioned ONLY on the top bar / floating nav.
+**Sourcing law:** reference screenshots are style DNA only — assets are never
+lifted from other products. Any external image must be license-safe and logged.
 
-## 5. Motion (locked — Emil standards)
+The core cast:
+- **العملة (The Coin)** — a glossy dinar coin, the brand object. Dashboard hero,
+  loading moments, favicon/logo evolution, landing.
+- **Orb family v2** — active/idle/done/danger; selection + progression markers.
+- **الخزنة (The Vault)** — closing a month is a physical ritual: the period folds
+  into a safe that locks. Periods screen + close-confirm dialog.
+- **الإيصال (The Receipt)** — costs/expenses object; empty states, cost forms.
+- **المكعبات (Chart blocks)** — extruded bar/waterfall blocks for report covers
+  and empty states.
+- Spot illustrations for: first-run onboarding, empty products, backup/restore,
+  error states.
 
-```css
---ease-out:    cubic-bezier(0.23, 1, 0.32, 1);   /* enter/exit */
---ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);  /* on-screen morph */
---ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);   /* sheets/drawers */
-```
+## 3. Light logic
 
-- Frequency gate first: 100+/day actions (nav, table row hover, keyboard) = no
-  animation or ≤ 150ms color/surface shift only. Occasional (modal/drawer/toast) =
-  standard. First-run/rare = the only delight budget.
-- Durations: press 120–160ms (`:active` scale 0.96–0.98, fire on pointer-down);
-  tooltip 125–200; dropdown 150–250; modal 250 (scale 0.96 + opacity, backdrop same
-  timing); drawer 500 `--ease-drawer`, % translate. **All UI < 300ms.** Exits ≈ 75%.
-- Animate `transform` + `opacity` only (full transform strings in motion/react, not
-  x/y shorthands). Never `ease-in`. Never scale(0). Springs: `bounce: 0` default
-  (fintech), 0.2 max for genuinely spatial gestures.
-- Stagger 50ms/item, y-offset 8–12px, entrances only, never blocking input.
-- Tab/segment indicator: clip-path duplicate technique, 250ms `--ease-in-out`.
-- **Charts: data being read does not move.** Mount-only reveal (Recharts
-  `animationDuration` 300–400, ease-out, series stagger ≤ 80ms), disabled on data/filter
-  re-render and under `prefers-reduced-motion`.
-- KPI numbers: animated count-up on mount only, tabular digits so nothing shifts.
-- `prefers-reduced-motion`: keep opacity/color, drop transforms — gentler, not dead.
-  Honor `prefers-reduced-transparency` (solid instead of vibrancy).
-- Theme flip: suppress transitions for one frame (inject `transition: none`, reflow,
-  remove) — no cross-fade slop.
+One global light source: **top-start** (top-right in RTL). Every material obeys:
+- speculars and top-edge highlights face the light; cast shadows fall away from it
+- hover = the element lifts toward the light (translate + shadow deepens
+  + specular shifts); press = pushed away (depth compresses)
+- dark scenes: glow rises from below (the `night` mesh logic), light objects keep
+  their own speculars
 
-## 6. RTL / Arabic (locked — Flousi owns this layer; no vendored skill covers it)
+## 4. Motion choreography (promoted from garnish to structure)
 
-- Logical properties ONLY: `ms-/me-/ps-/pe-/text-start/inset-inline` — physical
-  left/right reserved for genuinely physical geometry.
-- Identifying content leads (right in RTL), metadata/actions trail. Direction-tied
-  icons (chevrons, arrows, send) flip via `rtl:-scale-x-100`; media controls stay LTR.
-- **Digits are never reordered.** Wrap mixed Arabic+number runs in `<bdi>`. All
-  formatting through `Intl.NumberFormat`/`Intl.DateTimeFormat` with the locale from
-  settings (ar-IQ default, IQD).
-- `lang`/`dir` set at every direction boundary; embedded English paragraphs (3+ lines)
-  keep their own LTR alignment.
+The v3 curves/durations stay as the physics vocabulary; what changes is scale:
+- **Scene entrances:** every screen enters as an orchestrated sequence (hero
+  object → headline → KPIs → data, 50–80ms stagger, one authored focal moment
+  per screen — entrance ≤ 700ms total, interactive immediately).
+- **Physical objects:** springs with real mass (`stiffness 260–360 / damping
+  18–28` for objects; UI chrome stays bounce-0), pointer parallax/tilt on hero
+  objects (≤ 6°, `@media (hover:hover)` only).
+- **The Living Number** stays and grows: digit-roll variant for the hero,
+  polarity morph (color + sign + mesh crossfade ~250ms).
+- **Micro-interactions on every control:** press depth (clay compress), icon
+  transitions (scale 0.25→1 + blur 4→0, bounce 0), checkbox/toggle physical
+  snaps, focus ring with a soft bloom (≤ 4px, never a halo).
+- **Charts:** may draw on mount (line draw / bar rise, ≤ 600ms, once); still
+  never move while being read or on data re-render.
+- **Ritual moments:** closing a period, saving a product, exporting — each gets
+  one designed sequence (the delight budget is now per-flow, not per-app).
+- Floors that stay: `prefers-reduced-motion` collapses to opacity; nothing
+  gates content; interaction feedback ≤ 200ms; animate transform/opacity only;
+  no infinite loops on idle screens.
 
-## 7. Data surfaces (locked)
+## 5. Composition
 
-- Tables: numbers trailing-aligned tabular mono; text leading-aligned; hairline
-  row separators (borders, not shadows); header 12px/500 muted; sticky headers with
-  `scroll-padding` so focus stays visible; row hover = background shift ≤ 150ms.
-- The one number the user came for is large + semibold; its label small + muted below.
-- Charts: color never the only encoding (shape/label/pattern too); text/table
-  equivalent nearby; trend = line (< 4 points → stat card); part-to-whole = donut ≤ 6
-  slices; cumulative = waterfall with profit/loss bar colors.
-- Currency: `Intl.NumberFormat`, consistent decimals (2), polarity color + sign + word.
+- Screens compose as **scenes with depth**: background field (mesh/tone) →
+  midground objects/cards → foreground focal content. Overlap and bleed are
+  encouraged when they serve the composition.
+- Bento grids with varied spans; cells can carry mesh, objects, or live charts.
+  Exactly N cells for N real items (no fillers) — slop law.
+- Data zones (tables, forms) stay calm and legible inside the scene: the
+  contrast between alive frame and calm data is still the reading rhythm.
+- Type: Cairo stays the Arabic voice; display sizes get more courage (clamp up
+  to ~96px on landing, 44–56px in-app heroes). Numbers stay IBM Plex Mono
+  tabular latn. Arabic letter-spacing stays untouched (script law).
 
-## 8. States & accessibility (locked)
+## 6. Imagery pipeline
 
-- Every interactive primitive ships: default / hover / focus-visible / active /
-  disabled / loading / error / selected. Every container: skeleton (shaped like final
-  layout) / empty (one clear next action) / error (diagnose + explain + recover).
-- Contrast: AA 4.5:1 body, 3:1 large text + controls + focus rings, measured on the
-  actual painted background in BOTH themes. KPI headline numbers target AAA.
-- Focus ring ≥ 2px, accent color, visible under sticky chrome. Labels above inputs
-  (programmatic `<label>`), errors below with `aria-invalid` + `aria-describedby`,
-  focus first invalid field on submit; never disable submit until valid; never block
-  paste.
-- Icons: Phosphor only, one weight per surface (`regular`; `fill` for the active
-  state), sizes 16/20/24, inherit text color, no tiles.
+1. Compose in CSS/SVG when possible (themable, RTL-safe, tiny).
+2. Generate hero renders when needed; store under `public/assets/3d/`,
+   optimize (WebP/AVIF, ≤ 200KB hero / ≤ 80KB spot), lazy-load below the fold.
+3. Record every asset in `design-system/ASSETS.md`: source (built/generated/
+   licensed), prompt or origin, license, usage map.
+4. Image seams masked with long eased fades; page color continuous (slop law).
 
-## 9. Governance
+## 7. Floors that survive the pivot (not taste — physics)
 
-- This file is the contract. Token change = edit `globals.css` + this file in one
-  commit. No raw hex/px in components that exists as a token.
-- Every surface ships only after the anti-slop gate matrix is fully ticked and its
-  unlazy gates file (`gates/*.md`) shows evidence. See `docs/DESIGN-PLAN.md`.
-- `/styleguide` is the living render of every token + primitive; it updates in the
-  same PR as any token change.
+- Anti-slop gate: mandatory, unchanged in authority.
+- Accessibility: AA contrast on text/controls (measure on the actual painted
+  scene — busy materials need scrims behind text), visible focus, hit areas
+  ≥ 24px, keyboard everywhere, reduced-motion/transparency honored.
+- RTL correctness: logical properties, latn digits, `<bdi>` islands, flipped
+  directional icons; scenes light from top-start.
+- Performance: LCP < 2.5s / INP < 200ms / CLS < 0.1 on the static export;
+  assets budgeted; blur ≤ 20px; grain never on scrolling containers.
+- Copy: Arabic-first, vocabulary-consistent, no invented numbers.
+
+## 8. Token carry-over (plumbing, unchanged)
+
+Semantic color tokens, type roles (micro→kpi), radius scale, motion curves
+(`--ease-out/--ease-in-out/--ease-drawer` + durations), `--elev-*`, `--ink/--paper`,
+`Money`, `LivingNumber`, `formatDate`, motion presets lib. New v4 tokens (glass,
+clay, metal, light, scene z-layers) are ADDED in Phase D2 — nothing existing breaks.
+
+## 9. Repealed v3 laws (explicit, so no agent re-enforces them)
+
+- ~~One mesh moment per screen~~ → as many as the composition earns.
+- ~~Restraint over ornament / flat-first~~ → authored richness is the brief.
+- ~~Delight budget = one place~~ → one designed ritual per flow.
+- ~~Vibrancy is the only sanctioned blur~~ → glass is a first-class material
+  (blur ≤ 20px, fallback required).
+- ~~Orb max one cluster per view~~ → orbs/objects wherever they mark something real.
+- Still standing from v3: everything in §7, the elevation single-declaration
+  rule (border OR shadow per element), digits/`<bdi>` law, chart no-motion-on-read.
+
+## 10. Governance
+
+MASTER v4 + the anti-slop gate are the only contracts. `docs/DESIGN-PLAN.md`
+(v4) sequences the build. Gates files + eye-verified screenshot proofs remain
+the definition of done for every surface.

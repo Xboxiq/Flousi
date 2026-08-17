@@ -1,68 +1,34 @@
-# Flousi — Signature System (the non-generic identity)
+# Flousi — Signature System v2 (Tangible Capital cast)
 
-> Clean is the floor; identity is the work. These five authored devices are what
-> make Flousi unmistakably Flousi. Each has a usage LAW — a device used outside
-> its law degrades into decoration, and decoration is slop. Contract level:
-> same authority as `design-system/MASTER.md`.
+> Updated for MASTER v4: the restraint-era caps are repealed — devices appear
+> wherever they do real compositional work. What survives is the AUTHORSHIP rule:
+> every device marks something true (a state, a sequence, an object of the
+> domain), never filler. Full object cast + material laws live in MASTER §1–§4.
 
-## 1. The Living Number
+## The cast
 
-- **What:** the net-profit figure glides from its current displayed value to the
-  next as the user types — interruptible (animates from the live presentation
-  value, never restarting from the target), tabular mono so only changing digits
-  move, snaps under `prefers-reduced-motion`. Polarity is worded first
-  (رابح / خسارة / تعادل badge + icon), color reinforces.
-- **Law:** this is the ONE place Flousi spends its delight budget. It lives on
-  the ProfitPanel hero (and the standalone calculator, which renders the same
-  panel). Numbers the user merely *reads* (tables, reports, dashboard KPIs)
-  never use it — they use the static `Money` primitive. Duration ≤ 300ms.
-- **Implementation:** `src/presentation/components/interactive/living-number.tsx`,
-  wired in `src/presentation/features/products/profit-panel.tsx`.
+1. **The Living Number** — the profit heartbeat; digit-roll hero variant,
+   polarity morph (word + sign + color + mesh crossfade). Now allowed on any
+   figure the user is actively shaping (calculator, product form); read-only
+   figures stay static `Money`.
+   `src/presentation/components/interactive/living-number.tsx`
+2. **العملة The Coin** — the brand object (glossy dinar). Dashboard hero,
+   loading, landing. *(D1)*
+3. **Orb family v2** — selection/progression/status markers, danger variant. Used
+   wherever a real state is marked. `ui/glossy-orb.tsx` *(v2 in D1)*
+4. **الخزنة The Vault** — the closing ritual object: months lock physically.
+   Periods + close dialog. *(D1)*
+5. **الإيصال The Receipt & chart blocks** — cost/report objects for covers,
+   empty states, onboarding. *(D1)*
+6. **The connected stepper** — clay material, genuine sequences only.
+   `ui/stepper.tsx`
+7. **Mesh fields & glass panels** — the scene materials (MASTER §1); as many per
+   screen as the composition earns.
+8. **Rituals** — one designed sequence per flow (close month, save product,
+   export): the per-flow delight budget.
 
-## 2. Orb markers
+## The one authorship test (replaces the old caps)
 
-- **What:** glossy 3D orbs (blue active / silver idle / emerald done) — the
-  tactile mark of the reference DNA (references 234741 / 234742).
-- **Law:** orbs mark *selection and progression* only: stepper states, radio-card
-  choices, onboarding checkpoints. Never bullets, never icon tiles, never
-  decoration. Max one orb cluster per view.
-- **Implementation:** `src/presentation/components/ui/glossy-orb.tsx`, consumed
-  by `stepper.tsx`. (Landing's decorative orb usage is scheduled for the
-  Phase 4 art-direction pass.)
-
-## 3. The connected stepper
-
-- **What:** vertical steps joined by a dotted line, orb states per step — the
-  flow language for money-moving sequences.
-- **Law:** only for genuine sequences (create product, close period,
-  onboarding). Never used to decorate a list of non-sequential features.
-- **Implementation:** `src/presentation/components/ui/stepper.tsx`.
-
-## 4. One mesh moment per surface
-
-- **What:** the grainy blue mesh (aurora light / night dark / night-danger loss)
-  is Flousi's single accent material.
-- **Law:** at most ONE mesh tile per screen — the hero or the single featured
-  cell. `night-danger` is semantic loss/destructive only. Hue capped at deep
-  indigo `#4f5dff`; grain ≤ 0.08, static surfaces only.
-- **Status:** dashboard ✓ (net-profit hero) · ProfitPanel ✓ (hero) ·
-  reports hub ✓ (featured monthly card only, enforced this phase) ·
-  landing ✗ (3 mesh surfaces — consolidated in Phase 4).
-- **Implementation:** `.mesh-*` in `globals.css` via `<MeshSurface>`.
-
-## 5. Hairline-quiet tables
-
-- **What:** data surfaces are deliberately the calmest thing in the product:
-  hairline separators, muted lowercase chrome, trailing-aligned tabular figures
-  via `Money`, row hover = background shift ≤ 150ms.
-- **Law:** no mesh, no orbs, no elevation games, no per-row entrances inside a
-  data table — ever. The contrast between calm tables and the Living Number IS
-  the aesthetic.
-- **Implementation:** `src/presentation/components/ui/table.tsx` +
-  `money.tsx`; exemplar: periods breakdown table.
-
-## Amendment protocol
-
-Adding a sixth device (or bending a law) requires: a one-sentence justification,
-an entry here, and a pass through `.claude/skills/flousi-anti-slop-gate/` —
-in the same PR.
+For every device instance, answer in one sentence: *what true thing does this
+mark or tell?* No answer → it's decoration → remove it. This plus the anti-slop
+gate is the entire law.
