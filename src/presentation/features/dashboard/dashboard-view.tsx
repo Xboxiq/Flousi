@@ -116,14 +116,14 @@ export function DashboardView() {
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-white/80">صافي الربح · هذا الشهر</span>
             {profitDelta !== undefined && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 text-xs font-semibold text-white">
                 <TrendUp size={13} weight="bold" className={profitUp ? "" : "rotate-180"} />
                 {formatSignedPercent(profitDelta)}
               </span>
             )}
           </div>
           <div>
-            <div className="font-mono text-[44px] font-semibold leading-none tracking-tight tabular-nums" dir="ltr">
+            <div className="font-mono text-kpi font-semibold tracking-tight tabular-nums" dir="ltr">
               <CountUp
                 value={metrics.monthProfit}
                 prefix={currencySymbol(settings.currency, settings.locale) + " "}
