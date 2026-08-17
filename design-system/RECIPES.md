@@ -290,6 +290,25 @@ card + one full-width dark CTA. Keeps confirmations calm and legible.
 An extruded folder with document sheets peeking out at unequal angles (§4), used
 as the export affordance. The sheets only appear when there is something to export.
 
+## R31–R34 — from the third visual-feedback batch (2026-08-17) — BUILT
+
+**R31 — Moulded control** *(built: `.molded*` + `ui/button.tsx`)*
+A pressable is a body: a lighter rim in a whiter mix of its own hue, a lit top edge
+inside it, a shaded lower lip, a hard base line and a body-sized soft shadow.
+Pressing travels the body down into that shadow instead of scaling it.
+
+**R32 — Quiet fraction** *(built: `ui/money.tsx`)*
+Split a formatted figure into whole / fraction / currency mark and set the last two
+one step quieter, so a long price still reads at a glance.
+
+**R33 — Badge on the fill edge** *(built: `.rail-badge` + dashboard rails)*
+The share badge rides the fill's leading edge, positioned logically so it is correct
+in both directions — the rail reports its own value with no legend.
+
+**R34 — Marked reading** *(built: chart activeDot + dashed cursor)*
+The hovered point becomes a filled disc with a surface-coloured collar and a dashed
+line dropping to its axis: a measurement marked on paper, not a hover glow.
+
 ---
 Also adopt from nova (not recipes but structure): glass tokens as a paired set
 (`--glass/-strong/-edge/-edge-shade/-specular/-caustic`), material depth as a

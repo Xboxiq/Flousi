@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatCurrency, formatCurrencyCompact } from "@/presentation/lib/format";
+import { formatCurrency, formatNumber } from "@/presentation/lib/format";
 import type { MonthlyPoint } from "@/application/analytics";
 
 interface Props {
@@ -70,19 +70,30 @@ export function ProfitAreaChart({ data, currency, locale }: Props) {
             tick={{ fill: "var(--subtle)", fontSize: 12 }}
             axisLine={false}
             tickLine={false}
-            width={56}
-            tickFormatter={(v: number) => formatCurrencyCompact(v, { currency, locale })}
+            width={46}
+            /* Ticks carry magnitude, not currency — the card title already says
+               these are money, and a full figure here collides with the plot. */
+            tickFormatter={(v: number) => {
+              if (v >= 1_000_000) return `${formatNumber(v / 1_000_000, { locale, digits: 1 })}م`;
+              if (v >= 1000) return `${formatNumber(v / 1000, { locale, digits: 0 })}ألف`;
+              return formatNumber(v, { locale, digits: 0 });
+            }}
           />
           <Tooltip
+            /* the hovered month gets a dashed drop line to its axis, the way a
+               measured reading is marked on paper */
+            cursor={{ stroke: "var(--fg)", strokeWidth: 1, strokeDasharray: "3 4", opacity: 0.35 }}
             contentStyle={{
               background: "var(--surface)",
               border: "1px solid var(--border)",
-              borderRadius: 10,
+              borderRadius: 12,
               fontSize: 13,
               color: "var(--fg)",
               fontVariantNumeric: "tabular-nums",
+              boxShadow: "var(--shadow-md)",
+              padding: "8px 12px",
             }}
-            labelStyle={{ color: "var(--muted)" }}
+            labelStyle={{ color: "var(--muted)", marginBottom: 4, fontWeight: 600 }}
             formatter={(value, name) => [
               formatCurrency(Number(value), { currency, locale }),
               name === "revenue" ? "الإيراد" : "صافي الربح",
@@ -98,6 +109,14 @@ export function ProfitAreaChart({ data, currency, locale }: Props) {
             animationDuration={350}
             animationBegin={0}
             animationEasing="ease-out"
+            /* the hovered point becomes a real marker: a filled disc with a
+               white collar, sized to be read against the line */
+            activeDot={{
+              r: 6,
+              fill: "var(--accent)",
+              stroke: "var(--surface)",
+              strokeWidth: 3,
+            }}
           />
           <Area
             type="monotone"
@@ -109,6 +128,12 @@ export function ProfitAreaChart({ data, currency, locale }: Props) {
             animationDuration={350}
             animationBegin={80}
             animationEasing="ease-out"
+            activeDot={{
+              r: 6,
+              fill: "var(--success)",
+              stroke: "var(--surface)",
+              strokeWidth: 3,
+            }}
           />
         </AreaChart>
       </ResponsiveContainer>

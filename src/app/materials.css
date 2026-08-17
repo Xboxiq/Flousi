@@ -310,27 +310,30 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    background-color: color-mix(in srgb, var(--accent) 16%, var(--surface));
+    /* Colour is pushed to the corners so the reading zone stays pale enough for
+       ink to hold AA — vivid material, legible text (VISUAL-LAW §6 + a11y floor). */
+    background-color: color-mix(in srgb, var(--accent) 12%, var(--surface));
     background-image:
-      radial-gradient(72% 82% at 12% 18%, color-mix(in srgb, var(--success) 60%, transparent), transparent 58%),
-      radial-gradient(66% 78% at 88% 78%, color-mix(in srgb, var(--accent) 70%, transparent), transparent 60%),
-      linear-gradient(146deg, color-mix(in srgb, var(--accent) 22%, white), color-mix(in srgb, var(--success) 18%, white));
+      radial-gradient(52% 62% at 104% 104%, color-mix(in srgb, var(--accent) 80%, transparent), transparent 66%),
+      radial-gradient(50% 58% at -6% 108%, color-mix(in srgb, var(--success) 70%, transparent), transparent 66%),
+      radial-gradient(60% 46% at 96% -12%, color-mix(in srgb, var(--accent) 42%, transparent), transparent 70%),
+      linear-gradient(160deg, color-mix(in srgb, var(--accent) 12%, white), color-mix(in srgb, var(--success) 12%, white));
   }
   [data-theme="dark"] .halftone {
-    background-color: color-mix(in srgb, var(--accent) 26%, #0d1017);
+    background-color: #0d1017;
     background-image:
-      radial-gradient(72% 82% at 12% 18%, color-mix(in srgb, var(--success) 48%, transparent), transparent 58%),
-      radial-gradient(66% 78% at 88% 78%, color-mix(in srgb, var(--accent) 62%, transparent), transparent 60%),
-      linear-gradient(146deg, color-mix(in srgb, var(--accent) 34%, #0d1017), color-mix(in srgb, var(--success) 22%, #0d1017));
+      radial-gradient(54% 64% at 104% 104%, color-mix(in srgb, var(--accent) 70%, transparent), transparent 66%),
+      radial-gradient(52% 60% at -6% 108%, color-mix(in srgb, var(--success) 55%, transparent), transparent 66%),
+      linear-gradient(160deg, color-mix(in srgb, var(--accent) 22%, #0d1017), #0d1017 62%);
   }
   .halftone::before {
     content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.62;
     mix-blend-mode: overlay;
-    background-image: radial-gradient(var(--fg) 42%, transparent 44%);
+    background-image: radial-gradient(var(--fg) 46%, transparent 48%);
     background-size: 4px 4px;
   }
   [data-theme="dark"] .halftone::before {
@@ -357,6 +360,96 @@
     border-radius: 999px;
     background-image: linear-gradient(180deg, color-mix(in oklab, var(--accent), white 34%), var(--accent));
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 -1px 3px rgba(18, 26, 38, 0.2);
+  }
+
+  /* ---- MOULDED CONTROLS (feedback: the Add Money / Withdraw pills) ----------
+     A pressable is a moulded body, not a filled rectangle: a lighter RIM around
+     the fill, a lit top edge inside it, a shaded lower lip, and a drop shadow
+     the size of the body. Pressing shortens the shadow and sinks the top light
+     so the finger feels the travel. */
+  .molded {
+    position: relative;
+    transition:
+      transform var(--motion-press) var(--ease-out),
+      box-shadow var(--motion-press) var(--ease-out),
+      background-color var(--motion-fast) var(--ease-out);
+  }
+  .molded-accent {
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--accent), white 14%), var(--accent));
+    box-shadow:
+      0 0 0 1.5px color-mix(in oklab, var(--accent), white 26%),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42),
+      inset 0 -2px 3px color-mix(in oklab, var(--accent-strong), black 22%),
+      0 3px 0 color-mix(in oklab, var(--accent-strong), black 12%),
+      0 8px 16px -6px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  .molded-accent:hover {
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--accent), white 6%), var(--accent-strong));
+  }
+  .molded-success {
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--success), white 14%), var(--success));
+    box-shadow:
+      0 0 0 1.5px color-mix(in oklab, var(--success), white 28%),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42),
+      inset 0 -2px 3px color-mix(in oklab, var(--success), black 30%),
+      0 3px 0 color-mix(in oklab, var(--success), black 18%),
+      0 8px 16px -6px color-mix(in srgb, var(--success) 50%, transparent);
+  }
+  .molded-danger {
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--danger), white 14%), var(--danger));
+    box-shadow:
+      0 0 0 1.5px color-mix(in oklab, var(--danger), white 26%),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      inset 0 -2px 3px color-mix(in oklab, var(--danger), black 28%),
+      0 3px 0 color-mix(in oklab, var(--danger), black 16%),
+      0 8px 16px -6px color-mix(in srgb, var(--danger) 48%, transparent);
+  }
+  /* the quiet twin: same body language, neutral material */
+  .molded-quiet {
+    background-image: linear-gradient(180deg, #ffffff, var(--surface-2));
+    box-shadow:
+      0 0 0 1px var(--border),
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      inset 0 -2px 3px rgba(18, 26, 38, 0.06),
+      0 2px 0 rgba(18, 26, 38, 0.06),
+      0 6px 12px -6px rgba(18, 26, 38, 0.2);
+  }
+  [data-theme="dark"] .molded-quiet {
+    background-image: linear-gradient(180deg, #33373f, #23262c);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.5),
+      0 2px 0 rgba(0, 0, 0, 0.5),
+      0 8px 14px -6px rgba(0, 0, 0, 0.7);
+  }
+  /* pressed: the body travels down into its own shadow */
+  .molded:active:not(:disabled) {
+    transform: translateY(2px);
+  }
+  .molded-accent:active:not(:disabled),
+  .molded-success:active:not(:disabled),
+  .molded-danger:active:not(:disabled) {
+    box-shadow:
+      0 0 0 1.5px color-mix(in oklab, var(--accent), white 20%),
+      inset 0 2px 4px rgba(0, 0, 0, 0.28),
+      0 1px 0 rgba(0, 0, 0, 0.2);
+  }
+  .molded-quiet:active:not(:disabled) {
+    box-shadow:
+      0 0 0 1px var(--border),
+      inset 0 2px 4px rgba(18, 26, 38, 0.14),
+      0 1px 0 rgba(18, 26, 38, 0.06);
+  }
+
+  /* ---- RAIL BADGE (feedback: the % badge riding the fill's leading edge) ---- */
+  .rail-badge {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 999px;
+    background-color: var(--surface);
+    box-shadow: 0 1px 2px rgba(18, 26, 38, 0.22), 0 0 0 1px var(--border-soft);
   }
 
   /* ---- FLOATING DOCK (feedback: the soft pill nav + liquid-glass dock) ------

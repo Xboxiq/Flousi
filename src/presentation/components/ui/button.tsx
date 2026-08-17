@@ -7,15 +7,18 @@ import { Spinner } from "./spinner";
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
+/**
+ * Buttons are moulded bodies (see `.molded*` in materials.css): a lighter rim
+ * around the fill, a lit top edge, a shaded lower lip, and a shadow the size of
+ * the body — pressing travels the body down into that shadow. Ghost and outline
+ * stay flat on purpose: they are not objects, they are text with a hit area.
+ */
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary:
-    "bg-accent text-white [box-shadow:inset_0_1px_0_rgba(255,255,255,0.22),var(--shadow-accent)] hover:bg-accent-strong",
-  secondary:
-    "border border-border bg-surface text-fg shadow-xs hover:bg-surface-2",
+  primary: "molded molded-accent text-white",
+  secondary: "molded molded-quiet text-fg",
   ghost: "text-muted hover:bg-surface-2 hover:text-fg",
   outline: "border border-border bg-transparent text-fg hover:bg-surface-2",
-  danger:
-    "bg-danger text-white [box-shadow:inset_0_1px_0_rgba(255,255,255,0.22),0_8px_20px_-6px_rgba(229,50,43,0.45)] hover:brightness-[1.05]",
+  danger: "molded molded-danger text-white",
 };
 
 const SIZES: Record<ButtonSize, string> = {
@@ -51,10 +54,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   },
   ref,
 ) {
+  const flat = variant === "ghost" || variant === "outline";
   const classes = cn(
-    "inline-flex select-none items-center justify-center font-medium",
+    "inline-flex select-none items-center justify-center font-semibold",
     "transition-[background-color,color,transform,opacity] duration-[var(--motion-fast)]",
-    "active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50",
+    flat && "active:scale-[0.98]",
+    "disabled:pointer-events-none disabled:opacity-50",
     VARIANTS[variant],
     SIZES[size],
     className,

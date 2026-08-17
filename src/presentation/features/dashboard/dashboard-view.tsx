@@ -143,7 +143,7 @@ export function DashboardView() {
               value={metrics.margin}
               label={formatPercent(metrics.margin, { locale: settings.locale })}
               caption="الهامش"
-              size={76}
+              size={92}
               tone={metrics.margin >= 0.2 ? "success" : metrics.margin > 0 ? "accent" : "danger"}
             />
           </div>
@@ -206,20 +206,31 @@ export function DashboardView() {
           <CardContent className="flex flex-col gap-3.5">
             {metrics.topProducts.map((p) => {
               const max = metrics.topProducts[0]?.netProfit || 1;
-              const width = Math.max(6, Math.round((p.netProfit / max) * 100));
+              const share = Math.max(0.06, p.netProfit / max);
+              const pct = Math.round(share * 100);
               return (
-                <div key={p.productId} className="flex flex-col gap-1.5">
+                <div key={p.productId} className="flex flex-col gap-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="truncate font-medium text-fg">{p.name}</span>
                     <Money polarity={p.netProfit} className="ms-3 shrink-0">
                       {money(p.netProfit)}
                     </Money>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-sunken">
+                  {/* the share badge rides the fill's leading edge, so the rail
+                      reports its own value instead of needing a legend */}
+                  <div className="rail relative h-6 overflow-hidden rounded-full">
                     <div
-                      className="h-full rounded-full bg-accent"
-                      style={{ width: `${width}%` }}
+                      className="rail-fill absolute inset-y-0 start-0 rounded-full bg-accent"
+                      style={{ width: `${pct}%` }}
                     />
+                    <span
+                      className="rail-badge px-1.5 py-[3px] text-[10px] font-bold text-fg"
+                      style={{ insetInlineStart: `calc(${pct}% - 34px)` }}
+                    >
+                      <bdi dir="ltr" className="font-mono tabular-nums">
+                        {pct}%
+                      </bdi>
+                    </span>
                   </div>
                 </div>
               );

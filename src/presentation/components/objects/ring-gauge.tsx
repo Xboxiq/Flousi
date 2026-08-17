@@ -55,12 +55,12 @@ export function RingGauge({
           {/* the remainder is data: a hatch, never a soft gradient */}
           <pattern
             id="gauge-hatch"
-            width="5"
-            height="5"
+            width="4"
+            height="4"
             patternTransform="rotate(45)"
             patternUnits="userSpaceOnUse"
           >
-            <line x1="0" y1="0" x2="0" y2="5" stroke="var(--border)" strokeWidth="2" />
+            <line x1="0" y1="0" x2="0" y2="4" stroke="var(--subtle)" strokeWidth="1.6" />
           </pattern>
         </defs>
         <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
@@ -79,7 +79,7 @@ export function RingGauge({
             fill="none"
             stroke="url(#gauge-hatch)"
             strokeWidth={stroke}
-            opacity="0.8"
+            opacity="0.95"
           />
           <circle
             cx={size / 2}
@@ -97,10 +97,12 @@ export function RingGauge({
         </g>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <bdi dir="ltr" className="font-mono text-sm font-bold tabular-nums text-fg">
+        <bdi dir="ltr" className="font-mono text-[15px] font-bold leading-none tabular-nums text-fg">
           {label}
         </bdi>
-        {caption && <span className="mt-0.5 text-[10px] text-subtle">{caption}</span>}
+        {caption && (
+          <span className="mt-1 text-[10px] leading-none font-medium text-muted">{caption}</span>
+        )}
       </div>
     </div>
   );
