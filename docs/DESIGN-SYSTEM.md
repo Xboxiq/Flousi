@@ -1,4 +1,7 @@
-# Flousi — Design System (Single Source of Truth)
+# Flousi — Design System (v2 — HISTORICAL)
+
+> **Superseded 2026-08-17 by `design-system/MASTER.md` (v3 "Precision Capital").**
+> Kept as the v2 record. Do not build against this file.
 
 > **v2 — "Soft Capital".** The visual language is taken directly from the reference
 > screens: neumorphic soft-UI (glossy 3D orbs, connected steppers, soft raised
