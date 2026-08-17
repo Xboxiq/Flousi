@@ -41,9 +41,16 @@ on the busy scene (contrast measured over materials) · suite green.
 ## Phase D1 — مسبك الأصول (Asset Foundry)
 
 Build the object cast + document it:
+- **Primary source: the client's own `Xboxiq/nova`** — 15 ported recipes in
+  `design-system/RECIPES.md` (mesh money field, two-lip glass, conic rim,
+  pointer foil for the Coin, RTL-safe 3D face rig for the Vault, three-role
+  shadows, state leaks, metal switch, drum picker, ritual button…). Techniques
+  ported, hexes rebound to Flousi tokens (nova's violet is not).
 - Coin (hero + small), Orb family v2 (active/idle/done/danger), Vault, Receipt,
   Chart blocks, 4–6 spot illustrations (onboarding, empty-products, backup,
   error) — CSS/SVG first, layered-SVG second, generated renders last resort.
+- Every object passes the image-grade standard (MASTER §3b) and VISUAL-LAW
+  clause by clause.
 - `design-system/ASSETS.md`: source/prompt/license/usage for every asset.
 - `public/assets/3d/` pipeline: WebP/AVIF, budgets (hero ≤ 200KB, spot ≤ 80KB),
   lazy below the fold.
@@ -98,11 +105,25 @@ direction earns shares.
 - RTL sweep on every new scene (light source top-start, flipped icons, digits).
 - Export/print surfaces re-branded to v4 (covers, headers) while staying ink.
 
-## Enforcement (unchanged, permanent)
+## Enforcement (unchanged, permanent — expanded with nova's process)
 
 - Anti-slop gate matrix per surface — the ONE law.
 - Gates files with evidence; eye-verified proofs in `design-system/proofs/`.
-- Suite green per push (typecheck/lint/test/build) + scan.mjs trend recorded.
+- **Design-law gates (from nova):** visual laws become runnable checks — gates
+  that parse the code and FAIL the build when physics lies (e.g. side-wall
+  brightness values must be equal per VISUAL-LAW §2; all three shadow roles
+  present via `data-part="contact|cast|occlusion"` attributes; state-bound
+  details asserted as conditions, not ornaments). Elements get `data-*` part
+  names purely so gates can read them.
+- **Proofs matrix widened:** every visual change proven in RTL AND LTR, light
+  AND dark (nova's qa convention).
+- **Rejection log** maintained in VISUAL-LAW.md — refused references recorded
+  with reasons; a reference appearing twice is not an argument.
+- **Dial declaration:** every scene brief opens with three dials out of 10
+  (variance / motion / density) so no agent silently picks its own intensity.
+  Flousi v4 defaults: variance 8 · motion 6 · density 6 (nova's calibration).
+- Suite green per push (typecheck/lint/test/build) + scan.mjs trend recorded,
+  suppressions only via `/* deslop-ignore */` with the justification comment.
 - SESSION-LOG row per session.
 
 ## Skill routing (v4 emphasis)

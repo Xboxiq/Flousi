@@ -124,6 +124,7 @@ and must belong to Flousi's one cohesive world (see `design-system/MASTER.md`).
 - [ ] RTL: logical properties only; direction-tied icons flipped; `<bdi>` on mixed runs; 360px + 1440px checked in RTL
 - [ ] Motion: tokens/presets only, interaction feedback < 200ms, scene entrances ≤ 700ms and never gate content, `prefers-reduced-motion` collapses transforms, charts never move while being read
 - [ ] Materials: every mesh/glass/clay/metal instance passes the authorship test (SIGNATURE.md) — one sentence for what true thing it marks; text on rich materials sits on a scrim and still measures AA
+- [ ] Image-grade standard (VISUAL-LAW): every visual object passes the screenshot test — ≥3 cooperating light layers, overhead light only, shadow trio present, nameable composition axis; motion budget: ≤2 simultaneous animations on data surfaces, ≤1 loop per page, zero infinite loops on product components
 - [ ] `scan.mjs` clean or every leftover justified in one sentence
 - [ ] LCP < 2.5s / INP < 200ms / CLS < 0.1 on the built static export
 - [ ] The surface has a signature moment worth screenshotting, and you can name it

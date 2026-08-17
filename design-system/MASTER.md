@@ -67,14 +67,31 @@ The core cast:
 - Spot illustrations for: first-run onboarding, empty products, backup/restore,
   error states.
 
-## 3. Light logic
+## 3. Light logic (amended per VISUAL-LAW §2)
 
-One global light source: **top-start** (top-right in RTL). Every material obeys:
-- speculars and top-edge highlights face the light; cast shadows fall away from it
-- hover = the element lifts toward the light (translate + shadow deepens
-  + specular shifts); press = pushed away (depth compresses)
-- dark scenes: glow rises from below (the `night` mesh logic), light objects keep
-  their own speculars
+One global light source: **directly overhead, slightly toward the camera** —
+NEVER lateral (a side-lit object mirrored by `scaleX(-1)` for RTL would have its
+physics flipped by a language setting). Every material obeys:
+- speculars/top-edge highlights face up; cast shadows fall below; per-face
+  lighting = one neutral material + `filter: brightness()` per face, side faces
+  always EQUAL
+- three shadows, three jobs: contact (pins) + cast (height) + ambient occlusion
+  (seats); one soft shadow alone reads as a sticker; contact shadows animate
+  with the object (tighten on close/land, spread on open/lift)
+- hover = lift toward the light (translate + shadow deepens); press = compress
+- dark scenes: glow rises from below (the `night` mesh logic)
+
+## 3b. The image-grade standard (client requirement, binding)
+
+No "plain simple CSS drawings". Every visual object must pass the **screenshot
+test**: cropped alone, it could be mistaken for a rendered image — which in
+practice means ≥ 3 cooperating light layers (form gradient + specular/edge lips
++ the shadow trio), composed geometry (a nameable visual axis with balanced
+weights), and detail at edges/joints. Flat single-gradient rectangles,
+unbalanced line-art and bare-stroke decorations FAIL the gate. The full law:
+`design-system/VISUAL-LAW.md`. The proven techniques: `design-system/RECIPES.md`
+(mined from the client's own `Xboxiq/nova` — first-party, rebound to Flousi
+tokens; nova's legacy violet hues are explicitly NOT ported).
 
 ## 4. Motion choreography (promoted from garnish to structure)
 
@@ -94,9 +111,13 @@ The v3 curves/durations stay as the physics vocabulary; what changes is scale:
   never move while being read or on data re-render.
 - **Ritual moments:** closing a period, saving a product, exporting — each gets
   one designed sequence (the delight budget is now per-flow, not per-app).
+- **Motion budget (from nova — protects the cinema from eating legibility):**
+  max two simultaneously animating elements on a product/data surface; max one
+  endless loop per page (heroes/chrome only — zero infinite animation on
+  product components); one focal material effect per surface; every directional
+  animation ships its `[dir="ltr"]` counter-rule.
 - Floors that stay: `prefers-reduced-motion` collapses to opacity; nothing
-  gates content; interaction feedback ≤ 200ms; animate transform/opacity only;
-  no infinite loops on idle screens.
+  gates content; interaction feedback ≤ 200ms; animate transform/opacity only.
 
 ## 5. Composition
 
