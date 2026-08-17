@@ -7,6 +7,10 @@ import { Odometer } from "@/presentation/components/objects/odometer";
 import { DistributionBar } from "@/presentation/components/objects/distribution-bar";
 import { PriceColumn } from "@/presentation/components/objects/price-column";
 import { Delta } from "@/presentation/components/ui";
+import { Sparkline } from "@/presentation/components/objects/sparkline";
+import { MagnitudeRings } from "@/presentation/components/objects/magnitude-rings";
+import { ReportFolder } from "@/presentation/components/objects/report-folder";
+import { SlideToCommit } from "@/presentation/components/interactive/slide-to-commit";
 
 const money = (n: number) =>
   new Intl.NumberFormat("ar-IQ", {
@@ -146,6 +150,57 @@ export function InstrumentsStudy() {
             <Delta value={0.124} label="+12.4%" against="مقابل الشهر السابق" />
             <Delta value={-0.095} label="-9.5%" against="مقابل الشهر السابق" />
           </div>
+        </Bay>
+
+        <Bay
+          name="خط الاتجاه · Sparkline"
+          measures="ستة أشهر لصفٍّ واحد في جدول"
+          law="لا حركة على بيانات تُقرأ · خط الصفر يظهر فقط عند العبور"
+        >
+          <div className="flex flex-col items-center gap-3">
+            <Sparkline values={[120, 80, 210, 160, 260, 240]} width={150} height={34} />
+            <Sparkline values={[90, 140, 40, -60, -20, 30]} width={150} height={34} />
+          </div>
+        </Bay>
+
+        <Bay
+          name="حلقات الحجم · MagnitudeRings"
+          measures="ثلاث كميات يحوي بعضُها بعضاً — المساحة هي القيمة"
+          law="نصف القطر ∝ √القيمة · شرعيتها الاحتواء الحقيقي، وإلا فشريط التوزيع"
+        >
+          <MagnitudeRings
+            size={116}
+            format={(n) => money(n)}
+            rings={[
+              { label: "الإيراد", value: 4299000, kind: "whole" },
+              { label: "التكاليف", value: 2806641, kind: "cost" },
+              { label: "صافي الربح", value: 1492359, kind: "keep" },
+            ]}
+          />
+        </Bay>
+
+        <Bay
+          name="ملف الأرشيف · ReportFolder"
+          measures="كم شهراً مؤرشفاً يحمله المتجر"
+          law="§8 الأوراق تظهر فقط عند وجود أشهر مقفلة · §4 لا تساوي بين ميلين"
+        >
+          <div className="stage stage-standing h-[120px] w-44">
+            <ReportFolder sheets={3} />
+          </div>
+        </Bay>
+
+        <Bay
+          name="اسحب للإتمام · SlideToCommit"
+          measures="فعل لا رجعة فيه — إغلاق شهر"
+          law="الإيماءة هي التأكيد · الإفلات المبكر يرتد · مسار لوحة المفاتيح موجود"
+          wide
+        >
+          <SlideToCommit
+            className="max-w-[420px]"
+            label="اسحب لإغلاق الشهر وقفله"
+            doneLabel="أُغلق الشهر"
+            onCommit={() => new Promise((r) => setTimeout(r, 600))}
+          />
         </Bay>
       </div>
     </section>

@@ -9,7 +9,14 @@ interface EmptyStateProps {
   className?: string;
 }
 
-/** Composed empty state that always points to the next action. */
+/**
+ * Composed empty state that always points to the next action.
+ *
+ * The subject stands as an OBJECT on a stage (batch-3 feedback: the 3D squircle
+ * icon on a tinted pool): a moulded body under overhead light, pinned by a
+ * contact/cast floor — not a flat icon in a grey disc (§1 §3). The emptiness
+ * itself is the message, so the stage stays sparse on purpose.
+ */
 export function EmptyState({ icon, title, description, action, className }: EmptyStateProps) {
   return (
     <div
@@ -19,8 +26,8 @@ export function EmptyState({ icon, title, description, action, className }: Empt
       )}
     >
       {icon && (
-        <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-surface-2 text-muted">
-          {icon}
+        <div className="stage mb-6 h-[92px] w-[150px]">
+          <div className="squircle size-[68px] text-muted">{icon}</div>
         </div>
       )}
       <h3 className="text-base font-semibold text-fg">{title}</h3>

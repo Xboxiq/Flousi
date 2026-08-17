@@ -27,6 +27,8 @@ import {
 } from "@/presentation/components/ui";
 import type { Product, Sale } from "@/domain";
 import { formatCurrency, formatDate, formatPercent } from "@/presentation/lib/format";
+import { MagnitudeRings } from "@/presentation/components/objects/magnitude-rings";
+import { SlideToCommit } from "@/presentation/components/interactive/slide-to-commit";
 
 export function PeriodsView() {
   const loaded = useDataStore((s) => s.loaded);
@@ -38,7 +40,12 @@ export function PeriodsView() {
   const openPeriod = useDataStore((s) => s.openPeriod);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [working, setWorking] = useState(false);
+  /**
+   * The month being sealed, PINNED at the moment the dialog opens. Committing
+   * swaps the store's active period underneath the open dialog — without the
+   * snapshot the sheet re-targets mid-close and asks about the new month.
+   */
+  const [closing, setClosing] = useState<{ label: string; summary: NonNullable<typeof liveSummary> } | null>(null);
 
   const active = periods.find((p) => p.status === "open");
   const closed = useMemo(
@@ -56,20 +63,19 @@ export function PeriodsView() {
 
   const onClose = async () => {
     if (!active || !liveSummary) return;
-    setWorking(true);
-    try {
-      await closePeriod(active.id, {
-        status: "closed",
-        endDate: new Date().toISOString(),
-        closedAt: new Date().toISOString(),
-        summary: liveSummary,
-      });
-      const next = nextPeriodAfter(active);
-      await openPeriod({ label: next.label, startDate: next.startDate, status: "open" });
+    await closePeriod(active.id, {
+      status: "closed",
+      endDate: new Date().toISOString(),
+      closedAt: new Date().toISOString(),
+      summary: liveSummary,
+    });
+    const next = nextPeriodAfter(active);
+    await openPeriod({ label: next.label, startDate: next.startDate, status: "open" });
+    // the slide lands («أُغلق الشهر») and is SEEN landed before the sheet leaves
+    setTimeout(() => {
       setConfirmOpen(false);
-    } finally {
-      setWorking(false);
-    }
+      setClosing(null);
+    }, 900);
   };
 
   const startFirstPeriod = async () => {
@@ -110,7 +116,13 @@ export function PeriodsView() {
                 مفتوحة
               </Badge>
             </div>
-            <Button leadingIcon={<Lock size={16} />} onClick={() => setConfirmOpen(true)}>
+            <Button
+              leadingIcon={<Lock size={16} />}
+              onClick={() => {
+                setClosing({ label: active.label, summary: liveSummary });
+                setConfirmOpen(true);
+              }}
+            >
               إغلاق الفترة
             </Button>
           </CardHeader>
@@ -161,7 +173,19 @@ export function PeriodsView() {
               </CardHeader>
               <CardContent>
                 {period.summary && (
-                  <SummaryGrid summary={period.summary} money={money} locale={settings.locale} />
+                  <div className="flex flex-col gap-4">
+                    {/* the month's magnitudes as nested areas (R47) beside its figures */}
+                    <MagnitudeRings
+                      rings={[
+                        { label: "الإيراد", value: period.summary.revenue, kind: "whole" },
+                        { label: "التكاليف", value: period.summary.totalCost, kind: "cost" },
+                        { label: "صافي الربح", value: period.summary.netProfit, kind: "keep" },
+                      ]}
+                      size={116}
+                      format={money}
+                    />
+                    <SummaryGrid summary={period.summary} money={money} locale={settings.locale} />
+                  </div>
                 )}
                 <ExportButtons label={period.label} periodId={period.id} products={products} sales={sales} />
               </CardContent>
@@ -173,25 +197,42 @@ export function PeriodsView() {
       {/* Confirm close */}
       <Dialog
         open={confirmOpen}
-        onClose={() => setConfirmOpen(false)}
-        title={`إغلاق ${active?.label ?? "الفترة"}؟`}
+        onClose={() => {
+          setConfirmOpen(false);
+          setClosing(null);
+        }}
+        title={`إغلاق ${closing?.label ?? "الفترة"}؟`}
         description="سيتم قفل الفترة. يصبح تقريرها للقراءة فقط وتُفتح فترة جديدة."
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => setConfirmOpen(false)} disabled={working}>
-              إلغاء
-            </Button>
-            <Button onClick={onClose} loading={working} leadingIcon={<Lock size={16} />}>
-              إغلاق وقفل
-            </Button>
-          </>
+        /* the art is the DATA being sealed: the month's own magnitudes (R29+R47) */
+        art={
+          closing ? (
+            <MagnitudeRings
+              rings={[
+                { label: "الإيراد", value: closing.summary.revenue, kind: "whole" },
+                { label: "التكاليف", value: closing.summary.totalCost, kind: "cost" },
+                { label: "صافي الربح", value: closing.summary.netProfit, kind: "keep" },
+              ]}
+              size={120}
+              format={money}
+            />
+          ) : undefined
         }
       >
-        {liveSummary && (
+        {closing && (
           <div className="rounded-[var(--radius-md)] border border-border bg-surface-2 p-4">
-            <SummaryGrid summary={liveSummary} money={money} locale={settings.locale} compact />
+            <SummaryGrid summary={closing.summary} money={money} locale={settings.locale} compact />
           </div>
         )}
+        {/* closing a month is irreversible, so it costs a gesture (R25) */}
+        <SlideToCommit
+          className="mt-4"
+          label="اسحب لإغلاق الشهر وقفله"
+          doneLabel="أُغلق الشهر"
+          onCommit={onClose}
+        />
+        <p className="mt-2 text-center text-[11px] text-subtle">
+          الإفلات قبل النهاية يلغي — لا يُغلق شهر بالخطأ.
+        </p>
       </Dialog>
     </>
   );

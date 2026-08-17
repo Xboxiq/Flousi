@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeDashboard, profitForSale } from "./analytics";
+import { computeDashboard, computeProductTrends, profitForSale } from "./analytics";
 import { makeCostBreakdown, type Product, type Sale } from "@/domain";
 
 function product(overrides: Partial<Product> = {}): Product {
@@ -127,6 +127,24 @@ describe("computeDashboard", () => {
     const m = computeDashboard([product()], [sale(), sale({ id: "s2" })], { now, months: 6 });
     // 120 of profit spread over a 6-month window.
     expect(m.averageMonthProfit).toBe(20);
+  });
+
+  it("builds a comparable trailing series per product, empty months included", () => {
+    const a = product({ id: "a" });
+    const b = product({ id: "b", costs: makeCostBreakdown({ purchase: { fixed: 90, percent: 0 } }) });
+    const trends = computeProductTrends(
+      [a, b],
+      [
+        sale({ productId: "a", soldAt: "2026-06-10T12:00:00.000Z" }), // +60
+        sale({ id: "s2", productId: "a", soldAt: "2026-04-02T12:00:00.000Z", quantity: 2 }), // +120
+        sale({ id: "s3", productId: "b", soldAt: "2026-05-15T12:00:00.000Z" }), // +10
+        sale({ id: "s4", productId: "a", soldAt: "2025-11-01T12:00:00.000Z" }), // outside window
+      ],
+      { now, months: 6 },
+    );
+    // Window: Jan..Jun 2026, oldest first. Same length for every product.
+    expect(trends.get("a")).toEqual([0, 0, 0, 120, 0, 60]);
+    expect(trends.get("b")).toEqual([0, 0, 0, 0, 10, 0]);
   });
 
   it("ranks top products by net profit", () => {

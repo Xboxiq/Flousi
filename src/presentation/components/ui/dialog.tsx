@@ -10,6 +10,13 @@ interface DialogProps {
   onClose: () => void;
   title?: string;
   description?: string;
+  /**
+   * An art header (RECIPES R29): a band above the title holding an OBJECT —
+   * ideally the data the dialog acts on (the month's rings, a folder), never a
+   * decorative icon on a wash. The band is a shallow stage, so whatever is
+   * placed in it stands rather than floats.
+   */
+  art?: React.ReactNode;
   children: React.ReactNode;
   footer?: React.ReactNode;
   className?: string;
@@ -20,6 +27,7 @@ export function Dialog({
   onClose,
   title,
   description,
+  art,
   children,
   footer,
   className,
@@ -63,20 +71,35 @@ export function Dialog({
             exit={reduce ? undefined : { opacity: 0, scale: 0.96, y: 8 }}
             transition={{ duration: 0.2, ease: [0.33, 1, 0.68, 1] }}
           >
+            {art && (
+              <div className="scene-field relative flex items-center justify-center overflow-hidden !rounded-b-none rounded-t-[calc(var(--radius-lg)-1px)] px-5 pt-6 pb-4">
+                {art}
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label="Close"
+                  className="absolute end-3 top-3 inline-flex size-8 items-center justify-center rounded-full bg-surface/85 text-muted shadow-sm hover:text-fg"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            )}
             {(title || description) && (
               <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
                 <div>
                   {title && <h2 className="text-base font-semibold text-fg">{title}</h2>}
                   {description && <p className="mt-1 text-sm text-muted">{description}</p>}
                 </div>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  aria-label="Close"
-                  className="inline-flex size-8 items-center justify-center rounded-[var(--radius-md)] text-muted hover:bg-surface-2 hover:text-fg"
-                >
-                  <X size={18} />
-                </button>
+                {!art && (
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    aria-label="Close"
+                    className="inline-flex size-8 items-center justify-center rounded-[var(--radius-md)] text-muted hover:bg-surface-2 hover:text-fg"
+                  >
+                    <X size={18} />
+                  </button>
+                )}
               </div>
             )}
             <div className="px-5 py-4">{children}</div>

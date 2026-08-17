@@ -130,6 +130,40 @@ const MONTH_LABELS = [
 ];
 
 /**
+ * Per-product trailing net-profit series — the sparkline on each product row.
+ * Months with no sales stay 0 so every product spans the same window and the
+ * sparklines are comparable across rows. Oldest first.
+ */
+export function computeProductTrends(
+  products: Product[],
+  sales: Sale[],
+  options: { months?: number; now?: Date } = {},
+): Map<string, number[]> {
+  const months = options.months ?? 6;
+  const now = options.now ?? new Date();
+  const productById = new Map(products.map((p) => [p.id, p]));
+
+  // Month-key → index into each product's series.
+  const slot = new Map<string, number>();
+  for (let i = months - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    slot.set(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`, months - 1 - i);
+  }
+
+  const series = new Map<string, number[]>(products.map((p) => [p.id, new Array(months).fill(0)]));
+  for (const sale of sales) {
+    const d = new Date(sale.soldAt);
+    const idx = slot.get(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+    if (idx === undefined) continue;
+    const row = series.get(sale.productId);
+    if (!row) continue;
+    const sp = profitForSale(sale, productById.get(sale.productId));
+    row[idx] = round2(row[idx] + sp.netProfit);
+  }
+  return series;
+}
+
+/**
  * Aggregate products + sales into the full dashboard metric set.
  * Pure and deterministic given `now` (defaults to current date).
  */

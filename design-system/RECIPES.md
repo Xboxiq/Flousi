@@ -263,7 +263,7 @@ A raised pill rail where the active destination sits in its OWN lifted capsule �
 selection is a physical position, not a colour swap. The content column reserves
 its height so no row is trapped underneath.
 
-**R25 — Slide to commit** *(to build: periods)*
+**R25 — Slide to commit** *(BUILT: `interactive/slide-to-commit.tsx` + `.slide-*`, closing a period — pointer 1:1, snap-back on early release, keyboard + reduced-motion paths)*
 A committing action that requires a deliberate drag ("اسحب للإغلاق") with a
 circular handle in a white rail. For irreversible money events — closing a period,
 paying a settlement — where a tap is too cheap.
@@ -273,7 +273,7 @@ Four soft-tinted circular tiles with a bare icon and a word beneath. Only for
 actions that are genuinely daily; each tile's tint is its semantic (income green,
 expense red, invoice accent).
 
-**R27 — Sparkline row tile** *(to build: products, reps)*
+**R27 — Sparkline row tile** *(BUILT: `objects/sparkline.tsx` fed by `computeProductTrends`, a column on the products table; reps screen still to come)*
 A dark mini-tile fused to the leading edge of a list row carrying that item's
 trend + its value. Turns a flat list into a scannable comparison.
 
@@ -282,11 +282,11 @@ A gradient rail with a hatched zone marking "your usual range" and an explicit
 label when the handle passes it. Compares the current choice to the merchant's own
 history instead of an abstract scale.
 
-**R29 — Sheet with an art header** *(to build: dialogs)*
+**R29 — Sheet with an art header** *(BUILT: `Dialog art=` — the close-period sheet opens on the month's own rings, data as art)*
 Modal = a gradient/halftone art strip + a white sheet + an inner bordered detail
 card + one full-width dark CTA. Keeps confirmations calm and legible.
 
-**R30 — Document folder object** *(to build: reports/export)*
+**R30 — Document folder object** *(BUILT: `objects/report-folder.tsx` + `.folder-*` — the reports hub's featured scene; sheets + count are the real closed-period count)*
 An extruded folder with document sheets peeking out at unequal angles (§4), used
 as the export affordance. The sheets only appear when there is something to export.
 
@@ -398,7 +398,7 @@ Two stacked inset rows (from / to) with a circular swap control centred on the s
 between them. The control belongs to the JOINT, which is why it reads as reversing
 the pair rather than acting on one row.
 
-**R47 — Concentric magnitude rings** *(queued: reports)*
+**R47 — Concentric magnitude rings** *(BUILT: `objects/magnitude-rings.tsx` — period summaries and the close dialog's art; bottom-tangent nesting, radius ∝ √value)*
 Nested circles sized by √value so AREA carries the magnitude. Only legitimate when
 the values genuinely contain one another (revenue ⊃ costs ⊃ profit); for a partition
 use the distribution bar instead.

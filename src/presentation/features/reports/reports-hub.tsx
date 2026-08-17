@@ -9,6 +9,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { REPORT_META, type ReportType } from "@/application/reports";
 import { PageHeader } from "@/presentation/components/layout/page-header";
+import { ReportsFolderScene } from "./reports-folder-scene";
 import { cn } from "@/presentation/lib/cn";
 
 const ICONS: Record<ReportType, React.ReactNode> = {
@@ -43,12 +44,9 @@ export function ReportsHub() {
               )}
             >
               {featured ? (
-                <div className="grainy mesh-aurora relative flex h-44 items-start justify-between p-5 text-white">
-                  <span className="relative z-[2]">{ICONS[type]}</span>
-                  <span className="relative z-[2] flex size-9 items-center justify-center rounded-full bg-paper/90 text-ink shadow-sm">
-                    <ArrowUpLeft size={16} weight="bold" />
-                  </span>
-                </div>
+                /* the band is an OBJECT with real state (the folder of filed
+                   months), replacing the old icon-on-mesh wash (R30, §1 §8) */
+                <ReportsFolderScene />
               ) : (
                 <div className="flex items-center justify-between p-5 pb-0">
                   <span className="text-muted">{ICONS[type]}</span>
