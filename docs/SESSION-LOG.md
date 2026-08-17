@@ -85,7 +85,14 @@ Material classes / components:
 
 ## 7. Next steps (pick up here)
 
-Priority order for visual parity + completeness:
+> **2026-08-17 — Design Plan v3 supersedes the list below.** Execute
+> `docs/DESIGN-PLAN.md` phase by phase (Phase 0 = reference intake, waiting on the
+> client's attached design-system files; Phase 1 = foundation surgery can start now).
+> Contract: `design-system/MASTER.md` v3. Mandatory gate:
+> `.claude/skills/flousi-anti-slop-gate/`. 29 curated skills vendored under
+> `.claude/skills/` (see its README + the routing table in the plan).
+
+Old v2 priority list (historical):
 1. **Art-direct remaining screens** to the Soft Capital language:
    - Products list → bento/cards, profit polarity, softer table.
    - Product form/detail → group sections on soft surfaces, use `Stepper` for create flow, glossy save CTA.
@@ -106,5 +113,6 @@ Priority order for visual parity + completeness:
 | 2026-06-26 | Build Flousi v1 (phases 0–14) | Foundation, domain engine, dashboard, products+calculator, periods, reports+export, settings, tests, docs. PR #3. |
 | 2026-06-26 | GitHub Pages | Static export + `deploy.yml`; `/products/[id]` → `/products/view?id=`. |
 | 2026-06-26 | Design overhaul v2 "Soft Capital" | New tokens (neumorphism, grainient mesh, glossy orbs), General Sans, revamped dashboard + ProfitPanel + signature components + styleguide. |
+| 2026-08-17 | **Design Plan v3 "Precision Capital"** | Audited + vendored 29 skills into `.claude/skills/` (impeccable, frontend-design, emil motion set, interfaces, ui-ux-pro-max data, kill-ai-slop, unlazy, ponytail, layers). Authored `flousi-anti-slop-gate` skill, rewrote `design-system/MASTER.md` (v3), wrote `docs/DESIGN-PLAN.md` (7 phases, gates method, reference-intake protocol for incoming client design files). `docs/DESIGN-SYSTEM.md` marked historical. |
 
 > When you finish a work session, append a row here and tick items in `docs/PROGRESS.md`.
