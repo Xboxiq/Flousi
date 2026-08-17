@@ -3,7 +3,9 @@ import { TrendUp, TrendDown } from "@phosphor-icons/react/dist/ssr";
 import { Card } from "./card";
 
 export type StatTone = "default" | "success" | "danger";
-export type StatAccent = "blue" | "green" | "violet" | "orange" | "neutral";
+/** Accent hues are locked to the semantic set: blue (interactive/brand),
+ *  green (profit), neutral. Violet/orange were decorative — removed (MASTER §1). */
+export type StatAccent = "blue" | "green" | "neutral";
 
 export interface StatProps {
   label: string;
@@ -30,8 +32,6 @@ const VALUE_TONE: Record<StatTone, string> = {
 const CHIP: Record<StatAccent, string> = {
   blue: "bg-accent-soft text-accent",
   green: "bg-success-soft text-success",
-  violet: "bg-[color-mix(in_oklab,var(--violet)_16%,transparent)] text-[var(--violet)]",
-  orange: "bg-[color-mix(in_oklab,var(--orange)_18%,transparent)] text-[var(--orange)]",
   neutral: "bg-surface-2 text-muted",
 };
 
@@ -64,7 +64,7 @@ export function Stat({
       </div>
       <div
         className={cn(
-          "mt-4 font-mono text-[28px] font-bold leading-none tabular-nums",
+          "mt-4 font-mono text-display font-bold tabular-nums",
           VALUE_TONE[tone],
         )}
       >

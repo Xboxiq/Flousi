@@ -27,11 +27,11 @@ export function MaterialsDemo() {
           </MeshSurface>
           <MeshSurface variant="night" className="flex min-h-[180px] flex-col items-center justify-between rounded-[var(--radius-xl)] p-6 text-center text-white shadow-md">
             <span className="text-base font-semibold">Start Working Smarter</span>
-            <Button variant="secondary" className="!bg-white !text-[#11141b]">
+            <Button variant="secondary" className="!bg-paper !text-ink">
               Get started
             </Button>
           </MeshSurface>
-          <MeshSurface variant="night-rose" className="flex min-h-[180px] items-end rounded-[var(--radius-xl)] p-6 text-white shadow-md">
+          <MeshSurface variant="night-danger" className="flex min-h-[180px] items-end rounded-[var(--radius-xl)] p-6 text-white shadow-md">
             <span className="text-sm text-white/80">Night · rose</span>
           </MeshSurface>
         </div>
@@ -84,7 +84,7 @@ export function MaterialsDemo() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-subtle">{title}</h2>
+      <h2 className="mb-4 text-sm font-medium text-subtle">{title}</h2>
       {children}
     </section>
   );

@@ -40,7 +40,7 @@ export function ProfitPanel({ sellingPrice, costs, currency, locale, quantity = 
     <div className={cn("flex flex-col gap-3", className)}>
       {/* Net profit hero */}
       <MeshSurface
-        variant={positive ? "night" : "night-rose"}
+        variant={positive ? "night" : "night-danger"}
         className="rounded-[var(--radius-xl)] p-6 text-white shadow-md"
       >
         <div className="flex items-center justify-between">
@@ -71,7 +71,7 @@ export function ProfitPanel({ sellingPrice, costs, currency, locale, quantity = 
 
       {/* Cost breakdown */}
       <div className="rounded-[var(--radius-lg)] border border-border-soft bg-surface p-5 shadow-sm">
-        <span className="text-xs font-semibold uppercase tracking-wide text-subtle">تفصيل التكاليف</span>
+        <span className="text-xs font-semibold text-subtle">تفصيل التكاليف</span>
         <ul className="mt-3 flex flex-col gap-2">
           {Object.entries(result.costByLine)
             .filter(([, amount]) => amount > 0)

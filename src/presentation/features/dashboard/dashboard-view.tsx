@@ -149,7 +149,7 @@ export function DashboardView() {
         <Stat
           label="إجمالي التكاليف"
           value={money(metrics.totalCost)}
-          accent="orange"
+          accent="neutral"
           icon={<Receipt size={18} weight="bold" />}
         />
       </div>

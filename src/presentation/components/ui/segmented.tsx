@@ -31,7 +31,7 @@ export function Segmented<T extends string>({
             onClick={() => onChange(opt.value)}
             aria-pressed={active}
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-[var(--motion-base)]",
+              "inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-[color,background-color,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-out)]",
               active
                 ? "bg-surface text-fg shadow-sm"
                 : "text-muted hover:text-fg",

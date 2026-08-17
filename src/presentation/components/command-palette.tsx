@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { MagnifyingGlass, ArrowRight } from "@phosphor-icons/react";
 import { NAV_GROUPS } from "./layout/nav-config";
 import { useUiStore } from "@/presentation/stores/ui-store";
+import { easeOut } from "@/presentation/lib/motion";
 import { cn } from "@/presentation/lib/cn";
 
 interface Command {
@@ -96,7 +97,7 @@ export function CommandPalette() {
       {open && (
         <div className="fixed inset-0 z-[60] flex items-start justify-center p-4 pt-[12vh]">
           <motion.div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -111,7 +112,7 @@ export function CommandPalette() {
             initial={reduce ? false : { opacity: 0, scale: 0.97, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={reduce ? undefined : { opacity: 0, scale: 0.97, y: 10 }}
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.2, ease: easeOut }}
             onKeyDown={onKeyDown}
           >
             <div className="flex items-center gap-3 border-b border-border px-4">
@@ -138,7 +139,7 @@ export function CommandPalette() {
                     onMouseEnter={() => setActive(i)}
                     onClick={() => run(c)}
                     className={cn(
-                      "flex w-full items-center justify-between rounded-[var(--radius-md)] px-3 py-2.5 text-left text-sm transition-colors",
+                      "flex w-full items-center justify-between rounded-[var(--radius-md)] px-3 py-2.5 text-start text-sm transition-colors",
                       i === active ? "bg-accent-soft text-accent" : "text-fg hover:bg-surface-2",
                     )}
                   >

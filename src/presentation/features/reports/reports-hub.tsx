@@ -45,7 +45,7 @@ export function ReportsHub() {
                 )}
               >
                 <span className="relative z-[2]">{ICONS[type]}</span>
-                <span className="relative z-[2] flex size-9 items-center justify-center rounded-full bg-white/90 text-[#1b1c22] shadow-sm transition-transform group-hover:scale-110">
+                <span className="relative z-[2] flex size-9 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm">
                   <ArrowUpLeft size={16} weight="bold" />
                 </span>
               </div>

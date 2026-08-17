@@ -13,6 +13,8 @@ export { Badge } from "./badge";
 export type { BadgeTone } from "./badge";
 export { Stat } from "./stat";
 export type { StatProps } from "./stat";
+export { Money } from "./money";
+export type { MoneyProps } from "./money";
 export { Skeleton } from "./skeleton";
 export { Spinner } from "./spinner";
 export { EmptyState } from "./empty-state";

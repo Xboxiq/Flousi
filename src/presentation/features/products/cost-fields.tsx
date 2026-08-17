@@ -23,7 +23,7 @@ interface Props {
 export function CostFields({ costs, currencySymbol, onChange }: Props) {
   return (
     <div className="flex flex-col gap-3">
-      <div className="hidden grid-cols-[1fr_120px_120px] gap-3 px-1 text-xs font-medium uppercase tracking-wide text-subtle sm:grid">
+      <div className="hidden grid-cols-[1fr_120px_120px] gap-3 px-1 text-xs font-medium text-subtle sm:grid">
         <span>بند التكلفة</span>
         <span>ثابت</span>
         <span>نسبة</span>

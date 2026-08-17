@@ -164,7 +164,7 @@ export default function StyleguidePage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mb-12">
-      <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-subtle">{title}</h2>
+      <h2 className="mb-4 text-sm font-medium text-subtle">{title}</h2>
       {children}
     </section>
   );

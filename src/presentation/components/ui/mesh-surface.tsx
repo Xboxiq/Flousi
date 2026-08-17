@@ -1,11 +1,12 @@
 import { cn } from "@/presentation/lib/cn";
 
-export type MeshVariant = "aurora" | "night" | "night-rose";
+export type MeshVariant = "aurora" | "night" | "night-danger";
 
 const MAP: Record<MeshVariant, string> = {
   aurora: "mesh-aurora",
   night: "mesh-night",
-  "night-rose": "mesh-night-rose",
+  // Semantic LOSS surface (danger red). Never decorative.
+  "night-danger": "mesh-night-danger",
 };
 
 /**

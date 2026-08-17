@@ -18,9 +18,10 @@ import { TiltCard } from "@/presentation/components/interactive/tilt-card";
 import { Magnetic } from "@/presentation/components/interactive/magnetic";
 import { SpotlightCard } from "@/presentation/components/interactive/spotlight-card";
 import { CountUp } from "@/presentation/components/interactive/count-up";
+import { easeOut as ease } from "@/presentation/lib/motion";
 import { cn } from "@/presentation/lib/cn";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+
 
 export function LandingPage() {
   const reduce = useReducedMotion();
@@ -84,9 +85,7 @@ export function LandingPage() {
             >
               اعرف
               <br />
-              <span className="bg-[linear-gradient(110deg,var(--blue-500),var(--teal)_52%,var(--green-500))] bg-clip-text text-transparent">
-                صافي ربحك الحقيقي.
-              </span>
+              <span className="text-accent">صافي ربحك الحقيقي.</span>
             </motion.h1>
             <motion.p {...rise(0.12)} className="mt-6 max-w-[36ch] text-lg leading-relaxed text-muted md:text-xl">
               فلوسي يحوّل السعر والرسوم والتكاليف الخفية إلى الرقم الوحيد المهم، فورًا.
@@ -151,7 +150,7 @@ export function LandingPage() {
             { v: 4, s: " صيغ", l: "PDF · Excel · CSV · طباعة" },
             { v: 0, s: "ms", l: "لإعادة حساب الربح", pre: "~" },
           ].map((stat) => (
-            <motion.div key={stat.l} {...reveal} className="text-center md:text-left">
+            <motion.div key={stat.l} {...reveal} className="text-center md:text-start">
               <div className="font-display text-4xl font-semibold tracking-tight md:text-5xl">
                 <CountUp value={stat.v} prefix={stat.pre ?? ""} suffix={stat.s} />
               </div>
@@ -259,7 +258,7 @@ export function LandingPage() {
             <Magnetic strength={0.5}>
               <Link
                 href="/dashboard"
-                className="mt-9 inline-flex h-12 items-center gap-2 rounded-full bg-white px-8 text-base font-semibold text-[#0b1220] transition-transform hover:scale-[1.02]"
+                className="mt-9 inline-flex h-12 items-center gap-2 rounded-full bg-white px-8 text-base font-semibold text-ink transition-transform hover:scale-[1.02]"
               >
                 افتح فلوسي <ArrowUpRight size={18} weight="bold" />
               </Link>

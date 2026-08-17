@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { durations, easeOut } from "@/presentation/lib/motion";
 
 /** Subtle entrance transition on every in-app navigation. */
 export default function Template({ children }: { children: React.ReactNode }) {
@@ -10,7 +11,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: durations.slow, ease: easeOut }}
     >
       {children}
     </motion.div>

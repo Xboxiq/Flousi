@@ -16,6 +16,7 @@ import {
   CardTitle,
   Dialog,
   EmptyState,
+  Money,
   Skeleton,
   Table,
   TBody,
@@ -136,7 +137,7 @@ export function PeriodsView() {
       )}
 
       {/* السجل */}
-      <h2 className="mt-8 mb-3 text-sm font-medium uppercase tracking-wide text-subtle">
+      <h2 className="mt-8 mb-3 text-sm font-medium text-subtle">
         الفترات المغلقة
       </h2>
       {closed.length === 0 ? (
@@ -212,7 +213,7 @@ function ExportButtons({
   if (!has) return null;
   return (
     <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4">
-      <span className="me-1 text-xs font-medium uppercase tracking-wide text-subtle">
+      <span className="me-1 text-xs font-medium text-subtle">
         تصدير أرباح الشهر
       </span>
       <Button variant="secondary" size="sm" leadingIcon={<FileCsv size={15} />} onClick={() => downloadReport("csv", table())}>
@@ -256,7 +257,7 @@ function BreakdownTable({
   }
   return (
     <div className="mt-5 border-t border-border pt-4">
-      <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-subtle">
+      <h3 className="mb-2 text-xs font-medium text-subtle">
         الربح حسب المنتج
       </h3>
       <Table>
@@ -277,14 +278,14 @@ function BreakdownTable({
             return (
               <TR key={i} className={isTotal ? "font-semibold" : ""}>
                 <TD className={isTotal ? "font-semibold" : "font-medium"}>{String(row[0])}</TD>
-                <TD className="text-start font-mono tabular-nums text-muted" dir="ltr">{String(row[2])}</TD>
-                <TD className="text-start font-mono tabular-nums" dir="ltr">{money(Number(row[3]))}</TD>
-                <TD className="text-start font-mono tabular-nums" dir="ltr">{money(Number(row[4]))}</TD>
-                <TD className={`text-start font-mono tabular-nums ${net >= 0 ? "text-success" : "text-danger"}`} dir="ltr">
-                  {money(net)}
+                <TD className="text-start"><Money className="text-muted">{String(row[2])}</Money></TD>
+                <TD className="text-start"><Money>{money(Number(row[3]))}</Money></TD>
+                <TD className="text-start"><Money>{money(Number(row[4]))}</Money></TD>
+                <TD className="text-start">
+                  <Money polarity={net}>{money(net)}</Money>
                 </TD>
-                <TD className="text-start font-mono tabular-nums text-muted" dir="ltr">
-                  {formatPercent(Number(row[6]), { locale })}
+                <TD className="text-start">
+                  <Money className="text-muted">{formatPercent(Number(row[6]), { locale })}</Money>
                 </TD>
               </TR>
             );
@@ -314,14 +315,10 @@ function SummaryGrid({
   live?: boolean;
   compact?: boolean;
 }) {
-  const items = [
+  const items: { label: string; value: string; polarity?: number }[] = [
     { label: live ? "الإيراد (حتى الآن)" : "الإيراد", value: money(summary.revenue) },
     { label: "إجمالي التكلفة", value: money(summary.totalCost) },
-    {
-      label: "صافي الربح",
-      value: money(summary.netProfit),
-      tone: summary.netProfit >= 0 ? "text-success" : "text-danger",
-    },
+    { label: "صافي الربح", value: money(summary.netProfit), polarity: summary.netProfit },
     { label: "الهامش", value: formatPercent(summary.margin, { locale }) },
   ];
   return (
@@ -329,11 +326,8 @@ function SummaryGrid({
       {items.map((it) => (
         <div key={it.label}>
           <div className="text-xs text-muted">{it.label}</div>
-          <div
-            className={`mt-0.5 font-mono text-lg font-semibold tabular-nums ${it.tone ?? "text-fg"}`}
-            dir="ltr"
-          >
-            {it.value}
+          <div className="mt-0.5 text-lg font-semibold text-fg">
+            <Money polarity={it.polarity}>{it.value}</Money>
           </div>
         </div>
       ))}
