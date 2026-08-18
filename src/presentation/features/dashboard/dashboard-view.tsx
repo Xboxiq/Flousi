@@ -307,6 +307,7 @@ export function DashboardView() {
             {/* the window actually changes what is aggregated (R38) */}
             <Segmented
               className="self-start"
+              aria-label="نافذة القراءة"
               options={WINDOWS.map((w) => ({ label: w.label, value: w.value }))}
               value={window}
               onChange={(v) => setWindow(v)}

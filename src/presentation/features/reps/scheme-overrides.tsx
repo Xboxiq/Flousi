@@ -12,6 +12,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Dialog,
   Field,
   Select,
   Table,
@@ -27,6 +28,8 @@ import { cn } from "@/presentation/lib/cn";
 const ANY = "";
 /** The chain, in the order the resolver walks it. */
 const CHAIN: SchemeTier[] = ["productRep", "product", "rep", "accountDefault"];
+/** Printed by both the table and the phone list, so it is worded once. */
+const NO_ROWS = "لا توجد استثناءات، فكل بيع يقع على الافتراضي للحساب.";
 
 /**
  * The overrides bench: where the chain is bound, and where it is proven.
@@ -51,6 +54,10 @@ export function SchemeOverrides() {
   const [schemeId, setSchemeId] = useState(ANY);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  /* A precedence binding is not lost to one mis-tap: removal is confirmed first,
+     the same shape product-detail uses for a destructive action. */
+  const [pendingRemove, setPendingRemove] = useState<string | null>(null);
+  const [removing, setRemoving] = useState(false);
 
   const [probeRep, setProbeRep] = useState(ANY);
   const [probeProduct, setProbeProduct] = useState(ANY);
@@ -69,6 +76,33 @@ export function SchemeOverrides() {
         .sort((a, b) => assignmentTier(b).localeCompare(assignmentTier(a))),
     [assignments],
   );
+
+  /* One key, two widths: the sanctioned icon-only Button is 44px tall and carries
+     the moulded grammar its siblings have, so the phone gets a real target. */
+  const removeKey = (a: (typeof rows)[number]) => (
+    <Button
+      variant="ghost"
+      size="icon"
+      aria-label={`إزالة استثناء ${schemeName(a.schemeId)}`}
+      title="إزالة الاستثناء"
+      onClick={() => setPendingRemove(a.id)}
+    >
+      <Trash size={16} />
+    </Button>
+  );
+
+  const pending = pendingRemove ? (rows.find((a) => a.id === pendingRemove) ?? null) : null;
+
+  const doRemove = async () => {
+    if (!pendingRemove) return;
+    setRemoving(true);
+    try {
+      await deleteAssignment(pendingRemove);
+      setPendingRemove(null);
+    } finally {
+      setRemoving(false);
+    }
+  };
 
   const add = async () => {
     if (!schemeId) {
@@ -185,47 +219,65 @@ export function SchemeOverrides() {
           </div>
         </div>
 
-        <Table>
-          <THead>
-            <TR>
-              <TH>النطاق</TH>
-              <TH>المنتج</TH>
-              <TH>المندوب</TH>
-              <TH>النظام</TH>
-              <TH className="text-end">إزالة</TH>
-            </TR>
-          </THead>
-          <TBody>
-            {rows.map((a) => (
-              <TR key={a.id}>
-                <TD>
-                  <Badge>{SCHEME_TIER_LABELS[assignmentTier(a)]}</Badge>
-                </TD>
-                <TD className="text-muted">{productName(a.productId)}</TD>
-                <TD className="text-muted">{repName(a.repId)}</TD>
-                <TD className="font-medium text-fg">{schemeName(a.schemeId)}</TD>
-                <TD className="text-end">
-                  <button
-                    type="button"
-                    onClick={() => void deleteAssignment(a.id)}
-                    aria-label={`إزالة استثناء ${schemeName(a.schemeId)}`}
-                    title="إزالة الاستثناء"
-                    className="inline-flex size-8 items-center justify-center rounded-[var(--radius-md)] text-muted hover:bg-surface-2 hover:text-fg"
-                  >
-                    <Trash size={16} />
-                  </button>
-                </TD>
-              </TR>
-            ))}
-            {rows.length === 0 && (
+        {/* Five columns need a tablet's width. On a phone the precedence chain —
+            the whole point of this list — would become a sideways-scrolling strip,
+            so it becomes rows instead (the shape rep-sale-rows.tsx established). */}
+        <div className="hidden sm:block">
+          <Table>
+            <THead>
               <TR>
-                <TD className="py-8 text-center text-muted" colSpan={5}>
-                  لا توجد استثناءات، فكل بيع يقع على الافتراضي للحساب.
-                </TD>
+                <TH>النطاق</TH>
+                <TH>المنتج</TH>
+                <TH>المندوب</TH>
+                <TH>النظام</TH>
+                <TH className="text-end">إزالة</TH>
               </TR>
-            )}
-          </TBody>
-        </Table>
+            </THead>
+            <TBody>
+              {rows.map((a) => (
+                <TR key={a.id}>
+                  <TD>
+                    <Badge>{SCHEME_TIER_LABELS[assignmentTier(a)]}</Badge>
+                  </TD>
+                  <TD className="text-muted">{productName(a.productId)}</TD>
+                  <TD className="text-muted">{repName(a.repId)}</TD>
+                  <TD className="font-medium text-fg">{schemeName(a.schemeId)}</TD>
+                  <TD className="text-end">{removeKey(a)}</TD>
+                </TR>
+              ))}
+              {rows.length === 0 && (
+                <TR>
+                  <TD className="py-8 text-center text-muted" colSpan={5}>
+                    {NO_ROWS}
+                  </TD>
+                </TR>
+              )}
+            </TBody>
+          </Table>
+        </div>
+
+        <ul className="flex flex-col gap-2 sm:hidden">
+          {rows.map((a) => (
+            <li
+              key={a.id}
+              className="clay-inset flex items-center gap-3 rounded-[var(--radius-lg)] p-3"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="flex flex-wrap items-center gap-2">
+                  <Badge>{SCHEME_TIER_LABELS[assignmentTier(a)]}</Badge>
+                  <span className="min-w-0 truncate text-sm font-semibold text-fg">
+                    {schemeName(a.schemeId)}
+                  </span>
+                </span>
+                <span className="mt-1 block text-[11px] text-subtle">
+                  {productName(a.productId)} · {repName(a.repId)}
+                </span>
+              </span>
+              <span className="shrink-0">{removeKey(a)}</span>
+            </li>
+          ))}
+          {rows.length === 0 && <li className="py-6 text-center text-sm text-muted">{NO_ROWS}</li>}
+        </ul>
 
         {/* The chain, proven on a real pair rather than described */}
         <div className="border-t border-border pt-4">
@@ -271,7 +323,9 @@ export function SchemeOverrides() {
                     <span>{SCHEME_TIER_LABELS[tier]}</span>
                     <span className="flex items-baseline gap-2">
                       <span>{name ?? "لا ارتباط"}</span>
-                      {won && <Badge tone="accent">المطبَّق</Badge>}
+                      {/* the raised body already says which tier won, so the pill
+                          stays neutral: one state, one channel (VISUAL-LAW §6a) */}
+                      {won && <Badge>المطبَّق</Badge>}
                     </span>
                   </li>
                 );
@@ -285,6 +339,33 @@ export function SchemeOverrides() {
           )}
         </div>
       </CardContent>
+
+      <Dialog
+        open={pendingRemove !== null}
+        onClose={() => setPendingRemove(null)}
+        title="إزالة الاستثناء"
+        description={
+          pending
+            ? `يُزال ارتباط «${schemeName(pending.schemeId)}» بـ ${productName(
+                pending.productId,
+              )} · ${repName(pending.repId)}، فيعود القرار لما بعده في سلسلة الأولوية.`
+            : undefined
+        }
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setPendingRemove(null)} disabled={removing}>
+              إلغاء
+            </Button>
+            <Button variant="danger" onClick={doRemove} loading={removing}>
+              إزالة
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-muted">
+          الاستثناء وحده يُزال، ولا يتغيّر شيء في العمليات المسجّلة: حصصها مجمّدة على قاعدتها.
+        </p>
+      </Dialog>
     </Card>
   );
 }

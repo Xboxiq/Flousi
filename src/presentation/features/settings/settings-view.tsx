@@ -114,7 +114,12 @@ export function SettingsView() {
             </div>
           </CardHeader>
           <CardContent>
-            <Segmented options={THEME_OPTIONS} value={preference} onChange={setPreference} />
+            <Segmented
+              aria-label="المظهر"
+              options={THEME_OPTIONS}
+              value={preference}
+              onChange={setPreference}
+            />
           </CardContent>
         </Card>
 

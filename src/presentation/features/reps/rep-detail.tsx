@@ -8,6 +8,7 @@ import {
   ArrowUUpLeft,
   HandCoins,
   PencilSimple,
+  Sliders,
   UsersThree,
 } from "@phosphor-icons/react";
 import {
@@ -21,6 +22,7 @@ import {
   computeRepAggregates,
   computeRepTrends,
   computeSaleCommissions,
+  repMomentum,
   toMajor,
 } from "@/application/commissions";
 import { useDataStore } from "@/presentation/stores/data-store";
@@ -135,20 +137,13 @@ export function RepDetail({ id }: { id: string }) {
     () => computeSaleCommissions(input).filter((r) => r.repId === id),
     [input, id],
   );
-  const trend = useMemo(
-    () => computeRepTrends(input, { currency: settings.currency, months: 6 }).get(id) ?? [],
+  /* Month over month, derived in the read model beside the series it reads — the
+     view only chooses whether to print it. */
+  const monthDelta = useMemo(
+    () =>
+      repMomentum(computeRepTrends(input, { currency: settings.currency, months: 6 }).get(id) ?? []),
     [input, settings.currency, id],
   );
-
-  /* Month over month, over the application's own series. A display ratio, not a
-     money computation: nothing here is stored or paid out. */
-  const monthDelta = useMemo(() => {
-    if (trend.length < 2) return null;
-    const current = trend[trend.length - 1];
-    const previous = trend[trend.length - 2];
-    if (previous === 0) return null;
-    return (current - previous) / Math.abs(previous);
-  }, [trend]);
 
   /* His baseline rule, resolved by the domain resolver itself. An empty productId
      can match no product-tier binding, so the chain falls exactly to
@@ -192,6 +187,15 @@ export function RepDetail({ id }: { id: string }) {
     return out;
   }, [assignments, id, schemes, settings.defaultCommissionSchemeId, products, baseline.scheme?.id]);
 
+  /**
+   * How much of the ledger is on screen. A working rep reaches hundreds of rows,
+   * and rendering all of them made the page 6,700px tall — the settlement section
+   * beneath it was unreachable in practice. The newest page is the reading; the
+   * rest is available on request.
+   */
+  const LEDGER_PAGE = 12;
+  const [ledgerShown, setLedgerShown] = useState(LEDGER_PAGE);
+
   /** Each frozen row against today's rule: the snapshot is history, not a mirror. */
   const ledger = useMemo(
     () =>
@@ -219,6 +223,9 @@ export function RepDetail({ id }: { id: string }) {
       }),
     [rows, id, assignments, schemes, settings.defaultCommissionSchemeId, products],
   );
+
+  /* Newest first, so the visible page is the recent history a merchant asks about. */
+  const visibleLedger = useMemo(() => ledger.slice(0, ledgerShown), [ledger, ledgerShown]);
 
   const repSettlements = useMemo(
     () =>
@@ -291,7 +298,13 @@ export function RepDetail({ id }: { id: string }) {
   return (
     <>
       <div className="mb-2">
-        <Button asChild variant="ghost" size="sm" leadingIcon={<ArrowLeft size={16} />}>
+        {/* back is toward the inline START, so the glyph is mirrored with the axis */}
+        <Button
+          asChild
+          variant="ghost"
+          size="sm"
+          leadingIcon={<ArrowLeft size={16} className="rtl:rotate-180" />}
+        >
           <Link href="/reps">الفريق</Link>
         </Button>
       </div>
@@ -300,6 +313,10 @@ export function RepDetail({ id }: { id: string }) {
         title={name}
         description={rep?.phone ? rep.phone : "عملياته وحصصه ورصيده المشتقّ."}
         actions={
+          /* One labelled primary beside icon-only keys that name themselves (R42):
+             three default pills plus the state badges overran a 360px phone and
+             pushed the shell sideways. Each key keeps a 44px hit area, an
+             aria-label and a title, so nothing is icon-only to a reader. */
           <>
             {rep?.status === "archived" && <Badge>{REP_STATUS_LABELS.archived}</Badge>}
             {agg.needsSchemeCount > 0 && (
@@ -324,23 +341,28 @@ export function RepDetail({ id }: { id: string }) {
             {rep && (
               <Button
                 variant="secondary"
-                leadingIcon={<PencilSimple size={16} />}
+                size="icon"
+                aria-label="تعديل بيانات المندوب"
+                title="تعديل بيانات المندوب"
                 onClick={() => setEditOpen(true)}
               >
-                تعديل
+                <PencilSimple size={18} />
               </Button>
             )}
             {rep && (
               <Button
                 variant="ghost"
+                size="icon"
+                aria-label={rep.status === "active" ? "أرشفة المندوب" : "إعادة تنشيط المندوب"}
+                title={rep.status === "active" ? "أرشفة المندوب" : "إعادة تنشيط المندوب"}
+                /* the glyph rides `leadingIcon` so the spinner REPLACES it while
+                   busy instead of crowding beside it in a 54px key */
                 leadingIcon={
-                  rep.status === "active" ? <Archive size={16} /> : <ArrowUUpLeft size={16} />
+                  rep.status === "active" ? <Archive size={18} /> : <ArrowUUpLeft size={18} />
                 }
                 loading={busy}
                 onClick={toggleStatus}
-              >
-                {rep.status === "active" ? "أرشفة" : "إعادة تنشيط"}
-              </Button>
+              />
             )}
           </>
         }
@@ -419,6 +441,7 @@ export function RepDetail({ id }: { id: string }) {
               total={split.total}
               format={money}
               formatShare={share}
+              label={`قسمة الأساس بين حصتك وحصة ${agg.repName}`}
             />
           ) : (
             <div className="flex flex-col gap-2 text-[13px]">
@@ -447,7 +470,9 @@ export function RepDetail({ id }: { id: string }) {
             <CardTitle>نظام القسمة المطبَّق عليه</CardTitle>
             <CardDescription>القاعدة بالكلمات وبأرقامها، كما يقرأها المحرّك.</CardDescription>
           </div>
-          <Button asChild variant="ghost" size="sm">
+          {/* A bare ghost label in a card header reads as an orphan heading, not as
+              somewhere to go: the glyph is what makes it an action. */}
+          <Button asChild variant="ghost" size="sm" leadingIcon={<Sliders size={15} />}>
             <Link href="/reps/schemes">مِسطرة القسمة</Link>
           </Button>
         </CardHeader>
@@ -558,7 +583,7 @@ export function RepDetail({ id }: { id: string }) {
               </TR>
             </THead>
             <TBody>
-              {ledger.map(({ row, stale, currentSchemeName, productName }) => (
+              {visibleLedger.map(({ row, stale, currentSchemeName, productName }) => (
                 <TR key={row.sale.id}>
                   <TD className="whitespace-nowrap text-muted">
                     {formatDate(row.sale.soldAt, {
@@ -615,7 +640,7 @@ export function RepDetail({ id }: { id: string }) {
           </Table>
         </div>
         <RepSaleRows
-          rows={ledger.map(({ row, stale, currentSchemeName, productName }) => ({
+          rows={visibleLedger.map(({ row, stale, currentSchemeName, productName }) => ({
             id: row.sale.id,
             productName,
             meta: `${formatDate(row.sale.soldAt, { locale: settings.locale, month: "short", day: "numeric" })} · ${count(row.sale.quantity)} قطعة`,
@@ -626,6 +651,21 @@ export function RepDetail({ id }: { id: string }) {
             staleHint: `جُمّدت على ${row.schemeName ?? "بلا نظام"}، والقاعدة اليوم ${currentSchemeName ?? "غير محدّدة"}`,
           }))}
         />
+        {ledger.length > visibleLedger.length && (
+          <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-3">
+            <span className="text-xs text-muted">
+              ظهر <Money>{count(visibleLedger.length)}</Money> من{" "}
+              <Money>{count(ledger.length)}</Money> عملية
+            </span>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setLedgerShown((n) => n + LEDGER_PAGE * 4)}
+            >
+              عرض المزيد
+            </Button>
+          </div>
+        )}
       </Card>
 
       <Card className="mt-5">

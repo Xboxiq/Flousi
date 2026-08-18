@@ -8,6 +8,12 @@ const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
 interface LivingNumberProps {
   value: number;
+  /**
+   * Hide the gliding figure from assistive tech. A caller that announces the
+   * settled value itself (an sr-only live line) must set this: the glide walks
+   * through intermediate amounts that were never the reading.
+   */
+  "aria-hidden"?: boolean;
   /** Locale/currency formatter from `@/presentation/lib/format`. */
   format: (n: number) => string;
   /** Glide duration in ms. Keep under 300 (MASTER §5). */
@@ -23,7 +29,13 @@ interface LivingNumberProps {
  * `prefers-reduced-motion`. This is the one place Flousi spends its delight
  * budget; do not reuse it for numbers the user merely reads.
  */
-export function LivingNumber({ value, format, duration = 280, className }: LivingNumberProps) {
+export function LivingNumber({
+  value,
+  format,
+  duration = 280,
+  "aria-hidden": ariaHidden,
+  className,
+}: LivingNumberProps) {
   const reduce = useReducedMotion();
   const [display, setDisplay] = useState(value);
   // Live presentation value — the animation source on interrupt.
@@ -53,7 +65,7 @@ export function LivingNumber({ value, format, duration = 280, className }: Livin
   }, [value, duration, reduce]);
 
   return (
-    <bdi dir="ltr" className={cn("font-mono tabular-nums", className)}>
+    <bdi dir="ltr" aria-hidden={ariaHidden} className={cn("font-mono tabular-nums", className)}>
       {format(display)}
     </bdi>
   );

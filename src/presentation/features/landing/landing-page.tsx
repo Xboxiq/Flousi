@@ -61,7 +61,7 @@ export function LandingPage() {
               href="/dashboard"
               className="inline-flex h-10 items-center gap-1.5 rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[var(--shadow-accent)] transition-colors hover:bg-accent-strong"
             >
-              فتح التطبيق <ArrowRight size={15} weight="bold" />
+              فتح التطبيق <ArrowRight size={15} weight="bold" className="rtl:rotate-180" />
             </Link>
           </Magnetic>
         </div>
@@ -96,7 +96,7 @@ export function LandingPage() {
                   href="/dashboard"
                   className="inline-flex h-12 items-center gap-2 rounded-full bg-accent px-7 text-base font-semibold text-white shadow-[var(--shadow-accent)] transition-colors hover:bg-accent-strong"
                 >
-                  افتح فلوسي <ArrowRight size={18} weight="bold" />
+                  افتح فلوسي <ArrowRight size={18} weight="bold" className="rtl:rotate-180" />
                 </Link>
               </Magnetic>
               <a

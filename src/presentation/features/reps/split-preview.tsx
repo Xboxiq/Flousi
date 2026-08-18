@@ -68,10 +68,15 @@ export function SplitPreview({
         </span>
       </div>
 
-      {/* The two figures re-read on every keystroke in price/quantity while focus
-          sits in the Input, so the container is the live region — not LivingNumber
-          itself, which also renders figures the merchant is typing directly. */}
-      <div className="mt-3 grid grid-cols-2 gap-3" aria-live="polite" aria-atomic="true">
+      {/* The announcement is a SEPARATE sr-only line carrying the settled figures,
+          not the visible pair. LivingNumber glides to its new value one
+          requestAnimationFrame at a time, so a live region wrapped around it
+          would read out a stream of intermediate amounts that were never the
+          split — the screen reader would hear numbers the merchant never saw. */}
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        {`القسمة: لك ${money(keeps)}، وللمندوب ${repName} ${money(split.repShare.amount)}`}
+      </p>
+      <div className="mt-3 grid grid-cols-2 gap-3">
         <div className="clay-inset rounded-[var(--radius-md)] px-3 py-2.5">
           <div className="text-xs text-muted">هذا لك</div>
           <LivingNumber

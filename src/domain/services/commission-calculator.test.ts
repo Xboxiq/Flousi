@@ -1288,4 +1288,43 @@ describe("CommissionCalculator — حراسة الانحدار", () => {
     expect(r.basis.minorUnits).toBe(0);
     expect(shares(r)).toEqual([0, 0]);
   });
+  it("T45 pays a share that can actually change hands in a zero-decimal currency", () => {
+    // IQD has no sub-unit in circulation: a rep is paid whole dinars. Money stores
+    // every currency on a x100 scale, so a 50% share of an odd amount produced
+    // «2,009,881.4 د.ع.» — a figure the app cannot even display and the merchant
+    // cannot hand over. It also pre-filled the settlement input, making the
+    // default payment unpayable.
+    const r = run({
+      price: 40197.63,
+      currency: "IQD",
+      costs: purchase(0),
+      scheme: { repRatio: 0.5 },
+    });
+    expect(r.basis.minorUnits).toBe(4019763);
+    // The rep's share is a whole dinar; the owner absorbs the residual, exactly as
+    // roundingBeneficiary already governs the single-fils crumb.
+    expect(r.repShare.minorUnits % 100).toBe(0);
+    expect(r.repShare.minorUnits).toBe(2009800);
+    expect(r.ownerShare.minorUnits).toBe(2009963);
+    expect(r.repShare.minorUnits + r.ownerShare.minorUnits).toBe(r.basis.minorUnits);
+  });
+
+  it("T46 rounds the whole unit toward the rep when the rep holds the residual", () => {
+    const r = run({
+      price: 40197.63,
+      currency: "IQD",
+      costs: purchase(0),
+      scheme: { repRatio: 0.5, roundingBeneficiary: "rep" },
+    });
+    expect(r.repShare.minorUnits).toBe(2009900);
+    expect(r.repShare.minorUnits % 100).toBe(0);
+    expect(r.repShare.minorUnits + r.ownerShare.minorUnits).toBe(r.basis.minorUnits);
+  });
+
+  it("T47 leaves a two-decimal currency at its own granularity", () => {
+    // USD really does circulate cents, so nothing is snapped away.
+    const r = run({ price: 20.01, costs: purchase(0), scheme: { repRatio: 0.5 } });
+    expect(r.basis.minorUnits).toBe(2001);
+    expect(shares(r)).toEqual([1000, 1001]);
+  });
 });

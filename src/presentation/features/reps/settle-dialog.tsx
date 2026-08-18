@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Money as MoneyValue } from "@/domain";
+import { Money as MoneyValue, payableStepMinor } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { Button, Dialog, Field, Input, Money, Select } from "@/presentation/components/ui";
 import { RingGauge } from "@/presentation/components/objects/ring-gauge";
 import { SlideToCommit } from "@/presentation/components/interactive/slide-to-commit";
 import { LivingNumber } from "@/presentation/components/interactive/living-number";
-import { formatCurrency, formatDate, formatNumber } from "@/presentation/lib/format";
+import { formatCurrency, formatDate, formatNumber, formatPercent } from "@/presentation/lib/format";
 
 /**
  * What the sheet is settling, PINNED by the caller at the moment it opens.
@@ -84,7 +84,13 @@ export function SettleDialog({ pinned, onClose, locale, periodId }: Props) {
   const balanceMoney = (n: number) => formatCurrency(n, { currency: pin.currency, locale });
 
   const due = MoneyValue.fromMinor(pin.outstandingMinor, pin.currency);
-  const defaultAmount = due.minorUnits > 0 ? due.amount : 0;
+  /* The field must offer an amount that can actually change hands: in a currency
+     with no sub-unit in circulation (IQD) the payable step is one whole unit, and
+     the default is floored to it — a settlement is money leaving the till, so the
+     default never rounds UP into an overpayment. */
+  const step = payableStepMinor(pin.currency);
+  const payableDueMinor = Math.trunc(pin.outstandingMinor / step) * step;
+  const defaultAmount = payableDueMinor > 0 ? MoneyValue.fromMinor(payableDueMinor, pin.currency).amount : 0;
   const amount = amountText === null ? defaultAmount : parseFloat(amountText) || 0;
   const payment = MoneyValue.fromMajor(amount, currency);
 
@@ -94,15 +100,23 @@ export function SettleDialog({ pinned, onClose, locale, periodId }: Props) {
   const sameCurrency = currency === pin.currency;
   const remainder = sameCurrency ? due.subtract(payment).amount : due.amount;
 
-  /* Display normalisation only. What is already paid, out of what was earned. */
-  const covered = pin.earnedMinor > 0 ? pin.settledMinor / pin.earnedMinor : 0;
+  /* Display normalisation only. What is already paid, out of what was earned.
+     Clamped at the source: an overpaid rep must not be DRAWN as a completed ring
+     and then re-drawn as one at 300%. */
+  const covered =
+    pin.earnedMinor > 0 ? Math.min(1, Math.max(0, pin.settledMinor / pin.earnedMinor)) : 0;
+
+  /* Parsed ONCE, at noon, so the receipt line and the stored record can never
+     name two different days: `formatDate` on a bare "YYYY-MM-DD" parses it as UTC
+     midnight, which prints the previous day in any negative UTC offset. */
+  const paidAt = new Date(date + "T12:00:00");
 
   const commit = async () => {
     await createSettlement({
       repId: pin.repId,
       amountMinor: payment.minorUnits,
       currency,
-      paidAt: new Date(date + "T12:00:00").toISOString(),
+      paidAt: paidAt.toISOString(),
       periodId,
       method: method.trim() || undefined,
       notes: notes.trim() || undefined,
@@ -127,13 +141,24 @@ export function SettleDialog({ pinned, onClose, locale, periodId }: Props) {
       title={`تسوية مع ${pin.repName}`}
       description="ما يُدفع الآن يُخصم من رصيده المشتقّ، والباقي يبقى مستحقًا."
       art={
-        <RingGauge
-          value={covered}
-          label={balanceMoney(due.amount)}
-          caption="المستحق الآن"
-          size={124}
-          tone={due.minorUnits > 0 ? "accent" : due.minorUnits < 0 ? "muted" : "success"}
-        />
+        /* The ring reports two different quantities — the ARC is coverage of what
+           he earned, the struck figure is what is still owed — so the arc is named
+           in words under the housing. An unnamed arc is read as a fraction of the
+           figure it encircles, which it is not. */
+        <div className="flex flex-col items-center gap-2">
+          <RingGauge
+            value={covered}
+            label={balanceMoney(due.amount)}
+            caption="المستحق الآن"
+            size={124}
+            tone={due.minorUnits > 0 ? "accent" : due.minorUnits < 0 ? "muted" : "success"}
+          />
+          <p className="text-center text-[11px] text-muted">
+            {pin.earnedMinor > 0
+              ? `القوس: مدفوع ${formatPercent(covered, { locale, digits: 0 })} من حصصه المجمّدة`
+              : "لا حصص مجمّدة بعد، فلا قوس يُرسم"}
+          </p>
+        </div>
       }
       footer={
         <Button variant="ghost" onClick={onClose}>
@@ -147,7 +172,7 @@ export function SettleDialog({ pinned, onClose, locale, periodId }: Props) {
             id="settle-amount"
             type="number"
             min={0}
-            step="0.01"
+            step={step === 1 ? "0.01" : "1"}
             className="clay-inset"
             value={amountText === null ? defaultAmount || "" : amountText}
             onChange={(e) => setAmountText(e.target.value)}
@@ -203,17 +228,27 @@ export function SettleDialog({ pinned, onClose, locale, periodId }: Props) {
         </div>
         <div className="flex items-baseline justify-between gap-3 border-t border-border pt-2">
           <dt className="font-medium text-fg">المتبقّي بعد هذه التسوية</dt>
+          {/* The remainder re-reads on every keystroke in the amount Input, where
+              focus is, so it must be announced — but LivingNumber GLIDES to its
+              new value one animation frame at a time. A live region around it
+              would read out a stream of amounts that were never the remainder,
+              so the announcement is a separate sr-only line carrying the settled
+              figure and the visible number is hidden from the reader. */}
           <dd>
             <LivingNumber
               value={remainder}
               format={balanceMoney}
+              aria-hidden
               className="text-[16px] font-bold text-fg"
             />
+            <span className="sr-only" aria-live="polite" aria-atomic="true">
+              {`المتبقّي بعد هذه التسوية ${balanceMoney(remainder)}`}
+            </span>
           </dd>
         </div>
         <div className="flex items-baseline justify-between gap-3">
           <dt className="text-muted">تاريخ الدفع</dt>
-          <dd className="text-fg">{formatDate(date, { locale })}</dd>
+          <dd className="text-fg">{formatDate(paidAt, { locale })}</dd>
         </div>
       </dl>
 

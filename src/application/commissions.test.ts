@@ -5,6 +5,7 @@ import {
   computeSaleCommissions,
   computeTeamCommissions,
   frozenSnapshots,
+  repMomentum,
   resolveSaleCommission,
   toMajor,
   type CommissionInput,
@@ -507,6 +508,49 @@ describe("computeRepTrends", () => {
     const idle = rep({ id: "R9", name: "نور" });
     const trends = computeRepTrends(input({ reps: [r1, idle] }), { now });
     expect(trends.get("R9")).toEqual([0, 0, 0, 0, 0, 0]);
+  });
+});
+
+describe("repMomentum", () => {
+  it("reads the last month against the one before it", () => {
+    expect(repMomentum([0, 0, 0, 0, 400, 500])).toBeCloseTo(0.25);
+    expect(repMomentum([0, 0, 0, 0, 500, 400])).toBeCloseTo(-0.2);
+    expect(repMomentum([0, 0, 0, 0, 500, 500])).toBe(0);
+  });
+
+  it("divides by the MAGNITUDE, so a recovery from a loss reads as a rise", () => {
+    expect(repMomentum([-400, 200])).toBeCloseTo(1.5);
+    expect(repMomentum([-400, -600])).toBeCloseTo(-0.5);
+  });
+
+  it("has nothing to state without a previous month to compare against", () => {
+    expect(repMomentum([])).toBeNull();
+    expect(repMomentum([500])).toBeNull();
+  });
+
+  it("refuses a zero previous month: up from nothing is not a percentage", () => {
+    expect(repMomentum([0, 500])).toBeNull();
+    expect(repMomentum([0, 0, 0, 0, 0, 0])).toBeNull();
+  });
+
+  it("reads the tail of a real series from computeRepTrends", () => {
+    const now = new Date("2026-06-26T12:00:00.000Z");
+    const r1 = rep();
+    const may = frozen(
+      sale({ id: "S1", repId: "R1", soldAt: "2026-05-10T12:00:00.000Z" }),
+      product(),
+      scheme(),
+      r1,
+    );
+    const june = frozen(
+      sale({ id: "S2", repId: "R1", quantity: 3, soldAt: "2026-06-10T12:00:00.000Z" }),
+      product(),
+      scheme(),
+      r1,
+    );
+    const series = computeRepTrends(input({ sales: [may, june], reps: [r1] }), { now }).get("R1")!;
+    expect(series).toEqual([0, 0, 0, 0, 500, 1500]);
+    expect(repMomentum(series)).toBeCloseTo(2);
   });
 });
 

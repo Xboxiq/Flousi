@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useId, useRef } from "react";
 import { X } from "@phosphor-icons/react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { cn } from "@/presentation/lib/cn";
@@ -33,15 +33,29 @@ export function Dialog({
   className,
 }: DialogProps) {
   const reduce = useReducedMotion();
+  const titleId = useId();
+  const descId = useId();
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
+
+    // Focus moves INTO the sheet and returns to where it was on close. Without
+    // this a keyboard user stays behind the overlay, tabbing an unreachable page,
+    // and a screen reader never enters the dialog at all.
+    const returnTo = document.activeElement as HTMLElement | null;
+    const focusable = panelRef.current?.querySelector<HTMLElement>(
+      'input:not([type="hidden"]), select, textarea, [role="slider"], button:not([aria-hidden="true"]), [href], [tabindex]:not([tabindex="-1"])',
+    );
+    (focusable ?? panelRef.current)?.focus({ preventScroll: true });
+
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
+      returnTo?.focus?.({ preventScroll: true });
     };
   }, [open, onClose]);
 
@@ -52,6 +66,10 @@ export function Dialog({
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
+          /* The sheet must SAY what it is: role="dialog" with no accessible name
+             is announced as an unnamed dialog. */
+          aria-labelledby={title ? titleId : undefined}
+          aria-describedby={description ? descId : undefined}
         >
           <motion.div
             className="absolute inset-0 bg-black/45"
@@ -62,6 +80,8 @@ export function Dialog({
             onClick={onClose}
           />
           <motion.div
+            ref={panelRef}
+            tabIndex={-1}
             className={cn(
               // A sheet taller than the phone must scroll its BODY while the art
               // band, the title and the footer stay put: the commit control is the
@@ -91,8 +111,16 @@ export function Dialog({
             {(title || description) && (
               <div className="flex shrink-0 items-start justify-between gap-4 border-b border-border px-5 py-4">
                 <div>
-                  {title && <h2 className="text-base font-semibold text-fg">{title}</h2>}
-                  {description && <p className="mt-1 text-sm text-muted">{description}</p>}
+                  {title && (
+                    <h2 id={titleId} className="text-base font-semibold text-fg">
+                      {title}
+                    </h2>
+                  )}
+                  {description && (
+                    <p id={descId} className="mt-1 text-sm text-muted">
+                      {description}
+                    </p>
+                  )}
                 </div>
                 {!art && (
                   <button

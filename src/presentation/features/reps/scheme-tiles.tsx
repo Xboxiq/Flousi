@@ -68,7 +68,10 @@ export function SchemeTiles({
                 </span>
               </span>
               <span className="flex shrink-0 flex-col items-end gap-1.5">
-                {scheme.id === defaultId && <Badge tone="accent">الافتراضي</Badge>}
+                {/* Neutral on purpose: the raised body means «you are editing this
+                    one», and the word means «this is the fallback». Two different
+                    facts must not share the accent channel (VISUAL-LAW §6a). */}
+                {scheme.id === defaultId && <Badge>الافتراضي</Badge>}
                 {scheme.status === "archived" && <Badge>مؤرشف</Badge>}
               </span>
             </span>
@@ -85,9 +88,18 @@ export function SchemeTiles({
                   />
                 ))}
               </span>
+              {/* Digits, «+» and parentheses are weak or neutral in the bidi
+                  algorithm, so the numeric runs are isolated in <Money> islands
+                  instead of being concatenated into RTL Arabic. */}
               <span className="text-[11px] text-subtle">
-                {used === 0 ? "بلا ارتباطات" : `${count(used)} ارتباطًا`}
-                {used > SLOTS ? ` (+${count(used - SLOTS)})` : ""}
+                {used === 0 ? (
+                  "بلا ارتباطات"
+                ) : (
+                  <>
+                    <Money>{count(used)}</Money> ارتباطًا
+                  </>
+                )}
+                {used > SLOTS && <Money className="ms-1">{`+${count(used - SLOTS)}`}</Money>}
               </span>
             </span>
           </button>

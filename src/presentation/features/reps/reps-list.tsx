@@ -45,6 +45,9 @@ type Scope = (typeof SCOPES)[number]["value"];
 
 const SCOPE_WORD: Record<Scope, string> = { month: "هذا الشهر", all: "كل السجل" };
 
+/** DistributionBar owns six plates; the sixth is spent on the grouped tail. */
+const TOP_PARTS = 5;
+
 /**
  * «طاولة الشركاء» — the month's profit as one divided whole at the head, and a
  * body per partner beneath it.
@@ -119,6 +122,10 @@ export function RepsList() {
     return windowTeam.reps.map((row, i) => ({
       row,
       balance: owed.get(row.repId) ?? row,
+      /* «آخر بيع» is a fact about the rep, not about the window — the same reason
+         the balance is read all-history. Taken from the window it told an archived
+         rep with real older sales «لا مبيعات بعد». */
+      lastSaleAt: (owed.get(row.repId) ?? row).lastSaleAt,
       /* display normalisation only; no money is computed in this view */
       pull: Math.abs(row.repShareMinor) / peak,
       leading: i === 0 && row.repShareMinor > 0,
@@ -130,6 +137,12 @@ export function RepsList() {
    * (net profit for a `netProfit` scheme, more for an `afterPurchaseCost` one),
    * and owner share + every rep share sums to it as an integer identity, so the
    * bar can never draw past its own whole (VISUAL-LAW §11b).
+   *
+   * The object owns six plates and six textures, so a seventh rep would silently
+   * repeat one. Only the top five stand alone; the rest become ONE grouped part
+   * that names its members in its own hint — the same rule the dashboard uses for
+   * its minor cost lines. The tail is summed in MINOR units before it is
+   * converted, so the identity stays exact.
    */
   const split = useMemo(() => {
     const drawable =
@@ -137,6 +150,11 @@ export function RepsList() {
       windowTeam.ownerShareMinor >= 0 &&
       windowTeam.reps.every((r) => r.repShareMinor >= 0);
     if (!drawable) return null;
+    /* already ranked best-earner-first by `computeRepAggregates` */
+    const paid = windowTeam.reps.filter((r) => r.repShareMinor > 0);
+    const top = paid.slice(0, TOP_PARTS);
+    const rest = paid.slice(TOP_PARTS);
+    const restMinor = rest.reduce((sum, r) => sum + r.repShareMinor, 0);
     const parts: DistributionPart[] = [
       {
         id: "owner",
@@ -144,17 +162,29 @@ export function RepsList() {
         amount: toMajor(windowTeam.ownerShareMinor, windowTeam.currency),
         kind: "keep",
       },
-      ...windowTeam.reps
-        .filter((r) => r.repShareMinor > 0)
-        .map((r) => ({
-          id: r.repId,
-          label: `حصة ${r.repName}`,
-          amount: toMajor(r.repShareMinor, windowTeam.currency),
-          kind: "spend" as const,
-        })),
+      ...top.map((r) => ({
+        id: r.repId,
+        label: `حصة ${r.repName}`,
+        amount: toMajor(r.repShareMinor, windowTeam.currency),
+        kind: "spend" as const,
+      })),
+      ...(restMinor > 0
+        ? [
+            {
+              id: "rest",
+              /* A plate label is a plain string, so <Money> cannot be the bidi
+                 island here: FSI…PDI is. Parentheses around a digit run in RTL
+                 text resolve on the wrong side without it. */
+              label: `بقية الفريق \u2068(${formatNumber(rest.length, { locale: settings.locale, digits: 0 })})\u2069`,
+              hint: rest.map((r) => r.repName).join(" · "),
+              amount: toMajor(restMinor, windowTeam.currency),
+              kind: "spend" as const,
+            },
+          ]
+        : []),
     ];
     return { parts, total: toMajor(windowTeam.basisMinor, windowTeam.currency) };
-  }, [windowTeam]);
+  }, [windowTeam, settings.locale]);
 
   const actions = (
     <div className="flex items-center gap-2.5">
@@ -222,6 +252,7 @@ export function RepsList() {
             </div>
             <Segmented
               className="self-start sm:ms-auto"
+              aria-label="نطاق القراءة"
               options={SCOPES}
               value={scope}
               onChange={setScope}
@@ -234,6 +265,7 @@ export function RepsList() {
                 total={split.total}
                 format={money}
                 formatShare={share}
+                label={`قسمة الأساس المقسوم بين حصتك وحصص المندوبين، ${SCOPE_WORD[scope]}`}
               />
             ) : (
               /* Not drawable as a whole: a negative basis has no parts to divide,
@@ -265,16 +297,19 @@ export function RepsList() {
         </Card>
       </div>
 
-      <h2 className="mt-7 mb-3 text-sm font-medium text-subtle">
-        المندوبون ({count(rows.length)})
+      {/* the count is a figure, so it is a bdi island rather than digits loose in
+          an RTL sentence — parentheses around it would resolve on either side */}
+      <h2 className="mt-7 mb-3 flex items-baseline gap-1.5 text-sm font-medium text-subtle">
+        المندوبون <Money>{count(rows.length)}</Money>
       </h2>
 
       <div className="grid gap-4 md:grid-cols-2">
-        {rows.map(({ row, balance, pull, leading }) => (
+        {rows.map(({ row, balance, lastSaleAt, pull, leading }) => (
           <RepCard
             key={row.repId}
             row={row}
             balance={balance}
+            lastSaleAt={lastSaleAt}
             pull={pull}
             leading={leading}
             scope={scope}
@@ -303,6 +338,7 @@ export function RepsList() {
 function RepCard({
   row,
   balance,
+  lastSaleAt,
   pull,
   leading,
   scope,
@@ -316,6 +352,7 @@ function RepCard({
 }: {
   row: RepAggregate;
   balance: RepAggregate;
+  lastSaleAt: string | null;
   pull: number;
   leading: boolean;
   scope: Scope;
@@ -329,23 +366,27 @@ function RepCard({
 }) {
   const owed = toMajor(balance.balanceMinor, balance.currency);
   const losing = row.repShareMinor < 0;
-  /* width only: a rail is never allowed to vanish, so it keeps a 4% stub */
-  const pct = Math.max(4, pull * 100);
+  /* The RingGauge rule: nothing is drawn for a reading that does not exist, so at
+     zero the carved rail hatch is the whole statement and the badge prints «0%»
+     against it. Above zero the fill keeps a 4% stub so it can never vanish. */
+  const drawn = pull > 0.002;
+  const pct = drawn ? Math.max(4, pull * 100) : 0;
 
   return (
     <Card className="bento-hover cursor-pointer" onClick={onOpen}>
       <CardHeader>
         <div className="min-w-0">
           {/* the whole card is clickable for the mouse, and the name is a real
-              link so the keyboard has the same road */}
+              link so the keyboard has the same road — the link stops the bubble
+              so one click is one navigation, not the Link plus the card's push */}
           <CardTitle className="truncate">
-            <Link href={href} className="hover:underline">
+            <Link href={href} className="hover:underline" onClick={(e) => e.stopPropagation()}>
               {row.repName}
             </Link>
           </CardTitle>
           <span className="mt-1 block text-[11px] text-subtle">
-            {row.lastSaleAt
-              ? `آخر بيع ${formatDate(row.lastSaleAt, { locale, month: "short", day: "numeric" })}`
+            {lastSaleAt
+              ? `آخر بيع ${formatDate(lastSaleAt, { locale, month: "short", day: "numeric" })}`
               : "لا مبيعات بعد"}
           </span>
         </div>
@@ -354,10 +395,13 @@ function RepCard({
           {row.needsSchemeCount > 0 && (
             <Badge tone="warning">{`${count(row.needsSchemeCount)} بلا نظام قسمة`}</Badge>
           )}
-          {/* the trend is a drawn line, never animated; phones drop it entirely */}
+          {/* the trend is a drawn line, never animated; phones drop it entirely.
+              A rep's share is a QUANTITY of money changing hands, not a profit, so
+              the line stays neutral ink — success means the merchant keeps (§13) */}
           <Sparkline
             className="hidden md:block"
             values={trend}
+            tone="neutral"
             label={`اتجاه حصة ${row.repName} في آخر ستة أشهر`}
           />
         </div>
@@ -388,15 +432,17 @@ function RepCard({
             {leading && <span className="text-subtle">القراءة المرجعية</span>}
           </div>
           <div className="rail relative mt-1.5 h-6 overflow-hidden rounded-[10px]">
-            <div
-              className={cn(
-                "rail-fill absolute inset-y-0 start-0 rounded-[10px]",
-                losing ? "bg-danger" : "bg-accent",
-                /* dots = a quieted reading (§11a): only the leader stays solid */
-                !leading && "capsule-fill-quiet",
-              )}
-              style={{ width: `${pct}%` }}
-            />
+            {drawn && (
+              <div
+                className={cn(
+                  "rail-fill absolute inset-y-0 start-0 rounded-[10px]",
+                  losing ? "bg-danger" : "bg-accent",
+                  /* dots = a quieted reading (§11a): only the leader stays solid */
+                  !leading && "capsule-fill-quiet",
+                )}
+                style={{ width: `${pct}%` }}
+              />
+            )}
             <span
               className="rail-badge px-1.5 py-[3px] text-[10px] font-bold text-fg"
               style={{ insetInlineStart: `max(4px, calc(${pct}% - 38px))` }}

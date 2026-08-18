@@ -102,6 +102,39 @@ const BP_SCALE = 10_000;
  */
 const norm0 = (n: number): number => (n === 0 ? 0 : n);
 
+/**
+ * Currencies with no sub-unit in circulation. Money stores every currency on a
+ * x100 minor scale, but a rep in Baghdad is paid in whole dinars — nobody hands
+ * over 0.4 IQD, and the app formats these with zero decimals, so a share of
+ * «2,009,881.4» is both unpayable and invisible. Kept in the DOMAIN because it is
+ * a fact about money, not about formatting.
+ */
+const ZERO_DECIMAL_CURRENCIES = new Set(["IQD", "JPY", "KRW", "VND", "CLP", "ISK"]);
+
+/** The smallest amount that can actually change hands, in minor units. */
+export function payableStepMinor(currency: string): number {
+  return ZERO_DECIMAL_CURRENCIES.has(currency.toUpperCase()) ? 100 : 1;
+}
+
+/**
+ * Snap a share down (or up, for the rep) to the currency's payable step, so the
+ * side being PAID always receives an amount that exists. The other side takes the
+ * residual, exactly as `roundingBeneficiary` already governs the single-minor-unit
+ * crumb — this is the same rule at the currency's real granularity.
+ */
+function quantiseToPayable(
+  minor: number,
+  currency: string,
+  beneficiary: "owner" | "rep",
+): number {
+  const step = payableStepMinor(currency);
+  if (step === 1) return minor;
+  // Toward zero for the owner-favouring default, away from zero for the rep, so
+  // the beneficiary of the crumb is the beneficiary of the rounding at every scale.
+  const q = beneficiary === "rep" ? Math.ceil(minor / step) : Math.trunc(minor / step);
+  return q * step;
+}
+
 /** A configured fee, in payable minor units. A corrupt (non-finite) fee is 0. */
 const toMinorFee = (minor: number | undefined): number => {
   const safe = Number(minor);
@@ -199,7 +232,11 @@ export class CommissionCalculator {
     // loss paid the rep nothing: the owner was 4.99 better off selling worse. The
     // fee is therefore capped at the basis it is paid out of; «shared» keeps the
     // uncapped figure, because there the rep genuinely carries the downside.
-    const entitledMinor = lossApplied ? 0 : rawRepMinor;
+    // Snapped to what can actually be handed over in this currency before any cap
+    // or policy runs, so every downstream figure — the balance, the settlement
+    // default, the receipt — is an amount that exists.
+    const payableMinor = quantiseToPayable(rawRepMinor, b.currency, p.roundingBeneficiary);
+    const entitledMinor = lossApplied ? 0 : payableMinor;
     const cappedMinor =
       p.lossPolicy === "ownerOnly" && p.kind !== "profitShare"
         ? Math.min(entitledMinor, Math.max(0, basisMinor))

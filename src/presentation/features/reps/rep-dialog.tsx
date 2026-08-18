@@ -103,8 +103,16 @@ export function RepDialog({ open, onClose, rep }: Props) {
             dir="ltr"
           />
         </Field>
-        <Field label="الحالة" htmlFor="rep-status" className="sm:col-span-2">
-          <Segmented options={STATUS_OPTIONS} value={status} onChange={setStatus} />
+        {/* a row of buttons is a group, and <label for> cannot name one — the
+            label becomes a <span id> the group points at instead */}
+        <Field label="الحالة" htmlFor="rep-status" labelsGroup className="sm:col-span-2">
+          <Segmented
+            id="rep-status"
+            aria-labelledby="rep-status-label"
+            options={STATUS_OPTIONS}
+            value={status}
+            onChange={setStatus}
+          />
         </Field>
         <Field label="ملاحظات" htmlFor="rep-notes" className="sm:col-span-2">
           <Textarea

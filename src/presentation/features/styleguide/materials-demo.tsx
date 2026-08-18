@@ -68,6 +68,7 @@ export function MaterialsDemo() {
       {/* Segmented */}
       <Section title="Segmented control">
         <Segmented
+          aria-label="عيّنة عناصر التحكم"
           options={[
             { label: "Day", value: "day", icon: <Sun size={15} /> },
             { label: "Week", value: "week", icon: <Moon size={15} /> },

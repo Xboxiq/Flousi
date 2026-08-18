@@ -61,6 +61,7 @@ export type {
 export { ProfitCalculator } from "./services/profit-calculator";
 export type { ProfitInput, ProfitResult } from "./services/profit-calculator";
 
+export { payableStepMinor } from "./services/commission-calculator";
 export { CommissionCalculator, RepBalanceCalculator } from "./services/commission-calculator";
 export type {
   CommissionBasisInput,

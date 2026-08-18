@@ -516,3 +516,23 @@ export function computeRepTrends(
   }
   return series;
 }
+
+/**
+ * Month-over-month change in a rep's monthly share series — the series
+ * `computeRepTrends` produces, oldest first.
+ *
+ * A DISPLAY ratio, not money: nothing here is stored, owed or paid out, which is
+ * why it returns a bare number rather than a `Money`. It lives beside the series
+ * it reads so it can be tested, instead of inside a render path.
+ *
+ * `null` means there is no comparison to state: a window shorter than two months
+ * has no previous month, and a previous month of exactly zero has no magnitude to
+ * divide by — "up from nothing" is not a percentage.
+ */
+export function repMomentum(series: readonly number[]): number | null {
+  if (series.length < 2) return null;
+  const current = series[series.length - 1];
+  const previous = series[series.length - 2];
+  if (previous === 0) return null;
+  return (current - previous) / Math.abs(previous);
+}

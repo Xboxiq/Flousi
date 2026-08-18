@@ -104,7 +104,7 @@ export function ReportView({ type }: { type: ReportType }) {
   return (
     <>
       <div className="mb-2">
-        <Button asChild variant="ghost" size="sm" leadingIcon={<ArrowLeft size={16} />}>
+        <Button asChild variant="ghost" size="sm" leadingIcon={<ArrowLeft size={16} className="rtl:rotate-180" />}>
           <Link href="/reports">التقارير</Link>
         </Button>
       </div>

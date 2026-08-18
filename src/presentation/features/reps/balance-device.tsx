@@ -66,12 +66,16 @@ export function BalanceDevice({
 
   return (
     <div
-      className={cn("device leak relative px-5 pt-4 pb-5", className)}
+      /* the glow is STATE-BOUND, so it is absent from the class list at neutral
+         rather than present-but-transparent (VISUAL-LAW §8 §12) */
+      className={cn("device relative px-5 pt-4 pb-5", lit && "leak", className)}
       data-part="balance-device"
       style={
-        {
-          "--leak-color": lit ? `color-mix(in srgb, ${hue} 45%, transparent)` : "transparent",
-        } as React.CSSProperties
+        lit
+          ? ({
+              "--leak-color": `color-mix(in srgb, ${hue} 45%, transparent)`,
+            } as React.CSSProperties)
+          : undefined
       }
     >
       <div className="flex items-center justify-between gap-3">

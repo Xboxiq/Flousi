@@ -20,7 +20,14 @@ const ACTIONS: Command[] = [
   { label: "إضافة منتج", group: "إجراءات", href: "/products/new", keywords: "new create جديد" },
   { label: "فتح الحاسبة", group: "إجراءات", href: "/calculator", keywords: "calc profit حساب" },
   { label: "إغلاق الشهر", group: "إجراءات", href: "/periods", keywords: "period lock فترة" },
-  { label: "تسجيل تسوية", group: "إجراءات", href: "/reps", keywords: "settle balance رصيد مندوب" },
+  /* Named for what it does: this is a navigation to the team list, not a recorded
+     settlement — the payment itself is still committed from a rep's own sheet. */
+  {
+    label: "الفريق والتسويات",
+    group: "إجراءات",
+    href: "/reps",
+    keywords: "settle balance رصيد مندوب تسوية",
+  },
   {
     label: "إعدادات القسمة",
     group: "إجراءات",
@@ -114,7 +121,7 @@ export function CommandPalette() {
           <motion.div
             role="dialog"
             aria-modal="true"
-            aria-label="Command palette"
+            aria-label="لوحة الأوامر"
             className="relative z-10 w-full max-w-xl overflow-hidden rounded-[var(--radius-xl)] border border-border bg-surface shadow-xl"
             initial={reduce ? false : { opacity: 0, scale: 0.97, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -155,7 +162,10 @@ export function CommandPalette() {
                       <span className="text-subtle">/</span>
                       <span className="font-medium">{c.label}</span>
                     </span>
-                    <ArrowRight size={14} className={i === active ? "opacity-100" : "opacity-0"} />
+                    <ArrowRight
+                      size={14}
+                      className={cn("rtl:rotate-180", i === active ? "opacity-100" : "opacity-0")}
+                    />
                   </button>
                 </li>
               ))}

@@ -191,6 +191,10 @@ export function CommissionBench() {
     [draft],
   );
 
+  /* The rail echoes the ratio the DOMAIN will receive, not a second conversion of
+     the typed percent: one number, one source (see the `params` memo above). */
+  const railPct = Math.min(100, Math.max(0, (params.repRatio ?? 0) * 100));
+
   const costs = useMemo(
     () =>
       makeCostBreakdown({
@@ -380,7 +384,16 @@ export function CommissionBench() {
       description="اضبط القاعدة، والأرقام تحت كل خيار تشرح نفسها."
       actions={
         <>
-          {saved && <span className="text-sm text-success">تم الحفظ.</span>}
+          {/* A confirmation is not a profit figure, so it stays in neutral ink and
+              lets the word do the work (§13 keeps success for «the merchant keeps»).
+              The region is always in the DOM, because it self-clears after 2s and a
+              live region mounted with its message is announced by nothing. */}
+          {/* `empty:hidden` keeps it in the DOM (so the message IS announced when
+              it appears) without leaving an empty flex item holding a gap open in
+              the action row while there is nothing to say. */}
+          <span aria-live="polite" className="text-sm text-muted empty:hidden">
+            {saved ? "تم الحفظ." : null}
+          </span>
           <Button
             leadingIcon={<FloppyDisk size={16} />}
             loading={saving}
@@ -412,7 +425,14 @@ export function CommissionBench() {
 
   const back = (
     <div className="mb-2">
-      <Button asChild variant="ghost" size="sm" leadingIcon={<ArrowLeft size={16} />}>
+      {/* Back is toward the inline START, which in RTL is the right — an unmirrored
+          left arrow reads as «forward» (the idiom slide-to-commit already owns). */}
+      <Button
+        asChild
+        variant="ghost"
+        size="sm"
+        leadingIcon={<ArrowLeft size={16} className="rtl:rotate-180" />}
+      >
         <Link href="/reps">الفريق</Link>
       </Button>
     </div>
@@ -498,8 +518,12 @@ export function CommissionBench() {
               />
             </Field>
 
-            <Field label="طريقة الحساب" htmlFor="scheme-kind">
+            {/* A Segmented row is a GROUP: <label for> cannot name it, so the label
+                renders as a span and the group points back at it. */}
+            <Field label="طريقة الحساب" htmlFor="scheme-kind" labelsGroup>
               <Segmented
+                id="scheme-kind"
+                aria-labelledby="scheme-kind-label"
                 options={KIND_OPTIONS}
                 value={draft.kind}
                 onChange={(kind) => set({ kind })}
@@ -511,7 +535,7 @@ export function CommissionBench() {
                 <Field
                   label="حصة المندوب من الأساس"
                   htmlFor="scheme-ratio"
-                  helper={`افتراض البيت ${share(DEFAULT_REP_RATIO)}`}
+                  helper={`الافتراضي ${share(DEFAULT_REP_RATIO)}`}
                 >
                   <Input
                     id="scheme-ratio"
@@ -529,7 +553,7 @@ export function CommissionBench() {
                 <div className="rail relative h-7 overflow-hidden rounded-[10px]">
                   <div
                     className="rail-fill absolute inset-y-0 start-0 rounded-[10px] bg-accent"
-                    style={{ width: `${Math.min(100, Math.max(0, draft.repPercent))}%` }}
+                    style={{ width: `${railPct}%` }}
                   />
                   <span
                     aria-hidden
@@ -539,10 +563,10 @@ export function CommissionBench() {
                   <span
                     className="rail-badge px-1.5 py-[3px] text-[10px] font-bold text-fg"
                     style={{
-                      insetInlineStart: `max(4px, calc(${Math.min(100, Math.max(0, draft.repPercent))}% - 40px))`,
+                      insetInlineStart: `max(4px, calc(${railPct}% - 40px))`,
                     }}
                   >
-                    <Money>{share(draft.repPercent / 100)}</Money>
+                    <Money>{share(params.repRatio ?? 0)}</Money>
                   </span>
                 </div>
                 <span className="text-[11px] text-subtle">
@@ -592,18 +616,23 @@ export function CommissionBench() {
             <Field
               label="الأساس المقسوم"
               htmlFor="scheme-basis"
+              labelsGroup
               helper={PROFIT_BASIS_HINTS[draft.profitBasis]}
             >
               <Segmented
+                id="scheme-basis"
+                aria-labelledby="scheme-basis-label"
                 options={BASIS_OPTIONS}
                 value={draft.profitBasis}
                 onChange={(profitBasis) => set({ profitBasis })}
               />
             </Field>
 
-            <Field label="عند الخسارة" htmlFor="scheme-loss">
+            <Field label="عند الخسارة" htmlFor="scheme-loss" labelsGroup>
               <div className="flex flex-wrap items-center gap-3">
                 <Segmented
+                  id="scheme-loss"
+                  aria-labelledby="scheme-loss-label"
                   options={LOSS_OPTIONS}
                   value={draft.lossPolicy}
                   onChange={(lossPolicy) => set({ lossPolicy })}
@@ -630,9 +659,12 @@ export function CommissionBench() {
             <Field
               label="الوحدة الصغرى غير القابلة للقسمة"
               htmlFor="scheme-round"
+              labelsGroup
               helper="الطرف الذي يأخذها في الربح ويحملها في الخسارة."
             >
               <Segmented
+                id="scheme-round"
+                aria-labelledby="scheme-round-label"
                 options={ROUND_OPTIONS}
                 value={draft.roundingBeneficiary}
                 onChange={(roundingBeneficiary) => set({ roundingBeneficiary })}
@@ -843,6 +875,7 @@ export function CommissionBench() {
                 total={recentParts.total}
                 format={money}
                 formatShare={(r) => share(r)}
+                label={`قسمة أساس آخر عملية: ${recent.product.name}`}
               />
             ) : (
               <div className="flex flex-wrap gap-x-6 gap-y-2 text-[13px]">
@@ -924,7 +957,9 @@ function LossCase({
     >
       <div className="flex items-center justify-between gap-2">
         <span className="text-[13px] font-semibold text-fg">{title}</span>
-        {applied && <Badge tone="accent">المطبَّق</Badge>}
+        {/* the raised body already carries «applied»; a tinted pill would claim
+            the same state twice on two channels (VISUAL-LAW §6a) */}
+        {applied && <Badge>المطبَّق</Badge>}
       </div>
       <div className="flex flex-wrap gap-x-5 gap-y-2">
         <Reading label="حصة المندوب" value={money(split.repShare.amount)} />
