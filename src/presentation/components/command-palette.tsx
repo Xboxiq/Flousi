@@ -20,6 +20,13 @@ const ACTIONS: Command[] = [
   { label: "إضافة منتج", group: "إجراءات", href: "/products/new", keywords: "new create جديد" },
   { label: "فتح الحاسبة", group: "إجراءات", href: "/calculator", keywords: "calc profit حساب" },
   { label: "إغلاق الشهر", group: "إجراءات", href: "/periods", keywords: "period lock فترة" },
+  { label: "تسجيل تسوية", group: "إجراءات", href: "/reps", keywords: "settle balance رصيد مندوب" },
+  {
+    label: "إعدادات القسمة",
+    group: "إجراءات",
+    href: "/reps/schemes",
+    keywords: "commission scheme split نظام حصة",
+  },
 ];
 
 export function CommandPalette() {
