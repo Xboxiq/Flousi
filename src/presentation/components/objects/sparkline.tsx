@@ -7,6 +7,14 @@ interface SparklineProps {
   height?: number;
   /** Announced to assistive tech; the drawing itself is aria-hidden. */
   label?: string;
+  /**
+   * "polarity" (default) reads the window's net sign as profit or loss — correct
+   * for a product's own profit trend. "neutral" is for a series that is not a
+   * profit at all (a rep's earned share, a volume count): those are always
+   * positive by construction, so painting them success would spend the colour on
+   * a fact rather than on a meaning (VISUAL-LAW §13).
+   */
+  tone?: "polarity" | "neutral";
   className?: string;
 }
 
@@ -20,7 +28,14 @@ interface SparklineProps {
  * The newest point carries the only marker: a disc with a surface collar, the
  * same grammar as the chart's active dot (R34).
  */
-export function Sparkline({ values, width = 96, height = 26, label, className }: SparklineProps) {
+export function Sparkline({
+  values,
+  width = 96,
+  height = 26,
+  label,
+  tone = "polarity",
+  className,
+}: SparklineProps) {
   const n = values.length;
   if (n < 2) return null;
 
@@ -33,7 +48,12 @@ export function Sparkline({ values, width = 96, height = 26, label, className }:
 
   const total = values.reduce((s, v) => s + v, 0);
   const allZero = values.every((v) => v === 0);
-  const color = allZero ? "var(--subtle)" : total >= 0 ? "var(--success)" : "var(--danger)";
+  const color =
+    allZero || tone === "neutral"
+      ? "var(--subtle)"
+      : total >= 0
+        ? "var(--success)"
+        : "var(--danger)";
   const crossesZero = min < 0 && max > 0;
 
   const points = values.map((v, i) => `${x(i)},${y(v)}`).join(" ");

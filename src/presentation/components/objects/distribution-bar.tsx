@@ -29,6 +29,12 @@ interface Props {
   format: (n: number) => string;
   /** Formats a share (0..1) for the ruler. */
   formatShare: (n: number) => string;
+  /**
+   * What this bar divides, for assistive tech. Defaulted for the dashboard's
+   * original caller; every other surface must say its own truth — a team's
+   * profit split announced as «توزيع إيراد الشهر» is simply false.
+   */
+  label?: string;
   className?: string;
 }
 
@@ -68,6 +74,7 @@ export function DistributionBar({
   overrun,
   format,
   formatShare,
+  label = "توزيع إيراد الشهر",
   className,
 }: Props) {
   const whole = total > 0 ? total : 1;
@@ -91,7 +98,7 @@ export function DistributionBar({
 
   return (
     <div className={cn("flex flex-col", className)} data-part="distribution">
-      <div className="dist-track h-7" role="img" aria-label="توزيع إيراد الشهر">
+      <div className="dist-track h-7" role="img" aria-label={label}>
         {rows.map(({ part, plate, share }) => (
           <div
             key={part.id}

@@ -18,15 +18,30 @@ export function Segmented<T extends string>({
   options,
   value,
   onChange,
+  id,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
   className,
 }: {
   options: SegmentedOption<T>[];
   value: T;
   onChange: (value: T) => void;
+  /** Lets a Field's own <label> point at the group instead of at nothing. */
+  id?: string;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
   className?: string;
 }) {
   return (
-    <div className={cn("neu-inset inline-flex gap-1 rounded-full bg-sunken p-1", className)}>
+    /* A group, not an anonymous div: a row of buttons under a Field label had no
+       accessible name at all, because <label for> cannot target a div. */
+    <div
+      id={id}
+      role="group"
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
+      className={cn("neu-inset inline-flex gap-1 rounded-full bg-sunken p-1", className)}
+    >
       {options.map((opt) => {
         const active = opt.value === value;
         return (

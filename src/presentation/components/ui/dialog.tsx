@@ -63,7 +63,11 @@ export function Dialog({
           />
           <motion.div
             className={cn(
-              "relative z-10 w-full max-w-lg rounded-[var(--radius-lg)] border border-border bg-surface shadow-xl",
+              // A sheet taller than the phone must scroll its BODY while the art
+              // band, the title and the footer stay put: the commit control is the
+              // whole point of a dialog, so it can never be the part that is cut off.
+              "relative z-10 flex max-h-[calc(100dvh-2rem)] w-full max-w-lg flex-col",
+              "rounded-[var(--radius-lg)] border border-border bg-surface shadow-xl",
               className,
             )}
             initial={reduce ? false : { opacity: 0, scale: 0.96, y: 8 }}
@@ -72,20 +76,20 @@ export function Dialog({
             transition={{ duration: 0.2, ease: [0.33, 1, 0.68, 1] }}
           >
             {art && (
-              <div className="scene-field relative flex items-center justify-center overflow-hidden !rounded-b-none rounded-t-[calc(var(--radius-lg)-1px)] px-5 pt-6 pb-4">
+              <div className="scene-field relative flex shrink-0 items-center justify-center overflow-hidden !rounded-b-none rounded-t-[calc(var(--radius-lg)-1px)] px-5 pt-6 pb-4">
                 {art}
                 <button
                   type="button"
                   onClick={onClose}
-                  aria-label="Close"
-                  className="absolute end-3 top-3 inline-flex size-8 items-center justify-center rounded-full bg-surface/85 text-muted shadow-sm hover:text-fg"
+                  aria-label="إغلاق"
+                  className="absolute end-2 top-2 inline-flex size-11 items-center justify-center rounded-full bg-surface/85 text-muted shadow-sm hover:text-fg"
                 >
-                  <X size={16} />
+                  <X size={17} />
                 </button>
               </div>
             )}
             {(title || description) && (
-              <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
+              <div className="flex shrink-0 items-start justify-between gap-4 border-b border-border px-5 py-4">
                 <div>
                   {title && <h2 className="text-base font-semibold text-fg">{title}</h2>}
                   {description && <p className="mt-1 text-sm text-muted">{description}</p>}
@@ -94,17 +98,17 @@ export function Dialog({
                   <button
                     type="button"
                     onClick={onClose}
-                    aria-label="Close"
-                    className="inline-flex size-8 items-center justify-center rounded-[var(--radius-md)] text-muted hover:bg-surface-2 hover:text-fg"
+                    aria-label="إغلاق"
+                    className="-me-2 -mt-2 inline-flex size-11 items-center justify-center rounded-[var(--radius-md)] text-muted hover:bg-surface-2 hover:text-fg"
                   >
                     <X size={18} />
                   </button>
                 )}
               </div>
             )}
-            <div className="px-5 py-4">{children}</div>
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
             {footer && (
-              <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-3">
+              <div className="flex shrink-0 items-center justify-end gap-2 border-t border-border px-5 py-3">
                 {footer}
               </div>
             )}

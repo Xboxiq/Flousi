@@ -1,4 +1,13 @@
-import type { Product, Sale, AccountingPeriod, AppSettings } from "@/domain";
+import type {
+  Product,
+  Sale,
+  AccountingPeriod,
+  AppSettings,
+  Rep,
+  CommissionScheme,
+  CommissionAssignment,
+  Settlement,
+} from "@/domain";
 import { storage, STORAGE_KEYS } from "./storage";
 import { DEFAULT_SETTINGS } from "./repositories";
 
@@ -10,6 +19,15 @@ export interface BackupFile {
   sales: Sale[];
   periods: AccountingPeriod[];
   settings: AppSettings;
+  /**
+   * Commission collections. Optional on the type so a version-1 file written
+   * before the commission feature still imports — the arrays fall back to empty
+   * rather than failing validation. Frozen snapshots travel inside `sales`.
+   */
+  reps?: Rep[];
+  commissionSchemes?: CommissionScheme[];
+  commissionAssignments?: CommissionAssignment[];
+  settlements?: Settlement[];
 }
 
 export function exportAll(): BackupFile {
@@ -21,6 +39,13 @@ export function exportAll(): BackupFile {
     sales: storage.get<Sale[]>(STORAGE_KEYS.sales, []),
     periods: storage.get<AccountingPeriod[]>(STORAGE_KEYS.periods, []),
     settings: storage.get<AppSettings>(STORAGE_KEYS.settings, DEFAULT_SETTINGS),
+    reps: storage.get<Rep[]>(STORAGE_KEYS.reps, []),
+    commissionSchemes: storage.get<CommissionScheme[]>(STORAGE_KEYS.commissionSchemes, []),
+    commissionAssignments: storage.get<CommissionAssignment[]>(
+      STORAGE_KEYS.commissionAssignments,
+      [],
+    ),
+    settlements: storage.get<Settlement[]>(STORAGE_KEYS.settlements, []),
   };
 }
 
@@ -45,6 +70,10 @@ export function importAll(raw: unknown): void {
   storage.set(STORAGE_KEYS.products, data.products ?? []);
   storage.set(STORAGE_KEYS.sales, data.sales ?? []);
   storage.set(STORAGE_KEYS.periods, data.periods ?? []);
+  storage.set(STORAGE_KEYS.reps, data.reps ?? []);
+  storage.set(STORAGE_KEYS.commissionSchemes, data.commissionSchemes ?? []);
+  storage.set(STORAGE_KEYS.commissionAssignments, data.commissionAssignments ?? []);
+  storage.set(STORAGE_KEYS.settlements, data.settlements ?? []);
   if (data.settings) storage.set(STORAGE_KEYS.settings, data.settings);
 }
 
@@ -54,4 +83,8 @@ export function clearAll(): void {
   storage.remove(STORAGE_KEYS.sales);
   storage.remove(STORAGE_KEYS.periods);
   storage.remove(STORAGE_KEYS.settings);
+  storage.remove(STORAGE_KEYS.reps);
+  storage.remove(STORAGE_KEYS.commissionSchemes);
+  storage.remove(STORAGE_KEYS.commissionAssignments);
+  storage.remove(STORAGE_KEYS.settlements);
 }
