@@ -437,9 +437,6 @@
     background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--accent) 12%, transparent), transparent 60%);
   }
   .spotlight:hover::before { opacity: 1; }
-
-  @keyframes flousi-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  .marquee-track { display: inline-flex; width: max-content; animation: flousi-marquee 26s linear infinite; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import {
   DownloadSimple,
   UploadSimple,
@@ -244,7 +245,17 @@ export function SettingsView() {
           <CardHeader>
             <div>
               <CardTitle>البيانات</CardTitle>
-              <CardDescription>بياناتك مخزّنة محليًا في هذا المتصفّح.</CardDescription>
+              <CardDescription>
+              بياناتك مخزّنة محليًا في هذا المتصفّح. اقرأ{" "}
+              <Link href="/legal/privacy" className="font-medium text-accent hover:underline">
+                سياسة الخصوصية
+              </Link>{" "}
+              و
+              <Link href="/legal/terms" className="font-medium text-accent hover:underline">
+                شروط الاستخدام
+              </Link>
+              .
+            </CardDescription>
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">

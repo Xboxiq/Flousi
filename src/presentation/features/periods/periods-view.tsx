@@ -231,7 +231,7 @@ export function PeriodsView() {
           onCommit={onClose}
         />
         <p className="mt-2 text-center text-[11px] text-subtle">
-          الإفلات قبل النهاية يلغي — لا يُغلق شهر بالخطأ.
+          الإفلات قبل النهاية يلغي، فلا يُغلق شهر بالخطأ.
         </p>
       </Dialog>
     </>

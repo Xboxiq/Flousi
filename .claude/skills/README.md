@@ -16,6 +16,7 @@ inside). These load automatically in Claude Code sessions for this repo.
 | `unlazy` | github.com/Leonxlnx/unlazy | Gates method + gate-check.mjs |
 | `ponytail`, `ponytail-review`, `ponytail-debt` | github.com/DietrichGebert/ponytail | Code-quality ladder (scoped to logic/deps, never design polish) |
 | `layers-conceptual-model`, `layers-surface` | github.com/jamiemill/layers-skills | Object model + vocabulary method |
+| `anti-slop-ui` | **Client-supplied** (uploaded 2026-08-18) | 30 banned UI/UX patterns + a 30-row matrix. Audit run in `gates/phase-a1-anti-slop-ui.md`; the eight material rules Flousi deliberately breaks are reconciled clause by clause in `design-system/VISUAL-LAW.md` §14 |
 | `flousi-anti-slop-gate` | **Flousi-owned** | Consolidated mandatory pre-delivery gate |
 
 Consulted but not vendored: `Leonxlnx/taste-skill` (landing-page scoped; its AI-tells

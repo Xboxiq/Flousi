@@ -84,6 +84,38 @@ and where it leaks from. A permanent glow is atmospheric wash in disguise.
 Color for a stable meaning (profit/loss/action) is code; color for variety is
 decor and gets removed.
 
+## §14 مصالحة anti-slop-ui — Reconciliation with the client-supplied skill
+
+The client supplied `anti-slop-ui` (30 banned patterns) on 2026-08-18. Twenty-two of
+its rules we already keep, and several of them we keep more strictly than it asks.
+Eight of them we **deliberately break**, and the reason is the same in all eight
+cases: the skill is written for a flat, bordered, technical-document aesthetic, and
+it bans the *symptom* (a shadow, a radius, a gradient) rather than the fault (depth
+that reports nothing). Flousi's brief was the opposite and was stated twice:
+«يهتم بالتفاصيل والأشكال ثلاثية الأبعاد» and
+«تكون كأنها صور أو تكوينات احترافية … مو خطوط وكلشي مو متوازن». A 1px
+border on a flat panel is exactly the drawing he rejected.
+
+So each break is bound to the clause that governs it instead. A break with no clause
+holding it is not a break, it is slop — and any new one has to be added to this table
+before it ships.
+
+| قاعدة المهارة | ما نفعله | البند الأصرم الذي يحكمه بدلاً منها |
+|---|---|---|
+| #7 لا `box-shadow` | طبقة مواد كاملة (`.clay` `.molded` `.slab`) | **§2 + §3**: الضوء من فوق حصراً، وكل جسم له ثلاثة ظلال لكل واحد وظيفة (ملامسة، مطروح، حواف). الممنوع عندنا هو الظل الطافي الملوّن — وهو نفس ما تمنعه المهارة، لكننا نمنعه بسببه لا باسمه |
+| #8 لا زجاج | `.glass` على سطح واحد: نتيجة الحاسبة | **§6**: الزجاج ليس مادة زينة بل طبقة واحدة فوق العمل تقول «هذا الرقم محسوب ممّا تحته». مرة واحدة في التطبيق كله؛ ممنوع على البطاقات والأشرطة |
+| #9 نصف قطر ≤ 6px | 18px للمفاتيح، 30px للألواح، وكبسولات للمرشّحات | **§1**: الجسم قبل الشكل. قطعة مسبوكة لها نصف قطر القالب؛ زاوية 4px على جسم مجسّم تقرأ كمستطيل مرسوم لا كقطعة. والكبسولة تحمل معنى: المرشّح ينزلق، واللوح لا |
+| #1 لا تدرجات | تدرجات دقيقة داخل الأجسام والأقراص | **§2**: التدرج ليس لوناً، بل وجه يميل تحت ضوء علوي. الممنوع هو تدرج متعدد الألوان يمتد خلف المحتوى — واللاندينغ في هذه الدفعة فقد ما كان منه |
+| #11 لا كرات ضوء | `.scene-spot` مسرح واحد تحت جسم قائم | **§2 + §7**: بقعة المسرح لها موقع (تحت الجسم مباشرة) وتربطه بالأرض. كرة في زاوية فارغة مصدر ضوء بلا موقع — وقد أُزيلت من اللاندينغ في G3 |
+| #12 لا شبكات نقاط | نقاط وتحزيز في الأجزاء | **§11a**: للملمس قواعد معنى محددة — التحزيز تجاوز، والنقاط قراءة مُسكتة. ملمس بلا معنى يسقط بـ§8، وملمس خلفية زخرفي ممنوع مثلما تمنعه المهارة |
+| #14 لا شبكة bento | مركز التقارير مشبّك | **§10**: ممنوع ما تمنعه المهارة فعلاً: بطاقات متنافرة بمقاييس عشوائية. مركز التقارير مجموعة من أجسام متماثلة تفتح الملف نفسه؛ واللاندينغ خرج من الـbento في G7 |
+| #21 لا رفع عند المرور | مرور يغيّر اللون والحافة فقط | **متفقان** — أُزيل `bento-hover` و`hover:scale` في G8. يبقى المال مغنطة (`Magnetic`) داخل زر واحد لأنها تتبع المؤشر لا ترفع البطاقة |
+
+وما التزمنا به من المهارة دون تحفّظ: لا Lucide (Phosphor)، لا Inter/Geist/Space Grotesk
+(Cairo + IBM Plex Mono)، لا إيموجي، لا بريق ذكاء اصطناعي، لا شهادات ملفقة، لا طرفية مزيفة،
+لا ثلاث باقات أسعار، لا ألوان نيون ولا باستيل، لا بنفسجي على أسود، لا شريط جانبي ملوّن،
+لا أسهم متحركة، وهياكل تحميل موجودة لكل شاشة تقرأ من المخزن.
+
 ## ميزانية الحركة (من nova — تحمي السينمائية من أكل المقروئية)
 - Max **two simultaneously animating elements** on a product/data surface.
 - Max **one** endless loop per page; **zero** infinite animation on a product
