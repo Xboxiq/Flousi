@@ -57,7 +57,7 @@ export function ProductDetail({ id }: { id: string }) {
   return (
     <>
       <div className="mb-2">
-        <Button asChild variant="ghost" size="sm" leadingIcon={<ArrowLeft size={16} />}>
+        <Button asChild variant="ghost" size="sm" leadingIcon={<ArrowLeft size={16} className="rtl:rotate-180" />}>
           <Link href="/products">المنتجات</Link>
         </Button>
       </div>

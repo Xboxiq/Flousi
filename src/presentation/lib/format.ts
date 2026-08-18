@@ -67,6 +67,22 @@ export function formatSignedPercent(ratio: number, opts: { locale?: string; digi
   return sign + formatPercent(ratio, opts);
 }
 
+/**
+ * Locale-aware date. Digits forced to latn so dates and money never mix
+ * numbering systems on one surface (MASTER §6).
+ */
+export function formatDate(
+  date: Date | string,
+  opts: { locale?: string } & Intl.DateTimeFormatOptions = {},
+): string {
+  const { locale = DEFAULTS.locale, ...dtOpts } = opts;
+  const d = typeof date === "string" ? new Date(date) : date;
+  return new Intl.DateTimeFormat(locale, {
+    numberingSystem: "latn",
+    ...(Object.keys(dtOpts).length ? dtOpts : { year: "numeric", month: "short", day: "numeric" }),
+  } as Intl.DateTimeFormatOptions).format(d);
+}
+
 /** Currency symbol for a currency/locale, e.g. "$", "د.ع". */
 export function currencySymbol(currency = DEFAULTS.currency, locale = DEFAULTS.locale): string {
   try {

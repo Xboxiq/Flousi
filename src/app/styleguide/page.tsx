@@ -1,5 +1,6 @@
 import { Plus, Package, Tag } from "@phosphor-icons/react/dist/ssr";
 import { MaterialsDemo } from "@/presentation/features/styleguide/materials-demo";
+import { InstrumentsStudy } from "@/presentation/features/styleguide/instruments-study";
 import {
   Badge,
   Button,
@@ -32,6 +33,8 @@ export default function StyleguidePage() {
         <p className="mt-2 text-muted">Primitive components rendered from the design tokens.</p>
       </header>
 
+      <InstrumentsStudy />
+
       <div className="mb-14">
         <MaterialsDemo />
       </div>
@@ -40,6 +43,7 @@ export default function StyleguidePage() {
         <div className="flex flex-wrap items-center gap-3">
           <Button leadingIcon={<Plus size={16} weight="bold" />}>Add product</Button>
           <Button variant="secondary">Secondary</Button>
+          <Button variant="graphite">Graphite</Button>
           <Button variant="outline">Outline</Button>
           <Button variant="ghost">Ghost</Button>
           <Button variant="danger">Delete</Button>
@@ -164,7 +168,7 @@ export default function StyleguidePage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mb-12">
-      <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-subtle">{title}</h2>
+      <h2 className="mb-4 text-sm font-medium text-subtle">{title}</h2>
       {children}
     </section>
   );

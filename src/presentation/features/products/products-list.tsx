@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, MagnifyingGlass, Package } from "@phosphor-icons/react";
 import { ProfitCalculator } from "@/domain";
+import { computeProductTrends } from "@/application/analytics";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
@@ -23,15 +24,20 @@ import {
   TR,
 } from "@/presentation/components/ui";
 import { formatCurrency, formatPercent } from "@/presentation/lib/format";
+import { Sparkline } from "@/presentation/components/objects/sparkline";
 
 export function ProductsList() {
   const router = useRouter();
   const loaded = useDataStore((s) => s.loaded);
   const products = useDataStore((s) => s.products);
+  const sales = useDataStore((s) => s.sales);
   const settings = useDataStore((s) => s.settings);
 
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
+
+  // each row's trailing six months, comparable across rows (R27)
+  const trends = useMemo(() => computeProductTrends(products, sales), [products, sales]);
 
   const rows = useMemo(() => {
     return products
@@ -111,6 +117,7 @@ export function ProductsList() {
               <TR>
                 <TH>المنتج</TH>
                 <TH>الفئة</TH>
+                <TH className="hidden md:table-cell">آخر 6 أشهر</TH>
                 <TH className="text-start">السعر</TH>
                 <TH className="text-start">صافي الربح / وحدة</TH>
                 <TH className="text-start">الهامش</TH>
@@ -130,6 +137,12 @@ export function ProductsList() {
                     )}
                   </TD>
                   <TD className="text-muted">{product.category ?? "—"}</TD>
+                  <TD className="hidden md:table-cell">
+                    <Sparkline
+                      values={trends.get(product.id) ?? []}
+                      label={`اتجاه ربح ${product.name} في آخر ستة أشهر`}
+                    />
+                  </TD>
                   <TD className="text-start font-mono tabular-nums" dir="ltr">
                     {money(product.sellingPrice, product.currency)}
                   </TD>
@@ -148,7 +161,7 @@ export function ProductsList() {
               ))}
               {rows.length === 0 && (
                 <TR>
-                  <TD className="py-10 text-center text-muted" colSpan={5}>
+                  <TD className="py-10 text-center text-muted" colSpan={6}>
                     لا توجد منتجات مطابقة لبحثك.
                   </TD>
                 </TR>

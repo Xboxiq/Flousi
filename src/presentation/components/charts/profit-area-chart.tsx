@@ -1,28 +1,110 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "motion/react";
 import {
   Area,
   AreaChart,
   CartesianGrid,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-import { formatCurrency, formatCurrencyCompact } from "@/presentation/lib/format";
+import { formatCurrency, formatNumber } from "@/presentation/lib/format";
 import type { MonthlyPoint } from "@/application/analytics";
 
 interface Props {
   data: MonthlyPoint[];
   currency: string;
   locale: string;
+  /** The level worth drawing: the merchant's target, or their own average. */
+  threshold?: { value: number; met: boolean };
 }
 
-export function ProfitAreaChart({ data, currency, locale }: Props) {
+/**
+ * The threshold's own figure, carried on a chip at the head of its dashed rule
+ * (RECIPES R35). Green only when the level is actually met — the line is a level,
+ * the chip is the verdict (VISUAL-LAW §12 §13).
+ */
+function ThresholdChip({
+  viewBox,
+  text,
+  met,
+}: {
+  viewBox?: { x?: number; y?: number; width?: number; height?: number };
+  text: string;
+  met: boolean;
+}) {
+  if (!viewBox || viewBox.x == null || viewBox.y == null) return null;
+  const w = text.length * 7.6 + 16;
+  const h = 19;
+  const x = viewBox.x + 4;
+  const y = viewBox.y - h - 3;
+  return (
+    <g pointerEvents="none">
+      <rect
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        rx={6}
+        fill={met ? "var(--success)" : "var(--surface)"}
+        stroke={met ? "var(--success)" : "var(--border)"}
+        strokeWidth={1}
+        filter="drop-shadow(0 1px 2px rgba(18,26,38,0.22))"
+      />
+      <text
+        x={x + w / 2}
+        y={y + h / 2 + 4}
+        textAnchor="middle"
+        fontSize={11}
+        fontWeight={700}
+        fill={met ? "#ffffff" : "var(--fg)"}
+        style={{ fontVariantNumeric: "tabular-nums" }}
+      >
+        {text}
+      </text>
+    </g>
+  );
+}
+
+/** Magnitude only: the card title already says these are money. */
+function magnitude(v: number, locale: string): string {
+  const abs = Math.abs(v);
+  if (abs >= 1_000_000) return `${formatNumber(v / 1_000_000, { locale, digits: 1 })}م`;
+  if (abs >= 1000) return `${formatNumber(v / 1000, { locale, digits: 0 })}ألف`;
+  return formatNumber(v, { locale, digits: 0 });
+}
+
+/**
+ * Revenue / net-profit trend. Chart law (MASTER §5/§7): data being read does
+ * not move — one mount-only reveal (350ms ease-out, 80ms series stagger),
+ * disabled on data/filter re-renders and under prefers-reduced-motion.
+ */
+export function ProfitAreaChart({ data, currency, locale, threshold }: Props) {
+  const reduce = useReducedMotion();
+  const [animate, setAnimate] = useState(!reduce);
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    if (mounted.current) {
+      // Any later data change re-renders without motion.
+      setAnimate(false);
+      return;
+    }
+    mounted.current = true;
+    const t = setTimeout(() => setAnimate(false), 600);
+    return () => clearTimeout(t);
+  }, [data]);
+
   return (
     <div className="h-64 w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+        {/* RTL: the value axis sits on the trailing-start edge Arabic readers
+            scan first — orientation="right" (SVG coords ignore dir). */}
+        <AreaChart data={data} margin={{ top: 8, right: 0, left: 8, bottom: 0 }}>
           <defs>
             <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.25} />
@@ -41,24 +123,49 @@ export function ProfitAreaChart({ data, currency, locale }: Props) {
             tickLine={false}
           />
           <YAxis
+            orientation="right"
             tick={{ fill: "var(--subtle)", fontSize: 12 }}
             axisLine={false}
             tickLine={false}
-            width={56}
-            tickFormatter={(v: number) => formatCurrencyCompact(v, { currency, locale })}
+            width={46}
+            /* Ticks carry magnitude, not currency — the card title already says
+               these are money, and a full figure here collides with the plot. */
+            tickFormatter={(v: number) => magnitude(v, locale)}
           />
+          {threshold && threshold.value > 0 && (
+            /* The level the month is measured against — dashed, because it is a
+               rule and not a series, and it carries its own figure (R35). */
+            <ReferenceLine
+              y={threshold.value}
+              /* the level belongs to the PROFIT series, so it is drawn in that
+                 series' colour — a neutral rule read as if it bounded revenue */
+              stroke="var(--success)"
+              strokeOpacity={0.6}
+              strokeWidth={1.5}
+              strokeDasharray="6 5"
+              label={
+                <ThresholdChip text={magnitude(threshold.value, locale)} met={threshold.met} />
+              }
+            />
+          )}
           <Tooltip
+            /* the hovered month gets a dashed drop line to its axis, the way a
+               measured reading is marked on paper */
+            cursor={{ stroke: "var(--fg)", strokeWidth: 1, strokeDasharray: "3 4", opacity: 0.35 }}
             contentStyle={{
               background: "var(--surface)",
               border: "1px solid var(--border)",
-              borderRadius: 10,
+              borderRadius: 12,
               fontSize: 13,
               color: "var(--fg)",
+              fontVariantNumeric: "tabular-nums",
+              boxShadow: "var(--shadow-md)",
+              padding: "8px 12px",
             }}
-            labelStyle={{ color: "var(--muted)" }}
+            labelStyle={{ color: "var(--muted)", marginBottom: 4, fontWeight: 600 }}
             formatter={(value, name) => [
               formatCurrency(Number(value), { currency, locale }),
-              name === "revenue" ? "Revenue" : "Net profit",
+              name === "revenue" ? "الإيراد" : "صافي الربح",
             ]}
           />
           <Area
@@ -67,6 +174,18 @@ export function ProfitAreaChart({ data, currency, locale }: Props) {
             stroke="var(--accent)"
             strokeWidth={2}
             fill="url(#revenueFill)"
+            isAnimationActive={animate}
+            animationDuration={350}
+            animationBegin={0}
+            animationEasing="ease-out"
+            /* the hovered point becomes a real marker: a filled disc with a
+               white collar, sized to be read against the line */
+            activeDot={{
+              r: 6,
+              fill: "var(--accent)",
+              stroke: "var(--surface)",
+              strokeWidth: 3,
+            }}
           />
           <Area
             type="monotone"
@@ -74,6 +193,16 @@ export function ProfitAreaChart({ data, currency, locale }: Props) {
             stroke="var(--success)"
             strokeWidth={2}
             fill="url(#profitFill)"
+            isAnimationActive={animate}
+            animationDuration={350}
+            animationBegin={80}
+            animationEasing="ease-out"
+            activeDot={{
+              r: 6,
+              fill: "var(--success)",
+              stroke: "var(--surface)",
+              strokeWidth: 3,
+            }}
           />
         </AreaChart>
       </ResponsiveContainer>

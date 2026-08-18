@@ -4,7 +4,9 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
   return (
     <div
       className={cn(
-        "rounded-[var(--radius-xl)] border border-border-soft bg-surface shadow-sm",
+        // Elevation declared once: the shadow-card recipe carries its own 1px
+        // ring — no border, no ghost-card combo (MASTER §4).
+        "rounded-[var(--radius-xl)] bg-surface shadow-card",
         className,
       )}
       {...props}

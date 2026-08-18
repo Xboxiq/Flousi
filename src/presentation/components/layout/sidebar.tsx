@@ -23,7 +23,7 @@ export function SidebarNav({
       {NAV_GROUPS.map((group) => (
         <div key={group.label} className="flex flex-col gap-1">
           {!collapsed && (
-            <span className="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-subtle">
+            <span className="px-3 pb-1 text-xs font-medium text-subtle">
               {group.label}
             </span>
           )}

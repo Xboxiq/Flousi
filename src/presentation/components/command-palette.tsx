@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { MagnifyingGlass, ArrowRight } from "@phosphor-icons/react";
 import { NAV_GROUPS } from "./layout/nav-config";
 import { useUiStore } from "@/presentation/stores/ui-store";
+import { easeOut } from "@/presentation/lib/motion";
 import { cn } from "@/presentation/lib/cn";
 
 interface Command {
@@ -19,6 +20,20 @@ const ACTIONS: Command[] = [
   { label: "إضافة منتج", group: "إجراءات", href: "/products/new", keywords: "new create جديد" },
   { label: "فتح الحاسبة", group: "إجراءات", href: "/calculator", keywords: "calc profit حساب" },
   { label: "إغلاق الشهر", group: "إجراءات", href: "/periods", keywords: "period lock فترة" },
+  /* Named for what it does: this is a navigation to the team list, not a recorded
+     settlement — the payment itself is still committed from a rep's own sheet. */
+  {
+    label: "الفريق والتسويات",
+    group: "إجراءات",
+    href: "/reps",
+    keywords: "settle balance رصيد مندوب تسوية",
+  },
+  {
+    label: "إعدادات القسمة",
+    group: "إجراءات",
+    href: "/reps/schemes",
+    keywords: "commission scheme split نظام حصة",
+  },
 ];
 
 export function CommandPalette() {
@@ -96,7 +111,7 @@ export function CommandPalette() {
       {open && (
         <div className="fixed inset-0 z-[60] flex items-start justify-center p-4 pt-[12vh]">
           <motion.div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -106,12 +121,12 @@ export function CommandPalette() {
           <motion.div
             role="dialog"
             aria-modal="true"
-            aria-label="Command palette"
+            aria-label="لوحة الأوامر"
             className="relative z-10 w-full max-w-xl overflow-hidden rounded-[var(--radius-xl)] border border-border bg-surface shadow-xl"
             initial={reduce ? false : { opacity: 0, scale: 0.97, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={reduce ? undefined : { opacity: 0, scale: 0.97, y: 10 }}
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.2, ease: easeOut }}
             onKeyDown={onKeyDown}
           >
             <div className="flex items-center gap-3 border-b border-border px-4">
@@ -138,7 +153,7 @@ export function CommandPalette() {
                     onMouseEnter={() => setActive(i)}
                     onClick={() => run(c)}
                     className={cn(
-                      "flex w-full items-center justify-between rounded-[var(--radius-md)] px-3 py-2.5 text-left text-sm transition-colors",
+                      "flex w-full items-center justify-between rounded-[var(--radius-md)] px-3 py-2.5 text-start text-sm transition-colors",
                       i === active ? "bg-accent-soft text-accent" : "text-fg hover:bg-surface-2",
                     )}
                   >
@@ -147,7 +162,10 @@ export function CommandPalette() {
                       <span className="text-subtle">/</span>
                       <span className="font-medium">{c.label}</span>
                     </span>
-                    <ArrowRight size={14} className={i === active ? "opacity-100" : "opacity-0"} />
+                    <ArrowRight
+                      size={14}
+                      className={cn("rtl:rotate-180", i === active ? "opacity-100" : "opacity-0")}
+                    />
                   </button>
                 </li>
               ))}

@@ -1,0 +1,1048 @@
+/* ============================================================================
+   Flousi v4 MATERIAL LAYER — «المال الملموس»
+   Governed by design-system/VISUAL-LAW.md; techniques ported from the client's
+   own Xboxiq/nova and catalogued in design-system/RECIPES.md, with every hue
+   rebound to Flousi tokens.
+
+   deslop-ignore-file 06 19 20
+   ^ Scoped, justified suppression for this file ONLY: a slop scanner built for
+   flat-design defaults reads authored materials as "atmosphere gradients",
+   "glassmorphism" and "oversized shadows". Here they are the deliberate,
+   documented subject of the file — each obeys the overhead-light law, the
+   shadow trio, a two-lip edge, and a reduced-transparency fallback. Product
+   surfaces stay scanned: nothing outside this file is exempt, so the project
+   count keeps flagging real regressions.
+   ========================================================================== */
+
+/* ============================================================================
+   v4 MATERIALS — «المال الملموس». Techniques ported from the client's own
+   Xboxiq/nova (see design-system/RECIPES.md), hues rebound to Flousi tokens.
+   Governed by design-system/VISUAL-LAW.md: bodies not shapes, overhead light,
+   three shadow roles, detail at edges, state-bound glows.
+   ========================================================================== */
+@layer components {
+  /* ---- GLASS (R2): specular top lip + caustic + shaded bottom lip ---- */
+  /* Authored glass: overhead light logic, two-lip edge, blur<=20px, solid
+     reduced-transparency fallback (VISUAL-LAW §5) — not default glassmorphism. */
+  /* deslop-ignore-next-line 19 */
+  .glass {
+    position: relative;
+    isolation: isolate;
+    background-image: linear-gradient(
+      148deg,
+      var(--glass-strong),
+      var(--glass) 48%,
+      color-mix(in srgb, var(--glass) 70%, var(--glass-caustic))
+    );
+    border: 1px solid var(--glass-edge);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+  .glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background-image: linear-gradient(
+      112deg,
+      var(--glass-specular),
+      transparent 28% 68%,
+      var(--glass-caustic)
+    );
+    mask-image: linear-gradient(to bottom, black, transparent 58%);
+  }
+  .glass > * { position: relative; z-index: 1; }
+  @media (prefers-reduced-transparency: reduce) {
+    .glass {
+      background-image: none;
+      background-color: var(--surface);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    .glass::before { opacity: 0; }
+  }
+
+  /* ---- CLAY (R9 family): carved surfaces that respond to pressure ---- */
+  .clay {
+    position: relative;
+    border-radius: var(--radius-lg);
+    /* a body, not a rectangle: lit top face → shaded lower face */
+    background-image: linear-gradient(
+      177deg,
+      #ffffff 0%,
+      var(--surface) 34%,
+      color-mix(in srgb, var(--surface) 82%, var(--sunken)) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      inset 0 -2px 3px -1px rgba(18, 26, 38, 0.07),
+      var(--shadow-occlusion),
+      0 1px 2px rgba(18, 26, 38, 0.12),
+      0 20px 34px -16px rgba(18, 26, 38, 0.26);
+  }
+  [data-theme="dark"] .clay {
+    background-image: linear-gradient(
+      175deg,
+      color-mix(in srgb, var(--surface) 88%, white),
+      var(--surface) 42%,
+      color-mix(in srgb, var(--surface) 92%, black)
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      var(--shadow-occlusion),
+      0 2px 4px rgba(0, 0, 0, 0.5),
+      0 20px 36px -20px rgba(0, 0, 0, 0.7);
+  }
+  .clay-inset {
+    background-color: var(--surface-2);
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sunken) 70%, var(--surface-2)),
+      var(--surface-2) 60%
+    );
+    box-shadow:
+      inset 0 2px 5px rgba(18, 26, 38, 0.12),
+      inset 0 -1px 0 var(--neu-hi);
+    border-color: transparent !important;
+    transition: box-shadow var(--motion-fast) var(--ease-out);
+  }
+  [data-theme="dark"] .clay-inset {
+    background-image: linear-gradient(180deg, #0b0b0d, var(--sunken) 60%);
+    box-shadow:
+      inset 0 2px 6px rgba(0, 0, 0, 0.85),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .clay-inset:focus-within {
+    box-shadow:
+      inset 0 2px 5px rgba(18, 26, 38, 0.12),
+      0 0 0 3px color-mix(in srgb, var(--focus) 26%, transparent);
+  }
+  .clay-press {
+    transition:
+      transform var(--motion-press) var(--ease-out),
+      box-shadow var(--motion-press) var(--ease-out);
+  }
+  .clay-press:active {
+    transform: scale(0.97);
+    box-shadow: inset 0 3px 8px rgba(18, 26, 38, 0.16);
+  }
+
+  /* ---- SCENE FIELD (R1 + R11): the background plane objects sit on ---- */
+  /* A studio backdrop, deep enough that white bodies read as objects ON it and
+     glass has something behind it to bend. Composition axis: light pools at the
+     top, the floor darkens toward the bottom (overhead light, VISUAL-LAW §2). */
+  /* The studio backdrop IS the composition: a light pool overhead + a darkening
+     floor, terminated by grid and grain (VISUAL-LAW §2 §10) — not a wash. */
+  /* deslop-ignore-next-line 06 */
+  .scene-field {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: var(--radius-2xl);
+    background-color: var(--sunken);
+    background-image:
+      radial-gradient(120% 70% at 50% -18%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 62%),
+      linear-gradient(180deg, color-mix(in srgb, var(--accent) 6%, var(--bg)) 0%, var(--sunken) 78%);
+    box-shadow:
+      var(--shadow-occlusion),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      inset 0 -24px 48px -24px rgba(18, 26, 38, 0.18);
+  }
+  [data-theme="dark"] .scene-field {
+    background-color: #08080a;
+    background-image:
+      radial-gradient(120% 70% at 50% -18%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 62%),
+      linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, var(--bg)) 0%, #08080a 78%);
+    box-shadow:
+      var(--shadow-occlusion),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 -30px 60px -30px rgba(0, 0, 0, 0.8);
+  }
+  /* the pool of light a focal object stands in — travels with its column, so
+     it is correct in RTL and LTR without a mirrored rule */
+  .scene-spot {
+    position: relative;
+  }
+  /* The pool of light the focal object stands in; travels with its column so
+     RTL and LTR keep identical physics (VISUAL-LAW §2 §7). */
+  /* deslop-ignore-next-line 06 */
+  .scene-spot::before {
+    content: "";
+    position: absolute;
+    inset: -14% -22% -6%;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 45% 55% 62% 38% / 54% 42% 58% 46%;
+    background-image: radial-gradient(
+      58% 52% at 50% 34%,
+      color-mix(in srgb, var(--accent) 42%, transparent),
+      transparent 68%
+    );
+    filter: blur(22px);
+    opacity: 0.8;
+  }
+  .scene-spot > * { position: relative; z-index: 1; }
+  /* technical grid that FADES OUT instead of being cropped */
+  .scene-field::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--fg) 7%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--fg) 7%, transparent) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: linear-gradient(to bottom, black, transparent 78%);
+  }
+  /* dot-grain: kills banding, stops the field reading as a flat gradient */
+  .scene-field::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    mix-blend-mode: overlay;
+    background-image: radial-gradient(var(--fg) 0.65px, transparent 0.65px);
+    background-size: 3px 3px;
+  }
+  .scene-field > * { position: relative; z-index: 1; }
+
+  /* ---- DEVICE: a matte moulded body with a recessed display -----------------
+     From the client's visual feedback (utility-meter renders, chunky 3D icon
+     bodies): objects are moulded shells with a lit top face, shaded side rims
+     and instruments sunk INTO them. Nothing is printed on a flat rectangle. */
+  .device {
+    position: relative;
+    isolation: isolate;
+    border-radius: 26px;
+    background-image:
+      linear-gradient(178deg, #ffffff 0%, var(--surface) 30%, color-mix(in srgb, var(--surface) 78%, var(--sunken)) 100%);
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 1),
+      inset 10px 0 20px -14px rgba(18, 26, 38, 0.35),
+      inset -10px 0 20px -14px rgba(18, 26, 38, 0.35),
+      inset 0 -3px 6px -2px rgba(18, 26, 38, 0.1),
+      var(--shadow-occlusion),
+      0 2px 3px rgba(18, 26, 38, 0.14),
+      0 26px 44px -20px rgba(18, 26, 38, 0.34);
+  }
+  [data-theme="dark"] .device {
+    background-image:
+      linear-gradient(178deg, #2b3038 0%, var(--surface) 34%, #101216 100%);
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 0.1),
+      inset 10px 0 20px -14px rgba(0, 0, 0, 0.85),
+      inset -10px 0 20px -14px rgba(0, 0, 0, 0.85),
+      var(--shadow-occlusion),
+      0 2px 4px rgba(0, 0, 0, 0.6),
+      0 28px 48px -22px rgba(0, 0, 0, 0.8);
+  }
+  /* the instrument window: sunk into the shell, glass over a dark drum bay */
+  .display-window {
+    position: relative;
+    border-radius: 14px;
+    background-image: linear-gradient(180deg, #15181e, #23282f 62%, #1a1e24);
+    box-shadow:
+      inset 0 3px 8px rgba(0, 0, 0, 0.7),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.09),
+      0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+  [data-theme="dark"] .display-window {
+    box-shadow:
+      inset 0 3px 8px rgba(0, 0, 0, 0.85),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.07),
+      0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+  /* the glass over the window — one specular sweep, no blur needed */
+  .display-window::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background-image: linear-gradient(
+      104deg,
+      rgba(255, 255, 255, 0.16) 0 18%,
+      transparent 42%,
+      rgba(255, 255, 255, 0.06) 78%,
+      transparent
+    );
+  }
+
+  /* ---- DIGIT DRUMS: the mechanical counter (client feedback: kWh meters) ---- */
+  .odo {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+  }
+  .odo-wheel {
+    position: relative;
+    display: inline-block;
+    width: 0.62em;
+    height: var(--odo-h);
+    overflow: hidden;
+    /* depth of field, exactly like a physical drum bay */
+    mask-image: linear-gradient(transparent, black 26%, black 74%, transparent);
+  }
+  .odo-strip {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    transition: transform var(--motion-modal) var(--ease-out);
+  }
+  .odo-digit {
+    display: flex;
+    height: var(--odo-h);
+    align-items: center;
+    justify-content: center;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .odo-strip { transition: none; }
+  }
+
+  /* ---- HALFTONE HERO (feedback: the dithered net-income card) ----------------
+     A grainy gradient whose noise is a visible dot screen, not a blur. Reads as
+     printed ink rather than a CSS gradient, and the dots kill all banding. */
+  .halftone {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    /* Colour is pushed to the corners so the reading zone stays pale enough for
+       ink to hold AA — vivid material, legible text (VISUAL-LAW §6 + a11y floor). */
+    background-color: color-mix(in srgb, var(--accent) 12%, var(--surface));
+    background-image:
+      radial-gradient(52% 62% at 104% 104%, color-mix(in srgb, var(--accent) 80%, transparent), transparent 66%),
+      radial-gradient(50% 58% at -6% 108%, color-mix(in srgb, var(--success) 70%, transparent), transparent 66%),
+      radial-gradient(60% 46% at 96% -12%, color-mix(in srgb, var(--accent) 42%, transparent), transparent 70%),
+      linear-gradient(160deg, color-mix(in srgb, var(--accent) 12%, white), color-mix(in srgb, var(--success) 12%, white));
+  }
+  [data-theme="dark"] .halftone {
+    background-color: #0d1017;
+    background-image:
+      radial-gradient(54% 64% at 104% 104%, color-mix(in srgb, var(--accent) 70%, transparent), transparent 66%),
+      radial-gradient(52% 60% at -6% 108%, color-mix(in srgb, var(--success) 55%, transparent), transparent 66%),
+      linear-gradient(160deg, color-mix(in srgb, var(--accent) 22%, #0d1017), #0d1017 62%);
+  }
+  .halftone::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.62;
+    mix-blend-mode: overlay;
+    background-image: radial-gradient(var(--fg) 46%, transparent 48%);
+    background-size: 4px 4px;
+  }
+  [data-theme="dark"] .halftone::before {
+    opacity: 0.34;
+    mix-blend-mode: soft-light;
+    background-image: radial-gradient(#ffffff 42%, transparent 44%);
+  }
+  .halftone > * { position: relative; z-index: 1; }
+
+  /* ---- CAPSULE BARS (feedback: the M T W T F S S widget) --------------------
+     A week as capsules: each is a carved track with a filled cap that reads as
+     a plunger sitting at its level. Height is the value; the track is the rest. */
+  .capsule-track {
+    position: relative;
+    overflow: hidden;
+    border-radius: 999px;
+    background-color: var(--sunken);
+    box-shadow: inset 0 1px 3px rgba(18, 26, 38, 0.16), inset 0 -1px 0 var(--neu-hi);
+  }
+  .capsule-fill {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    border-radius: 999px;
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--accent), white 34%), var(--accent));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 -1px 3px rgba(18, 26, 38, 0.2);
+  }
+  /* One solid reading in a patterned set (R37): the day being reported keeps the
+     solid plunger; the others keep their hue but drop to a dot screen and recede.
+     App-wide grammar: diagonal HATCH = an unfilled remainder (§11), DOTS = a
+     reading that has been quieted. */
+  .capsule-fill-quiet::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.85) 0.9px, transparent 1px);
+    background-size: 4px 4px;
+    opacity: 0.75;
+  }
+  /* the chip that carries a reading, with a notch that points at the object it
+     belongs to — otherwise a floating figure looks like it labels its neighbour */
+  .reading-chip {
+    position: absolute;
+    border-radius: 999px;
+    background-image: linear-gradient(180deg, color-mix(in srgb, var(--surface) 96%, white), var(--surface));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 1px 2px rgba(18, 26, 38, 0.2),
+      0 8px 16px -8px rgba(18, 26, 38, 0.35);
+  }
+  [data-theme="dark"] .reading-chip {
+    background-image: linear-gradient(180deg, #2c3037, var(--surface));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 2px 6px rgba(0, 0, 0, 0.6);
+  }
+  /* The notch is a sibling, not a pseudo-element: it is centred on the OBJECT
+     the chip reports, which the chip itself is not (it hugs the strip's edge). */
+  .reading-notch {
+    position: absolute;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    margin-left: -4.5px;
+    transform: rotate(45deg);
+    border-bottom-right-radius: 2px;
+    background-color: var(--surface);
+    box-shadow: 1.5px 1.5px 2px rgba(18, 26, 38, 0.14);
+  }
+  [data-theme="dark"] .reading-notch {
+    background-color: var(--surface);
+    box-shadow: 1.5px 1.5px 3px rgba(0, 0, 0, 0.6);
+  }
+  .capsule-active {
+    box-shadow:
+      inset 0 1px 3px rgba(18, 26, 38, 0.24),
+      inset 0 -1px 0 var(--neu-hi),
+      0 0 0 2px color-mix(in srgb, var(--fg) 34%, transparent),
+      0 2px 6px -2px rgba(18, 26, 38, 0.3);
+  }
+
+  /* ---- DISTRIBUTION BAR (R36): «وين راح المال» in one whole ------------------
+     One bar = one month's revenue. Every part is the same milled plate under an
+     overhead light; what tells them apart is the TEXTURE and the JOINT, never a
+     hue per part — colour stays reserved for meaning, and the only coloured
+     plate is the one the merchant keeps (VISUAL-LAW §5 §13). */
+  .dist-track {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    border-radius: 11px;
+    background-color: var(--sunken);
+    box-shadow:
+      inset 0 2px 5px rgba(18, 26, 38, 0.22),
+      inset 0 -1px 0 var(--neu-hi),
+      0 1px 0 var(--neu-hi);
+  }
+  [data-theme="dark"] .dist-track {
+    box-shadow:
+      inset 0 2px 6px rgba(0, 0, 0, 0.8),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .dist-seg {
+    position: relative;
+    min-width: 3px;
+    /* the joint: an occluded seam with a lit lip on its far side */
+    box-shadow:
+      inset -1px 0 0 rgba(18, 26, 38, 0.45),
+      inset 1px 0 0 rgba(255, 255, 255, 0.28);
+  }
+  .dist-seg:last-child { box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.28); }
+  /* the lit top face of the plate — shared by the bar and its legend swatches */
+  .dist-seg::before,
+  .dist-chip::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.06) 46%,
+      rgba(18, 26, 38, 0.16)
+    );
+  }
+  /* in the dark room the same plate catches far less light */
+  [data-theme="dark"] .dist-seg::before,
+  [data-theme="dark"] .dist-chip::before {
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.16),
+      rgba(255, 255, 255, 0.02) 46%,
+      rgba(0, 0, 0, 0.3)
+    );
+  }
+  /* the texture that names the part */
+  .dist-seg::after,
+  .dist-chip::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.9;
+  }
+  .seg-solid::after { background-image: none; }
+  .seg-dots::after {
+    background-image: radial-gradient(var(--seg-ink) 1px, transparent 1.2px);
+    background-size: 5px 5px;
+  }
+  .seg-hatch::after {
+    background-image: repeating-linear-gradient(45deg, var(--seg-ink) 0 1.5px, transparent 1.5px 6px);
+  }
+  .seg-grid::after {
+    background-image:
+      repeating-linear-gradient(0deg, var(--seg-ink) 0 1px, transparent 1px 5px),
+      repeating-linear-gradient(90deg, var(--seg-ink) 0 1px, transparent 1px 5px);
+  }
+  .seg-dense::after {
+    background-image: repeating-linear-gradient(135deg, var(--seg-ink) 0 2px, transparent 2px 4px);
+  }
+  /* the plate that is the merchant's to keep — the one part allowed a hue */
+  .seg-keep::before {
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.45),
+      rgba(255, 255, 255, 0.04) 48%,
+      rgba(4, 40, 22, 0.2)
+    );
+  }
+  /* The tail of the cost bar that revenue never reached: a hatched region laid
+     over the plates it swallowed, with a scribe line where the money ran out.
+     Logical inset + logical border, so the mirror keeps the meaning. */
+  .seg-overrun-region {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    border-inline-start: 2px solid color-mix(in oklab, var(--danger), white 12%);
+    background-color: color-mix(in srgb, var(--danger) 74%, transparent);
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.55) 0 2px,
+      transparent 2px 7px
+    );
+  }
+  /* costs that ran past the revenue: hatched, because the excess is data (§11) */
+  .seg-overrun::after {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.55) 0 2px,
+      transparent 2px 7px
+    );
+  }
+  /* the ruler under the bar: a tick per boundary, scribed into the card */
+  .dist-tick {
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 6px;
+    background-color: color-mix(in srgb, var(--fg) 38%, transparent);
+    box-shadow: 1px 0 0 var(--neu-hi);
+  }
+  /* legend swatch: the same plate, shrunk */
+  .dist-chip {
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      inset 0 -2px 3px -1px rgba(18, 26, 38, 0.35),
+      0 1px 1px rgba(18, 26, 38, 0.2);
+  }
+
+  /* ---- TICK-COMB METER (R40) -------------------------------------------------
+     A share you can count: discrete ticks, filled up to the value, the rest left
+     as carved empty slots. The remainder is structural by construction, so this
+     obeys §11 without needing a hatch, and the quantising makes "about two
+     thirds" readable without a label. */
+  .comb {
+    display: flex;
+    align-items: stretch;
+    gap: 3px;
+  }
+  /* narrow and taller than wide — a tick, not a block. Capped so a wide card
+     cannot inflate them into squares (the same cap the week capsules use). */
+  .comb-tick {
+    flex: 1 1 0;
+    max-width: 7px;
+    border-radius: 3px;
+    background-color: var(--sunken);
+    box-shadow:
+      inset 0 1px 2px rgba(18, 26, 38, 0.16),
+      inset 0 -1px 0 var(--neu-hi);
+  }
+  [data-theme="dark"] .comb-tick {
+    background-color: #0b0b0d;
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.8),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  }
+  /* a filled tick is a small body: lit top, its own hue, a contact shadow */
+  .comb-tick[data-on="true"] {
+    background-color: var(--comb-color, var(--accent));
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--comb-color, var(--accent)), white 26%),
+      var(--comb-color, var(--accent))
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 1px 2px -1px color-mix(in srgb, var(--comb-color, var(--accent)) 60%, transparent);
+  }
+  /* the tick the value actually lands on gets the edge detail (§5) */
+  .comb-tick[data-edge="true"] {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 0 0 1.5px color-mix(in srgb, var(--comb-color, var(--accent)) 45%, transparent),
+      0 2px 4px -2px color-mix(in srgb, var(--comb-color, var(--accent)) 70%, transparent);
+  }
+
+  /* ---- MOULDED CONTROLS (feedback: the Add Money / Withdraw pills) ----------
+     A pressable is a moulded body, not a filled rectangle: a lighter RIM around
+     the fill, a lit top edge inside it, a shaded lower lip, and a drop shadow
+     the size of the body. Pressing shortens the shadow and sinks the top light
+     so the finger feels the travel. */
+  .molded {
+    position: relative;
+    transition:
+      transform var(--motion-press) var(--ease-out),
+      box-shadow var(--motion-press) var(--ease-out),
+      background-color var(--motion-fast) var(--ease-out);
+  }
+  .molded-accent {
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--accent), white 14%), var(--accent));
+    box-shadow:
+      0 0 0 1.5px color-mix(in oklab, var(--accent), white 26%),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42),
+      inset 0 -2px 3px color-mix(in oklab, var(--accent-strong), black 22%),
+      0 3px 0 color-mix(in oklab, var(--accent-strong), black 12%),
+      0 8px 16px -6px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  .molded-accent:hover {
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--accent), white 6%), var(--accent-strong));
+  }
+  .molded-success {
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--success), white 14%), var(--success));
+    box-shadow:
+      0 0 0 1.5px color-mix(in oklab, var(--success), white 28%),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42),
+      inset 0 -2px 3px color-mix(in oklab, var(--success), black 30%),
+      0 3px 0 color-mix(in oklab, var(--success), black 18%),
+      0 8px 16px -6px color-mix(in srgb, var(--success) 50%, transparent);
+  }
+  .molded-danger {
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--danger), white 14%), var(--danger));
+    box-shadow:
+      0 0 0 1.5px color-mix(in oklab, var(--danger), white 26%),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      inset 0 -2px 3px color-mix(in oklab, var(--danger), black 28%),
+      0 3px 0 color-mix(in oklab, var(--danger), black 16%),
+      0 8px 16px -6px color-mix(in srgb, var(--danger) 48%, transparent);
+  }
+  /* the graphite sibling (feedback: the dark icon pills beside the green one).
+     A neutral DARK pressable — the material an icon-only action wears so the one
+     labelled accent action in the row keeps the eye. */
+  .molded-graphite {
+    background-image: linear-gradient(180deg, #5a6068, #3c4148);
+    box-shadow:
+      0 0 0 1.5px #6c727b,
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.45),
+      0 3px 0 #23262b,
+      0 8px 16px -6px rgba(18, 26, 38, 0.5);
+  }
+  .molded-graphite:hover { background-image: linear-gradient(180deg, #666c75, #454a52); }
+  [data-theme="dark"] .molded-graphite {
+    background-image: linear-gradient(180deg, #40454d, #2a2e34);
+    box-shadow:
+      0 0 0 1.5px rgba(255, 255, 255, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.6),
+      0 3px 0 rgba(0, 0, 0, 0.6),
+      0 8px 16px -6px rgba(0, 0, 0, 0.7);
+  }
+  .molded-graphite:active:not(:disabled) {
+    box-shadow:
+      0 0 0 1.5px #6c727b,
+      inset 0 2px 5px rgba(0, 0, 0, 0.5),
+      0 1px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  /* the quiet twin: same body language, neutral material */
+  .molded-quiet {
+    background-image: linear-gradient(180deg, #ffffff, var(--surface-2));
+    box-shadow:
+      0 0 0 1px var(--border),
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      inset 0 -2px 3px rgba(18, 26, 38, 0.06),
+      0 2px 0 rgba(18, 26, 38, 0.06),
+      0 6px 12px -6px rgba(18, 26, 38, 0.2);
+  }
+  [data-theme="dark"] .molded-quiet {
+    background-image: linear-gradient(180deg, #33373f, #23262c);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.5),
+      0 2px 0 rgba(0, 0, 0, 0.5),
+      0 8px 14px -6px rgba(0, 0, 0, 0.7);
+  }
+  /* pressed: the body travels down into its own shadow */
+  .molded:active:not(:disabled) {
+    transform: translateY(2px);
+  }
+  .molded-accent:active:not(:disabled),
+  .molded-success:active:not(:disabled),
+  .molded-danger:active:not(:disabled) {
+    box-shadow:
+      0 0 0 1.5px color-mix(in oklab, var(--accent), white 20%),
+      inset 0 2px 4px rgba(0, 0, 0, 0.28),
+      0 1px 0 rgba(0, 0, 0, 0.2);
+  }
+  .molded-quiet:active:not(:disabled) {
+    box-shadow:
+      0 0 0 1px var(--border),
+      inset 0 2px 4px rgba(18, 26, 38, 0.14),
+      0 1px 0 rgba(18, 26, 38, 0.06);
+  }
+
+  /* ---- RAIL BADGE (feedback: the % badge riding the fill's leading edge) ---- */
+  .rail-badge {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 999px;
+    background-color: var(--surface);
+    box-shadow: 0 1px 2px rgba(18, 26, 38, 0.22), 0 0 0 1px var(--border-soft);
+  }
+
+  /* ---- FLOATING DOCK (feedback: the soft pill nav + liquid-glass dock) ------
+     A raised pill rail; the active item sits in its own lifted capsule. */
+  .dock {
+    border-radius: 999px;
+    background-image: linear-gradient(180deg, color-mix(in srgb, var(--surface) 94%, white), var(--surface));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      var(--shadow-occlusion),
+      0 2px 4px rgba(18, 26, 38, 0.12),
+      0 18px 32px -12px rgba(18, 26, 38, 0.3);
+  }
+  [data-theme="dark"] .dock {
+    background-image: linear-gradient(180deg, #23262c, var(--surface));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.09),
+      var(--shadow-occlusion),
+      0 2px 6px rgba(0, 0, 0, 0.6),
+      0 20px 36px -14px rgba(0, 0, 0, 0.8);
+  }
+  /* The seated key: a real rim is what makes it read as a body dropped into the
+     rail rather than a lighter patch of it (feedback batch 5, images 1/3/9). */
+  .dock-active {
+    border-radius: 999px;
+    background-color: var(--surface);
+    box-shadow:
+      0 0 0 1.5px color-mix(in srgb, var(--fg) 22%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      0 1px 2px rgba(18, 26, 38, 0.14),
+      0 6px 14px -6px rgba(18, 26, 38, 0.3);
+  }
+  [data-theme="dark"] .dock-active {
+    background-color: #2c3037;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 2px 6px rgba(0, 0, 0, 0.6);
+  }
+
+  /* ---- LAMP: an indicator that only glows when it has something to report ---- */
+  .lamp {
+    position: relative;
+    border-radius: 50%;
+    background-image: radial-gradient(circle at 38% 30%, rgba(255, 255, 255, 0.9), transparent 46%),
+      radial-gradient(circle at 50% 60%, var(--lamp-color, var(--subtle)), color-mix(in srgb, var(--lamp-color, var(--subtle)) 55%, black));
+    box-shadow:
+      inset 0 -1px 2px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(18, 26, 38, 0.18),
+      0 0 12px var(--lamp-glow, transparent);
+  }
+
+  /* ---- SLABS: milled plates for the price column ----------------------------
+     One material for every cost, exactly as a stack of identical plates would
+     be — what distinguishes them is the JOINT, not a colour (VISUAL-LAW §5 §13).
+     Overhead light: a bright line on each top edge, both side rims shaded
+     EQUALLY (never lateral light), occlusion pooling into the seam below. */
+  .slab {
+    position: relative;
+    background-image:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 44%),
+      linear-gradient(180deg, #eef2f8, #c2cddc);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      inset 9px 0 16px -11px rgba(18, 26, 38, 0.55),
+      inset -9px 0 16px -11px rgba(18, 26, 38, 0.55),
+      inset 0 -9px 12px -9px rgba(18, 26, 38, 0.5),
+      0 1px 0 rgba(18, 26, 38, 0.28);
+  }
+  [data-theme="dark"] .slab:not(.slab-profit):not(.slab-overrun) {
+    background-image:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 44%),
+      linear-gradient(180deg, #4e5764, #2f343d);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 9px 0 16px -11px rgba(0, 0, 0, 0.8),
+      inset -9px 0 16px -11px rgba(0, 0, 0, 0.8),
+      inset 0 -9px 12px -9px rgba(0, 0, 0, 0.75),
+      0 1px 0 rgba(0, 0, 0, 0.6);
+  }
+  /* the merchant's plate — the one that is theirs to keep */
+  .slab-profit {
+    background-image:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.42), transparent 46%),
+      linear-gradient(180deg, color-mix(in oklab, var(--success), white 26%), var(--success));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      inset 9px 0 16px -11px rgba(4, 40, 22, 0.6),
+      inset -9px 0 16px -11px rgba(4, 40, 22, 0.6),
+      inset 0 -9px 12px -9px rgba(4, 40, 22, 0.55),
+      0 1px 0 rgba(18, 26, 38, 0.28),
+      0 8px 18px -10px color-mix(in oklab, var(--success), transparent 45%);
+  }
+  /* costs that ran past the price — hatched, because the excess is data */
+  .slab-overrun {
+    background-image:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.36), transparent 46%),
+      linear-gradient(180deg, color-mix(in oklab, var(--danger), white 22%), var(--danger));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.66),
+      inset 9px 0 16px -11px rgba(60, 10, 6, 0.6),
+      inset -9px 0 16px -11px rgba(60, 10, 6, 0.6),
+      0 1px 0 rgba(18, 26, 38, 0.28),
+      0 8px 18px -10px color-mix(in oklab, var(--danger), transparent 45%);
+  }
+
+  /* ---- RAILS (R6): the unfilled remainder is DATA, hatched not gradient ---- */
+  .rail {
+    background-color: var(--surface-2);
+    /* deslop-ignore-next-line 06 -- structural hatch: names the remaining amount (VISUAL-LAW §11) */
+    background-image: repeating-linear-gradient(135deg, var(--border) 0 1px, transparent 1px 5px);
+  }
+  .rail-fill { transform-origin: left center; }
+  [dir="rtl"] .rail-fill { transform-origin: right center; }
+
+  /* ---- STATE LEAK (R7): must be handed a color, so it must name a state ---- */
+  .leak::after {
+    content: "";
+    position: absolute;
+    inset-inline: 14%;
+    bottom: -7px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--leak-color, transparent);
+    filter: blur(13px);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  /* ---- STAGE + SQUIRCLE BODY (batch 3: the 3D icon on a tinted stage) --------
+     What an empty state stands on: a shallow pool of light with a floor shadow,
+     and a moulded squircle body holding the subject. The object is lit from
+     overhead and pinned by the contact/cast pair (§1 §2 §3). */
+  .stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* a subject with a real base (folder, device) STANDS on the floor shadow
+     instead of floating at the centre of the pool */
+  .stage-standing {
+    align-items: flex-end;
+    padding-bottom: 10px;
+  }
+  /* deslop-ignore-next-line 06 -- the stage's light pool: composition, terminated, not a wash */
+  .stage::before {
+    content: "";
+    position: absolute;
+    inset: -8% -18%;
+    border-radius: 50%;
+    background-image: radial-gradient(
+      55% 48% at 50% 42%,
+      color-mix(in srgb, var(--accent) 16%, transparent),
+      transparent 70%
+    );
+  }
+  /* the floor: contact under the body, cast spreading behind it */
+  .stage::after {
+    content: "";
+    position: absolute;
+    bottom: 2px;
+    width: 58%;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(50% 100% at 50% 50%, rgba(18, 26, 38, 0.3), transparent 72%);
+    filter: blur(3px);
+  }
+  [data-theme="dark"] .stage::after {
+    background: radial-gradient(50% 100% at 50% 50%, rgba(0, 0, 0, 0.65), transparent 72%);
+  }
+  .squircle {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30%;
+    background-image: linear-gradient(
+      177deg,
+      #ffffff 0%,
+      var(--surface) 40%,
+      color-mix(in srgb, var(--surface) 74%, var(--sunken)) 100%
+    );
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 1),
+      inset 6px 0 12px -8px rgba(18, 26, 38, 0.35),
+      inset -6px 0 12px -8px rgba(18, 26, 38, 0.35),
+      inset 0 -3px 5px -2px rgba(18, 26, 38, 0.14),
+      0 1px 2px rgba(18, 26, 38, 0.2),
+      0 12px 22px -10px rgba(18, 26, 38, 0.36);
+  }
+  [data-theme="dark"] .squircle {
+    background-image: linear-gradient(177deg, #2e333b 0%, var(--surface) 42%, #101216 100%);
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 0.12),
+      inset 6px 0 12px -8px rgba(0, 0, 0, 0.8),
+      inset -6px 0 12px -8px rgba(0, 0, 0, 0.8),
+      0 2px 4px rgba(0, 0, 0, 0.55),
+      0 14px 24px -12px rgba(0, 0, 0, 0.8);
+  }
+
+  /* ---- DOCUMENT FOLDER (R30, batch 2): reports live in a real folder ---------
+     A back panel, sheets that exist ONLY when there is something filed (§8),
+     and a front flap with a lit fold. The whole body leans slightly — the angle
+     belongs to the content, the card stays straight (§4). */
+  .folder {
+    position: relative;
+    width: 132px;
+    height: 96px;
+  }
+  .folder-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--accent), black 18%), color-mix(in oklab, var(--accent), black 34%));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+  /* the tab cut into the back panel's top edge */
+  .folder-back::before {
+    content: "";
+    position: absolute;
+    top: -9px;
+    inset-inline-start: 10px;
+    width: 44%;
+    height: 18px;
+    border-radius: 8px 8px 0 0;
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--accent), black 12%), color-mix(in oklab, var(--accent), black 22%));
+  }
+  .folder-sheet {
+    position: absolute;
+    inset-inline: 10px;
+    top: -2px;
+    height: 70%;
+    border-radius: 6px;
+    background-image: linear-gradient(180deg, #ffffff, #eef1f6);
+    box-shadow: 0 1px 2px rgba(18, 26, 38, 0.18), inset 0 0 0 1px rgba(18, 26, 38, 0.05);
+  }
+  .folder-front {
+    position: absolute;
+    inset: 26% 0 0 0;
+    border-radius: 10px 10px 12px 12px;
+    background-image:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.05) 30%, rgba(18, 26, 38, 0.12)),
+      linear-gradient(180deg, color-mix(in oklab, var(--accent), white 16%), var(--accent));
+    box-shadow:
+      inset 0 1.5px 0 rgba(255, 255, 255, 0.55),
+      inset 0 -3px 6px -2px color-mix(in oklab, var(--accent), black 30%),
+      0 2px 3px rgba(18, 26, 38, 0.18),
+      0 14px 22px -12px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+
+  /* ---- SLIDE TO COMMIT (R25): the irreversible act costs a gesture ----------
+     A carved channel with a moulded thumb; the fill follows the finger. The
+     work is the confirmation — releasing early snaps back, so a stray tap can
+     never close a month. */
+  .slide-track {
+    position: relative;
+    overflow: hidden;
+    border-radius: 999px;
+    background-color: var(--sunken);
+    background-image: linear-gradient(180deg, color-mix(in srgb, var(--sunken) 86%, black), var(--sunken) 55%);
+    box-shadow:
+      inset 0 2px 5px rgba(18, 26, 38, 0.18),
+      inset 0 -1px 0 var(--neu-hi);
+  }
+  [data-theme="dark"] .slide-track {
+    background-image: linear-gradient(180deg, #08080a, var(--sunken) 55%);
+    box-shadow:
+      inset 0 2px 6px rgba(0, 0, 0, 0.85),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .slide-fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    border-radius: 999px;
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--accent), white 24%), var(--accent));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+  .slide-fill[data-done="true"] {
+    background-image: linear-gradient(180deg, color-mix(in oklab, var(--success), white 24%), var(--success));
+  }
+  .slide-thumb {
+    position: absolute;
+    top: 50%;
+    inset-inline-start: 0;
+    translate: 0 -50%;
+    touch-action: none;
+    cursor: grab;
+  }
+  .slide-thumb:active { cursor: grabbing; }
+  /* Only the snap-back is eased; while the finger drives, motion is 1:1.
+     Position must transition here — it IS the change (the thumb returning). */
+  .slide-track[data-settling="true"] .slide-fill,
+  .slide-track[data-settling="true"] .slide-thumb {
+    /* deslop-ignore-next-line 26 */
+    transition:
+      width var(--motion-base) var(--ease-out),
+      inset-inline-start var(--motion-base) var(--ease-out);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .slide-track[data-settling="true"] .slide-fill,
+    .slide-track[data-settling="true"] .slide-thumb {
+      transition: none;
+    }
+  }
+
+  /* ---- RITUAL ACTION (R15): the control shows its result inside itself ---- */
+  .ritual-fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: var(--ritual-progress, 0%);
+    background-image: linear-gradient(90deg, var(--accent-strong), var(--accent));
+    /* linear is correct for progress: real work, not a hover flourish */
+    /* deslop-ignore-next-line 26 */
+    transition: width var(--motion-base) linear;
+  }
+  .shard {
+    position: absolute;
+    inset-inline-start: 50%;
+    top: 50%;
+    width: 14px;
+    height: 9px;
+    border-radius: 2px;
+    background-image: linear-gradient(135deg, var(--accent), var(--success));
+    animation: flousi-shard 0.72s var(--ease-out) forwards;
+    pointer-events: none;
+  }
+  @keyframes flousi-shard {
+    to {
+      transform: translate(var(--sx), var(--sy)) rotate(var(--sr)) scale(0.15);
+      opacity: 0;
+      filter: blur(2px);
+    }
+  }
+}

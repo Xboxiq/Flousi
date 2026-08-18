@@ -16,6 +16,7 @@ import {
   CardTitle,
   Dialog,
   EmptyState,
+  Money,
   Skeleton,
   Table,
   TBody,
@@ -25,7 +26,9 @@ import {
   TR,
 } from "@/presentation/components/ui";
 import type { Product, Sale } from "@/domain";
-import { formatCurrency, formatPercent } from "@/presentation/lib/format";
+import { formatCurrency, formatDate, formatPercent } from "@/presentation/lib/format";
+import { MagnitudeRings } from "@/presentation/components/objects/magnitude-rings";
+import { SlideToCommit } from "@/presentation/components/interactive/slide-to-commit";
 
 export function PeriodsView() {
   const loaded = useDataStore((s) => s.loaded);
@@ -37,7 +40,12 @@ export function PeriodsView() {
   const openPeriod = useDataStore((s) => s.openPeriod);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [working, setWorking] = useState(false);
+  /**
+   * The month being sealed, PINNED at the moment the dialog opens. Committing
+   * swaps the store's active period underneath the open dialog — without the
+   * snapshot the sheet re-targets mid-close and asks about the new month.
+   */
+  const [closing, setClosing] = useState<{ label: string; summary: NonNullable<typeof liveSummary> } | null>(null);
 
   const active = periods.find((p) => p.status === "open");
   const closed = useMemo(
@@ -55,20 +63,19 @@ export function PeriodsView() {
 
   const onClose = async () => {
     if (!active || !liveSummary) return;
-    setWorking(true);
-    try {
-      await closePeriod(active.id, {
-        status: "closed",
-        endDate: new Date().toISOString(),
-        closedAt: new Date().toISOString(),
-        summary: liveSummary,
-      });
-      const next = nextPeriodAfter(active);
-      await openPeriod({ label: next.label, startDate: next.startDate, status: "open" });
+    await closePeriod(active.id, {
+      status: "closed",
+      endDate: new Date().toISOString(),
+      closedAt: new Date().toISOString(),
+      summary: liveSummary,
+    });
+    const next = nextPeriodAfter(active);
+    await openPeriod({ label: next.label, startDate: next.startDate, status: "open" });
+    // the slide lands («أُغلق الشهر») and is SEEN landed before the sheet leaves
+    setTimeout(() => {
       setConfirmOpen(false);
-    } finally {
-      setWorking(false);
-    }
+      setClosing(null);
+    }, 900);
   };
 
   const startFirstPeriod = async () => {
@@ -84,8 +91,8 @@ export function PeriodsView() {
     return (
       <>
         <PageHeader
-          title="Accounting periods"
-          description="Close months and lock historical reports."
+          title="الفترات المحاسبية"
+          description="أغلق الأشهر واحفظ التقارير التاريخية للقراءة فقط."
         />
         <Skeleton className="h-48 w-full" />
       </>
@@ -109,7 +116,13 @@ export function PeriodsView() {
                 مفتوحة
               </Badge>
             </div>
-            <Button leadingIcon={<Lock size={16} />} onClick={() => setConfirmOpen(true)}>
+            <Button
+              leadingIcon={<Lock size={16} />}
+              onClick={() => {
+                setClosing({ label: active.label, summary: liveSummary });
+                setConfirmOpen(true);
+              }}
+            >
               إغلاق الفترة
             </Button>
           </CardHeader>
@@ -136,7 +149,7 @@ export function PeriodsView() {
       )}
 
       {/* السجل */}
-      <h2 className="mt-8 mb-3 text-sm font-medium uppercase tracking-wide text-subtle">
+      <h2 className="mt-8 mb-3 text-sm font-medium text-subtle">
         الفترات المغلقة
       </h2>
       {closed.length === 0 ? (
@@ -154,13 +167,25 @@ export function PeriodsView() {
                 </div>
                 {period.closedAt && (
                   <span className="text-xs text-subtle">
-                    أُغلقت {new Date(period.closedAt).toLocaleDateString(settings.locale)}
+                    أُغلقت {formatDate(period.closedAt, { locale: settings.locale })}
                   </span>
                 )}
               </CardHeader>
               <CardContent>
                 {period.summary && (
-                  <SummaryGrid summary={period.summary} money={money} locale={settings.locale} />
+                  <div className="flex flex-col gap-4">
+                    {/* the month's magnitudes as nested areas (R47) beside its figures */}
+                    <MagnitudeRings
+                      rings={[
+                        { label: "الإيراد", value: period.summary.revenue, kind: "whole" },
+                        { label: "التكاليف", value: period.summary.totalCost, kind: "cost" },
+                        { label: "صافي الربح", value: period.summary.netProfit, kind: "keep" },
+                      ]}
+                      size={116}
+                      format={money}
+                    />
+                    <SummaryGrid summary={period.summary} money={money} locale={settings.locale} />
+                  </div>
                 )}
                 <ExportButtons label={period.label} periodId={period.id} products={products} sales={sales} />
               </CardContent>
@@ -172,25 +197,42 @@ export function PeriodsView() {
       {/* Confirm close */}
       <Dialog
         open={confirmOpen}
-        onClose={() => setConfirmOpen(false)}
-        title={`إغلاق ${active?.label ?? "الفترة"}؟`}
+        onClose={() => {
+          setConfirmOpen(false);
+          setClosing(null);
+        }}
+        title={`إغلاق ${closing?.label ?? "الفترة"}؟`}
         description="سيتم قفل الفترة. يصبح تقريرها للقراءة فقط وتُفتح فترة جديدة."
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => setConfirmOpen(false)} disabled={working}>
-              إلغاء
-            </Button>
-            <Button onClick={onClose} loading={working} leadingIcon={<Lock size={16} />}>
-              إغلاق وقفل
-            </Button>
-          </>
+        /* the art is the DATA being sealed: the month's own magnitudes (R29+R47) */
+        art={
+          closing ? (
+            <MagnitudeRings
+              rings={[
+                { label: "الإيراد", value: closing.summary.revenue, kind: "whole" },
+                { label: "التكاليف", value: closing.summary.totalCost, kind: "cost" },
+                { label: "صافي الربح", value: closing.summary.netProfit, kind: "keep" },
+              ]}
+              size={120}
+              format={money}
+            />
+          ) : undefined
         }
       >
-        {liveSummary && (
+        {closing && (
           <div className="rounded-[var(--radius-md)] border border-border bg-surface-2 p-4">
-            <SummaryGrid summary={liveSummary} money={money} locale={settings.locale} compact />
+            <SummaryGrid summary={closing.summary} money={money} locale={settings.locale} compact />
           </div>
         )}
+        {/* closing a month is irreversible, so it costs a gesture (R25) */}
+        <SlideToCommit
+          className="mt-4"
+          label="اسحب لإغلاق الشهر وقفله"
+          doneLabel="أُغلق الشهر"
+          onCommit={onClose}
+        />
+        <p className="mt-2 text-center text-[11px] text-subtle">
+          الإفلات قبل النهاية يلغي — لا يُغلق شهر بالخطأ.
+        </p>
       </Dialog>
     </>
   );
@@ -212,7 +254,7 @@ function ExportButtons({
   if (!has) return null;
   return (
     <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4">
-      <span className="me-1 text-xs font-medium uppercase tracking-wide text-subtle">
+      <span className="me-1 text-xs font-medium text-subtle">
         تصدير أرباح الشهر
       </span>
       <Button variant="secondary" size="sm" leadingIcon={<FileCsv size={15} />} onClick={() => downloadReport("csv", table())}>
@@ -256,7 +298,7 @@ function BreakdownTable({
   }
   return (
     <div className="mt-5 border-t border-border pt-4">
-      <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-subtle">
+      <h3 className="mb-2 text-xs font-medium text-subtle">
         الربح حسب المنتج
       </h3>
       <Table>
@@ -277,14 +319,14 @@ function BreakdownTable({
             return (
               <TR key={i} className={isTotal ? "font-semibold" : ""}>
                 <TD className={isTotal ? "font-semibold" : "font-medium"}>{String(row[0])}</TD>
-                <TD className="text-start font-mono tabular-nums text-muted" dir="ltr">{String(row[2])}</TD>
-                <TD className="text-start font-mono tabular-nums" dir="ltr">{money(Number(row[3]))}</TD>
-                <TD className="text-start font-mono tabular-nums" dir="ltr">{money(Number(row[4]))}</TD>
-                <TD className={`text-start font-mono tabular-nums ${net >= 0 ? "text-success" : "text-danger"}`} dir="ltr">
-                  {money(net)}
+                <TD className="text-start"><Money className="text-muted">{String(row[2])}</Money></TD>
+                <TD className="text-start"><Money>{money(Number(row[3]))}</Money></TD>
+                <TD className="text-start"><Money>{money(Number(row[4]))}</Money></TD>
+                <TD className="text-start">
+                  <Money polarity={net}>{money(net)}</Money>
                 </TD>
-                <TD className="text-start font-mono tabular-nums text-muted" dir="ltr">
-                  {formatPercent(Number(row[6]), { locale })}
+                <TD className="text-start">
+                  <Money className="text-muted">{formatPercent(Number(row[6]), { locale })}</Money>
                 </TD>
               </TR>
             );
@@ -314,14 +356,10 @@ function SummaryGrid({
   live?: boolean;
   compact?: boolean;
 }) {
-  const items = [
+  const items: { label: string; value: string; polarity?: number }[] = [
     { label: live ? "الإيراد (حتى الآن)" : "الإيراد", value: money(summary.revenue) },
     { label: "إجمالي التكلفة", value: money(summary.totalCost) },
-    {
-      label: "صافي الربح",
-      value: money(summary.netProfit),
-      tone: summary.netProfit >= 0 ? "text-success" : "text-danger",
-    },
+    { label: "صافي الربح", value: money(summary.netProfit), polarity: summary.netProfit },
     { label: "الهامش", value: formatPercent(summary.margin, { locale }) },
   ];
   return (
@@ -329,11 +367,8 @@ function SummaryGrid({
       {items.map((it) => (
         <div key={it.label}>
           <div className="text-xs text-muted">{it.label}</div>
-          <div
-            className={`mt-0.5 font-mono text-lg font-semibold tabular-nums ${it.tone ?? "text-fg"}`}
-            dir="ltr"
-          >
-            {it.value}
+          <div className="mt-0.5 text-lg font-semibold text-fg">
+            <Money polarity={it.polarity}>{it.value}</Money>
           </div>
         </div>
       ))}

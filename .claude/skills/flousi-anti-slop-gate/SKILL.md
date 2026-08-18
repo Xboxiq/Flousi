@@ -57,8 +57,10 @@ and must belong to Flousi's one cohesive world (see `design-system/MASTER.md`).
 - Rounded card + colored left border as universal decoration. `border-2` accent rings.
 - Rounded-square pastel icon tiles in grids; giant decorative filler icons.
 - Badge/pill spam ("✨ جديد", "🔥 الأكثر شيوعاً"); pills overlaid on images.
-- Glassmorphism/`backdrop-blur` as decoration (vibrancy chrome on top bar is the ONE
-  sanctioned use). Blur > 20px anywhere.
+- DEFAULT glassmorphism: `backdrop-blur` slapped on a surface with no light logic.
+  Glass is a legitimate Flousi material (MASTER v4) ONLY when authored: specular/
+  top-edge highlight consistent with the global light, blur ≤ 20px, and a solid
+  `prefers-reduced-transparency` fallback. Missing any of those = slop.
 - Sun-and-moon theme toggle cliché; gradient-circle initial avatars; hand-rolled SVG
   icons or AI-drawn mascots (Phosphor only, one weight per surface).
 - Div-faked screenshots/terminals/macOS chrome; dead controls; fake interactivity.
@@ -66,8 +68,9 @@ and must belong to Flousi's one cohesive world (see `design-system/MASTER.md`).
   the full SaaS template sequence (hero → 3 cards → tabs → pricing → FAQ → CTA slab).
 - Bento with empty cells; bento used for dense tables or live monitoring (bento is for
   the KPI/overview band only).
-- `feTurbulence` grain EXCEPT the sanctioned Flousi use: static (non-scrolling) mesh
-  hero/CTA surfaces at opacity ≤ 0.08 to kill gradient banding.
+- `feTurbulence` grain EXCEPT the sanctioned Flousi use: static (non-scrolling)
+  material surfaces at opacity ≤ 0.10 to kill gradient banding. Grain on a
+  scrolling container is always slop (repaint cost + noise).
 - Hard offset shadows (`4px 4px 0`) outside genuine neobrutalism; zero-offset halos.
 - Placeholder-as-label; red-border-only error states; disabled-until-valid submits.
 
@@ -119,7 +122,9 @@ and must belong to Flousi's one cohesive world (see `design-system/MASTER.md`).
 - [ ] Hit areas ≥ 24×24 (44 primary touch); focus ring ≥ 2px at 3:1, visible under sticky headers
 - [ ] Contrast: body ≥ 4.5:1, large/controls ≥ 3:1 — measured against actual painted bg, both themes
 - [ ] RTL: logical properties only; direction-tied icons flipped; `<bdi>` on mixed runs; 360px + 1440px checked in RTL
-- [ ] Motion: tokens only, all UI < 300ms, `prefers-reduced-motion` collapses transforms, charts mount-only
+- [ ] Motion: tokens/presets only, interaction feedback < 200ms, scene entrances ≤ 700ms and never gate content, `prefers-reduced-motion` collapses transforms, charts never move while being read
+- [ ] Materials: every mesh/glass/clay/metal instance passes the authorship test (SIGNATURE.md) — one sentence for what true thing it marks; text on rich materials sits on a scrim and still measures AA
+- [ ] Image-grade standard (VISUAL-LAW): every visual object passes the screenshot test — ≥3 cooperating light layers, overhead light only, shadow trio present, nameable composition axis; motion budget: ≤2 simultaneous animations on data surfaces, ≤1 loop per page, zero infinite loops on product components
 - [ ] `scan.mjs` clean or every leftover justified in one sentence
 - [ ] LCP < 2.5s / INP < 200ms / CLS < 0.1 on the built static export
-- [ ] The surface has its one signature moment, and you can name it
+- [ ] The surface has a signature moment worth screenshotting, and you can name it

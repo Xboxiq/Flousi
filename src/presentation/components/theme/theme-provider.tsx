@@ -22,7 +22,14 @@ function systemTheme(): ResolvedTheme {
 }
 
 function apply(resolved: ResolvedTheme) {
-  document.documentElement.setAttribute("data-theme", resolved);
+  const root = document.documentElement;
+  if (root.getAttribute("data-theme") === resolved) return;
+  // Suppress every CSS transition for one frame so the theme snaps cleanly
+  // instead of cross-fading each property (.theme-flip in globals.css).
+  root.classList.add("theme-flip");
+  root.setAttribute("data-theme", resolved);
+  void root.offsetHeight;
+  requestAnimationFrame(() => root.classList.remove("theme-flip"));
 }
 
 /**

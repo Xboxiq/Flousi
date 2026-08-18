@@ -154,8 +154,12 @@ export function ProductForm({ product }: Props) {
                 placeholder="حقائب"
               />
             </Field>
-            <Field label="الحالة" htmlFor="status">
+            {/* A Segmented row is a GROUP: `<label for>` cannot name one, so the
+                label renders as a span and the group points back at it. */}
+            <Field label="الحالة" htmlFor="status" labelsGroup>
               <Segmented
+                id="status"
+                aria-labelledby="status-label"
                 options={STATUS_OPTIONS}
                 value={status}
                 onChange={(v) => setStatus(v as ProductStatus)}

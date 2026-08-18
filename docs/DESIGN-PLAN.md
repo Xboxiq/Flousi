@@ -1,217 +1,157 @@
-# Flousi — خطة التطوير الرسومي المتكاملة (Design Plan v3)
+# Flousi — خطة التطوير والديزاين v4 «المال الملموس»
 
 > **الملخص التنفيذي (عربي):**
-> هذه الخطة تحوّل Flousi من "تطبيق مرتب" إلى منتج بهوية بصرية مملوكة لا تُنسب لأي قالب
-> أو ذكاء اصطناعي. بُنيت على تدقيق كامل لأهم سكلز التصميم في السوق (impeccable،
-> frontend-design من Anthropic، سكلز Emil Kowalski للحركة، interfaces، ui-ux-pro-max،
-> kill-ai-slop، taste-skill، unlazy، ponytail) وكلها مثبّتة الآن داخل الريبو تحت
-> `.claude/skills/` وتعمل تلقائياً في كل جلسة. الميثاق الملزم في
-> `design-system/MASTER.md`، وبوابة مكافحة السلوب في
-> `.claude/skills/flousi-anti-slop-gate/`. الخطة سبع مراحل، كل مرحلة لها بوابات قبول
-> مقاسة بالأدلة (منهج unlazy) — لا تسليم بدون تعليم كل البنود بدليل. المرحلة صفر
-> مخصصة لاستقبال ملفات الديزاين سستم التي سيرفقها العميل (آبل وغيرها) ودمج المناسب
-> منها قبل قفل أي قرار نهائي.
+> العميل غير راضٍ عن الشكل الحالي: محافظ، مسطّح، لا يفاجئ أحداً. القرار: تحول
+> إبداعي كامل — تصميم مُجسّم سينمائي غني بالتفاصيل: أجسام ثلاثية الأبعاد (عملة،
+> خزنة، إيصال، كرات زجاجية)، خامات حقيقية (زجاج، ميش محبب، معدن، صلصال ناعم)،
+> إضاءة موحدة المصدر، موشن فيزيائي مُخرَج مشهدياً، وصور/أصول بصرية مُصنّعة
+> خصيصاً — **بقانون واحد فقط: ممنوع الـ AI slop** (البوابة في
+> `.claude/skills/flousi-anti-slop-gate/`)، ومعه أرضيات الجودة غير الجمالية
+> (الوصولية، RTL، الأداء). كل قيود «الرصانة» السابقة أُلغيت رسمياً
+> (`design-system/MASTER.md` §9). الخطة تبدأ **ببروفة اتجاه** على شاشة واحدة
+> تُعتمد قبل التعميم، ثم مسبك أصول، ثم إعادة إخراج كل شاشة كمشهد.
 
-**Status:** approved plan, execution not started. **Branch:** `claude/professional-design-system-c0m4ei`.
-**Contract:** `design-system/MASTER.md` (v3) + `.claude/skills/flousi-anti-slop-gate/SKILL.md`.
-**Method:** unlazy gates — every phase writes `gates/<phase>.md` before work, with
-`CHECK`/`EXPECT`/`EVIDENCE` lines; a phase is done only when `node .claude/skills/unlazy/scripts/gate-check.mjs` passes and the anti-slop matrix is fully ticked.
+**Contract:** `design-system/MASTER.md` v4 + the anti-slop gate. **Branch:** `claude/professional-design-system-c0m4ei`.
+**Method unchanged:** unlazy gates per phase + eye-verified screenshot proofs
+(build → serve `out/` → playwright shots light/dark × 1440/360 RTL → look at them).
 
 ---
 
-## Skill routing table (which installed skill drives what)
+## Phase D0 — بروفة الاتجاه (Direction Proof) — FIRST, before everything
 
-| Skill (`.claude/skills/…`) | Used for | When |
+Rebuild **one surface** end-to-end at full v4 fidelity as the taster the client
+approves or corrects — cheap to redo, decisive for everything after.
+
+**Chosen surface: الحاسبة `/calculator`** (the purest stage: one hero, the Living
+Number, inputs, no data-table baggage) **+ لمحة داشبورد hero** (the coin's debut).
+
+D0 scope:
+1. **The Coin v1** — CSS/SVG glossy dinar coin (metal material, specular, cast
+   shadow, idle float ≤ subtle, pointer tilt ≤ 6°).
+2. **Calculator as a scene:** dark `night` mesh field OR light clay stage (build
+   both, pick by proof), glass result panel, digit-roll Living Number, clay
+   inputs with press depth, one orchestrated entrance (≤ 700ms), polarity morph
+   with mesh crossfade, ritual micro-moment on "احفظ كمنتج".
+3. Proof screenshots + a short screen-recording-style GIF if feasible.
+4. Client reviews → direction locked or adjusted → THEN D1+ rolls out.
+
+Gates: proofs exist and eye-verified · anti-slop matrix clean · a11y floors hold
+on the busy scene (contrast measured over materials) · suite green.
+
+## Phase D1 — مسبك الأصول (Asset Foundry)
+
+Build the object cast + document it:
+- **Primary source: the client's own `Xboxiq/nova`** — 15 ported recipes in
+  `design-system/RECIPES.md` (mesh money field, two-lip glass, conic rim,
+  pointer foil for the Coin, RTL-safe 3D face rig for the Vault, three-role
+  shadows, state leaks, metal switch, drum picker, ritual button…). Techniques
+  ported, hexes rebound to Flousi tokens (nova's violet is not).
+- Coin (hero + small), Orb family v2 (active/idle/done/danger), Vault, Receipt,
+  Chart blocks, 4–6 spot illustrations (onboarding, empty-products, backup,
+  error) — CSS/SVG first, layered-SVG second, generated renders last resort.
+- Every object passes the image-grade standard (MASTER §3b) and VISUAL-LAW
+  clause by clause.
+- `design-system/ASSETS.md`: source/prompt/license/usage for every asset.
+- `public/assets/3d/` pipeline: WebP/AVIF, budgets (hero ≤ 200KB, spot ≤ 80KB),
+  lazy below the fold.
+- Storybook page in `/styleguide`: the full cast rendered in both themes.
+
+## Phase D2 — خامات وحركة (Material & Motion tokens)
+
+Extend `globals.css` + `lib/motion.ts` with the v4 vocabulary:
+- Materials: `.glass` (+ reduced-transparency fallback), `.clay` /
+  `.clay-pressed`, `.metal`, mesh family v2 (`aurora/dawn/night/ember`), scene
+  field utilities, scrim-for-text-on-material utility.
+- Light tokens: `--light-x/y` constants; specular/cast-shadow recipes per side.
+- Motion: `scene()` orchestrator preset (staggered children), `tiltHover`,
+  `objectSpring` (260–360/18–28), `digitRoll`, `ritual()` sequence helper;
+  chart draw-on-mount preset.
+- Depth: z-layer scale (field / mid / focal / chrome / overlay).
+
+## Phase D3 — كل شاشة مشهد (Scene-by-scene rebuild)
+
+Order by impact; each screen = gates file → build → 4 passes → anti-slop matrix
+→ proofs. Per-screen art direction (one line each):
+
+| # | Screen | Scene |
 |---|---|---|
-| `flousi-anti-slop-gate` | Mandatory pre-delivery gate | Every surface, every phase |
-| `impeccable` (+ its detector CLI) | Design direction, critique passes, 59-rule detection | Phase 2–6 reviews |
-| `frontend-design` | Aesthetic risk & signature decisions, landing art direction | Phases 2, 4 |
-| `animate`, `review-animations`, `improve-animations`, `apple-design`, `emil-design-eng` | All motion work; STANDARDS.md is the values table | Phases 1, 5 |
-| `animation-systems`, `beautiful-shadows` (MengTo) | Duration/stagger tables; layered shadow strings | Phase 1 |
-| `better-ui/-typography/-colors/-layout/-accessibility/-writing`, `interface-review` (jakubkrehel) | Numeric floors (type, spacing, hit areas, contrast), RTL rules, review checklists | Phases 1, 3, 6 |
-| `baseline-ui`, `fixing-motion-performance` (ibelick) | Stack-exact Tailwind/motion guardrails | Continuous |
-| `ui-ux-pro-max` (data CSVs + search) | Finance-specific patterns, chart selection, palette cross-checks | Phases 0, 3, 5 |
-| `kill-ai-slop` (scan.mjs) | Automated slop scanning | Every PR |
-| `unlazy` | Gates method, four-pass finishing, evidence ledger | Every phase |
-| `ponytail`, `ponytail-review`, `ponytail-debt` | Code-quality ladder (logic/deps only — never design polish), debt ledger | Continuous |
-| `layers-conceptual-model`, `layers-surface` | Object model + Arabic ubiquitous vocabulary | Phase 0 |
-| `create-design-md` | Regenerating a distributable DESIGN.md after Phase 1 | End of Phase 1 |
+| D3.1 | **Dashboard** | The counting-house: coin hero on mesh field, KPI bento with mixed materials (glass/mesh/ink), chart draws once, tables calm ink islands. |
+| D3.2 | **Products** | The shelf: product rows with profit polarity, object empty-state, filter pills as clay segments. |
+| D3.3 | **Product form + ProfitPanel** | The workbench: cost lines as connected clay stepper, glass Living-Number panel floating sticky, save ritual. |
+| D3.4 | **Periods** | The vault: open month breathing on the field, close = lock ritual (dialog sequence: summary folds → vault shuts → new month slides in), history as locked-safe cards. |
+| D3.5 | **Reports** | The archive: report covers with chart-block objects, one featured mesh cover, export bar with real affordances, print stays ink-pure. |
+| D3.6 | **Settings** | The back office: grouped clay panels, orb radio for theme, danger zone with ember material + worded confirm. |
+| D3.7 | **App shell** | The stage: glass top chrome, sidebar with depth-lit active state, page transitions direction-aware. |
+| D3.8 | **الفريق Reps** (`docs/PRODUCT-PLAN.md`) | The partners' table: rep cards with orb status, Living-Money balances, metal target arcs; top seller holds the Coin. |
+| D3.9 | **التسويات Settlements** | The receipt ritual: paying a rep pours the balance into a stamped receipt; history as sealed receipts. |
+| D3.10 | **الأهداف + دفتر الحركة** | Target arcs (no default progress bars) + the calm ink ledger: every dinar's story — what happened, who, where it went. |
 
-Design references vendored knowledge: `VoltAgent/awesome-design-md` entries worth
-consulting live at getdesign.md — Linear, Stripe, Apple, Wise, Revolut, Kraken,
-Coinbase, Sentry, Shopify, Vercel (fintech-relevant §7 Do's/Don'ts).
+## Phase D4 — صفحة الهبوط (The showpiece)
 
----
+Full cinematic marketing surface: floating 3D objects hero with parallax
+(coin + receipt + glass panel over mesh field), scroll-choreographed sections
+(each a different layout family), the real live calculator embedded, honest
+demo numbers, one signature moment worth screenshotting. This is where the
+direction earns shares.
 
-## Phase 0 — Reference intake & vocabulary (blocks all visual locks)
+## Phase D5 — التقسية (Hardening)
 
-**Purpose:** the client will attach external design-system files (Apple HIG exports and
-others). Nothing in MASTER v3 gets re-locked until these are processed.
+- Contrast audit ON the materials (text-over-mesh gets scrims; measure painted
+  pixels, both themes), keyboard walks, reduced-motion/transparency parity
+  proofs (scenes must degrade gracefully, not break).
+- Performance: asset budget ledger, LCP/INP/CLS measured on Pages build and
+  pasted as evidence; font subsetting; no layout-thrashing motion
+  (fixing-motion-performance skill pass).
+- RTL sweep on every new scene (light source top-start, flipped icons, digits).
+- Export/print surfaces re-branded to v4 (covers, headers) while staying ink.
 
-Protocol when files arrive:
-1. Store originals under `references/design-systems/<source>/` (never edited in place).
-2. For each file produce a one-page delta memo in `design-system/intake/<source>.md`:
-   what it prescribes for color/type/space/motion, where it agrees with MASTER v3,
-   where it conflicts, and a keep/adapt/reject verdict per conflict **with a one-sentence
-   reason** (anti-slop rule: every choice explainable).
-3. Conflicts touching a LOCKED section of MASTER require a client decision; everything
-   else is decided by the delta memo and folded into MASTER in the same PR.
-4. Re-run the font question exactly once here: Cairo (current) vs IBM Plex Sans Arabic
-   (unifies with Plex Mono) vs whatever the attached systems prescribe for Arabic.
+## Enforcement (unchanged, permanent — expanded with nova's process)
 
-Also in Phase 0 (no client input needed):
-- Ubiquitous Arabic vocabulary pass (`layers-conceptual-model`): one canonical Arabic
-  term per domain object (منتج، تكلفة، بيع، فترة، صافي الربح، الهامش، نقطة التعادل…)
-  recorded in `design-system/VOCABULARY.md`; surface copy audited against it.
+- Anti-slop gate matrix per surface — the ONE law.
+- Gates files with evidence; eye-verified proofs in `design-system/proofs/`.
+- **Design-law gates (from nova):** visual laws become runnable checks — gates
+  that parse the code and FAIL the build when physics lies (e.g. side-wall
+  brightness values must be equal per VISUAL-LAW §2; all three shadow roles
+  present via `data-part="contact|cast|occlusion"` attributes; state-bound
+  details asserted as conditions, not ornaments). Elements get `data-*` part
+  names purely so gates can read them.
+- **Proofs matrix widened:** every visual change proven in RTL AND LTR, light
+  AND dark (nova's qa convention).
+- **Rejection log** maintained in VISUAL-LAW.md — refused references recorded
+  with reasons; a reference appearing twice is not an argument.
+- **Dial declaration:** every scene brief opens with three dials out of 10
+  (variance / motion / density) so no agent silently picks its own intensity.
+  Flousi v4 defaults: variance 8 · motion 6 · density 6 (nova's calibration).
+- Suite green per push (typecheck/lint/test/build) + scan.mjs trend recorded,
+  suppressions only via `/* deslop-ignore */` with the justification comment.
+- SESSION-LOG row per session.
 
-**Gates:** intake memos exist for every attached source · vocabulary file exists and
-every nav label/page title matches it · font decision recorded with rationale.
+## Skill routing (v4 emphasis)
 
-## Phase 1 — Foundation surgery (tokens, motion, RTL, numbers)
+| Skill | Drives |
+|---|---|
+| `impeccable` (bolder / delight / overdrive / animate refs) | pushing surfaces past safe; critique passes |
+| `frontend-design` | direction decisions, signature moments, matching complexity to vision |
+| `animate`, `emil-design-eng`, `apple-design`, `animation-systems` | choreography, springs, gestures, materials |
+| `fixing-motion-performance` | keeping the cinema at 60fps |
+| `beautiful-shadows`, `better-colors/-typography/-layout/-accessibility` | craft floors on materials |
+| `kill-ai-slop` + `flousi-anti-slop-gate` | the law |
+| `unlazy`, `ponytail` | process discipline (gates; lazy code never lazy craft) |
+| `ui-ux-pro-max` data | finance patterns / chart selection cross-checks |
 
-Bring `globals.css` + primitives to MASTER v3 exactly. No screen work until green.
+## Standing risks / decisions
 
-1. **Motion tokens:** replace current easings with the three Emil curves; add duration
-   tokens (press/pop/drop/modal/drawer); create `src/presentation/lib/motion.ts` with
-   named presets (`enter`, `pressable`, `staggerList`, `modal`, `drawer`) so feature code
-   never hand-writes curves.
-2. **Elevation surgery:** implement the light shadow-as-border recipe + dark single-ring
-   recipe as `--elev-card`/`--elev-card-hover`; migrate `Card`, `Stat`, `Dialog`,
-   dropdowns; delete every hairline+diffuse "ghost card" combo.
-3. **Type ramp:** encode the 8-role ramp as tokens; sweep all `text-*` usages onto
-   roles; kill any size within 2px of a neighbor; `text-wrap: balance` on headings.
-4. **Numbers layer:** one `<Money>`/`<Num>` component: Plex Mono, `tabular-nums`,
-   `slashed-zero`, `Intl.NumberFormat(ar-IQ)`, `<bdi>` wrapping, polarity =
-   color + sign + word. Everything that renders currency migrates to it.
-5. **RTL audit:** grep-and-fix every physical `ml-/mr-/pl-/pr-/left-/right-/text-left/
-   text-right` to logical equivalents; flip direction-tied icons; verify digit runs.
-6. **Mesh/grain discipline:** re-cap mesh gradients at hue 265° (current
-   `.mesh-aurora`/`.mesh-bento` use `#6d5cff` violet — pull back to deep indigo max);
-   grain only on static surfaces; `.mesh-night-rose` becomes a danger-surface exception
-   used ONLY for destructive confirmation heroes, or is deleted.
-7. **State completeness:** every primitive in `/styleguide` shows all 8 states; add the
-   theme-flip transition suppressor; `prefers-reduced-transparency` fallback for
-   vibrancy.
-
-**Gates (excerpt, full list in `gates/phase-1.md`):** zero physical-direction utilities
-in `src/` (CHECK: grep count = 0) · zero `transition: all` · zero raw hex in components
-· typecheck/build/test/lint green · scan.mjs clean · `/styleguide` renders all states
-in both themes.
-
-## Phase 2 — Signature system (the non-generic identity)
-
-The anti-slop rule: clean is the floor; identity is the work. Flousi's authored
-signature set, each with usage law:
-
-1. **The Living Number** — the ProfitPanel's net-profit figure is the product's
-   heartbeat: count-up on change (mount-only elsewhere), polarity transition
-   (color + sign morph, 250ms `--ease-in-out`), break-even flash worded not just
-   colored. This is the one place the delight budget is spent.
-2. **Orb markers** — glossy 3D orbs (already built) are Flousi's radio/step/status
-   mark (references 234741/234742). Law: orbs mark *selection and progression*, never
-   decoration; max one orb cluster per view.
-3. **Connected stepper** — the vertical dotted-line stepper is the flow language for
-   create-product, close-period, onboarding. Law: only for genuine sequences.
-4. **One mesh moment per surface** — at most one grainy blue mesh tile per screen
-   (hero, primary CTA, or the single featured bento cell).
-5. **Hairline-quiet tables** — data surfaces are deliberately the calmest thing in the
-   product; the contrast between calm tables and the Living Number IS the aesthetic.
-
-Deliverable: `design-system/SIGNATURE.md` documenting each device, its law, and its
-implementation file. Review with `impeccable` critique + `frontend-design` ("name the
-one aesthetic risk").
-
-**Gates:** signature doc exists · each device has exactly one implementation source ·
-impeccable detector run recorded on `/styleguide`.
-
-## Phase 3 — Screen-by-screen art direction (app surfaces)
-
-Order = user-impact. Each screen: gates file first → build → four passes (complete,
-expert re-read, defect hunt, free polish) → anti-slop matrix → screenshot both themes
-RTL 360/1440 into `design-system/proofs/<screen>/`.
-
-| # | Screen | Direction (one sentence each) |
-|---|---|---|
-| 3.1 | **Dashboard** | Bento KPI band (varied spans, `Stat` on quiet cards) + ONE mesh hero cell for net profit (the Living Number), trend chart mount-reveal only, top products + recent sales as hairline-quiet tables. |
-| 3.2 | **Products list** | Quiet 12-col table, 40–44px rows, profit polarity column (word+sign+color), search/filter as segmented pills, empty state teaches the create flow. |
-| 3.3 | **Product form + ProfitPanel** | Two-column: grouped soft sections (no nested cards) + sticky Living Number panel; cost lines as connected stepper rows; save CTA is the screen's single filled action. |
-| 3.4 | **Calculator** | The standalone stage for the Living Number: oversized KPI ramp, inputs left(trailing)-labeled, "save as product" secondary. |
-| 3.5 | **Periods** | Close-period as connected stepper + confirmation dialog with worded consequences; locked history as timeline of quiet snapshot cards. |
-| 3.6 | **Reports hub + view** | Hub = one bento with exactly N cells for N report types (one mesh cell max); view = print-grade table typography, export bar with real affordances. |
-| 3.7 | **Settings** | Grouped quiet cards, Segmented theme control, danger zone with worded destructive confirm (AlertDialog), backup/restore with full state cycle. |
-| 3.8 | **App shell** | Sidebar icon rail + labels (logical-props), vibrancy top bar (the one sanctioned blur), active-nav shared-layout indicator (clip-path technique). |
-
-**Gates per screen:** anti-slop matrix ticked · both-theme RTL proofs saved ·
-contrast measured on painted bg · states demo'd (loading/empty/error reachable) ·
-detector + scan clean or justified.
-
-## Phase 4 — Landing page (marketing surface)
-
-Full `frontend-design` + taste application; this is where boldness is spent.
-- Hero is a thesis: the real product (live ProfitPanel embed with seeded data), not
-  text + gradient blob. Arabic display type at real scale (3–5 word headline).
-- ≥ 4 distinct layout families across sections; exactly-N bento; no SaaS template
-  sequence; no invented stats — use the demo dataset's real numbers.
-- One aesthetic risk, named in the PR description.
-- CTA leads to `/dashboard` (local-first — "no signup" is the honest differentiator).
-
-**Gates:** frontend-design token block written before code · risk named · zero
-blacklist hits · LCP < 2.5s on Pages build.
-
-## Phase 5 — Motion & data-viz pass (whole product)
-
-- `improve-animations` audit (AUDIT.md workflow) over all surfaces; fix list executed
-  with `review-animations` STANDARDS values.
-- Frequency-gate sweep: nav/table/hover interactions down to ≤ 150ms surface shifts.
-- Chart pass with `ui-ux-pro-max` charts.csv + dataviz rules: mount-only animation,
-  color-plus-shape encoding, text/table equivalents, waterfall for period summaries
-  (profit/loss bars), donut ≤ 6 slices for cost breakdown, stat card when < 4 points.
-- NumberFlow-style count-up audit: mount-only, tabular, reduced-motion silent.
-
-**Gates:** zero animations without a nameable purpose (ledger lists every animation +
-its purpose sentence) · chart re-renders animation-free · reduced-motion pass recorded.
-
-## Phase 6 — Hardening (RTL, a11y, performance, print)
-
-- RTL/i18n: full-copy audit against VOCABULARY.md; `<bdi>` sweep; 3-line-English-block
-  direction check; 30–40% expansion test at 360px.
-- A11y: keyboard walk of every flow; focus visible under sticky chrome; form error
-  protocol (aria-invalid/describedby/focus-first-invalid) on all forms; charts get
-  table equivalents; AA measured both themes (AAA on KPI numbers).
-- Performance: static export budget LCP < 2.5s / INP < 200ms / CLS < 0.1; font
-  subsetting check (Cairo arabic+latin only); no blur > 20px; vibrancy fallback.
-- Print/export surfaces (reports, PDF): re-apply brand ramp to jsPDF/print CSS —
-  exported artifacts must pass the same gate (they are the product's face in Excel/PDF).
-
-**Gates:** measured numbers pasted as evidence (not claims) for every budget ·
-keyboard walk recorded per flow · print sample archived in proofs.
-
-## Phase 7 — Continuous enforcement
-
-- PR checklist = anti-slop matrix (copy into PR body); scan.mjs + impeccable detector
-  in the loop for every visual PR.
-- `ponytail-debt` harvest monthly → debt ledger; `interface-review` quarterly full pass.
-- SESSION-LOG updated per session (existing convention).
-- Any new screen starts from MASTER v3 + gates file, not from an existing screen's code.
-
----
-
-## Definition of Done (per surface — composite, from unlazy + gate)
-
-1. Gates file fully checked **with evidence lines** (no `pending`).
-2. Four passes done: complete build → expert re-read → defect hunt → free polish.
-3. Anti-slop pre-flight matrix: every box ticked honestly.
-4. Proof screenshots: light+dark × RTL × 360/1440 in `design-system/proofs/`.
-5. `typecheck` + `build` + `test` + `lint` green; scan.mjs clean or justified.
-6. Every number reported in the PR re-measured at report time.
-
-## Risks & open decisions
-
-- **Font lock** (Cairo vs Plex Sans Arabic vs incoming reference systems) — Phase 0.
-- **Violet in current meshes** conflicts with the fintech anti-pattern lock — Phase 1
-  pulls to ≤ 265°; if the client's incoming references demand violet, it needs an
-  explicit MASTER amendment (client decision).
-- **`docs/DESIGN-SYSTEM.md` (v2)** is now historical; superseded by
-  `design-system/MASTER.md` v3 (noted at its top when Phase 1 lands).
-- Landing i18n (English variant) intentionally out of scope until the Arabic surface
-  is locked.
+- **Direction proof gate:** nothing rolls out before D0 is approved by the client.
+- **Text over rich materials** is the #1 a11y risk — scrim utility is mandatory
+  wherever body text sits on mesh/glass.
+- **Static export + heavy assets:** budgets enforced per asset; WebGL (three.js)
+  is allowed for ONE landing hero only if CSS/SVG proves insufficient, behind
+  lazy load + reduced-motion fallback.
+- Client reference design-system files (Apple etc.), when attached, feed the
+  material/light language through the same intake protocol
+  (`references/design-systems/` + delta memos) — they refine v4, not resurrect v3.
+- **Product track:** the roles/reps/profit-sharing system is specified in
+  `docs/PRODUCT-PLAN.md` (P1 engine+team → P2 targets/ledger/settlements →
+  P3 cloud access). P1 builds directly in v4 language; the split-preview at
+  sale time is that flow's designed ritual. Sequencing: D0 → P1 ∥ D1–D2 →
+  P2 + D3 → D4 → D5 → P3.
