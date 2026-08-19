@@ -26,7 +26,7 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "فلوسي — صافي أرباح متجرك بدقّة",
+    default: "فلوسي · صافي أرباح متجرك بدقّة",
     template: "%s · فلوسي",
   },
   description:

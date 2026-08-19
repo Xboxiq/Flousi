@@ -39,4 +39,5 @@ export const STORAGE_KEYS = {
   commissionSchemes: "commission-schemes",
   commissionAssignments: "commission-assignments",
   settlements: "settlements",
+  targets: "targets",
 } as const;

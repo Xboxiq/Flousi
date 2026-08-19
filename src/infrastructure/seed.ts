@@ -17,6 +17,7 @@ import {
   commissionSchemeRepository,
   commissionAssignmentRepository,
   settlementRepository,
+  targetRepository,
   DEFAULT_SETTINGS,
 } from "./persistence/local-storage/repositories";
 import { uuidGenerator } from "./system";
@@ -137,14 +138,14 @@ const SEED_REPS: NewRep[] = [
     name: "ليث العبيدي",
     phone: "0781 905 3374",
     status: "active",
-    notes: "على اتفاق الربح الأولي — الشحن والرسوم على التاجر.",
+    notes: "على اتفاق الربح الأولي: الشحن والرسوم على التاجر.",
   },
   {
     name: "نور الحسن",
     phone: "0751 622 8815",
     // Archived, not deleted: نور توقّفت عن العمل ولها رصيد ما زال مستحقاً.
     status: "archived",
-    notes: "متوقّفة مؤقتاً — الرصيد المتبقّي يبقى مستحقاً.",
+    notes: "متوقّفة مؤقتاً، والرصيد المتبقّي يبقى مستحقاً.",
   },
 ];
 
@@ -441,11 +442,36 @@ export async function seedIfEmpty(): Promise<void> {
     }
   }
 
+  // Demo targets, so /targets opens on a real reading rather than on three
+  // «حدّد هدفاً» buttons: one standing account target, and one rep ahead of pace
+  // with another behind it — the contrast IS the screen's point.
+  await targetRepository.create({
+    metric: "netProfit",
+    amount: 4_500_000,
+    status: "active",
+  });
+  const seededRepTargets: Array<[string, number]> = [
+    [SEED_REPS[0].name, 900_000],
+    [SEED_REPS[1].name, 1_600_000],
+  ];
+  for (const [name, amount] of seededRepTargets) {
+    const target = repByName.get(name);
+    if (!target) continue;
+    await targetRepository.create({
+      metric: "netProfit",
+      amount,
+      repId: target.id,
+      status: "active",
+    });
+  }
+
   // One round partial payment per rep. The remainder carries forward, so the
   // reps screen opens on a real derived balance instead of a settled zero.
+  let firstRepPaid: string | undefined;
   for (const [repId, earnedMinor] of earnedBeforeThisMonth) {
     const amountMinor = seededSettlementMinor(earnedMinor);
     if (amountMinor <= 0) continue;
+    firstRepPaid ??= repId;
     await settlementRepository.create({
       repId,
       amountMinor,
@@ -454,6 +480,21 @@ export async function seedIfEmpty(): Promise<void> {
       periodId: activePeriod?.id,
       method: "نقداً",
       notes: "تسوية عن الأشهر السابقة.",
+    });
+  }
+
+  // One payment in a SECOND currency. A merchant handing a rep dollars is
+  // ordinary, and it makes the per-currency rule visible on /settlements instead
+  // of only true in a test: the screen must show two lines and never add them.
+  if (firstRepPaid) {
+    await settlementRepository.create({
+      repId: firstRepPaid,
+      amountMinor: 15_000,
+      currency: "USD",
+      paidAt: new Date(currentMonthStart.getTime() + 6 * 86_400_000).toISOString(),
+      periodId: activePeriod?.id,
+      method: "دولار نقداً",
+      notes: "دفعة بالدولار بطلب المندوب.",
     });
   }
 }

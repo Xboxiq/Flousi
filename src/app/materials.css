@@ -1046,3 +1046,73 @@
     }
   }
 }
+
+  /* ───────────────── مِسطرة الوتيرة — the pace rail (P2) ─────────────────
+     A milled channel where the fill is what has been ACHIEVED and a scribe
+     line marks how much of the month has ELAPSED. Two facts on one track, so
+     "45% of target" can never be read without "and half the month is gone".
+     The remainder is hatched, because an unfilled remainder is data (§11a). */
+  .pace-track {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: var(--sunken);
+    box-shadow:
+      inset 0 2px 5px rgba(18, 26, 38, 0.22),
+      inset 0 -1px 0 var(--neu-hi),
+      0 1px 0 var(--neu-hi);
+  }
+  [data-theme="dark"] .pace-track {
+    box-shadow:
+      inset 0 2px 6px rgba(0, 0, 0, 0.8),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  }
+  /* the achieved run: a moulded plate, lit from directly overhead (§2) */
+  .pace-fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    border-radius: inherit;
+    background-color: var(--pace-hue);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.42),
+      inset 0 -2px 3px rgba(18, 26, 38, 0.28),
+      1px 0 0 rgba(18, 26, 38, 0.35);
+  }
+  .pace-fill::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.34), transparent 62%);
+  }
+  /* what is still missing, in the app-wide hatch that means "remainder" */
+  .pace-gap {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    background-image: repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--fg) 24%, transparent) 0 1.5px,
+      transparent 1.5px 6px
+    );
+  }
+  /* the scribe: where the month itself has reached. A LINE, not a colour, so it
+     reads the same in both themes and never competes with the fill's meaning. */
+  .pace-scribe {
+    position: absolute;
+    inset-block: -2px;
+    width: 2px;
+    background-color: color-mix(in srgb, var(--fg) 62%, transparent);
+    box-shadow: 1px 0 0 var(--neu-hi), -1px 0 0 rgba(18, 26, 38, 0.25);
+  }
+  .pace-scribe::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: -2.5px;
+    top: -3px;
+    width: 7px;
+    height: 5px;
+    border-radius: 2px 2px 0 0;
+    background-color: inherit;
+  }

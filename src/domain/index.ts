@@ -58,6 +58,18 @@ export type {
   RepBalance,
 } from "./entities/settlement";
 
+export type {
+  Target,
+  NewTarget,
+  TargetMetric,
+  TargetStatus,
+  TargetScope,
+} from "./entities/target";
+export { targetScope, targetMonthKey, TARGET_SCOPE_RANK } from "./entities/target";
+
+export { TargetCalculator } from "./services/target-calculator";
+export type { TargetQuery, TargetResolution, TargetProgress } from "./services/target-calculator";
+
 export { ProfitCalculator } from "./services/profit-calculator";
 export type { ProfitInput, ProfitResult } from "./services/profit-calculator";
 
@@ -84,6 +96,7 @@ export type {
   CommissionSchemeRepository,
   CommissionAssignmentRepository,
   SettlementRepository,
+  TargetRepository,
 } from "./ports/repositories";
 export type {
   Clock,

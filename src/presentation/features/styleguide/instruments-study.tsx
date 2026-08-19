@@ -38,7 +38,7 @@ export function InstrumentsStudy() {
   return (
     <section className="mb-14">
       <header className="mb-5">
-        <h2 className="text-lg font-semibold text-fg">خزانة الأدوات — The instrument case</h2>
+        <h2 className="text-lg font-semibold text-fg">خزانة الأدوات · The instrument case</h2>
         <p className="mt-1 text-sm text-muted">
           كل أداة مع ما تقيسه والقانون الذي يشكّلها. أداة لا يمكن شرحها بسطر واحد هنا لا مكان لها في
           المنتج.
@@ -48,7 +48,7 @@ export function InstrumentsStudy() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Bay
           name="العدّاد · Odometer"
-          measures="مبلغ يتغيّر — الرقم نفسه في حالة حركة"
+          measures="مبلغ يتغيّر: الرقم نفسه في حالة حركة"
           law="§8 التفصيل يحمل معلومة · الأسطوانة اليمنى تسبق والبقية تتبعها بإيقاع"
         >
           <Odometer
@@ -61,7 +61,7 @@ export function InstrumentsStudy() {
 
         <Bay
           name="المشط · TickMeter"
-          measures="نسبة يمكن عدّها — أحد عشر سنّاً من عشرين"
+          measures="نسبة يمكن عدّها: أحد عشر سنّاً من عشرين"
           law="§11 المتبقي بيانات · الخلايا الفارغة محفورة لا متدرّجة"
         >
           <div className="flex w-full flex-col gap-3">
@@ -126,7 +126,7 @@ export function InstrumentsStudy() {
 
         <Bay
           name="عمود السعر · PriceColumn"
-          measures="من السعر إلى الربح — ارتفاع كل صفيحة حصتها"
+          measures="من السعر إلى الربح: ارتفاع كل صفيحة حصتها"
           law="§1 الجسم قبل الشكل · الجسم هو الحساب نفسه"
         >
           <PriceColumn
@@ -165,7 +165,7 @@ export function InstrumentsStudy() {
 
         <Bay
           name="حلقات الحجم · MagnitudeRings"
-          measures="ثلاث كميات يحوي بعضُها بعضاً — المساحة هي القيمة"
+          measures="ثلاث كميات يحوي بعضُها بعضاً: المساحة هي القيمة"
           law="نصف القطر ∝ √القيمة · شرعيتها الاحتواء الحقيقي، وإلا فشريط التوزيع"
         >
           <MagnitudeRings
@@ -191,7 +191,7 @@ export function InstrumentsStudy() {
 
         <Bay
           name="اسحب للإتمام · SlideToCommit"
-          measures="فعل لا رجعة فيه — إغلاق شهر"
+          measures="فعل لا رجعة فيه: إغلاق شهر"
           law="الإيماءة هي التأكيد · الإفلات المبكر يرتد · مسار لوحة المفاتيح موجود"
           wide
         >

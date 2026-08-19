@@ -16,6 +16,8 @@ import type {
   NewCommissionAssignment,
   Settlement,
   NewSettlement,
+  Target,
+  NewTarget,
 } from "@/domain";
 import {
   productRepository,
@@ -26,9 +28,11 @@ import {
   commissionSchemeRepository,
   commissionAssignmentRepository,
   settlementRepository,
+  targetRepository,
   DEFAULT_SETTINGS,
 } from "@/infrastructure/persistence/local-storage/repositories";
 import { seedIfEmpty } from "@/infrastructure/seed";
+import { runMigrations } from "@/infrastructure/migrations";
 
 interface DataState {
   loaded: boolean;
@@ -40,6 +44,7 @@ interface DataState {
   commissionSchemes: CommissionScheme[];
   commissionAssignments: CommissionAssignment[];
   settlements: Settlement[];
+  targets: Target[];
 
   init: () => Promise<void>;
   reload: () => Promise<void>;
@@ -71,6 +76,10 @@ interface DataState {
   /** Deleting a scheme is an archive: it stays readable for the history it froze. */
   archiveCommissionScheme: (id: string) => Promise<CommissionScheme>;
 
+  createTarget: (input: NewTarget) => Promise<Target>;
+  updateTarget: (id: string, patch: Partial<NewTarget>) => Promise<Target>;
+  deleteTarget: (id: string) => Promise<void>;
+
   createCommissionAssignment: (input: NewCommissionAssignment) => Promise<CommissionAssignment>;
   updateCommissionAssignment: (
     id: string,
@@ -93,6 +102,7 @@ async function loadAll() {
     commissionSchemes,
     commissionAssignments,
     settlements,
+    targets,
   ] = await Promise.all([
     productRepository.list(),
     saleRepository.list(),
@@ -102,6 +112,7 @@ async function loadAll() {
     commissionSchemeRepository.list(),
     commissionAssignmentRepository.list(),
     settlementRepository.list(),
+    targetRepository.list(),
   ]);
   return {
     products,
@@ -112,6 +123,7 @@ async function loadAll() {
     commissionSchemes,
     commissionAssignments,
     settlements,
+    targets,
   };
 }
 
@@ -125,10 +137,14 @@ export const useDataStore = create<DataState>((set, get) => ({
   commissionSchemes: [],
   commissionAssignments: [],
   settlements: [],
+  targets: [],
 
   init: async () => {
     if (get().loaded) return;
     await seedIfEmpty();
+    // Lifts run AFTER the seed and BEFORE the first read, so a store restored
+    // from a pre-P2 backup is already migrated by the time a screen reads it.
+    await runMigrations();
     set({ ...(await loadAll()), loaded: true });
   },
 
@@ -212,6 +228,21 @@ export const useDataStore = create<DataState>((set, get) => ({
     const updated = await commissionSchemeRepository.update(id, { status: "archived" });
     set({ commissionSchemes: await commissionSchemeRepository.list() });
     return updated;
+  },
+
+  createTarget: async (input) => {
+    const created = await targetRepository.create(input);
+    set({ targets: await targetRepository.list() });
+    return created;
+  },
+  updateTarget: async (id, patch) => {
+    const updated = await targetRepository.update(id, patch);
+    set({ targets: await targetRepository.list() });
+    return updated;
+  },
+  deleteTarget: async (id) => {
+    await targetRepository.remove(id);
+    set({ targets: await targetRepository.list() });
   },
 
   createCommissionAssignment: async (input) => {
