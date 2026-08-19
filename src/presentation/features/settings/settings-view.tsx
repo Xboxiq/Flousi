@@ -160,29 +160,24 @@ export function SettingsView() {
           </CardContent>
         </Card>
 
-        {/* Target — the level every profit reading is measured against */}
+        {/* Targets moved out of settings entirely in P2. Keeping an input here
+            beside the target store would leave two answers to «ما هدف هذا الشهر؟»,
+            and the old value has already been lifted into that store by
+            `runMigrations` (gate P2/G1). */}
         <Card>
           <CardHeader>
             <div>
-              <CardTitle>الهدف</CardTitle>
+              <CardTitle>الأهداف</CardTitle>
               <CardDescription>
-                هدف صافي الربح الشهري. يُرسَم كخط على منحنى الأرباح، واتركه صفرًا لمقارنة
-                الشهر بمعدّلك بدلًا من هدف.
+                انتقلت الأهداف إلى شاشتها الخاصة: هدف للحساب، ولكل مندوب، ولمنتج إن أردت،
+                دائم أو لشهر واحد. هدفك القديم منقول إليها كما هو.
               </CardDescription>
             </div>
           </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2">
-            <Field label="هدف الربح الشهري" htmlFor="target">
-              <Input
-                id="target"
-                type="number"
-                trailing={draft.currency}
-                value={draft.monthlyProfitTarget || ""}
-                onChange={(e) =>
-                  setDraft({ ...draft, monthlyProfitTarget: parseFloat(e.target.value) || 0 })
-                }
-              />
-            </Field>
+          <CardContent>
+            <Button variant="secondary" asChild>
+              <Link href="/targets">فتح الأهداف</Link>
+            </Button>
           </CardContent>
         </Card>
 

@@ -22,6 +22,10 @@ import type {
   Settlement,
   NewSettlement,
   SettlementRepository,
+  Target,
+  NewTarget,
+  TargetMetric,
+  TargetRepository,
 } from "@/domain";
 import { systemClock, uuidGenerator } from "@/infrastructure/system";
 import { storage, STORAGE_KEYS } from "./storage";
@@ -126,7 +130,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
   currency: "IQD",
   locale: "ar-IQ",
   language: "ar",
-  monthlyProfitTarget: 2_500_000,
+  // Legacy field, kept only so a pre-P2 backup still imports. Targets live in
+  // their own store from P2 on, and `runMigrations` zeroes whatever is here.
+  monthlyProfitTarget: 0,
   defaultCosts: {
     marketplaceFeePercent: 0,
     paymentFeePercent: 2.9,
@@ -301,6 +307,53 @@ export class LocalSettlementRepository implements SettlementRepository {
   }
 }
 
+export class LocalTargetRepository implements TargetRepository {
+  async list(filter?: {
+    metric?: TargetMetric;
+    repId?: string;
+    productId?: string;
+  }): Promise<Target[]> {
+    let all = storage.get<Target[]>(STORAGE_KEYS.targets, []);
+    if (filter?.metric) all = all.filter((t) => t.metric === filter.metric);
+    if (filter?.repId) all = all.filter((t) => t.repId === filter.repId);
+    if (filter?.productId) all = all.filter((t) => t.productId === filter.productId);
+    return all;
+  }
+  async getById(id: string): Promise<Target | null> {
+    return (await this.list()).find((t) => t.id === id) ?? null;
+  }
+  async create(target: NewTarget): Promise<Target> {
+    const all = await this.list();
+    const created: Target = {
+      ...target,
+      id: uuidGenerator.generate(),
+      createdAt: nowIso(),
+      updatedAt: nowIso(),
+    };
+    storage.set(STORAGE_KEYS.targets, [created, ...all]);
+    return created;
+  }
+  async update(id: string, patch: Partial<NewTarget>): Promise<Target> {
+    const all = await this.list();
+    let updated: Target | undefined;
+    const next = all.map((t) => {
+      if (t.id !== id) return t;
+      updated = { ...t, ...patch, updatedAt: nowIso() };
+      return updated;
+    });
+    if (!updated) throw new Error(`Target ${id} not found`);
+    storage.set(STORAGE_KEYS.targets, next);
+    return updated;
+  }
+  async remove(id: string): Promise<void> {
+    const all = await this.list();
+    storage.set(
+      STORAGE_KEYS.targets,
+      all.filter((t) => t.id !== id),
+    );
+  }
+}
+
 // Singletons used across the app (swap these for cloud adapters later).
 export const productRepository = new LocalProductRepository();
 export const saleRepository = new LocalSaleRepository();
@@ -310,3 +363,4 @@ export const repRepository = new LocalRepRepository();
 export const commissionSchemeRepository = new LocalCommissionSchemeRepository();
 export const commissionAssignmentRepository = new LocalCommissionAssignmentRepository();
 export const settlementRepository = new LocalSettlementRepository();
+export const targetRepository = new LocalTargetRepository();

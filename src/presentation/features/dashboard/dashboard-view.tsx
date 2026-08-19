@@ -11,6 +11,7 @@ import {
   ArrowLeft,
   ArrowsSplit,
 } from "@phosphor-icons/react";
+import { TargetCalculator } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { computeDashboard } from "@/application/analytics";
 import { PageHeader } from "@/presentation/components/layout/page-header";
@@ -59,6 +60,7 @@ export function DashboardView() {
   const products = useDataStore((s) => s.products);
   const sales = useDataStore((s) => s.sales);
   const settings = useDataStore((s) => s.settings);
+  const targets = useDataStore((s) => s.targets);
 
   const [window, setWindow] = useState<"3" | "6" | "12">("6");
 
@@ -122,7 +124,14 @@ export function DashboardView() {
   // The level this month is measured against: the merchant's own target when they
   // set one, otherwise their average over the window — never a round number
   // chosen because it looks tidy (RECIPES R35).
-  const target = settings.monthlyProfitTarget;
+  // Read through the resolver, not off settings: P2 made the target store the
+  // single truth, and the legacy settings field is zeroed by `runMigrations`
+  // (gate P2/G1). An account-scope read is the right one here — this panel is
+  // the whole store's month, not one rep's.
+  const target = TargetCalculator.resolve(targets, {
+    metric: "netProfit",
+    month: new Date().toISOString().slice(0, 7),
+  }).target?.amount ?? 0;
   const threshold = target
     ? { value: target, met: metrics.monthProfit >= target, isTarget: true }
     : metrics.averageMonthProfit > 0

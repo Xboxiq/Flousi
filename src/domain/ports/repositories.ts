@@ -8,6 +8,7 @@ import type {
   NewCommissionAssignment,
 } from "../entities/commission-assignment";
 import type { Settlement, NewSettlement } from "../entities/settlement";
+import type { Target, NewTarget, TargetMetric } from "../entities/target";
 
 /**
  * Persistence ports. Inner layers depend on these interfaces; infrastructure
@@ -98,5 +99,13 @@ export interface SettlementRepository {
   create(settlement: NewSettlement): Promise<Settlement>;
   /** Amount and currency are both editable — a mistyped payment is corrected, not voided. */
   update(id: string, patch: Partial<NewSettlement>): Promise<Settlement>;
+  remove(id: string): Promise<void>;
+}
+
+export interface TargetRepository {
+  list(filter?: { metric?: TargetMetric; repId?: string; productId?: string }): Promise<Target[]>;
+  getById(id: string): Promise<Target | null>;
+  create(target: NewTarget): Promise<Target>;
+  update(id: string, patch: Partial<NewTarget>): Promise<Target>;
   remove(id: string): Promise<void>;
 }

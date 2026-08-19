@@ -7,6 +7,7 @@ import type {
   CommissionScheme,
   CommissionAssignment,
   Settlement,
+  Target,
 } from "@/domain";
 import { storage, STORAGE_KEYS } from "./storage";
 import { DEFAULT_SETTINGS } from "./repositories";
@@ -28,6 +29,7 @@ export interface BackupFile {
   commissionSchemes?: CommissionScheme[];
   commissionAssignments?: CommissionAssignment[];
   settlements?: Settlement[];
+  targets?: Target[];
 }
 
 export function exportAll(): BackupFile {
@@ -46,6 +48,7 @@ export function exportAll(): BackupFile {
       [],
     ),
     settlements: storage.get<Settlement[]>(STORAGE_KEYS.settlements, []),
+    targets: storage.get<Target[]>(STORAGE_KEYS.targets, []),
   };
 }
 
@@ -74,6 +77,7 @@ export function importAll(raw: unknown): void {
   storage.set(STORAGE_KEYS.commissionSchemes, data.commissionSchemes ?? []);
   storage.set(STORAGE_KEYS.commissionAssignments, data.commissionAssignments ?? []);
   storage.set(STORAGE_KEYS.settlements, data.settlements ?? []);
+  storage.set(STORAGE_KEYS.targets, data.targets ?? []);
   if (data.settings) storage.set(STORAGE_KEYS.settings, data.settings);
 }
 
@@ -87,4 +91,5 @@ export function clearAll(): void {
   storage.remove(STORAGE_KEYS.commissionSchemes);
   storage.remove(STORAGE_KEYS.commissionAssignments);
   storage.remove(STORAGE_KEYS.settlements);
+  storage.remove(STORAGE_KEYS.targets);
 }

@@ -6,6 +6,9 @@ import {
   CalendarCheck,
   ChartBar,
   UsersThree,
+  Target,
+  HandCoins,
+  ClockCounterClockwise,
   Gear,
 } from "@phosphor-icons/react/dist/ssr";
 
@@ -40,6 +43,10 @@ export const NAV_GROUPS: NavGroup[] = [
       // a directory of people. Its own child routes (/reps/view, /reps/schemes)
       // keep this entry active, so the split rule needs no second nav row.
       { label: "الفريق", href: "/reps", icon: UsersThree },
+      // «كم استهدف» · «منو دفع» · «شنو صار» — the three questions P2 answered.
+      { label: "الأهداف", href: "/targets", icon: Target },
+      { label: "التسويات", href: "/settlements", icon: HandCoins },
+      { label: "السجل", href: "/ledger", icon: ClockCounterClockwise },
       { label: "الفترات", href: "/periods", icon: CalendarCheck },
       { label: "التقارير", href: "/reports", icon: ChartBar },
     ],

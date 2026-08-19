@@ -1,0 +1,386 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { Target as TargetIcon, Plus, PencilSimple } from "@phosphor-icons/react";
+import type { TargetMetric } from "@/domain";
+import { computeTargets, type TargetRow } from "@/application/targets";
+import { useDataStore } from "@/presentation/stores/data-store";
+import { PageHeader } from "@/presentation/components/layout/page-header";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  EmptyState,
+  Segmented,
+  Skeleton,
+} from "@/presentation/components/ui";
+import { Odometer } from "@/presentation/components/objects/odometer";
+import { PaceRail } from "@/presentation/components/objects/pace-rail";
+import { RingGauge } from "@/presentation/components/objects/ring-gauge";
+import { formatCurrency, formatNumber, formatPercent } from "@/presentation/lib/format";
+import { cn } from "@/presentation/lib/cn";
+import { TargetDialog } from "./target-dialog";
+
+const METRICS = [
+  { label: "صافي الربح", value: "netProfit" as const },
+  { label: "الإيراد", value: "revenue" as const },
+  { label: "القطع", value: "units" as const },
+];
+
+const MONTH_NAMES = [
+  "كانون الثاني", "شباط", "آذار", "نيسان", "أيار", "حزيران",
+  "تموز", "آب", "أيلول", "تشرين الأول", "تشرين الثاني", "كانون الأول",
+];
+
+function monthLabel(month: string): string {
+  const [y, m] = month.split("-").map(Number);
+  return `${MONTH_NAMES[(m ?? 1) - 1] ?? month} ${y ?? ""}`.trim();
+}
+
+/**
+ * «كم استهدف» — the fourth of the seven things the client asked a merchant to be
+ * able to read, and the one that had no screen.
+ *
+ * Every figure here comes from `computeTargets`, which resolves each subject's own
+ * target (most specific first) and measures it against that subject's own sales.
+ * The screen owns no arithmetic: it decides what to draw, not what is true.
+ */
+export function TargetsView() {
+  const loaded = useDataStore((s) => s.loaded);
+  const targets = useDataStore((s) => s.targets);
+  const sales = useDataStore((s) => s.sales);
+  const products = useDataStore((s) => s.products);
+  const reps = useDataStore((s) => s.reps);
+  const settings = useDataStore((s) => s.settings);
+
+  const [metric, setMetric] = useState<TargetMetric>("netProfit");
+  const [editing, setEditing] = useState<TargetRow | null>(null);
+
+  // One clock reading for the whole render, so every row on screen measures pace
+  // against the same instant rather than each against its own.
+  const asOf = useMemo(() => new Date().toISOString(), []);
+  const month = asOf.slice(0, 7);
+
+  const view = useMemo(
+    () => computeTargets({ targets, sales, products, reps, month, asOf, metric }),
+    [targets, sales, products, reps, month, asOf, metric],
+  );
+
+  const fmt = (n: number) =>
+    metric === "units"
+      ? `${formatNumber(n, { locale: settings.locale })} قطعة`
+      : formatCurrency(n, { currency: settings.currency, locale: settings.locale });
+
+  if (!loaded) {
+    return (
+      <>
+        <PageHeader title="الأهداف" description="ما تستهدفه هذا الشهر، ومن أين وصل." />
+        <div className="flex flex-col gap-5">
+          <Skeleton className="h-56 rounded-[var(--radius-2xl)]" />
+          <Skeleton className="h-64 rounded-[var(--radius-2xl)]" />
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <PageHeader
+        title="الأهداف"
+        /* The colon form avoids Arabic number agreement, which changes shape at
+           1, 2 (dual), 3–10 and 11+ — «3 هدفًا» is simply wrong Arabic, and a
+           dashboard line is not the place to conjugate. */
+        description={`${monthLabel(month)} · أهداف محدّدة: ${view.withTarget}${
+          view.behind > 0 ? ` · متأخّرة عن الوتيرة: ${view.behind}` : ""
+        }`}
+        actions={
+          <Segmented
+            aria-label="ما يُقاس"
+            options={METRICS}
+            value={metric}
+            onChange={setMetric}
+          />
+        }
+      />
+
+      <div className="flex flex-col gap-6">
+        {/* The account's own reading, at instrument size */}
+        <AccountReading row={view.account} fmt={fmt} onEdit={() => setEditing(view.account)} />
+
+        <Card>
+          <CardHeader>
+            <div>
+              <CardTitle>أهداف الفريق</CardTitle>
+              <CardDescription>
+                هدف كل مندوب يُقاس بمبيعاته وحده، والخط القائم في كل مسطرة هو ما مضى من
+                الشهر. المندوب بلا هدف يظهر هنا كي تحدّده، لا كي يختفي.
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {view.reps.length === 0 ? (
+              <EmptyState
+                icon={<TargetIcon size={24} />}
+                title="لا مندوبين بعد"
+                description="أضف مندوبًا من شاشة الفريق، ثم عُد لتحدّد هدفه."
+              />
+            ) : (
+              <ul className="flex flex-col">
+                {view.reps.map((row) => (
+                  <SubjectRow key={row.key} row={row} fmt={fmt} onEdit={() => setEditing(row)} />
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+
+        {view.products.length > 0 && (
+          <Card>
+            <CardHeader>
+              <div>
+                <CardTitle>أهداف المنتجات</CardTitle>
+                <CardDescription>
+                  تظهر هنا المنتجات التي حدّدت لها هدفًا فقط، لا كل الكتالوج.
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ul className="flex flex-col">
+                {view.products.map((row) => (
+                  <SubjectRow key={row.key} row={row} fmt={fmt} onEdit={() => setEditing(row)} />
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      <TargetDialog
+        /* Keyed by the row: the sheet remounts per subject, so one row's typed
+           amount can never open on another row. */
+        key={editing?.key ?? "none"}
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        subject={{
+          name: editing?.name ?? "",
+          repId: editing?.repId,
+          productId: editing?.productId,
+        }}
+        month={month}
+        metric={metric}
+        existing={editing?.target ?? null}
+        actual={editing?.progress.actual ?? 0}
+      />
+    </>
+  );
+}
+
+function toneFor(row: TargetRow) {
+  if (!row.progress.hasTarget) return "muted" as const;
+  if (row.progress.met) return "success" as const;
+  return row.progress.onPace ? "success" : ("danger" as const);
+}
+
+/** «مضى ٥٢٪ من الشهر» — the scribe's own caption, in words. */
+function elapsedWord(elapsed: number, locale: string): string {
+  return `مضى ${formatPercent(elapsed, { locale, digits: 0 })} من الشهر`;
+}
+
+function AccountReading({
+  row,
+  fmt,
+  onEdit,
+}: {
+  row: TargetRow;
+  fmt: (n: number) => string;
+  onEdit: () => void;
+}) {
+  const settings = useDataStore((s) => s.settings);
+  const p = row.progress;
+  const tone = toneFor(row);
+
+  return (
+    /* Two columns, not one stacked band: at full width the rail stretched to
+       1,470px, and a 33%-versus-61% comparison gets HARDER the longer the track
+       is — the two marks drift apart until the eye has to travel between them
+       (§10, composition balance). */
+    <div className="halftone grid gap-6 rounded-[var(--radius-2xl)] p-6 shadow-card lg:grid-cols-[1fr_26rem] lg:items-center">
+      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-5">
+        <div className="min-w-0">
+          <span className="text-sm font-semibold text-fg/70">
+            {row.metric === "netProfit" ? "صافي الربح" : row.metric === "revenue" ? "الإيراد" : "القطع"} · هذا الشهر
+          </span>
+          <div className="mt-2 text-fg">
+            <Odometer
+              value={p.actual}
+              format={fmt}
+              drumHeight={1.3}
+              className={cn(
+                "text-[26px] font-bold leading-none sm:text-[38px]",
+                p.actual < 0 && "text-danger",
+              )}
+            />
+          </div>
+          <p className="mt-3 text-sm font-medium text-fg/70">
+            {p.hasTarget ? (
+              <>
+                من هدف <bdi dir="ltr" className="font-mono font-semibold">{fmt(p.targetAmount)}</bdi>
+                {row.fromOverride && " (هدف هذا الشهر)"}
+              </>
+            ) : (
+              "لا هدف محدّد لهذا الشهر — تُقاس النتيجة بمعدّلك بدلًا منه."
+            )}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <RingGauge
+            value={p.attainment}
+            label={p.hasTarget ? formatPercent(p.attainment, { locale: settings.locale }) : "—"}
+            caption={p.hasTarget ? "من الهدف" : "بلا هدف"}
+            size={96}
+            tone={tone}
+          />
+          <Button
+            variant="secondary"
+            leadingIcon={p.hasTarget ? <PencilSimple size={16} /> : <Plus size={16} />}
+            onClick={onEdit}
+          >
+            {p.hasTarget ? "تعديل" : "حدّد هدفًا"}
+          </Button>
+        </div>
+      </div>
+
+      {p.hasTarget && (
+        <div className="rounded-[var(--radius-lg)] bg-surface/70 p-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <span className="text-[11px] font-semibold text-fg/70">
+              {elapsedWord(p.elapsed, settings.locale)}
+            </span>
+            <span
+              className={cn(
+                "text-[11px] font-semibold",
+                p.onPace ? "text-success" : "text-danger",
+              )}
+            >
+              {p.met ? "الهدف تحقّق" : p.onPace ? "في الوتيرة" : "متأخّر عن الوتيرة"}
+            </span>
+          </div>
+          <PaceRail
+            className="mt-2.5"
+            height={16}
+            attainment={p.attainment}
+            elapsed={p.elapsed}
+            tone={tone}
+            label={`${formatPercent(p.attainment, { locale: settings.locale })} من الهدف، و${elapsedWord(
+              p.elapsed,
+              settings.locale,
+            )}`}
+          />
+          <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-fg/70">
+            {/* The remainder is the reading a merchant acts on: what is LEFT to
+                make, not what has been made (§11). */}
+            <span>
+              {p.met ? "فوق الهدف بـ" : "يتبقّى"}{" "}
+              <bdi dir="ltr" className="font-mono font-semibold text-fg">
+                {fmt(p.met ? p.surplus : p.remaining)}
+              </bdi>
+            </span>
+            <span>
+              الوتيرة{" "}
+              <bdi dir="ltr" className="font-mono font-semibold text-fg">
+                {formatPercent(p.pace, { locale: settings.locale, digits: 0 })}
+              </bdi>
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SubjectRow({
+  row,
+  fmt,
+  onEdit,
+}: {
+  row: TargetRow;
+  fmt: (n: number) => string;
+  onEdit: () => void;
+}) {
+  const settings = useDataStore((s) => s.settings);
+  const p = row.progress;
+  const tone = toneFor(row);
+
+  return (
+    <li className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-3 border-b border-border-soft py-4 last:border-b-0 sm:grid-cols-[13.5rem_1fr_auto]">
+      <div className="min-w-0">
+        <span className="block truncate font-medium text-fg">{row.name}</span>
+        <span className="mt-0.5 block text-xs text-muted">
+          {p.hasTarget ? (
+            <>
+              <bdi dir="ltr" className="font-mono">{fmt(p.actual)}</bdi>
+              {" من "}
+              <bdi dir="ltr" className="font-mono">{fmt(p.targetAmount)}</bdi>
+            </>
+          ) : (
+            <>
+              <bdi dir="ltr" className="font-mono">{fmt(p.actual)}</bdi>
+              {" · بلا هدف"}
+            </>
+          )}
+        </span>
+      </div>
+
+      {/* On a phone the rail takes the full width under the name rather than
+          being crushed into a column beside it. */}
+      <div className="col-span-2 sm:col-span-1 sm:order-none">
+        {p.hasTarget ? (
+          <>
+            <PaceRail
+              attainment={p.attainment}
+              elapsed={p.elapsed}
+              tone={tone}
+              label={`${row.name}: ${formatPercent(p.attainment, {
+                locale: settings.locale,
+              })} من الهدف، و${elapsedWord(p.elapsed, settings.locale)}`}
+            />
+            {/* The elapsed share is a fact about the MONTH, not about this row: it
+                is stated once on the card's own header instead of once per rep. */}
+            <div className="mt-1.5 flex items-center justify-end text-[11px]">
+              <span className={cn("font-semibold", p.onPace ? "text-success" : "text-danger")}>
+                {p.met ? "تحقّق" : p.onPace ? "في الوتيرة" : `يتبقّى ${fmt(p.remaining)}`}
+              </span>
+            </div>
+          </>
+        ) : (
+          /* No rail at all rather than an empty one: a channel with nothing in it
+             would read as "zero progress" when the truth is "no target" (§8). */
+          <p className="text-xs text-subtle">لم يُحدَّد هدف، فلا وتيرة تُقاس.</p>
+        )}
+      </div>
+
+      <div className="flex items-center gap-2 justify-self-end">
+        {p.hasTarget && (
+          <Badge tone={p.met ? "success" : p.onPace ? "neutral" : "danger"}>
+            {formatPercent(p.attainment, { locale: settings.locale, digits: 0 })}
+          </Badge>
+        )}
+        {row.fromOverride && <Badge tone="neutral">هذا الشهر</Badge>}
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={`${p.hasTarget ? "تعديل" : "تحديد"} هدف ${row.name}`}
+          leadingIcon={p.hasTarget ? <PencilSimple size={15} /> : <Plus size={15} />}
+          onClick={onEdit}
+        >
+          {p.hasTarget ? "تعديل" : "حدّد"}
+        </Button>
+      </div>
+    </li>
+  );
+}
