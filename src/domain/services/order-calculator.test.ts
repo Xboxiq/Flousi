@@ -507,3 +507,43 @@ describe("legacy sales are not touched by any of this (gate P4/G0)", () => {
     expect(asOrder.netProfit).toBe(asSale.netProfit);
   });
 });
+
+describe("allocation lands on the currency's PAYABLE unit", () => {
+  it("5,000 IQD over three equal lines gives 1,667 / 1,667 / 1,666 — whole dinars", () => {
+    const parts = allocateDelivery({
+      lines: [line("a", "P", 1, 10_000), line("b", "P", 1, 10_000), line("c", "P", 1, 10_000)],
+      deliveryPaid: 5_000,
+      method: "byValue",
+      currency: IQD,
+    });
+    const amounts = parts.map((p) => p.amount).sort((a, b) => b - a);
+    expect(amounts).toEqual([1_667, 1_667, 1_666]);
+    // and every part is a whole dinar, so what prints is what was computed
+    expect(parts.every((p) => Number.isInteger(p.amount))).toBe(true);
+    expect(amounts.reduce((a, b) => a + b, 0)).toBe(5_000);
+  });
+
+  it("a two-decimal currency still splits to the cent", () => {
+    const parts = allocateDelivery({
+      lines: [line("a", "P", 1, 10), line("b", "P", 1, 10), line("c", "P", 1, 10)],
+      deliveryPaid: 10,
+      method: "byValue",
+      currency: "USD",
+    });
+    const total = parts.reduce((s, p) => s + p.amount, 0);
+    expect(total).toBeCloseTo(10, 10);
+    // 3.34 / 3.33 / 3.33 — cents, not whole dollars
+    expect(parts.some((p) => !Number.isInteger(p.amount))).toBe(true);
+  });
+
+  it("every IQD split in the sweep is whole dinars AND sums exactly", () => {
+    for (let n = 1; n <= 6; n += 1) {
+      for (const paid of [1_000, 5_000, 7_000, 10_000, 12_345]) {
+        const lines = Array.from({ length: n }, (_, i) => line(`l${i}`, "P", (i % 2) + 1, 1_000 * (i + 3)));
+        const parts = allocateDelivery({ lines, deliveryPaid: paid, method: "byValue", currency: IQD });
+        expect(parts.every((p) => Number.isInteger(p.amount)), `n=${n} paid=${paid}`).toBe(true);
+        expect(parts.reduce((s, p) => s + p.amount, 0), `n=${n} paid=${paid}`).toBe(paid);
+      }
+    }
+  });
+});

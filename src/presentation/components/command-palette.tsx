@@ -23,6 +23,13 @@ interface Command {
 
 const ACTIONS: Command[] = [
   {
+    label: "طلبية جديدة",
+    group: "إجراءات",
+    href: "/orders",
+    keywords: "order delivery طلبية توصيل بيع متعدد",
+    needs: "recordSales",
+  },
+  {
     label: "إضافة منتج",
     group: "إجراءات",
     href: "/products/new",

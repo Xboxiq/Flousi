@@ -92,7 +92,7 @@ per-line snapshot P1 froze stays exactly what it was.
 
 ## G6 — nothing regressed
 EVIDENCE: `npm run typecheck && npm run lint && npm test && npm run build`
-  → clean · clean · **308 passed (17 files)** · 27 routes
+  → clean · clean · **311 passed (17 files)** · 28 routes
 
 Domain: 34 tests on the calculator and allocator. Application: 16 on the read model,
 including the delivery reading (`computeDelivery`) that did not exist before this
@@ -100,4 +100,44 @@ phase. The demo store now seeds three trips, one of them deliberately SUBSIDISED
 (charged 5,000, paid 6,500), because a merchant needs to see that state once to learn
 the screen reports it.
 
-Still to land in this phase: the order builder screen and `/orders`.
+## G7 — the screens, and what looking at them found
+
+`/orders` opens on the reading this phase exists for — charged against paid, with the
+count of subsidised trips — then the trips, each collapsed to one line and opened on
+tap (the pattern the checkout research settles for order summaries on a phone). The
+builder adds lines, takes ONE delivery pair, and prints each line's allocated share
+live as it is typed.
+
+Four defects the renders found, and one thing that turned out not to be a defect:
+
+1. **The delivery rail meant the opposite of what it drew.** The fill was
+   `paid / charged`, so a FULLER green bar meant MORE of the fee had been eaten by the
+   courier — a rail that looked better the worse it got. The fill is now the margin,
+   the hatch is what went out, and fill means the good direction (§13).
+2. **Three shares of 1,667 that visibly summed to 5,001.** The allocator worked in
+   minor units, but IQD is printed and handed over in whole dinars, so 5,000 over three
+   lines gave 1,666.67 each — three parts that each PRINT as 1,667. It now allocates in
+   the currency's PAYABLE unit, so the split is 1,667 / 1,667 / 1,666 and sums both in
+   the arithmetic and to the eye. Same lesson as the P1 settlement amount: a figure a
+   merchant cannot hand over is one this app should not compute. Three new tests,
+   including a sweep asserting every IQD split is whole dinars AND sums exactly.
+3. **The phone layout gave the product name the NARROW slot** while the quantity
+   spread across the wide one. The row is now two shapes: the product on its own row,
+   then quantity, price and delete sharing the next, promoted to one grid row from
+   `sm` via `sm:contents`. The first attempt at this failed silently because `Select`
+   applies `className` to the `<select>` rather than to the grid item, so a
+   `col-span-3` there did nothing — worth recording, since the next person will try it.
+4. **«أضف صنفاً» added the same product every time.** It now offers the first product
+   not already on the order, so three taps build three lines.
+
+And an em dash I had just written into the new copy («نتيجة التوصيل 0 — متعادل»),
+caught by the same pass that has caught it in every phase.
+
+**Not a defect:** «ط-1043» looked reversed in the first render. It is not — in an RTL
+line the visual order right-to-left IS the logical order, so ط rightmost with 1043 to
+its left is correct. The `<bdi>` isolate stays anyway, because a merchant-authored code
+may mix scripts in ways that genuinely do need it, but no bug was fixed there and this
+gate does not claim one.
+
+Measured: no horizontal scroll and no overflow at 1440 / 1024 / 768 / 390 / 360, on
+both the list and the builder. No page errors in any of the 8 renders.

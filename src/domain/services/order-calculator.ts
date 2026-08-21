@@ -13,6 +13,7 @@ import type {
   RoundingBeneficiary,
 } from "../entities/commission-scheme";
 import { ProfitCalculator } from "./profit-calculator";
+import { payableStepMinor } from "./commission-calculator";
 
 /** A line, priced and costed, with its allocated share of the delivery fee. */
 export interface OrderLineResult {
@@ -66,11 +67,19 @@ export interface OrderResult {
 /**
  * Spreads one delivery fee across lines so the parts sum EXACTLY to the fee.
  *
- * The naive `round(fee × weight)` per line loses or invents a fils whenever the split
- * does not divide evenly, and in a currency printed to whole dinars that error is
- * visible. So the last line absorbs the remainder, and which line is "last" is
- * decided by `beneficiary` — the SAME setting the commission engine already uses for
- * its own rounding, rather than a second rule nobody would remember (gate P4/G3).
+ * The naive `round(fee × weight)` per line loses or invents a unit whenever the split
+ * does not divide evenly. The remainder is handed out one payable unit at a time, and
+ * who gets it first is decided by `beneficiary` — the SAME setting the commission
+ * engine already uses for its own rounding, rather than a second rule nobody would
+ * remember (gate P4/G3).
+ *
+ * The unit is the currency's PAYABLE unit, not the minor unit. IQD is stored at a ×100
+ * minor scale but printed and handed over in whole dinars, so splitting 5,000 three
+ * ways in minor units gives 1,666.67 / 1,666.67 / 1,666.66 — three parts that each
+ * PRINT as 1,667 and visibly add to 5,001 on screen. Allocating in payable units
+ * instead gives 1,667 / 1,667 / 1,666, which sums both in the arithmetic and to the
+ * eye. (The same lesson as the settlement amount in P1: a figure a merchant cannot
+ * hand over is a figure this app should not compute.)
  */
 export function allocateDelivery(input: {
   lines: readonly OrderLineInput[];
@@ -88,7 +97,9 @@ export function allocateDelivery(input: {
     return lines.map((l) => ({ lineId: l.id, amount: 0 }));
   }
 
-  const totalMinor = Money.fromMajor(paid, currency).minorUnits;
+  // Work in whole payable units so the printed parts sum to the printed whole.
+  const step = payableStepMinor(currency);
+  const totalUnits = Math.round(Money.fromMajor(paid, currency).minorUnits / step);
   const weight = (l: OrderLineInput) =>
     method === "byQuantity"
       ? Math.max(0, l.quantity)
@@ -102,14 +113,14 @@ export function allocateDelivery(input: {
   // dropped or dumped on line one.
   const shares =
     totalWeight === 0
-      ? lines.map(() => Math.trunc(totalMinor / lines.length))
-      : weights.map((w) => Math.trunc((totalMinor * w) / totalWeight));
+      ? lines.map(() => Math.trunc(totalUnits / lines.length))
+      : weights.map((w) => Math.trunc((totalUnits * w) / totalWeight));
 
   const assigned = shares.reduce((a, b) => a + b, 0);
-  let remainder = totalMinor - assigned;
+  let remainder = totalUnits - assigned;
 
-  // The remainder is at most (lines.length - 1) minor units, and it is handed out one
-  // unit at a time so no single line absorbs a visible lump.
+  // The remainder is at most (lines.length - 1) payable units, and it is handed out
+  // one unit at a time so no single line absorbs a visible lump.
   const order = lines
     .map((l, i) => ({ i, w: weights[i] }))
     .sort((a, b) => (input.beneficiary === "rep" ? a.w - b.w : b.w - a.w));
@@ -120,7 +131,7 @@ export function allocateDelivery(input: {
 
   return lines.map((l, i) => ({
     lineId: l.id,
-    amount: Money.fromMinor(shares[i], currency).amount,
+    amount: Money.fromMinor(shares[i] * step, currency).amount,
   }));
 }
 

@@ -3,6 +3,7 @@ import type { Capability, ResolvedAccess } from "@/domain";
 import {
   House,
   Package,
+  Receipt,
   Calculator,
   CalendarCheck,
   ChartBar,
@@ -42,6 +43,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "الكتالوج",
     items: [
       { label: "المنتجات", href: "/products", icon: Package, needs: "viewProducts" },
+      { label: "الطلبيات", href: "/orders", icon: Receipt, needs: "viewProducts" },
       { label: "الحاسبة", href: "/calculator", icon: Calculator, needs: "viewCosts" },
     ],
   },
@@ -87,6 +89,7 @@ export const ROUTE_CAPABILITIES: { prefix: string; needs: Capability }[] = [
   { prefix: "/dashboard", needs: "viewCosts" },
   // Opening the catalogue is `viewProducts`; the create and edit surfaces inside it
   // check `manageProducts` for themselves.
+  { prefix: "/orders", needs: "viewProducts" },
   { prefix: "/products/new", needs: "manageProducts" },
   { prefix: "/products", needs: "viewProducts" },
   { prefix: "/calculator", needs: "viewCosts" },
