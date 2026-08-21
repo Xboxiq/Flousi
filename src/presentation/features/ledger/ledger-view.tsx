@@ -10,6 +10,7 @@ import {
 } from "@phosphor-icons/react";
 import { computeLedger, type Movement, type MovementKind } from "@/application/ledger";
 import { useDataStore } from "@/presentation/stores/data-store";
+import { useAccess } from "@/presentation/hooks/use-access";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
   Button,
@@ -50,6 +51,7 @@ export function LedgerView() {
   const products = useDataStore((s) => s.products);
   const reps = useDataStore((s) => s.reps);
   const settings = useDataStore((s) => s.settings);
+  const access = useAccess();
 
   const [filter, setFilter] = useState<Filter>("all");
   const [shown, setShown] = useState(PAGE);
@@ -65,8 +67,10 @@ export function LedgerView() {
         currency: settings.currency,
         kind: filter === "all" ? undefined : filter,
         limit: shown,
+        scope: access.salesScope,
+        costs: access.can("viewCosts"),
       }),
-    [sales, settlements, periods, products, reps, settings.currency, filter, shown],
+    [sales, settlements, periods, products, reps, settings.currency, filter, shown, access],
   );
 
   const onFilter = (next: Filter) => {
@@ -209,10 +213,14 @@ function MovementRow({ movement, locale }: { movement: Movement; locale: string 
               m.secondary < 0 ? "text-danger" : "text-muted",
             )}
           >
-            {/* A sale's profit beside its revenue: the figure the merchant actually
-                keeps, quieter than the one that came in. The word goes BEFORE the
-                number — «-5,000 ربحًا» would call a loss a profit. */}
-            {m.secondary < 0 ? "خسارة " : "ربح "}
+            {/* The word goes BEFORE the number: «-5,000 ربحًا» would call a loss a
+                profit. And it names WHICH figure this is — a rep sees their own
+                share here, never the sale's profit (gate P3/G4). */}
+            {m.secondaryKind === "repShare"
+              ? "حصّتك "
+              : m.secondary < 0
+                ? "خسارة "
+                : "ربح "}
             {money(Math.abs(m.secondary))}
           </bdi>
         )}

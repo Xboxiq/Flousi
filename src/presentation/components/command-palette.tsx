@@ -4,7 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { MagnifyingGlass, ArrowRight } from "@phosphor-icons/react";
-import { NAV_GROUPS } from "./layout/nav-config";
+import type { Capability } from "@/domain";
+import { visibleNavGroups } from "./layout/nav-config";
+import { useAccess } from "@/presentation/hooks/use-access";
 import { useUiStore } from "@/presentation/stores/ui-store";
 import { easeOut } from "@/presentation/lib/motion";
 import { cn } from "@/presentation/lib/cn";
@@ -14,12 +16,40 @@ interface Command {
   group: string;
   href: string;
   keywords?: string;
+  /** The capability that opens it. A palette that offers a door the session cannot
+   *  open is worse than one that hides it: the merchant presses it and is refused. */
+  needs?: Capability;
 }
 
 const ACTIONS: Command[] = [
-  { label: "إضافة منتج", group: "إجراءات", href: "/products/new", keywords: "new create جديد" },
-  { label: "فتح الحاسبة", group: "إجراءات", href: "/calculator", keywords: "calc profit حساب" },
-  { label: "إغلاق الشهر", group: "إجراءات", href: "/periods", keywords: "period lock فترة" },
+  {
+    label: "طلبية جديدة",
+    group: "إجراءات",
+    href: "/orders",
+    keywords: "order delivery طلبية توصيل بيع متعدد",
+    needs: "recordSales",
+  },
+  {
+    label: "إضافة منتج",
+    group: "إجراءات",
+    href: "/products/new",
+    keywords: "new create جديد",
+    needs: "manageProducts",
+  },
+  {
+    label: "فتح الحاسبة",
+    group: "إجراءات",
+    href: "/calculator",
+    keywords: "calc profit حساب",
+    needs: "viewCosts",
+  },
+  {
+    label: "إغلاق الشهر",
+    group: "إجراءات",
+    href: "/periods",
+    keywords: "period lock فترة",
+    needs: "closePeriods",
+  },
   /* Named for what it does: this is a navigation to the team list, not a recorded
      settlement — the payment itself is still committed from a rep's own sheet. */
   {
@@ -27,12 +57,14 @@ const ACTIONS: Command[] = [
     group: "إجراءات",
     href: "/reps",
     keywords: "settle balance رصيد مندوب تسوية",
+    needs: "viewTeam",
   },
   {
     label: "إعدادات القسمة",
     group: "إجراءات",
     href: "/reps/schemes",
     keywords: "commission scheme split نظام حصة",
+    needs: "manageTeam",
   },
 ];
 
@@ -45,12 +77,18 @@ export function CommandPalette() {
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const access = useAccess();
+
   const commands = useMemo<Command[]>(() => {
-    const nav = NAV_GROUPS.flatMap((g) =>
+    // Both halves are filtered: the nav entries by `visibleNavGroups`, and the
+    // actions by their own capability. Offering «إغلاق الشهر» to a rep who will be
+    // refused is worse than not offering it (gate P3/G6).
+    const nav = visibleNavGroups(access).flatMap((g) =>
       g.items.map((i) => ({ label: i.label, group: g.label, href: i.href })),
     );
-    return [...ACTIONS, ...nav];
-  }, []);
+    const actions = ACTIONS.filter((a) => !a.needs || access.can(a.needs));
+    return [...actions, ...nav];
+  }, [access]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -142,7 +180,7 @@ export function CommandPalette() {
                 esc
               </kbd>
             </div>
-            <ul className="max-h-[52vh] overflow-y-auto p-2">
+            <ul className="max-h-[52vh] overflow-y-auto overscroll-contain p-2">
               {results.length === 0 && (
                 <li className="px-3 py-6 text-center text-sm text-muted">لا توجد نتائج.</li>
               )}

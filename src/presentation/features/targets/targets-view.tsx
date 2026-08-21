@@ -5,6 +5,7 @@ import { Target as TargetIcon, Plus, PencilSimple } from "@phosphor-icons/react"
 import type { TargetMetric } from "@/domain";
 import { computeTargets, type TargetRow } from "@/application/targets";
 import { useDataStore } from "@/presentation/stores/data-store";
+import { useAccess } from "@/presentation/hooks/use-access";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
   Badge,
@@ -31,6 +32,18 @@ const METRICS = [
   { label: "القطع", value: "units" as const },
 ];
 
+/**
+ * Net profit is the merchant's own margin, so it is not offered to a session without
+ * `viewCosts` — even in aggregate, and even for that session's own sales.
+ *
+ * A monthly total does not reveal any single product's cost the way a per-row profit
+ * does, which is why this is a narrower rule than the ledger's. But «ما ربحه المتجر
+ * من عملي» is still the merchant's figure to share or not, and a role built to hide
+ * costs should not print it (gate P3/G4). Revenue and units are quantities a rep is
+ * entitled to: they are their own work, counted.
+ */
+const OPEN_METRICS = METRICS.filter((m) => m.value !== "netProfit");
+
 const MONTH_NAMES = [
   "كانون الثاني", "شباط", "آذار", "نيسان", "أيار", "حزيران",
   "تموز", "آب", "أيلول", "تشرين الأول", "تشرين الثاني", "كانون الأول",
@@ -56,8 +69,24 @@ export function TargetsView() {
   const products = useDataStore((s) => s.products);
   const reps = useDataStore((s) => s.reps);
   const settings = useDataStore((s) => s.settings);
+  const access = useAccess();
 
-  const [metric, setMetric] = useState<TargetMetric>("netProfit");
+  const canEdit = access.can("manageTargets");
+  const canSeeCosts = access.can("viewCosts");
+  const metrics = canSeeCosts ? METRICS : OPEN_METRICS;
+
+  /**
+   * The chosen metric, and the metric actually READ.
+   *
+   * They are two values on purpose. `useState` captures its initial value on the
+   * first render, and on that render the store has not loaded yet — so `access`
+   * still resolves to the owner and an initial value of «netProfit» would stick
+   * even after the session turns out to be a rep. Deriving the effective metric
+   * every render instead of seeding state from async data means the load order
+   * cannot decide what a session is shown.
+   */
+  const [chosen, setMetric] = useState<TargetMetric>("netProfit");
+  const metric: TargetMetric = canSeeCosts ? chosen : chosen === "netProfit" ? "revenue" : chosen;
   const [editing, setEditing] = useState<TargetRow | null>(null);
 
   // One clock reading for the whole render, so every row on screen measures pace
@@ -66,8 +95,18 @@ export function TargetsView() {
   const month = asOf.slice(0, 7);
 
   const view = useMemo(
-    () => computeTargets({ targets, sales, products, reps, month, asOf, metric }),
-    [targets, sales, products, reps, month, asOf, metric],
+    () =>
+      computeTargets({
+        targets,
+        sales,
+        products,
+        reps,
+        month,
+        asOf,
+        metric,
+        scope: access.salesScope,
+      }),
+    [targets, sales, products, reps, month, asOf, metric, access.salesScope],
   );
 
   const fmt = (n: number) =>
@@ -98,18 +137,18 @@ export function TargetsView() {
           view.behind > 0 ? ` · متأخّرة عن الوتيرة: ${view.behind}` : ""
         }`}
         actions={
-          <Segmented
-            aria-label="ما يُقاس"
-            options={METRICS}
-            value={metric}
-            onChange={setMetric}
-          />
+          <Segmented aria-label="ما يُقاس" options={metrics} value={metric} onChange={setMetric} />
         }
       />
 
       <div className="flex flex-col gap-6">
         {/* The account's own reading, at instrument size */}
-        <AccountReading row={view.account} fmt={fmt} onEdit={() => setEditing(view.account)} />
+        <AccountReading
+          row={view.account}
+          fmt={fmt}
+          canEdit={canEdit}
+          onEdit={() => setEditing(view.account)}
+        />
 
         <Card>
           <CardHeader>
@@ -117,7 +156,8 @@ export function TargetsView() {
               <CardTitle>أهداف الفريق</CardTitle>
               <CardDescription>
                 هدف كل مندوب يُقاس بمبيعاته وحده، والخط القائم في كل مسطرة هو ما مضى من
-                الشهر. المندوب بلا هدف يظهر هنا كي تحدّده، لا كي يختفي.
+                الشهر.
+                {canEdit ? " المندوب بلا هدف يظهر هنا كي تحدّده، لا كي يختفي." : ""}
               </CardDescription>
             </div>
           </CardHeader>
@@ -131,7 +171,13 @@ export function TargetsView() {
             ) : (
               <ul className="flex flex-col">
                 {view.reps.map((row) => (
-                  <SubjectRow key={row.key} row={row} fmt={fmt} onEdit={() => setEditing(row)} />
+                  <SubjectRow
+                    key={row.key}
+                    row={row}
+                    fmt={fmt}
+                    canEdit={canEdit}
+                    onEdit={() => setEditing(row)}
+                  />
                 ))}
               </ul>
             )}
@@ -151,7 +197,13 @@ export function TargetsView() {
             <CardContent>
               <ul className="flex flex-col">
                 {view.products.map((row) => (
-                  <SubjectRow key={row.key} row={row} fmt={fmt} onEdit={() => setEditing(row)} />
+                  <SubjectRow
+                    key={row.key}
+                    row={row}
+                    fmt={fmt}
+                    canEdit={canEdit}
+                    onEdit={() => setEditing(row)}
+                  />
                 ))}
               </ul>
             </CardContent>
@@ -194,10 +246,12 @@ function AccountReading({
   row,
   fmt,
   onEdit,
+  canEdit,
 }: {
   row: TargetRow;
   fmt: (n: number) => string;
   onEdit: () => void;
+  canEdit: boolean;
 }) {
   const settings = useDataStore((s) => s.settings);
   const p = row.progress;
@@ -245,13 +299,15 @@ function AccountReading({
             size={96}
             tone={tone}
           />
-          <Button
-            variant="secondary"
-            leadingIcon={p.hasTarget ? <PencilSimple size={16} /> : <Plus size={16} />}
-            onClick={onEdit}
-          >
-            {p.hasTarget ? "تعديل" : "حدّد هدفًا"}
-          </Button>
+          {canEdit && (
+            <Button
+              variant="secondary"
+              leadingIcon={p.hasTarget ? <PencilSimple size={16} /> : <Plus size={16} />}
+              onClick={onEdit}
+            >
+              {p.hasTarget ? "تعديل" : "حدّد هدفًا"}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -307,10 +363,12 @@ function SubjectRow({
   row,
   fmt,
   onEdit,
+  canEdit,
 }: {
   row: TargetRow;
   fmt: (n: number) => string;
   onEdit: () => void;
+  canEdit: boolean;
 }) {
   const settings = useDataStore((s) => s.settings);
   const p = row.progress;
@@ -371,15 +429,17 @@ function SubjectRow({
           </Badge>
         )}
         {row.fromOverride && <Badge tone="neutral">هذا الشهر</Badge>}
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label={`${p.hasTarget ? "تعديل" : "تحديد"} هدف ${row.name}`}
-          leadingIcon={p.hasTarget ? <PencilSimple size={15} /> : <Plus size={15} />}
-          onClick={onEdit}
-        >
-          {p.hasTarget ? "تعديل" : "حدّد"}
-        </Button>
+        {canEdit && (
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-label={`${p.hasTarget ? "تعديل" : "تحديد"} هدف ${row.name}`}
+            leadingIcon={p.hasTarget ? <PencilSimple size={15} /> : <Plus size={15} />}
+            onClick={onEdit}
+          >
+            {p.hasTarget ? "تعديل" : "حدّد"}
+          </Button>
+        )}
       </div>
     </li>
   );

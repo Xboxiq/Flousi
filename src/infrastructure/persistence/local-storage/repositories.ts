@@ -26,8 +26,18 @@ import type {
   NewTarget,
   TargetMetric,
   TargetRepository,
+  Role,
+  NewRole,
+  RoleRepository,
+  AccessSession,
+  AccessStore,
+  PinRecord,
+  Order,
+  NewOrder,
+  OrderRepository,
 } from "@/domain";
 import { systemClock, uuidGenerator } from "@/infrastructure/system";
+import { isOwnerRole, ownerRole } from "@/domain";
 import { storage, STORAGE_KEYS } from "./storage";
 
 const nowIso = () => systemClock.now().toISOString();
@@ -354,6 +364,115 @@ export class LocalTargetRepository implements TargetRepository {
   }
 }
 
+export class LocalRoleRepository implements RoleRepository {
+  /**
+   * The owner is always first and always present, even on a store that has never
+   * seen this feature: it is not a seeded row that could be missing, it is a fact
+   * about the product (gate P3/G2).
+   */
+  async list(): Promise<Role[]> {
+    const stored = storage.get<Role[]>(STORAGE_KEYS.roles, []);
+    const custom = stored.filter((r) => !isOwnerRole(r));
+    return [ownerRole(), ...custom];
+  }
+  async getById(id: string): Promise<Role | null> {
+    return (await this.list()).find((r) => r.id === id) ?? null;
+  }
+  async create(role: NewRole): Promise<Role> {
+    const stored = storage.get<Role[]>(STORAGE_KEYS.roles, []).filter((r) => !isOwnerRole(r));
+    const created: Role = {
+      ...role,
+      builtIn: false,
+      id: uuidGenerator.generate(),
+      createdAt: nowIso(),
+      updatedAt: nowIso(),
+    };
+    storage.set(STORAGE_KEYS.roles, [...stored, created]);
+    return created;
+  }
+  async update(id: string, patch: Partial<NewRole>): Promise<Role> {
+    if (id === ownerRole().id) throw new Error("دور المالك غير قابل للتعديل.");
+    const stored = storage.get<Role[]>(STORAGE_KEYS.roles, []).filter((r) => !isOwnerRole(r));
+    let updated: Role | undefined;
+    const next = stored.map((r) => {
+      if (r.id !== id) return r;
+      // `builtIn` and `id` are never patchable: a custom role must not be able to
+      // promote itself into the un-editable one.
+      updated = { ...r, ...patch, id: r.id, builtIn: false, updatedAt: nowIso() };
+      return updated;
+    });
+    if (!updated) throw new Error(`Role ${id} not found`);
+    storage.set(STORAGE_KEYS.roles, next);
+    return updated;
+  }
+  async remove(id: string): Promise<void> {
+    if (id === ownerRole().id) throw new Error("دور المالك غير قابل للحذف.");
+    const stored = storage.get<Role[]>(STORAGE_KEYS.roles, []).filter((r) => !isOwnerRole(r));
+    storage.set(
+      STORAGE_KEYS.roles,
+      stored.filter((r) => r.id !== id),
+    );
+  }
+}
+
+export class LocalAccessStore implements AccessStore {
+  async getSession(): Promise<AccessSession | null> {
+    return storage.get<AccessSession | null>(STORAGE_KEYS.accessSession, null);
+  }
+  async setSession(session: AccessSession): Promise<void> {
+    storage.set(STORAGE_KEYS.accessSession, session);
+  }
+  async getPin(): Promise<PinRecord | null> {
+    return storage.get<PinRecord | null>(STORAGE_KEYS.accessPin, null);
+  }
+  async setPin(record: PinRecord | null): Promise<void> {
+    if (record === null) storage.remove(STORAGE_KEYS.accessPin);
+    else storage.set(STORAGE_KEYS.accessPin, record);
+  }
+}
+
+export class LocalOrderRepository implements OrderRepository {
+  async list(filter?: { repId?: string; periodId?: string }): Promise<Order[]> {
+    let all = storage.get<Order[]>(STORAGE_KEYS.orders, []);
+    if (filter?.repId) all = all.filter((o) => o.repId === filter.repId);
+    if (filter?.periodId) all = all.filter((o) => o.periodId === filter.periodId);
+    return all;
+  }
+  async getById(id: string): Promise<Order | null> {
+    return (await this.list()).find((o) => o.id === id) ?? null;
+  }
+  async create(order: NewOrder): Promise<Order> {
+    const all = await this.list();
+    const created: Order = {
+      ...order,
+      id: uuidGenerator.generate(),
+      createdAt: nowIso(),
+      updatedAt: nowIso(),
+    };
+    storage.set(STORAGE_KEYS.orders, [created, ...all]);
+    return created;
+  }
+  async update(id: string, patch: Partial<NewOrder>): Promise<Order> {
+    const all = await this.list();
+    let updated: Order | undefined;
+    const next = all.map((o) => {
+      if (o.id !== id) return o;
+      updated = { ...o, ...patch, updatedAt: nowIso() };
+      return updated;
+    });
+    if (!updated) throw new Error(`Order ${id} not found`);
+    storage.set(STORAGE_KEYS.orders, next);
+    return updated;
+  }
+  async remove(id: string): Promise<void> {
+    const all = await this.list();
+    storage.set(
+      STORAGE_KEYS.orders,
+      all.filter((o) => o.id !== id),
+    );
+  }
+}
+
 // Singletons used across the app (swap these for cloud adapters later).
 export const productRepository = new LocalProductRepository();
 export const saleRepository = new LocalSaleRepository();
@@ -364,3 +483,6 @@ export const commissionSchemeRepository = new LocalCommissionSchemeRepository();
 export const commissionAssignmentRepository = new LocalCommissionAssignmentRepository();
 export const settlementRepository = new LocalSettlementRepository();
 export const targetRepository = new LocalTargetRepository();
+export const orderRepository = new LocalOrderRepository();
+export const roleRepository = new LocalRoleRepository();
+export const accessStore = new LocalAccessStore();

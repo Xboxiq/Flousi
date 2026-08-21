@@ -5,6 +5,7 @@ import Link from "next/link";
 import { HandCoins, Receipt } from "@phosphor-icons/react";
 import { computeSettlements, type CurrencyTotal } from "@/application/ledger";
 import { useDataStore } from "@/presentation/stores/data-store";
+import { useAccess } from "@/presentation/hooks/use-access";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
   Badge,
@@ -40,10 +41,11 @@ export function SettlementsView() {
   const sales = useDataStore((s) => s.sales);
   const periods = useDataStore((s) => s.periods);
   const settings = useDataStore((s) => s.settings);
+  const access = useAccess();
 
   const view = useMemo(
-    () => computeSettlements({ settlements, reps, sales, periods }),
-    [settlements, reps, sales, periods],
+    () => computeSettlements({ settlements, reps, sales, periods, scope: access.salesScope }),
+    [settlements, reps, sales, periods, access.salesScope],
   );
 
   const money = (n: number, currency: string) =>

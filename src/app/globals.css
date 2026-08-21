@@ -301,6 +301,19 @@
 @layer base {
   html { color-scheme: light; }
   html[data-theme="dark"] { color-scheme: dark; }
+  /* Every tap on a touch device waits ~300ms to see whether a second tap is coming
+     (double-tap zoom). On a shop counter that delay is felt on every single key, and
+     nothing in this app is zoomed by double-tapping a control
+     (web-interface-guidelines: Touch & Interaction). Pinch zoom is untouched — the
+     viewport never disables it, which the same guidelines forbid. */
+  button,
+  a,
+  summary,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    touch-action: manipulation;
+  }
   body {
     background-color: var(--bg);
     color: var(--fg);

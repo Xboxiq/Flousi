@@ -219,3 +219,55 @@ describe("computeTargets", () => {
     expect(v.account.progress.actual).toBe(0);
   });
 });
+
+describe("computeTargets scoping (gate P3/G3)", () => {
+  const reps = [rep(), rep({ id: "R2", name: "علي" })];
+  const sales = [
+    sale({ id: "mine", repId: "R1" }),
+    sale({ id: "theirs", repId: "R2" }),
+    sale({ id: "house" }),
+  ];
+  const targets = [
+    target({ amount: 1_000 }), // the account's
+    target({ amount: 30, repId: "R1" }),
+    target({ amount: 30, repId: "R2" }),
+    target({ amount: 20, productId: "P1" }),
+  ];
+
+  it("a scoped view holds ONLY that rep's row", () => {
+    const v = view({ targets, sales, reps, scope: { repId: "R1" } });
+    expect(v.reps).toHaveLength(1);
+    expect(v.reps[0].repId).toBe("R1");
+    expect(v.products).toHaveLength(0);
+  });
+
+  it("the account figure is that rep's own work, not the store's", () => {
+    const scoped = view({ targets, sales, reps, scope: { repId: "R1" } });
+    // one sale of 40 net, not three
+    expect(scoped.account.progress.actual).toBe(40);
+    const all = view({ targets, sales, reps });
+    expect(all.account.progress.actual).toBe(120);
+  });
+
+  it("the rep's own reading is unchanged by the scope — only the surroundings shrink", () => {
+    const scoped = view({ targets, sales, reps, scope: { repId: "R1" } });
+    const all = view({ targets, sales, reps });
+    const mineScoped = scoped.reps.find((r) => r.repId === "R1");
+    const mineAll = all.reps.find((r) => r.repId === "R1");
+    expect(mineScoped?.progress.actual).toBe(mineAll?.progress.actual);
+    expect(mineScoped?.progress.targetAmount).toBe(mineAll?.progress.targetAmount);
+  });
+
+  it('scope "none" yields no rows and no actuals', () => {
+    const v = view({ targets, sales, reps, scope: "none" });
+    expect(v.reps).toHaveLength(0);
+    expect(v.products).toHaveLength(0);
+    expect(v.account.progress.actual).toBe(0);
+  });
+
+  it("counts follow the scope, since they are printed in the header", () => {
+    const v = view({ targets, sales, reps, scope: { repId: "R1" } });
+    // the account row + this rep's row, not four rows
+    expect(v.withTarget).toBe(2);
+  });
+});

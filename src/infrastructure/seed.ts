@@ -5,6 +5,7 @@ import type {
   AccountingPeriod,
   NewProduct,
   NewRep,
+  NewRole,
   NewCommissionScheme,
 } from "@/domain";
 import { CommissionCalculator, defaultCommissionSchemeParams, makeCostBreakdown } from "@/domain";
@@ -18,6 +19,8 @@ import {
   commissionAssignmentRepository,
   settlementRepository,
   targetRepository,
+  roleRepository,
+  orderRepository,
   DEFAULT_SETTINGS,
 } from "./persistence/local-storage/repositories";
 import { uuidGenerator } from "./system";
@@ -338,6 +341,46 @@ async function seedTeamIfEmpty(products: Product[]): Promise<string | undefined>
  * already exist. Always ensures settings exist, and always ensures the
  * commission team exists.
  */
+
+/**
+ * Two starting points, neither of them built in.
+ *
+ * A seeded role a merchant cannot change is a decision taken away from him (gate
+ * P3/G9), so these are ordinary editable rows. Neither holds `manageAccess`: a role
+ * that could switch the session is not a limited role.
+ */
+const SEED_ROLES: NewRole[] = [
+  {
+    name: "مندوب",
+    description: "يرى مبيعاته وحصّته فقط. لا يرى تكاليف الشراء ولا أرقام غيره.",
+    capabilities: ["viewProducts", "recordSales", "viewTargets", "viewLedger"],
+    status: "active",
+  },
+  {
+    name: "محاسب",
+    description: "يقرأ كل شيء ويصدّره، ولا يعدّل ولا يغلق شهراً ولا يسوّي حساباً.",
+    capabilities: [
+      "viewCosts",
+      "viewAllSales",
+      "viewProducts",
+      "viewTeam",
+      "viewReports",
+      "viewTargets",
+      "viewLedger",
+      "exportData",
+    ],
+    status: "active",
+  },
+];
+
+async function seedRolesIfEmpty(): Promise<void> {
+  // Only the owner exists on a fresh store, and `list()` always includes it, so the
+  // emptiness test is "nothing but the owner".
+  const existing = (await roleRepository.list()).filter((r) => !r.builtIn);
+  if (existing.length > 0) return;
+  for (const role of SEED_ROLES) await roleRepository.create(role);
+}
+
 export async function seedIfEmpty(): Promise<void> {
   const existing = await productRepository.list();
   const settings = await settingsRepository.get().catch(() => DEFAULT_SETTINGS);
@@ -370,6 +413,7 @@ export async function seedIfEmpty(): Promise<void> {
   // is the honest answer there, and it already points at «إضافة مندوب».
   if (existing.length > 0) return;
 
+  await seedRolesIfEmpty();
   const defaultSchemeId = await seedTeamIfEmpty(created);
   await settingsRepository.save({
     ...settings,
@@ -463,6 +507,90 @@ export async function seedIfEmpty(): Promise<void> {
       repId: target.id,
       status: "active",
     });
+    // A REVENUE target too, because that is the one a rep can actually be shown: a
+    // role built to hide costs is not shown the store's profit, so a rep whose only
+    // target were in profit would open the screen on nothing.
+    await targetRepository.create({
+      metric: "revenue",
+      amount: amount * 4,
+      repId: target.id,
+      status: "active",
+    });
+  }
+
+  // Three delivery trips, so /orders opens on the case this phase exists for: one
+  // fee carrying several products. The middle one is SUBSIDISED — charged 5,000 and
+  // paid 6,500 — because a merchant needs to see that state at least once to learn
+  // that the screen reports it.
+  const catalogue = await productRepository.list();
+  const pick = (name: string) => catalogue.find((p) => p.name.includes(name));
+  const trips: Array<{
+    charged: number;
+    paid: number;
+    day: number;
+    area: string;
+    customer: string;
+    lines: Array<{ name: string; qty: number }>;
+  }> = [
+    {
+      charged: 5_000,
+      paid: 5_000,
+      day: 4,
+      area: "الكرادة",
+      customer: "زبون الكرادة",
+      lines: [{ name: "وشاح", qty: 1 }, { name: "شمعة", qty: 2 }],
+    },
+    {
+      charged: 5_000,
+      paid: 6_500,
+      day: 9,
+      area: "أبو غريب",
+      customer: "زبون أبو غريب",
+      lines: [{ name: "كوب", qty: 1 }],
+    },
+    {
+      charged: 10_000,
+      paid: 6_000,
+      day: 15,
+      area: "الجادرية",
+      customer: "زبون الجادرية",
+      lines: [{ name: "دفتر", qty: 1 }, { name: "طقم", qty: 1 }, { name: "كوب", qty: 2 }],
+    },
+  ];
+
+  const seniorForTrips = reps.find((r) => r.status === "active");
+  for (const [i, trip] of trips.entries()) {
+    const lines = trip.lines
+      .map((l) => ({ product: pick(l.name), qty: l.qty }))
+      .filter((l): l is { product: Product; qty: number } => !!l.product);
+    if (lines.length === 0) continue;
+    const placedAt = new Date(
+      currentMonthStart.getTime() + trip.day * 86_400_000,
+    ).toISOString();
+    const created = await orderRepository.create({
+      code: `ط-${1041 + i}`,
+      currency: CURRENCY,
+      placedAt,
+      periodId: activePeriod?.id,
+      repId: seniorForTrips?.id,
+      deliveryCharged: trip.charged,
+      deliveryPaid: trip.paid,
+      deliveryAllocation: "byValue",
+      customerName: trip.customer,
+      customerArea: trip.area,
+    });
+    for (const line of lines) {
+      await saleRepository.create({
+        productId: line.product.id,
+        quantity: line.qty,
+        unitPrice: line.product.sellingPrice,
+        currency: CURRENCY,
+        soldAt: placedAt,
+        periodId: activePeriod?.id,
+        repId: seniorForTrips?.id,
+        orderId: created.id,
+      });
+    }
   }
 
   // One round partial payment per rep. The remainder carries forward, so the

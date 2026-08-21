@@ -59,6 +59,32 @@ export type {
 } from "./entities/settlement";
 
 export type {
+  Order,
+  NewOrder,
+  OrderLineInput,
+  DeliveryAllocation,
+  DeliveryShare,
+} from "./entities/order";
+export {
+  DELIVERY_ALLOCATIONS,
+  DELIVERY_ALLOCATION_LABELS,
+  deliveryMargin,
+  defaultAllocation,
+} from "./entities/order";
+
+export {
+  allocateDelivery,
+  calculateOrder,
+  costsByProduct,
+  splitDeliveryMargin,
+} from "./services/order-calculator";
+export type {
+  OrderLineResult,
+  OrderResult,
+  DeliverySplitResult,
+} from "./services/order-calculator";
+
+export type {
   Target,
   NewTarget,
   TargetMetric,
@@ -66,6 +92,26 @@ export type {
   TargetScope,
 } from "./entities/target";
 export { targetScope, targetMonthKey, TARGET_SCOPE_RANK } from "./entities/target";
+
+export type {
+  Role,
+  NewRole,
+  RoleStatus,
+  Capability,
+  AccessSession,
+  PinRecord,
+} from "./entities/role";
+export {
+  CAPABILITIES,
+  CAPABILITY_LABELS,
+  CAPABILITY_NOTES,
+  OWNER_ROLE_ID,
+  ownerRole,
+  isOwnerRole,
+} from "./entities/role";
+
+export { AccessPolicy } from "./services/access-policy";
+export type { ResolvedAccess } from "./services/access-policy";
 
 export { TargetCalculator } from "./services/target-calculator";
 export type { TargetQuery, TargetResolution, TargetProgress } from "./services/target-calculator";
@@ -97,6 +143,9 @@ export type {
   CommissionAssignmentRepository,
   SettlementRepository,
   TargetRepository,
+  RoleRepository,
+  AccessStore,
+  OrderRepository,
 } from "./ports/repositories";
 export type {
   Clock,

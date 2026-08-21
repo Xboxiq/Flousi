@@ -113,10 +113,29 @@ export function computeTargets(input: {
   asOf: string;
   /** Which metric the screen is reading. */
   metric?: TargetMetric;
+  /**
+   * Restricts the view to one rep: their own row, measured against their own sales,
+   * and NO account row — the store's target is not theirs to read (gate P3/G3).
+   */
+  scope?: { repId: string } | "none";
 }): TargetsView {
-  const { targets, sales, products, reps, month, asOf } = input;
+  const { targets, products, month, asOf, scope } = input;
   const metric = input.metric ?? "netProfit";
   const list = targets.slice();
+  // Filtered at the source: a scoped session's account figure must not be computed
+  // from sales it may not read, because that figure is printed on the screen.
+  const sales =
+    scope === undefined
+      ? input.sales
+      : scope === "none"
+        ? []
+        : input.sales.filter((sale) => sale.repId === scope.repId);
+  const reps =
+    scope === undefined || scope === "none"
+      ? scope === "none"
+        ? []
+        : input.reps
+      : input.reps.filter((r) => r.id === scope.repId);
   const actuals = collectActuals(sales, products, month);
 
   const row = (
@@ -173,12 +192,14 @@ export function computeTargets(input: {
       }),
     );
 
+  // A scoped session gets no product rows: a product's target is the store's number,
+  // and it is not narrowed by who sold it.
   const targetedProductIds = new Set(
     list
       .filter((t) => t.status === "active" && targetScope(t) === "product" && t.productId)
       .map((t) => t.productId as string),
   );
-  const productRows = products
+  const productRows = (scope === undefined ? products : [])
     .filter((p) => targetedProductIds.has(p.id))
     .map((p) =>
       row({

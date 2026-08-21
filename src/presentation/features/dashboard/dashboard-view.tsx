@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   Coins,
@@ -17,7 +18,17 @@ import { computeDashboard } from "@/application/analytics";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import { QuickActions } from "./quick-actions";
 import { SaleRows } from "./sale-rows";
-import { ProfitAreaChart } from "@/presentation/components/charts/profit-area-chart";
+/**
+ * Recharts is 380 KB of the dashboard's 1,308 KB of JS, and this chart sits below
+ * the fold behind the hero, the KPI pair and the distribution bar
+ * (vercel-react-best-practices: `bundle-dynamic-imports`, CRITICAL). It is loaded
+ * when the page has already painted, behind a skeleton the exact height of the
+ * chart so nothing shifts when it arrives.
+ */
+const ProfitAreaChart = dynamic(
+  () => import("@/presentation/components/charts/profit-area-chart").then((m) => m.ProfitAreaChart),
+  { ssr: false, loading: () => <Skeleton className="h-[260px] rounded-[var(--radius-lg)]" /> },
+);
 import {
   Button,
   Card,

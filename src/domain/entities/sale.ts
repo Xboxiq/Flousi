@@ -15,6 +15,16 @@ export interface Sale {
   soldAt: string;
   /** The accounting period this sale belongs to (assigned at record time). */
   periodId?: string;
+  /**
+   * The delivery order this sale is a line of.
+   *
+   * Absent = a sale of its own, which is every sale recorded before P4 and every
+   * single-product sale after it. The `Order` row holds what belongs to the TRIP (the
+   * delivery fee on both sides, the customer, the allocation method); the sale keeps
+   * holding what belongs to the goods. Nothing about an existing sale is rewritten by
+   * this — additively adding one optional field is the whole change (gate P4/G0).
+   */
+  orderId?: string;
   notes?: string;
 
   /** The rep credited with this sale. Absent = the owner sold it directly. */

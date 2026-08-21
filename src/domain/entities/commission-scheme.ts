@@ -35,6 +35,27 @@ export interface CommissionSchemeParams {
    * rep can verify on a pocket calculator.
    */
   roundingBeneficiary: RoundingBeneficiary;
+  /**
+   * Does the ORDER's delivery margin (charged − paid) enter the rep's basis?
+   *
+   * The client chose «خيار لكل طريقة عمولة»: this is per scheme, not per account, so
+   * one rep can share the delivery outcome and another not.
+   *
+   * Default **false**, the conservative reading: a rep sells goods, and the trip's
+   * economics are the merchant's. Set true and the rep shares the upside when the
+   * fee beats the courier — and, under a `shared` loss policy, the downside when it
+   * does not.
+   */
+  deliveryProfitShared?: boolean;
+  /**
+   * Is the rep's basis taken before or after an order discount?
+   *
+   * Stored from P4 and consumed in P6, deliberately: this value is FROZEN into every
+   * snapshot, and adding a field to a frozen shape after thousands of splits exist is
+   * the expensive kind of change. Default `afterDiscount` — the rep shares the cost
+   * of the discount he granted, which is what stops a rep discounting freely.
+   */
+  discountTreatment?: "afterDiscount" | "beforeDiscount";
 }
 
 /**
@@ -67,6 +88,8 @@ export function defaultCommissionSchemeParams(): CommissionSchemeParams {
     profitBasis: DEFAULT_PROFIT_BASIS,
     lossPolicy: DEFAULT_LOSS_POLICY,
     roundingBeneficiary: DEFAULT_ROUNDING_BENEFICIARY,
+    deliveryProfitShared: false,
+    discountTreatment: "afterDiscount",
   };
 }
 

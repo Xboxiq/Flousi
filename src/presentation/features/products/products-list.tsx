@@ -7,6 +7,7 @@ import { Plus, MagnifyingGlass, Package } from "@phosphor-icons/react";
 import { ProfitCalculator } from "@/domain";
 import { computeProductTrends } from "@/application/analytics";
 import { useDataStore } from "@/presentation/stores/data-store";
+import { useAccess } from "@/presentation/hooks/use-access";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
   Badge,
@@ -32,6 +33,8 @@ export function ProductsList() {
   const products = useDataStore((s) => s.products);
   const sales = useDataStore((s) => s.sales);
   const settings = useDataStore((s) => s.settings);
+  const access = useAccess();
+  const canSeeCosts = access.can("viewCosts");
 
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
@@ -53,16 +56,23 @@ export function ProductsList() {
   const money = (n: number, c: string) =>
     formatCurrency(n, { currency: c, locale: settings.locale });
 
-  const actions = (
+  // A button that leads straight to a refusal is worse than no button.
+  const actions = access.can("manageProducts") ? (
     <Button asChild leadingIcon={<Plus size={16} weight="bold" />}>
       <Link href="/products/new">إضافة منتج</Link>
     </Button>
-  );
+  ) : undefined;
+
+  /* The description must not promise a figure this session will not be shown: the
+     catalogue reads as a price list to a rep, and as a profit sheet to the merchant. */
+  const description = canSeeCosts
+    ? "كل منتج وصافي ربحه الحقيقي."
+    : "كل منتج وسعر بيعه.";
 
   if (!loaded) {
     return (
       <>
-        <PageHeader title="المنتجات" description="كل منتج وصافي ربحه الحقيقي." actions={actions} />
+        <PageHeader title="المنتجات" description={description} actions={actions} />
         <Skeleton className="h-96 w-full" />
       </>
     );
@@ -70,7 +80,7 @@ export function ProductsList() {
 
   return (
     <>
-      <PageHeader title="المنتجات" description="كل منتج وصافي ربحه الحقيقي." actions={actions} />
+      <PageHeader title="المنتجات" description={description} actions={actions} />
 
       {products.length === 0 ? (
         <EmptyState
@@ -117,10 +127,13 @@ export function ProductsList() {
               <TR>
                 <TH>المنتج</TH>
                 <TH>الفئة</TH>
-                <TH className="hidden md:table-cell">آخر 6 أشهر</TH>
+                {canSeeCosts && <TH className="hidden md:table-cell">آخر 6 أشهر</TH>}
                 <TH className="text-start">السعر</TH>
-                <TH className="text-start">صافي الربح / وحدة</TH>
-                <TH className="text-start">الهامش</TH>
+                {/* Profit and margin ARE the cost: revenue minus profit is what the
+                    merchant paid, so printing them to a session without `viewCosts`
+                    hands over the purchase price by subtraction (gate P3/G4). */}
+                {canSeeCosts && <TH className="text-start">صافي الربح / وحدة</TH>}
+                {canSeeCosts && <TH className="text-start">الهامش</TH>}
               </TR>
             </THead>
             <TBody>
@@ -137,31 +150,37 @@ export function ProductsList() {
                     )}
                   </TD>
                   <TD className="text-muted">{product.category ?? "—"}</TD>
-                  <TD className="hidden md:table-cell">
-                    <Sparkline
-                      values={trends.get(product.id) ?? []}
-                      label={`اتجاه ربح ${product.name} في آخر ستة أشهر`}
-                    />
-                  </TD>
+                  {canSeeCosts && (
+                    <TD className="hidden md:table-cell">
+                      <Sparkline
+                        values={trends.get(product.id) ?? []}
+                        label={`اتجاه ربح ${product.name} في آخر ستة أشهر`}
+                      />
+                    </TD>
+                  )}
                   <TD className="text-start font-mono tabular-nums" dir="ltr">
                     {money(product.sellingPrice, product.currency)}
                   </TD>
-                  <TD
-                    className={`text-start font-mono tabular-nums ${result.netProfit >= 0 ? "text-success" : "text-danger"}`}
-                    dir="ltr"
-                  >
-                    {money(result.netProfit, product.currency)}
-                  </TD>
-                  <TD className="text-start">
-                    <Badge tone={result.margin >= 0 ? "success" : "danger"}>
-                      {formatPercent(result.margin, { locale: settings.locale })}
-                    </Badge>
-                  </TD>
+                  {canSeeCosts && (
+                    <TD
+                      className={`text-start font-mono tabular-nums ${result.netProfit >= 0 ? "text-success" : "text-danger"}`}
+                      dir="ltr"
+                    >
+                      {money(result.netProfit, product.currency)}
+                    </TD>
+                  )}
+                  {canSeeCosts && (
+                    <TD className="text-start">
+                      <Badge tone={result.margin >= 0 ? "success" : "danger"}>
+                        {formatPercent(result.margin, { locale: settings.locale })}
+                      </Badge>
+                    </TD>
+                  )}
                 </TR>
               ))}
               {rows.length === 0 && (
                 <TR>
-                  <TD className="py-10 text-center text-muted" colSpan={6}>
+                  <TD className="py-10 text-center text-muted" colSpan={canSeeCosts ? 6 : 3}>
                     لا توجد منتجات مطابقة لبحثك.
                   </TD>
                 </TR>

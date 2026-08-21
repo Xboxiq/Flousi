@@ -8,6 +8,8 @@ import type {
   CommissionAssignment,
   Settlement,
   Target,
+  Role,
+  Order,
 } from "@/domain";
 import { storage, STORAGE_KEYS } from "./storage";
 import { DEFAULT_SETTINGS } from "./repositories";
@@ -30,6 +32,9 @@ export interface BackupFile {
   commissionAssignments?: CommissionAssignment[];
   settlements?: Settlement[];
   targets?: Target[];
+  /** Roles travel with a backup; the session and the PIN stay on the device. */
+  roles?: Role[];
+  orders?: Order[];
 }
 
 export function exportAll(): BackupFile {
@@ -49,6 +54,8 @@ export function exportAll(): BackupFile {
     ),
     settlements: storage.get<Settlement[]>(STORAGE_KEYS.settlements, []),
     targets: storage.get<Target[]>(STORAGE_KEYS.targets, []),
+    roles: storage.get<Role[]>(STORAGE_KEYS.roles, []),
+    orders: storage.get<Order[]>(STORAGE_KEYS.orders, []),
   };
 }
 
@@ -78,6 +85,11 @@ export function importAll(raw: unknown): void {
   storage.set(STORAGE_KEYS.commissionAssignments, data.commissionAssignments ?? []);
   storage.set(STORAGE_KEYS.settlements, data.settlements ?? []);
   storage.set(STORAGE_KEYS.targets, data.targets ?? []);
+  storage.set(STORAGE_KEYS.roles, data.roles ?? []);
+  storage.set(STORAGE_KEYS.orders, data.orders ?? []);
+  // A restored backup must never carry someone else's session into this device: the
+  // store reopens as the owner, which is the only session that cannot lock anyone out.
+  storage.remove(STORAGE_KEYS.accessSession);
   if (data.settings) storage.set(STORAGE_KEYS.settings, data.settings);
 }
 
@@ -92,4 +104,8 @@ export function clearAll(): void {
   storage.remove(STORAGE_KEYS.commissionAssignments);
   storage.remove(STORAGE_KEYS.settlements);
   storage.remove(STORAGE_KEYS.targets);
+  storage.remove(STORAGE_KEYS.roles);
+  storage.remove(STORAGE_KEYS.orders);
+  storage.remove(STORAGE_KEYS.accessSession);
+  storage.remove(STORAGE_KEYS.accessPin);
 }

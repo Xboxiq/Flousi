@@ -1,16 +1,54 @@
 import type { Target } from "@/domain";
 import { settingsRepository, targetRepository } from "./persistence/local-storage/repositories";
+import { storage, STORAGE_KEYS } from "./persistence/local-storage/storage";
 
 /**
- * One-time, idempotent data lifts.
+ * The generation this build expects the store to be at.
  *
- * Run on every boot, before the store loads. Each one must be safe to run on an
- * already-migrated store, on a fresh store, and on a store restored from an old
- * backup — those are the same code path here, not three.
+ * Bump it when a migration is added, and add the migration to `MIGRATIONS` at the
+ * matching index.
+ */
+const SCHEMA_VERSION = 1;
+
+/**
+ * The lifts, in order. Index 0 brings a pre-P2 store to generation 1.
+ *
+ * Every one must still be SAFE to run twice: a stamp can be lost with a partial
+ * write, and a restored backup arrives with whatever stamp it was exported at. The
+ * stamp saves the work, it does not license carelessness.
+ */
+const MIGRATIONS: Array<() => Promise<void>> = [liftLegacyProfitTarget];
+
+/**
+ * Brings the store up to `SCHEMA_VERSION`, running only the lifts it has not had.
+ *
+ * Runs on boot, before anything reads. Previously each lift re-inspected the data on
+ * every single boot to decide whether it had already happened; the stamp means a
+ * migrated store does one integer read and stops.
  */
 export async function runMigrations(): Promise<void> {
-  await liftLegacyProfitTarget();
+  const at = readVersion();
+  if (at >= SCHEMA_VERSION) return;
+
+  for (let i = at; i < MIGRATIONS.length; i += 1) {
+    await MIGRATIONS[i]();
+  }
+  storage.set(STORAGE_KEYS.schemaVersion, SCHEMA_VERSION);
 }
+
+/**
+ * A store with data but no stamp is a PRE-STAMP store and must start at 0 so its
+ * lifts run. A genuinely empty store is already current — there is nothing to lift —
+ * but it is stamped rather than left blank so the next boot does no work either.
+ */
+function readVersion(): number {
+  const raw = storage.get<number | null>(STORAGE_KEYS.schemaVersion, null);
+  if (typeof raw === "number" && Number.isFinite(raw)) return raw;
+  return 0;
+}
+
+/** Exported for the test: the generation this build expects. */
+export const CURRENT_SCHEMA_VERSION = SCHEMA_VERSION;
 
 /**
  * `AppSettings.monthlyProfitTarget` was the only place a target could live: one

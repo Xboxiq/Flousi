@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CaretLeft } from "@phosphor-icons/react";
 import { motion } from "motion/react";
-import { NAV_GROUPS } from "./nav-config";
+import { visibleNavGroups } from "./nav-config";
 import { Logo } from "./logo";
 import { useUiStore } from "@/presentation/stores/ui-store";
+import { useAccess } from "@/presentation/hooks/use-access";
 import { cn } from "@/presentation/lib/cn";
 
 export function SidebarNav({
@@ -17,10 +18,14 @@ export function SidebarNav({
   idPrefix?: string;
 }) {
   const pathname = usePathname();
+  const access = useAccess();
+  // Filtered from the same capability the screen itself checks, so an entry can
+  // never be visible while its screen refuses (gate P3/G6).
+  const groups = visibleNavGroups(access);
 
   return (
-    <nav className="flex flex-1 flex-col gap-6 overflow-y-auto px-3 py-4">
-      {NAV_GROUPS.map((group) => (
+    <nav className="flex flex-1 flex-col gap-6 overflow-y-auto overscroll-contain px-3 py-4">
+      {groups.map((group) => (
         <div key={group.label} className="flex flex-col gap-1">
           {!collapsed && (
             <span className="px-3 pb-1 text-xs font-medium text-subtle">

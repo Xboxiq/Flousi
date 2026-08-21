@@ -40,4 +40,22 @@ export const STORAGE_KEYS = {
   commissionAssignments: "commission-assignments",
   settlements: "settlements",
   targets: "targets",
+  orders: "orders",
+  roles: "roles",
+  accessSession: "access-session",
+  accessPin: "access-pin",
+  /**
+   * The schema generation this store has been brought up to.
+   *
+   * Migrations used to be driven by inspecting the data ("does this look already
+   * lifted?"), which meant every lift re-read and re-tested the store on every
+   * single boot, forever. A stamp makes each one run once
+   * (vercel-react-best-practices: `client-localstorage-schema`).
+   *
+   * The KEYS are deliberately NOT versioned: renaming `flousi:products` to
+   * `flousi:products:v3` would orphan every store already in the field, and the
+   * rule's purpose — evolving the schema safely — is served by this stamp plus the
+   * migration list, without a rename that has to be right on the first try.
+   */
+  schemaVersion: "schema-version",
 } as const;

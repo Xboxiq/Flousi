@@ -341,3 +341,162 @@ describe("computeLedger — «شنو صار»", () => {
     expect(sales.map((s) => s.id)).toEqual(["a", "b"]);
   });
 });
+
+describe("scoping to one rep (gate P3/G3)", () => {
+  const products = [product()];
+  const reps = [rep(), rep({ id: "R2", name: "علي" })];
+  const sales = [
+    frozen(sale({ id: "mine", repId: "R1" })),
+    frozen(sale({ id: "theirs", repId: "R2" }), product(), scheme(), rep({ id: "R2", name: "علي" })),
+    sale({ id: "houseSale" }), // no rep: the store's own
+  ];
+  const settlements = [
+    settlement({ id: "toMe", repId: "R1", amountMinor: 1_000 }),
+    settlement({ id: "toThem", repId: "R2", amountMinor: 9_000 }),
+  ];
+  const periods = [period()];
+
+  it("the ledger returns only that rep's sales and payments", () => {
+    const v = computeLedger({
+      sales,
+      settlements,
+      periods,
+      products,
+      reps,
+      currency: IQD,
+      scope: { repId: "R1" },
+    });
+    expect(v.rows.map((r) => r.id).sort()).toEqual(["sale:mine", "settlement:toMe"]);
+    // and the COUNTS follow the scope, because they are printed on the screen
+    expect(v.counts).toEqual({ sale: 1, settlement: 1, periodClose: 0 });
+    expect(v.total).toBe(2);
+  });
+
+  it("a period close never appears in a scoped log — it is the store's event", () => {
+    const v = computeLedger({
+      sales: [],
+      settlements: [],
+      periods,
+      products,
+      reps,
+      currency: IQD,
+      scope: { repId: "R1" },
+    });
+    expect(v.rows).toHaveLength(0);
+    expect(v.counts.periodClose).toBe(0);
+    // unscoped, the same period IS reported
+    expect(
+      computeLedger({ sales: [], settlements: [], periods, products, reps, currency: IQD }).counts
+        .periodClose,
+    ).toBe(1);
+  });
+
+  it('scope "none" yields nothing at all rather than everything', () => {
+    const v = computeLedger({
+      sales,
+      settlements,
+      periods,
+      products,
+      reps,
+      currency: IQD,
+      scope: "none",
+    });
+    expect(v.rows).toHaveLength(0);
+    expect(v.total).toBe(0);
+    expect(v.counts).toEqual({ sale: 0, settlement: 0, periodClose: 0 });
+  });
+
+  it("an unscoped read still sees everything, including the house sale", () => {
+    const v = computeLedger({ sales, settlements, periods, products, reps, currency: IQD });
+    expect(v.counts).toEqual({ sale: 3, settlement: 2, periodClose: 1 });
+  });
+
+  it("settlement TOTALS are the rep's own, not the store's with rows hidden", () => {
+    const mine = computeSettlements({ settlements, reps, sales, periods, scope: { repId: "R1" } });
+    expect(mine.rows.map((r) => r.settlement.id)).toEqual(["toMe"]);
+    expect(mine.count).toBe(1);
+    const line = mine.totals.find((t) => t.currency === IQD);
+    // R1 earned 20 (half of 40 profit) and was paid 10
+    expect(line?.earned).toBe(20);
+    expect(line?.paid).toBe(10);
+    expect(line?.outstanding).toBe(10);
+
+    // the unscoped view is visibly larger — proof the scope is doing the filtering
+    const all = computeSettlements({ settlements, reps, sales, periods });
+    expect(all.count).toBe(2);
+    expect(all.totals.find((t) => t.currency === IQD)?.earned).toBe(40);
+  });
+
+  it('settlements under scope "none" report no payments and no earnings', () => {
+    const v = computeSettlements({ settlements, reps, sales, periods, scope: "none" });
+    expect(v.rows).toHaveLength(0);
+    expect(v.totals).toEqual([]);
+  });
+});
+
+describe("withholding costs from the ledger (gate P3/G4)", () => {
+  const products = [product()];
+  const reps = [rep()];
+  const withSnapshot = [frozen(sale({ id: "s1", repId: "R1" }))];
+
+  it("by default a sale carries its NET PROFIT", () => {
+    const v = computeLedger({
+      sales: withSnapshot,
+      settlements: [],
+      periods: [],
+      products,
+      reps,
+      currency: IQD,
+    });
+    expect(v.rows[0].secondary).toBe(40);
+    expect(v.rows[0].secondaryKind).toBe("profit");
+  });
+
+  it("costs:false replaces the profit with the rep's OWN frozen share", () => {
+    const v = computeLedger({
+      sales: withSnapshot,
+      settlements: [],
+      periods: [],
+      products,
+      reps,
+      currency: IQD,
+      costs: false,
+    });
+    // 100 revenue − 60 cost = 40 profit; the rep's half is 20
+    expect(v.rows[0].amount).toBe(100);
+    expect(v.rows[0].secondary).toBe(20);
+    expect(v.rows[0].secondaryKind).toBe("repShare");
+    // and the profit is nowhere on the row, so revenue − secondary cannot recover cost
+    expect(v.rows[0].secondary).not.toBe(40);
+  });
+
+  it("costs:false on a sale with NO snapshot attaches nothing at all", () => {
+    const v = computeLedger({
+      sales: [sale({ id: "bare" })],
+      settlements: [],
+      periods: [],
+      products,
+      reps,
+      currency: IQD,
+      costs: false,
+    });
+    expect(v.rows[0].secondary).toBeUndefined();
+    expect(v.rows[0].secondaryKind).toBeUndefined();
+    // revenue alone reveals nothing about what it cost
+    expect(v.rows[0].amount).toBe(100);
+  });
+
+  it("a settlement is unaffected: a payment is not a cost", () => {
+    const v = computeLedger({
+      sales: [],
+      settlements: [settlement({ amountMinor: 5_000 })],
+      periods: [],
+      products,
+      reps,
+      currency: IQD,
+      costs: false,
+    });
+    expect(v.rows[0].amount).toBe(50);
+    expect(v.rows[0].secondary).toBeUndefined();
+  });
+});

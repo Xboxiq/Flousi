@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { House, Package, Calculator, ChartBar, Plus } from "@phosphor-icons/react";
+import type { Capability } from "@/domain";
+import { useAccess } from "@/presentation/hooks/use-access";
 import { cn } from "@/presentation/lib/cn";
 
-const ITEMS = [
-  { label: "الرئيسية", href: "/dashboard", icon: House },
-  { label: "المنتجات", href: "/products", icon: Package },
-  { label: "الحاسبة", href: "/calculator", icon: Calculator },
-  { label: "التقارير", href: "/reports", icon: ChartBar },
-] as const;
+const ITEMS: { label: string; href: string; icon: typeof House; needs?: Capability }[] = [
+  { label: "الرئيسية", href: "/dashboard", icon: House, needs: "viewCosts" },
+  { label: "المنتجات", href: "/products", icon: Package, needs: "viewProducts" },
+  { label: "الحاسبة", href: "/calculator", icon: Calculator, needs: "viewCosts" },
+  { label: "التقارير", href: "/reports", icon: ChartBar, needs: "viewReports" },
+];
 
 /**
  * A floating dock for phones (from the client's feedback: the raised pill nav).
@@ -33,6 +35,8 @@ const ITEMS = [
  */
 export function MobileDock() {
   const pathname = usePathname();
+  const access = useAccess();
+  const items = ITEMS.filter((item) => !item.needs || access.can(item.needs));
 
   return (
     <nav
@@ -41,7 +45,7 @@ export function MobileDock() {
     >
       <div className="pointer-events-auto flex items-center gap-2">
         <div className="dock flex items-center gap-1 p-1.5">
-          {ITEMS.map((item) => {
+          {items.map((item) => {
             const active = pathname.startsWith(item.href);
             const Icon = item.icon;
             return (
