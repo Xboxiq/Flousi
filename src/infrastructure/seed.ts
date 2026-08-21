@@ -5,6 +5,7 @@ import type {
   AccountingPeriod,
   NewProduct,
   NewRep,
+  NewRole,
   NewCommissionScheme,
 } from "@/domain";
 import { CommissionCalculator, defaultCommissionSchemeParams, makeCostBreakdown } from "@/domain";
@@ -18,6 +19,7 @@ import {
   commissionAssignmentRepository,
   settlementRepository,
   targetRepository,
+  roleRepository,
   DEFAULT_SETTINGS,
 } from "./persistence/local-storage/repositories";
 import { uuidGenerator } from "./system";
@@ -338,6 +340,45 @@ async function seedTeamIfEmpty(products: Product[]): Promise<string | undefined>
  * already exist. Always ensures settings exist, and always ensures the
  * commission team exists.
  */
+
+/**
+ * Two starting points, neither of them built in.
+ *
+ * A seeded role a merchant cannot change is a decision taken away from him (gate
+ * P3/G9), so these are ordinary editable rows. Neither holds `manageAccess`: a role
+ * that could switch the session is not a limited role.
+ */
+const SEED_ROLES: NewRole[] = [
+  {
+    name: "مندوب",
+    description: "يرى مبيعاته وحصّته فقط. لا يرى تكاليف الشراء ولا أرقام غيره.",
+    capabilities: ["recordSales", "viewTargets"],
+    status: "active",
+  },
+  {
+    name: "محاسب",
+    description: "يقرأ كل شيء ويصدّره، ولا يعدّل ولا يغلق شهراً ولا يسوّي حساباً.",
+    capabilities: [
+      "viewCosts",
+      "viewAllSales",
+      "viewTeam",
+      "viewReports",
+      "viewTargets",
+      "viewLedger",
+      "exportData",
+    ],
+    status: "active",
+  },
+];
+
+async function seedRolesIfEmpty(): Promise<void> {
+  // Only the owner exists on a fresh store, and `list()` always includes it, so the
+  // emptiness test is "nothing but the owner".
+  const existing = (await roleRepository.list()).filter((r) => !r.builtIn);
+  if (existing.length > 0) return;
+  for (const role of SEED_ROLES) await roleRepository.create(role);
+}
+
 export async function seedIfEmpty(): Promise<void> {
   const existing = await productRepository.list();
   const settings = await settingsRepository.get().catch(() => DEFAULT_SETTINGS);
@@ -370,6 +411,7 @@ export async function seedIfEmpty(): Promise<void> {
   // is the honest answer there, and it already points at «إضافة مندوب».
   if (existing.length > 0) return;
 
+  await seedRolesIfEmpty();
   const defaultSchemeId = await seedTeamIfEmpty(created);
   await settingsRepository.save({
     ...settings,

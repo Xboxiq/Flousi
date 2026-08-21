@@ -134,7 +134,12 @@ export function Dialog({
                 )}
               </div>
             )}
-            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
+            {/* `overscroll-contain`: reaching the end of a sheet's own scroll must not start
+                scrolling the page behind it, which on a phone reads as the dialog
+                "slipping" (web-interface-guidelines: Touch & Interaction). */}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4">
+              {children}
+            </div>
             {footer && (
               <div className="flex shrink-0 items-center justify-end gap-2 border-t border-border px-5 py-3">
                 {footer}

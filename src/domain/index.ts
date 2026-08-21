@@ -67,6 +67,26 @@ export type {
 } from "./entities/target";
 export { targetScope, targetMonthKey, TARGET_SCOPE_RANK } from "./entities/target";
 
+export type {
+  Role,
+  NewRole,
+  RoleStatus,
+  Capability,
+  AccessSession,
+  PinRecord,
+} from "./entities/role";
+export {
+  CAPABILITIES,
+  CAPABILITY_LABELS,
+  CAPABILITY_NOTES,
+  OWNER_ROLE_ID,
+  ownerRole,
+  isOwnerRole,
+} from "./entities/role";
+
+export { AccessPolicy } from "./services/access-policy";
+export type { ResolvedAccess } from "./services/access-policy";
+
 export { TargetCalculator } from "./services/target-calculator";
 export type { TargetQuery, TargetResolution, TargetProgress } from "./services/target-calculator";
 
@@ -97,6 +117,8 @@ export type {
   CommissionAssignmentRepository,
   SettlementRepository,
   TargetRepository,
+  RoleRepository,
+  AccessStore,
 } from "./ports/repositories";
 export type {
   Clock,

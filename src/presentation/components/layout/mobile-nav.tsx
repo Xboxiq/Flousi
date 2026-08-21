@@ -50,6 +50,11 @@ export function MobileNav() {
                 <X size={18} />
               </button>
             </div>
+            {/* Not a control: a delegating wrapper that closes the drawer when any
+                LINK inside it is activated. The links are the interactive elements and
+                they keep their own keyboard behaviour — Enter on a link fires click, so
+                this closes for keyboard users too. Deliberately not a <button>, which
+                may not contain links. */}
             <div onClick={() => setMobileNavOpen(false)} className="flex flex-1 flex-col">
               <SidebarNav idPrefix="mobile" />
             </div>

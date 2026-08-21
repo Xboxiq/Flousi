@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { runMigrations } from "./migrations";
+import { runMigrations, CURRENT_SCHEMA_VERSION } from "./migrations";
 import {
   settingsRepository,
   targetRepository,
   DEFAULT_SETTINGS,
 } from "./persistence/local-storage/repositories";
+import { storage, STORAGE_KEYS } from "./persistence/local-storage/storage";
 
 describe("runMigrations — lift of the legacy profit target (gate P2/G1)", () => {
   beforeEach(() => {
@@ -95,5 +96,68 @@ describe("runMigrations — lift of the legacy profit target (gate P2/G1)", () =
     const targets = await targetRepository.list();
     expect(targets).toHaveLength(2);
     expect(targets.some((t) => t.metric === "netProfit" && t.amount === 2_500_000)).toBe(true);
+  });
+});
+
+describe("schema version stamp (vercel: client-localstorage-schema)", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  it("a store with no stamp is treated as pre-stamp, so its lifts DO run", async () => {
+    await settingsRepository.save({ ...DEFAULT_SETTINGS, monthlyProfitTarget: 700 });
+    expect(storage.get<number | null>(STORAGE_KEYS.schemaVersion, null)).toBeNull();
+    await runMigrations();
+    expect(await targetRepository.list()).toHaveLength(1);
+    expect(storage.get<number | null>(STORAGE_KEYS.schemaVersion, null)).toBe(
+      CURRENT_SCHEMA_VERSION,
+    );
+  });
+
+  it("an already-stamped store does no work, even with a legacy value sitting there", async () => {
+    storage.set(STORAGE_KEYS.schemaVersion, CURRENT_SCHEMA_VERSION);
+    // A value the lift WOULD have taken, left behind deliberately: the stamp says
+    // this store has been through that lift already, so it must be left alone.
+    await settingsRepository.save({ ...DEFAULT_SETTINGS, monthlyProfitTarget: 700 });
+    await runMigrations();
+    expect(await targetRepository.list()).toHaveLength(0);
+    expect((await settingsRepository.get()).monthlyProfitTarget).toBe(700);
+  });
+
+  it("a fresh empty store is stamped, so the next boot does no work either", async () => {
+    await runMigrations();
+    expect(storage.get<number | null>(STORAGE_KEYS.schemaVersion, null)).toBe(
+      CURRENT_SCHEMA_VERSION,
+    );
+    expect(await targetRepository.list()).toHaveLength(0);
+  });
+
+  it("a junk stamp is treated as pre-stamp rather than trusted", async () => {
+    storage.set(STORAGE_KEYS.schemaVersion, "v2" as unknown as number);
+    await settingsRepository.save({ ...DEFAULT_SETTINGS, monthlyProfitTarget: 700 });
+    await runMigrations();
+    expect(await targetRepository.list()).toHaveLength(1);
+    expect(storage.get<number | null>(STORAGE_KEYS.schemaVersion, null)).toBe(
+      CURRENT_SCHEMA_VERSION,
+    );
+  });
+
+  it("a stamp from a FUTURE build is left alone — a newer app already migrated it", async () => {
+    storage.set(STORAGE_KEYS.schemaVersion, CURRENT_SCHEMA_VERSION + 5);
+    await settingsRepository.save({ ...DEFAULT_SETTINGS, monthlyProfitTarget: 700 });
+    await runMigrations();
+    expect(await targetRepository.list()).toHaveLength(0);
+    expect(storage.get<number | null>(STORAGE_KEYS.schemaVersion, null)).toBe(
+      CURRENT_SCHEMA_VERSION + 5,
+    );
+  });
+
+  it("the lifts stay individually idempotent — the stamp saves work, it is not a licence", async () => {
+    await settingsRepository.save({ ...DEFAULT_SETTINGS, monthlyProfitTarget: 700 });
+    await runMigrations();
+    // simulate a lost stamp (a partial write, a restored backup)
+    storage.remove(STORAGE_KEYS.schemaVersion);
+    await runMigrations();
+    expect(await targetRepository.list()).toHaveLength(1);
   });
 });

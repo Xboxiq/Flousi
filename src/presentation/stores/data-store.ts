@@ -18,7 +18,11 @@ import type {
   NewSettlement,
   Target,
   NewTarget,
+  Role,
+  NewRole,
+  AccessSession,
 } from "@/domain";
+import { AccessPolicy } from "@/domain";
 import {
   productRepository,
   saleRepository,
@@ -29,10 +33,13 @@ import {
   commissionAssignmentRepository,
   settlementRepository,
   targetRepository,
+  roleRepository,
+  accessStore,
   DEFAULT_SETTINGS,
 } from "@/infrastructure/persistence/local-storage/repositories";
 import { seedIfEmpty } from "@/infrastructure/seed";
 import { runMigrations } from "@/infrastructure/migrations";
+import { hashPin, verifyPin } from "@/infrastructure/access/pin";
 
 interface DataState {
   loaded: boolean;
@@ -45,6 +52,11 @@ interface DataState {
   commissionAssignments: CommissionAssignment[];
   settlements: Settlement[];
   targets: Target[];
+  roles: Role[];
+  /** The view mode this device is running in. Null = the owner. */
+  session: AccessSession | null;
+  /** True when a PIN is set, so the UI can say so without holding the record. */
+  pinSet: boolean;
 
   init: () => Promise<void>;
   reload: () => Promise<void>;
@@ -76,6 +88,18 @@ interface DataState {
   /** Deleting a scheme is an archive: it stays readable for the history it froze. */
   archiveCommissionScheme: (id: string) => Promise<CommissionScheme>;
 
+  createRole: (input: NewRole) => Promise<Role>;
+  updateRole: (id: string, patch: Partial<NewRole>) => Promise<Role>;
+  deleteRole: (id: string) => Promise<void>;
+  /** Switches the device into a role, optionally as one rep. */
+  switchRole: (roleId: string, repId?: string) => Promise<void>;
+  /**
+   * Returns to the owner. Resolves false when a PIN is set and the one given is
+   * wrong — the caller then keeps the sheet open rather than silently failing.
+   */
+  returnToOwner: (pin?: string) => Promise<boolean>;
+  setPin: (pin: string | null) => Promise<void>;
+
   createTarget: (input: NewTarget) => Promise<Target>;
   updateTarget: (id: string, patch: Partial<NewTarget>) => Promise<Target>;
   deleteTarget: (id: string) => Promise<void>;
@@ -103,6 +127,9 @@ async function loadAll() {
     commissionAssignments,
     settlements,
     targets,
+    roles,
+    session,
+    pin,
   ] = await Promise.all([
     productRepository.list(),
     saleRepository.list(),
@@ -113,6 +140,9 @@ async function loadAll() {
     commissionAssignmentRepository.list(),
     settlementRepository.list(),
     targetRepository.list(),
+    roleRepository.list(),
+    accessStore.getSession(),
+    accessStore.getPin(),
   ]);
   return {
     products,
@@ -124,6 +154,11 @@ async function loadAll() {
     commissionAssignments,
     settlements,
     targets,
+    roles,
+    session,
+    // Only whether one exists reaches the store: the record itself has no business
+    // in a client state object that every component can read.
+    pinSet: pin !== null,
   };
 }
 
@@ -138,6 +173,9 @@ export const useDataStore = create<DataState>((set, get) => ({
   commissionAssignments: [],
   settlements: [],
   targets: [],
+  roles: [],
+  session: null,
+  pinSet: false,
 
   init: async () => {
     if (get().loaded) return;
@@ -228,6 +266,52 @@ export const useDataStore = create<DataState>((set, get) => ({
     const updated = await commissionSchemeRepository.update(id, { status: "archived" });
     set({ commissionSchemes: await commissionSchemeRepository.list() });
     return updated;
+  },
+
+  createRole: async (input) => {
+    const created = await roleRepository.create(input);
+    set({ roles: await roleRepository.list() });
+    return created;
+  },
+  updateRole: async (id, patch) => {
+    const updated = await roleRepository.update(id, patch);
+    set({ roles: await roleRepository.list() });
+    return updated;
+  },
+  deleteRole: async (id) => {
+    await roleRepository.remove(id);
+    // If the device was running AS the deleted role, the session would resolve to a
+    // dangling id. `AccessPolicy.resolve` falls back to the owner, but the stored
+    // record is cleaned up here too so the fallback is never load-bearing.
+    const session = get().session;
+    if (session?.roleId === id) {
+      const owner = AccessPolicy.ownerSession(new Date().toISOString());
+      await accessStore.setSession(owner);
+      set({ session: owner });
+    }
+    set({ roles: await roleRepository.list() });
+  },
+  switchRole: async (roleId, repId) => {
+    const next = AccessPolicy.session(roleId, new Date().toISOString(), repId);
+    await accessStore.setSession(next);
+    set({ session: next });
+  },
+  returnToOwner: async (pin) => {
+    const record = await accessStore.getPin();
+    if (!(await verifyPin(record, pin ?? ""))) return false;
+    const owner = AccessPolicy.ownerSession(new Date().toISOString());
+    await accessStore.setSession(owner);
+    set({ session: owner });
+    return true;
+  },
+  setPin: async (pin) => {
+    if (pin === null || pin === "") {
+      await accessStore.setPin(null);
+      set({ pinSet: false });
+      return;
+    }
+    await accessStore.setPin(await hashPin(pin, new Date().toISOString()));
+    set({ pinSet: true });
   },
 
   createTarget: async (input) => {
