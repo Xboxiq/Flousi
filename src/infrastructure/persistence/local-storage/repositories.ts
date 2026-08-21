@@ -32,6 +32,9 @@ import type {
   AccessSession,
   AccessStore,
   PinRecord,
+  Order,
+  NewOrder,
+  OrderRepository,
 } from "@/domain";
 import { systemClock, uuidGenerator } from "@/infrastructure/system";
 import { isOwnerRole, ownerRole } from "@/domain";
@@ -428,6 +431,48 @@ export class LocalAccessStore implements AccessStore {
   }
 }
 
+export class LocalOrderRepository implements OrderRepository {
+  async list(filter?: { repId?: string; periodId?: string }): Promise<Order[]> {
+    let all = storage.get<Order[]>(STORAGE_KEYS.orders, []);
+    if (filter?.repId) all = all.filter((o) => o.repId === filter.repId);
+    if (filter?.periodId) all = all.filter((o) => o.periodId === filter.periodId);
+    return all;
+  }
+  async getById(id: string): Promise<Order | null> {
+    return (await this.list()).find((o) => o.id === id) ?? null;
+  }
+  async create(order: NewOrder): Promise<Order> {
+    const all = await this.list();
+    const created: Order = {
+      ...order,
+      id: uuidGenerator.generate(),
+      createdAt: nowIso(),
+      updatedAt: nowIso(),
+    };
+    storage.set(STORAGE_KEYS.orders, [created, ...all]);
+    return created;
+  }
+  async update(id: string, patch: Partial<NewOrder>): Promise<Order> {
+    const all = await this.list();
+    let updated: Order | undefined;
+    const next = all.map((o) => {
+      if (o.id !== id) return o;
+      updated = { ...o, ...patch, updatedAt: nowIso() };
+      return updated;
+    });
+    if (!updated) throw new Error(`Order ${id} not found`);
+    storage.set(STORAGE_KEYS.orders, next);
+    return updated;
+  }
+  async remove(id: string): Promise<void> {
+    const all = await this.list();
+    storage.set(
+      STORAGE_KEYS.orders,
+      all.filter((o) => o.id !== id),
+    );
+  }
+}
+
 // Singletons used across the app (swap these for cloud adapters later).
 export const productRepository = new LocalProductRepository();
 export const saleRepository = new LocalSaleRepository();
@@ -438,5 +483,6 @@ export const commissionSchemeRepository = new LocalCommissionSchemeRepository();
 export const commissionAssignmentRepository = new LocalCommissionAssignmentRepository();
 export const settlementRepository = new LocalSettlementRepository();
 export const targetRepository = new LocalTargetRepository();
+export const orderRepository = new LocalOrderRepository();
 export const roleRepository = new LocalRoleRepository();
 export const accessStore = new LocalAccessStore();

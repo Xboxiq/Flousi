@@ -21,6 +21,8 @@ import type {
   Role,
   NewRole,
   AccessSession,
+  Order,
+  NewOrder,
 } from "@/domain";
 import { AccessPolicy } from "@/domain";
 import {
@@ -35,6 +37,7 @@ import {
   targetRepository,
   roleRepository,
   accessStore,
+  orderRepository,
   DEFAULT_SETTINGS,
 } from "@/infrastructure/persistence/local-storage/repositories";
 import { seedIfEmpty } from "@/infrastructure/seed";
@@ -52,6 +55,7 @@ interface DataState {
   commissionAssignments: CommissionAssignment[];
   settlements: Settlement[];
   targets: Target[];
+  orders: Order[];
   roles: Role[];
   /** The view mode this device is running in. Null = the owner. */
   session: AccessSession | null;
@@ -100,6 +104,18 @@ interface DataState {
   returnToOwner: (pin?: string) => Promise<boolean>;
   setPin: (pin: string | null) => Promise<void>;
 
+  /**
+   * Records a delivery order plus its lines in ONE call, because a half-written
+   * order (a trip with no goods, or goods with no trip) is not a state the store
+   * should be able to hold.
+   */
+  createOrder: (input: {
+    order: NewOrder;
+    lines: Array<Omit<NewSale, "orderId" | "currency" | "soldAt" | "periodId" | "repId">>;
+  }) => Promise<Order>;
+  updateOrder: (id: string, patch: Partial<NewOrder>) => Promise<Order>;
+  deleteOrder: (id: string) => Promise<void>;
+
   createTarget: (input: NewTarget) => Promise<Target>;
   updateTarget: (id: string, patch: Partial<NewTarget>) => Promise<Target>;
   deleteTarget: (id: string) => Promise<void>;
@@ -127,6 +143,7 @@ async function loadAll() {
     commissionAssignments,
     settlements,
     targets,
+    orders,
     roles,
     session,
     pin,
@@ -140,6 +157,7 @@ async function loadAll() {
     commissionAssignmentRepository.list(),
     settlementRepository.list(),
     targetRepository.list(),
+    orderRepository.list(),
     roleRepository.list(),
     accessStore.getSession(),
     accessStore.getPin(),
@@ -154,6 +172,7 @@ async function loadAll() {
     commissionAssignments,
     settlements,
     targets,
+    orders,
     roles,
     session,
     // Only whether one exists reaches the store: the record itself has no business
@@ -173,6 +192,7 @@ export const useDataStore = create<DataState>((set, get) => ({
   commissionAssignments: [],
   settlements: [],
   targets: [],
+  orders: [],
   roles: [],
   session: null,
   pinSet: false,
@@ -312,6 +332,39 @@ export const useDataStore = create<DataState>((set, get) => ({
     }
     await accessStore.setPin(await hashPin(pin, new Date().toISOString()));
     set({ pinSet: true });
+  },
+
+  createOrder: async ({ order, lines }) => {
+    const created = await orderRepository.create(order);
+    // The lines are sales, carrying the order's id. They keep being the line item, so
+    // every read model that already understands sales keeps working unchanged.
+    for (const line of lines) {
+      await saleRepository.create({
+        ...line,
+        orderId: created.id,
+        currency: order.currency,
+        soldAt: order.placedAt,
+        periodId: order.periodId,
+        repId: order.repId,
+      });
+    }
+    set({ orders: await orderRepository.list(), sales: await saleRepository.list() });
+    return created;
+  },
+  updateOrder: async (id, patch) => {
+    const updated = await orderRepository.update(id, patch);
+    set({ orders: await orderRepository.list() });
+    return updated;
+  },
+  deleteOrder: async (id) => {
+    // The lines go with the trip: an orphaned sale pointing at a deleted order would
+    // keep its revenue while losing the delivery that belonged to it.
+    const sales = await saleRepository.list();
+    for (const sale of sales.filter((s) => s.orderId === id)) {
+      await saleRepository.remove(sale.id);
+    }
+    await orderRepository.remove(id);
+    set({ orders: await orderRepository.list(), sales: await saleRepository.list() });
   },
 
   createTarget: async (input) => {

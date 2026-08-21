@@ -59,6 +59,32 @@ export type {
 } from "./entities/settlement";
 
 export type {
+  Order,
+  NewOrder,
+  OrderLineInput,
+  DeliveryAllocation,
+  DeliveryShare,
+} from "./entities/order";
+export {
+  DELIVERY_ALLOCATIONS,
+  DELIVERY_ALLOCATION_LABELS,
+  deliveryMargin,
+  defaultAllocation,
+} from "./entities/order";
+
+export {
+  allocateDelivery,
+  calculateOrder,
+  costsByProduct,
+  splitDeliveryMargin,
+} from "./services/order-calculator";
+export type {
+  OrderLineResult,
+  OrderResult,
+  DeliverySplitResult,
+} from "./services/order-calculator";
+
+export type {
   Target,
   NewTarget,
   TargetMetric,
@@ -119,6 +145,7 @@ export type {
   TargetRepository,
   RoleRepository,
   AccessStore,
+  OrderRepository,
 } from "./ports/repositories";
 export type {
   Clock,

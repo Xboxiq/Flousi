@@ -40,6 +40,7 @@ export const STORAGE_KEYS = {
   commissionAssignments: "commission-assignments",
   settlements: "settlements",
   targets: "targets",
+  orders: "orders",
   roles: "roles",
   accessSession: "access-session",
   accessPin: "access-pin",

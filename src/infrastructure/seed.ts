@@ -20,6 +20,7 @@ import {
   settlementRepository,
   targetRepository,
   roleRepository,
+  orderRepository,
   DEFAULT_SETTINGS,
 } from "./persistence/local-storage/repositories";
 import { uuidGenerator } from "./system";
@@ -515,6 +516,81 @@ export async function seedIfEmpty(): Promise<void> {
       repId: target.id,
       status: "active",
     });
+  }
+
+  // Three delivery trips, so /orders opens on the case this phase exists for: one
+  // fee carrying several products. The middle one is SUBSIDISED — charged 5,000 and
+  // paid 6,500 — because a merchant needs to see that state at least once to learn
+  // that the screen reports it.
+  const catalogue = await productRepository.list();
+  const pick = (name: string) => catalogue.find((p) => p.name.includes(name));
+  const trips: Array<{
+    charged: number;
+    paid: number;
+    day: number;
+    area: string;
+    customer: string;
+    lines: Array<{ name: string; qty: number }>;
+  }> = [
+    {
+      charged: 5_000,
+      paid: 5_000,
+      day: 4,
+      area: "الكرادة",
+      customer: "زبون الكرادة",
+      lines: [{ name: "وشاح", qty: 1 }, { name: "شمعة", qty: 2 }],
+    },
+    {
+      charged: 5_000,
+      paid: 6_500,
+      day: 9,
+      area: "أبو غريب",
+      customer: "زبون أبو غريب",
+      lines: [{ name: "كوب", qty: 1 }],
+    },
+    {
+      charged: 10_000,
+      paid: 6_000,
+      day: 15,
+      area: "الجادرية",
+      customer: "زبون الجادرية",
+      lines: [{ name: "دفتر", qty: 1 }, { name: "طقم", qty: 1 }, { name: "كوب", qty: 2 }],
+    },
+  ];
+
+  const seniorForTrips = reps.find((r) => r.status === "active");
+  for (const [i, trip] of trips.entries()) {
+    const lines = trip.lines
+      .map((l) => ({ product: pick(l.name), qty: l.qty }))
+      .filter((l): l is { product: Product; qty: number } => !!l.product);
+    if (lines.length === 0) continue;
+    const placedAt = new Date(
+      currentMonthStart.getTime() + trip.day * 86_400_000,
+    ).toISOString();
+    const created = await orderRepository.create({
+      code: `ط-${1041 + i}`,
+      currency: CURRENCY,
+      placedAt,
+      periodId: activePeriod?.id,
+      repId: seniorForTrips?.id,
+      deliveryCharged: trip.charged,
+      deliveryPaid: trip.paid,
+      deliveryAllocation: "byValue",
+      customerName: trip.customer,
+      customerArea: trip.area,
+    });
+    for (const line of lines) {
+      await saleRepository.create({
+        productId: line.product.id,
+        quantity: line.qty,
+        unitPrice: line.product.sellingPrice,
+        currency: CURRENCY,
+        soldAt: placedAt,
+        periodId: activePeriod?.id,
+        repId: seniorForTrips?.id,
+        orderId: created.id,
+      });
+    }
   }
 
   // One round partial payment per rep. The remainder carries forward, so the

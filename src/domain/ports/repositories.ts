@@ -10,6 +10,7 @@ import type {
 import type { Settlement, NewSettlement } from "../entities/settlement";
 import type { Target, NewTarget, TargetMetric } from "../entities/target";
 import type { Role, NewRole, AccessSession, PinRecord } from "../entities/role";
+import type { Order, NewOrder } from "../entities/order";
 
 /**
  * Persistence ports. Inner layers depend on these interfaces; infrastructure
@@ -130,4 +131,13 @@ export interface AccessStore {
   getPin(): Promise<PinRecord | null>;
   /** Passing null clears the PIN. */
   setPin(record: PinRecord | null): Promise<void>;
+}
+
+export interface OrderRepository {
+  list(filter?: { repId?: string; periodId?: string }): Promise<Order[]>;
+  getById(id: string): Promise<Order | null>;
+  create(order: NewOrder): Promise<Order>;
+  /** Delivery charged and paid are both editable: a mistyped fee is corrected. */
+  update(id: string, patch: Partial<NewOrder>): Promise<Order>;
+  remove(id: string): Promise<void>;
 }
