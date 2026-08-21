@@ -60,8 +60,14 @@ export function computeSettlements(input: {
   reps: readonly Rep[];
   sales: readonly Sale[];
   periods: readonly AccountingPeriod[];
+  /** Restricts to one rep's own payments and their own earned share. */
+  scope?: { repId: string } | "none";
 }): SettlementsView {
-  const { settlements, reps, sales, periods } = input;
+  const { reps, periods, scope } = input;
+  const allows = (subject: { repId?: string }) =>
+    scope === undefined ? true : scope === "none" ? false : subject.repId === scope.repId;
+  const settlements = input.settlements.filter(allows);
+  const sales = input.sales.filter(allows);
   const repById = new Map(reps.map((r) => [r.id, r]));
   const periodById = new Map(periods.map((p) => [p.id, p]));
 
@@ -139,8 +145,17 @@ export interface Movement {
   /** The figure, major units. Always positive — direction carries the sign. */
   amount: number;
   currency: string;
-  /** A second, quieter figure: a sale's profit beside its revenue. */
+  /** A second, quieter figure beside the amount. */
   secondary?: number;
+  /**
+   * What `secondary` IS, because the two are not interchangeable:
+   *
+   * * `"profit"` — the sale's net profit. Revenue minus this IS what the merchant
+   *   paid, so it is only ever attached for a session that may see costs.
+   * * `"repShare"` — the rep's own frozen share of that sale. Theirs to know, and it
+   *   reveals nothing about the purchase price on its own.
+   */
+  secondaryKind?: "profit" | "repShare";
   /** Deep link for the row, when the event has a screen of its own. */
   href?: string;
 }
@@ -172,17 +187,39 @@ export function computeLedger(input: {
   limit?: number;
   /** Show only this kind. */
   kind?: MovementKind;
+  /**
+   * Restricts the log to one rep's own movements: their sales and their payments,
+   * and no period closes at all — a month's close is the store's event, not theirs.
+   *
+   * Applied HERE and not in the view, so a scoped session's counts and totals are
+   * that rep's rather than the store's with rows hidden (gate P3/G3).
+   */
+  scope?: { repId: string } | "none";
+  /**
+   * Whether this session may see costs. False withholds a sale's NET PROFIT and
+   * attaches the rep's own frozen share instead — because revenue minus profit is
+   * the purchase price, so printing profit hands the merchant's cost to a rep by
+   * subtraction (gate P3/G4). Decided here rather than in the view: a figure the
+   * session may not read is not computed into the row at all.
+   */
+  costs?: boolean;
 }): LedgerView {
-  const { sales, settlements, periods, products, reps, currency } = input;
+  const { sales, settlements, periods, products, reps, currency, scope } = input;
+  const costs = input.costs ?? true;
+  const allows = (subject: { repId?: string }) =>
+    scope === undefined ? true : scope === "none" ? false : subject.repId === scope.repId;
   const productById = new Map(products.map((p) => [p.id, p]));
   const repById = new Map(reps.map((r) => [r.id, r]));
 
   const all: Movement[] = [];
 
   for (const sale of sales) {
+    if (!allows(sale)) continue;
     const product = productById.get(sale.productId);
     const p = profitForSale(sale, product);
     const rep = sale.repId ? repById.get(sale.repId) : undefined;
+    const snapshot = sale.commissionSnapshot;
+    const share = snapshot ? toMajor(snapshot.repShareMinor, snapshot.currency) : undefined;
     all.push({
       id: `sale:${sale.id}`,
       kind: "sale",
@@ -192,12 +229,14 @@ export function computeLedger(input: {
       detail: rep ? `بيع · ${rep.name}` : "بيع",
       amount: p.revenue,
       currency: sale.currency || currency,
-      secondary: p.netProfit,
+      secondary: costs ? p.netProfit : share,
+      secondaryKind: costs ? "profit" : share === undefined ? undefined : "repShare",
       href: product ? `/products/view?id=${product.id}` : undefined,
     });
   }
 
   for (const s of settlements) {
+    if (!allows(s)) continue;
     const rep = repById.get(s.repId);
     all.push({
       id: `settlement:${s.id}`,
@@ -213,6 +252,9 @@ export function computeLedger(input: {
   }
 
   for (const period of periods) {
+    // A close belongs to the store, so it is absent from a scoped log rather than
+    // shown with a figure the session is not entitled to.
+    if (scope !== undefined) break;
     if (period.status !== "closed" || !period.endDate) continue;
     all.push({
       id: `period:${period.id}`,

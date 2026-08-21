@@ -36,12 +36,12 @@ export interface NavGroup {
 export const NAV_GROUPS: NavGroup[] = [
   {
     label: "نظرة عامة",
-    items: [{ label: "لوحة التحكم", href: "/dashboard", icon: House }],
+    items: [{ label: "لوحة التحكم", href: "/dashboard", icon: House, needs: "viewCosts" }],
   },
   {
     label: "الكتالوج",
     items: [
-      { label: "المنتجات", href: "/products", icon: Package },
+      { label: "المنتجات", href: "/products", icon: Package, needs: "viewProducts" },
       { label: "الحاسبة", href: "/calculator", icon: Calculator, needs: "viewCosts" },
     ],
   },
@@ -84,7 +84,11 @@ export function visibleNavGroups(access: Pick<ResolvedAccess, "can">): NavGroup[
 
 /** Every route the nav knows, with what it needs — the route guard reads this. */
 export const ROUTE_CAPABILITIES: { prefix: string; needs: Capability }[] = [
-  { prefix: "/products", needs: "manageProducts" },
+  { prefix: "/dashboard", needs: "viewCosts" },
+  // Opening the catalogue is `viewProducts`; the create and edit surfaces inside it
+  // check `manageProducts` for themselves.
+  { prefix: "/products/new", needs: "manageProducts" },
+  { prefix: "/products", needs: "viewProducts" },
   { prefix: "/calculator", needs: "viewCosts" },
   { prefix: "/reps", needs: "viewTeam" },
   { prefix: "/targets", needs: "viewTargets" },

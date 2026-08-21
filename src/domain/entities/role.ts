@@ -11,6 +11,12 @@ export const CAPABILITIES = [
   "viewCosts",
   /** Sees the whole store's sales. Without it, a session sees only its own rep's. */
   "viewAllSales",
+  /**
+   * Opens the catalogue and a product's page. Separate from `manageProducts` on
+   * purpose: a rep who may record a sale has to be able to FIND the product, and
+   * that is not the same permission as editing it.
+   */
+  "viewProducts",
   /** Sees the team screen, other reps' figures and the schemes bench. */
   "viewTeam",
   /** Opens the reports hub and the report views. */
@@ -45,6 +51,7 @@ export type Capability = (typeof CAPABILITIES)[number];
 export const CAPABILITY_LABELS: Record<Capability, string> = {
   viewCosts: "يرى تكاليف الشراء والهامش",
   viewAllSales: "يرى مبيعات المتجر كلها",
+  viewProducts: "يرى قائمة المنتجات",
   viewTeam: "يرى الفريق وحصص الآخرين",
   viewReports: "يفتح التقارير",
   viewTargets: "يفتح الأهداف",
@@ -64,6 +71,7 @@ export const CAPABILITY_LABELS: Record<Capability, string> = {
 export const CAPABILITY_NOTES: Partial<Record<Capability, string>> = {
   viewCosts: "بدونها لا يظهر سعر الشراء ولا بنود التكلفة ولا الهامش في أي شاشة.",
   viewAllSales: "بدونها ترى الجلسة مبيعات المندوب المرتبط بها وحده.",
+  viewProducts: "لازمة لمن يسجّل البيعات: لا يمكن اختيار منتج لا يُرى.",
   closePeriods: "فعل لا رجعة فيه، فلا يُمنح مع غيره تلقائياً.",
   manageAccess: "من يملكها يستطيع الرجوع إلى وضع المالك. لا تمنحها لدور محدود.",
 };

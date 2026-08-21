@@ -8,8 +8,8 @@ import { useAccess } from "@/presentation/hooks/use-access";
 import { cn } from "@/presentation/lib/cn";
 
 const ITEMS: { label: string; href: string; icon: typeof House; needs?: Capability }[] = [
-  { label: "الرئيسية", href: "/dashboard", icon: House },
-  { label: "المنتجات", href: "/products", icon: Package, needs: "manageProducts" },
+  { label: "الرئيسية", href: "/dashboard", icon: House, needs: "viewCosts" },
+  { label: "المنتجات", href: "/products", icon: Package, needs: "viewProducts" },
   { label: "الحاسبة", href: "/calculator", icon: Calculator, needs: "viewCosts" },
   { label: "التقارير", href: "/reports", icon: ChartBar, needs: "viewReports" },
 ];

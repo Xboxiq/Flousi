@@ -352,7 +352,7 @@ const SEED_ROLES: NewRole[] = [
   {
     name: "مندوب",
     description: "يرى مبيعاته وحصّته فقط. لا يرى تكاليف الشراء ولا أرقام غيره.",
-    capabilities: ["recordSales", "viewTargets"],
+    capabilities: ["viewProducts", "recordSales", "viewTargets", "viewLedger"],
     status: "active",
   },
   {
@@ -361,6 +361,7 @@ const SEED_ROLES: NewRole[] = [
     capabilities: [
       "viewCosts",
       "viewAllSales",
+      "viewProducts",
       "viewTeam",
       "viewReports",
       "viewTargets",
@@ -502,6 +503,15 @@ export async function seedIfEmpty(): Promise<void> {
     await targetRepository.create({
       metric: "netProfit",
       amount,
+      repId: target.id,
+      status: "active",
+    });
+    // A REVENUE target too, because that is the one a rep can actually be shown: a
+    // role built to hide costs is not shown the store's profit, so a rep whose only
+    // target were in profit would open the screen on nothing.
+    await targetRepository.create({
+      metric: "revenue",
+      amount: amount * 4,
       repId: target.id,
       status: "active",
     });
