@@ -188,7 +188,15 @@ describe("computeOrders", () => {
 describe("computeDelivery — the reading that did not exist before P4", () => {
   it("an empty window is zeros with no division by zero", () => {
     const d = computeDelivery([]);
-    expect(d).toEqual({ charged: 0, paid: 0, margin: 0, trips: 0, subsidised: 0, rate: 0 });
+    expect(d).toEqual({
+      charged: 0,
+      paid: 0,
+      margin: 0,
+      trips: 0,
+      subsidised: 0,
+      rate: 0,
+      inFlight: 0,
+    });
     expect(Number.isFinite(d.rate)).toBe(true);
   });
 
@@ -232,5 +240,125 @@ describe("computeDelivery — the reading that did not exist before P4", () => {
     expect(Number.isFinite(d.paid)).toBe(true);
     expect(d.charged).toBe(5_000);
     expect(d.paid).toBe(5_000);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// P5 — the state of a trip changes what its figures MEAN.
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("computeOrders carries the outcome, not just the arithmetic (gate P5/G3)", () => {
+  const lines = [sale({ id: "a", orderId: "O1", productId: "P1" })];
+
+  it("a delivered and collected trip reads as money in hand", () => {
+    const v = computeOrders({
+      orders: [order({ status: "delivered", collection: "collected" })],
+      sales: lines,
+      products,
+      reps: [],
+    });
+    expect(v.rows[0].outcome.cash).toBe("inHand");
+    expect(v.rows[0].outcome.commissionOwed).toBe(true);
+    expect(v.pending).toBe(0);
+    expect(v.withCourier).toBe(0);
+    expect(v.voided).toBe(0);
+  });
+
+  it("a delivered trip whose cash is with the courier is counted apart", () => {
+    const v = computeOrders({
+      orders: [order({ status: "delivered", collection: "withCourier" })],
+      sales: lines,
+      products,
+      reps: [],
+    });
+    expect(v.withCourier).toBe(1);
+    expect(v.rows[0].outcome.cash).toBe("withCourier");
+  });
+
+  it("a returned trip is counted as void, and its result still says what it would have made", () => {
+    const v = computeOrders({
+      orders: [order({ status: "returned", returnCost: 5_000 })],
+      sales: lines,
+      products,
+      reps: [],
+    });
+    expect(v.voided).toBe(1);
+    expect(v.rows[0].outcome.netProfit).toBe(-10_000);
+    // The arithmetic is untouched: it is the reading of it that changed.
+    expect(v.rows[0].result.collected).toBe(65_000);
+  });
+
+  it("a void trip is absent from the delivery MARGIN total, which is a settled reading", () => {
+    const v = computeOrders({
+      orders: [
+        order({ id: "O1", status: "delivered" }),
+        order({ id: "O2", status: "returned", returnCost: 5_000 }),
+      ],
+      sales: [sale({ id: "a", orderId: "O1" }), sale({ id: "b", orderId: "O2" })],
+      products,
+      reps: [],
+    });
+    // O1 charged 5,000 and paid 5,000: margin 0. The return's loss belongs to the
+    // cash reading, not to the margin, or the same money is counted twice.
+    expect(v.deliveryMarginTotal).toBe(0);
+    expect(v.subsidised).toBe(0);
+    expect(v.voided).toBe(1);
+  });
+});
+
+describe("computeDelivery is a REALISED reading (gate P5/G1)", () => {
+  it("a returned trip collected no fee and paid for two legs", () => {
+    const d = computeDelivery([
+      order({ status: "returned", deliveryCharged: 5_000, deliveryPaid: 4_000, returnCost: 4_000 }),
+    ]);
+    expect(d.charged).toBe(0);
+    expect(d.paid).toBe(8_000);
+    expect(d.margin).toBe(-8_000);
+    expect(d.trips).toBe(1);
+    expect(d.subsidised).toBe(1);
+  });
+
+  it("a cancelled trip neither charged nor paid", () => {
+    const d = computeDelivery([order({ status: "cancelled" })]);
+    expect(d).toMatchObject({ charged: 0, paid: 0, margin: 0, trips: 1, subsidised: 0 });
+  });
+
+  it("a trip still on the road is in NO figure, and is reported on its own", () => {
+    const d = computeDelivery([order({ status: "pending" })]);
+    expect(d.charged).toBe(0);
+    expect(d.paid).toBe(0);
+    expect(d.trips).toBe(0);
+    expect(d.inFlight).toBe(1);
+  });
+
+  it("a delivered trip reads exactly as it did before P5", () => {
+    const d = computeDelivery([
+      order({ status: "delivered", deliveryCharged: 5_000, deliveryPaid: 4_000 }),
+    ]);
+    expect(d).toMatchObject({ charged: 5_000, paid: 4_000, margin: 1_000, subsidised: 0 });
+    expect(d.rate).toBeCloseTo(0.2, 10);
+  });
+
+  it("an order with no status is delivered, so a pre-P5 store reads unchanged", () => {
+    const d = computeDelivery([order({ deliveryCharged: 5_000, deliveryPaid: 6_500 })]);
+    expect(d.charged).toBe(5_000);
+    expect(d.paid).toBe(6_500);
+    expect(d.subsidised).toBe(1);
+    expect(d.inFlight).toBe(0);
+  });
+
+  it("a mixed window keeps every state in its own column", () => {
+    const d = computeDelivery([
+      order({ id: "1", status: "delivered", deliveryCharged: 5_000, deliveryPaid: 4_000 }),
+      order({ id: "2", status: "pending", deliveryCharged: 5_000, deliveryPaid: 4_000 }),
+      order({ id: "3", status: "returned", deliveryCharged: 5_000, deliveryPaid: 4_000, returnCost: 0 }),
+      order({ id: "4", status: "cancelled", deliveryCharged: 5_000, deliveryPaid: 4_000 }),
+    ]);
+    expect(d.charged).toBe(5_000);
+    expect(d.paid).toBe(8_000);
+    expect(d.margin).toBe(-3_000);
+    expect(d.trips).toBe(3);
+    expect(d.inFlight).toBe(1);
+    expect(d.subsidised).toBe(1);
   });
 });

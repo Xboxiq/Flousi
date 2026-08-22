@@ -5,8 +5,10 @@ import Link from "next/link";
 import {
   ArrowLineDown,
   ArrowLineUp,
+  ArrowUUpLeft,
   ClockCounterClockwise,
   Lock,
+  Prohibit,
 } from "@phosphor-icons/react";
 import { computeLedger, type Movement, type MovementKind } from "@/application/ledger";
 import { useDataStore } from "@/presentation/stores/data-store";
@@ -50,6 +52,7 @@ export function LedgerView() {
   const periods = useDataStore((s) => s.periods);
   const products = useDataStore((s) => s.products);
   const reps = useDataStore((s) => s.reps);
+  const orders = useDataStore((s) => s.orders);
   const settings = useDataStore((s) => s.settings);
   const access = useAccess();
 
@@ -64,13 +67,16 @@ export function LedgerView() {
         periods,
         products,
         reps,
+        // A sale on a returned trip is marked void here, so the log paints it as no
+        // movement instead of as income (gate P5/G2).
+        orders,
         currency: settings.currency,
         kind: filter === "all" ? undefined : filter,
         limit: shown,
         scope: access.salesScope,
         costs: access.can("viewCosts"),
       }),
-    [sales, settlements, periods, products, reps, settings.currency, filter, shown, access],
+    [sales, settlements, periods, products, reps, orders, settings.currency, filter, shown, access],
   );
 
   const onFilter = (next: Filter) => {
@@ -160,7 +166,14 @@ const MARK: Record<MovementKind, { icon: React.ReactNode; word: string }> = {
 
 function MovementRow({ movement, locale }: { movement: Movement; locale: string }) {
   const m = movement;
-  const mark = MARK[m.kind];
+  /* A void sale is its own mark, not a sale's mark greyed out: the goods went out and
+     came BACK, which is a different event from an inward one, and the U-turn glyph
+     says so before any word is read (gate P5/G3). */
+  const mark = m.voided
+    ? m.status === "cancelled"
+      ? { icon: <Prohibit size={16} weight="bold" />, word: "ملغاة، لم تُحصّل" }
+      : { icon: <ArrowUUpLeft size={16} weight="bold" />, word: "راجعة، لم تُحصّل" }
+    : MARK[m.kind];
   const money = (n: number) => formatCurrency(n, { currency: m.currency, locale });
 
   const body = (
@@ -201,6 +214,12 @@ function MovementRow({ movement, locale }: { movement: Movement; locale: string 
           className={cn(
             "block font-mono text-sm font-semibold tabular-nums",
             m.direction === "none" ? "text-muted" : "text-fg",
+            // Struck, not hidden: the figure is what the sale WOULD have brought in,
+            // and the strike is what says it did not (gate P5/G2).
+            /* A semantic strike: the sale's revenue never arrived. The figure is kept
+               so the row still explains itself. */
+            // deslop-ignore-next-line 09
+            m.voided && "line-through decoration-[1.5px] decoration-danger/70",
           )}
         >
           {money(m.amount)}

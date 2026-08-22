@@ -40,7 +40,9 @@ export function Segmented<T extends string>({
       role="group"
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
-      className={cn("neu-inset inline-flex gap-1 rounded-full bg-sunken p-1", className)}
+            /* The GROUP wraps, the labels do not: a squeezed row now breaks between
+         options instead of snapping a two-word state in half. */
+      className={cn("neu-inset inline-flex flex-wrap gap-1 rounded-full bg-sunken p-1", className)}
     >
       {options.map((opt) => {
         const active = opt.value === value;
@@ -51,7 +53,10 @@ export function Segmented<T extends string>({
             onClick={() => onChange(opt.value)}
             aria-pressed={active}
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-[color,background-color,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-out)]",
+              /* nowrap: a squeezed group used to break «في الطريق» in half INSIDE its
+                 own pill, which reads as two broken words rather than one state. The
+                 group wraps between options instead (see `flex-wrap` on the group). */
+              "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-[color,background-color,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-out)]",
               active
                 ? "molded molded-accent font-semibold text-white"
                 : "text-muted hover:text-fg",

@@ -3,10 +3,14 @@ import type { CostBreakdown } from "../entities/cost-breakdown";
 import type { Product } from "../entities/product";
 import {
   deliveryMargin,
+  isVoidOrder,
+  orderCollection,
+  orderStatus,
   type DeliveryAllocation,
   type DeliveryShare,
   type Order,
   type OrderLineInput,
+  type OrderStatus,
 } from "../entities/order";
 import type {
   CommissionSchemeParams,
@@ -309,4 +313,138 @@ export function splitDeliveryMargin(input: {
     shared: true,
     lossWithheld: false,
   };
+}
+
+/* ─────────────────── what an order in each state DID to the money ─────────────────── */
+
+/** Where an order's money sits right now. */
+export type CashPosition =
+  /** Nothing to collect: still in the road, or void. */
+  | "none"
+  /** Delivered, cash still with the courier. Earned, not spendable. */
+  | "withCourier"
+  /** Delivered and collected. The only spendable figure. */
+  | "inHand";
+
+export interface OrderOutcome {
+  status: OrderStatus;
+  /** What the customer actually handed over. Zero unless delivered. */
+  collected: number;
+  /**
+   * Cost of goods CONSUMED.
+   *
+   * Zero on a return, and that is the point: the goods came BACK, so the merchant
+   * still owns them and the purchase price was not spent. Counting it would invent a
+   * loss he did not take (gate P5/G1).
+   */
+  goodsCost: number;
+  /** Delivery actually paid out, including the return leg when there was one. */
+  deliveryOut: number;
+  /** collected − goodsCost − deliveryOut. Negative on a return, by construction. */
+  netProfit: number;
+  /**
+   * Is the rep's share owed on this order?
+   *
+   * False when void. The frozen snapshot is never rewritten — it remains the record of
+   * what was agreed — but a balance that counted it would pay commission on money that
+   * never arrived (gate P5/G2).
+   */
+  commissionOwed: boolean;
+  cash: CashPosition;
+}
+
+/**
+ * Turns an order's arithmetic into what actually happened, given its state.
+ *
+ * `calculateOrder` answers "what would this order make if it completed". This answers
+ * "what did it do", and the two differ for every order that is not delivered.
+ */
+export function orderOutcome(input: {
+  order: Pick<
+    Order,
+    "status" | "collection" | "deliveryCharged" | "deliveryPaid" | "returnCost" | "currency"
+  >;
+  /** The completed-order arithmetic, from `calculateOrder`. */
+  result: Pick<OrderResult, "collected" | "goodsCost" | "deliveryPaid">;
+}): OrderOutcome {
+  const status = orderStatus(input.order);
+  const collection = orderCollection(input.order);
+  const currency = input.order.currency;
+  const zero = Money.zero(currency);
+
+  const paidOut = Money.fromMajor(
+    Number.isFinite(input.order.deliveryPaid) ? input.order.deliveryPaid : 0,
+    currency,
+  );
+  const returnLeg = Money.fromMajor(
+    Number.isFinite(input.order.returnCost) ? (input.order.returnCost as number) : 0,
+    currency,
+  );
+
+  if (status === "cancelled") {
+    // Never went out: nothing collected, nothing consumed, nothing paid.
+    return {
+      status,
+      collected: 0,
+      goodsCost: 0,
+      deliveryOut: 0,
+      netProfit: 0,
+      commissionOwed: false,
+      cash: "none",
+    };
+  }
+
+  if (status === "returned") {
+    const out = paidOut.add(returnLeg);
+    return {
+      status,
+      collected: 0,
+      goodsCost: 0,
+      deliveryOut: out.amount,
+      netProfit: zero.subtract(out).amount,
+      commissionOwed: false,
+      cash: "none",
+    };
+  }
+
+  if (status === "pending") {
+    // The goods are out and the courier will be paid, but nothing is collected yet and
+    // no revenue is realised. Reported as in-flight rather than as profit.
+    return {
+      status,
+      collected: 0,
+      goodsCost: 0,
+      deliveryOut: 0,
+      netProfit: 0,
+      commissionOwed: false,
+      cash: "none",
+    };
+  }
+
+  const collected = Money.fromMajor(input.result.collected, currency);
+  const goodsCost = Money.fromMajor(input.result.goodsCost, currency);
+  return {
+    status,
+    collected: collected.amount,
+    goodsCost: goodsCost.amount,
+    deliveryOut: paidOut.amount,
+    netProfit: collected.subtract(goodsCost).subtract(paidOut).amount,
+    commissionOwed: true,
+    cash: collection === "collected" ? "inHand" : "withCourier",
+  };
+}
+
+/**
+ * The ids of every order that realised nothing — returned or cancelled.
+ *
+ * The one input a read model needs in order to stop counting a void order's money.
+ * A Set rather than a filter over orders, because the caller holds sales and needs
+ * to ask "is this sale's trip void?" once per sale, not once per sale per order.
+ */
+export function voidOrderIds(orders: readonly Pick<Order, "id" | "status">[]): Set<string> {
+  const out = new Set<string>();
+  for (const order of orders) {
+    if (isVoidOrder(orderStatus(order))) out.add(order.id);
+  }
+  return out;
 }

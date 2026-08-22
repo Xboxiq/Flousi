@@ -5,6 +5,7 @@ import {
   RepBalanceCalculator,
   needsCommissionScheme,
   schemeParams,
+  voidOrderIds,
   type CommissionAssignment,
   type CommissionScheme,
   type CommissionSnapshot,
@@ -12,6 +13,7 @@ import {
   type Rep,
   type RepBalance,
   type RepStatus,
+  type Order,
   type Sale,
   type SchemeTier,
   type Settlement,
@@ -29,6 +31,15 @@ export interface CommissionInput {
   schemes: readonly CommissionScheme[];
   assignments: readonly CommissionAssignment[];
   settlements: readonly Settlement[];
+  /**
+   * The delivery trips those sales were lines of. Supplied so a RETURNED or
+   * CANCELLED order can stop being counted as earnings: the money never arrived,
+   * so no share is owed on it (gate P5/G2).
+   *
+   * Omit and every sale reads as delivered — which is exactly right for a store
+   * with no orders yet, and for the sales recorded before P4.
+   */
+  orders?: readonly Order[];
   /** `AppSettings.defaultCommissionSchemeId` — the last resort of the chain. */
   defaultCommissionSchemeId?: string;
 }
@@ -61,6 +72,12 @@ export interface SaleCommission {
   frozen: boolean;
   /** A rep is credited but nothing could be frozen. Fixable, never fabricated. */
   needsScheme: boolean;
+  /**
+   * The trip this sale rode came back, or was cancelled. The row STAYS — with its
+   * snapshot untouched — because it is the record of what was agreed. What changes
+   * is that no total counts it (gate P5/G2).
+   */
+  voided: boolean;
   schemeId?: string;
   schemeName?: string;
   schemeTier: SchemeTier;
@@ -117,6 +134,14 @@ export interface RepAggregate {
   lastSaleAt: string | null;
   /** Rows crediting this rep that still have no frozen split. */
   needsSchemeCount: number;
+  /**
+   * The share that WAS agreed on trips that came back, and is therefore no longer
+   * owed. Reported rather than silently dropped: a rep whose balance fell needs to
+   * see why, and «رجّعت» is the answer (gate P5/G2).
+   */
+  voidedShareMinor: number;
+  /** How many of this rep's sales rode a void trip. */
+  voidedCount: number;
   /** 1-based position in the ranking, best earner first. */
   rank: number;
 }
@@ -141,6 +166,9 @@ export interface TeamCommissions {
   /** Total still owed to the team in `currency`. Never clamped. */
   outstandingMinor: number;
   needsSchemeCount: number;
+  /** Team-wide share reversed by returns and cancellations. */
+  voidedShareMinor: number;
+  voidedCount: number;
   activeRepCount: number;
 }
 
@@ -152,24 +180,46 @@ export function toMajor(minorUnits: number, currency: string): number {
   return Money.fromMinor(minorUnits, currency).amount;
 }
 
-/** Frozen splits only — the one input a balance is ever derived from. */
-export function frozenSnapshots(sales: readonly Sale[]): CommissionSnapshot[] {
+/**
+ * Frozen splits only — the one input a balance is ever derived from.
+ *
+ * `voidOrders` removes the splits of returned and cancelled trips. It removes them
+ * from the READING, never from the store: the snapshot stays on the sale, so the
+ * history of what was agreed survives and the same order marked delivered again
+ * brings its share straight back (gates P5/G2, P5/G4).
+ */
+export function frozenSnapshots(
+  sales: readonly Sale[],
+  voidOrders?: ReadonlySet<string>,
+): CommissionSnapshot[] {
   const out: CommissionSnapshot[] = [];
   for (const sale of sales) {
-    if (sale.commissionSnapshot) out.push(sale.commissionSnapshot);
+    if (!sale.commissionSnapshot) continue;
+    if (voidOrders && sale.orderId && voidOrders.has(sale.orderId)) continue;
+    out.push(sale.commissionSnapshot);
   }
   return out;
+}
+
+/**
+ * A sale rode a trip that came back. A sale with no `orderId` never rode one and
+ * is therefore never void — that is what the 216 pre-P4 sales are (gate P5/G6).
+ */
+export function isVoidSale(sale: Pick<Sale, "orderId">, voidOrders: ReadonlySet<string>): boolean {
+  return Boolean(sale.orderId) && voidOrders.has(sale.orderId as string);
 }
 
 interface Lookups {
   productById: Map<string, Product>;
   repById: Map<string, Rep>;
+  voidOrders: Set<string>;
 }
 
 function lookups(input: CommissionInput): Lookups {
   return {
     productById: new Map(input.products.map((p) => [p.id, p])),
     repById: new Map(input.reps.map((r) => [r.id, r])),
+    voidOrders: voidOrderIds(input.orders ?? []),
   };
 }
 
@@ -199,6 +249,7 @@ function saleCommissionWith(sale: Sale, input: CommissionInput, at: Lookups): Sa
       repName: snapshot.repName,
       frozen: true,
       needsScheme: false,
+      voided: isVoidSale(sale, at.voidOrders),
       schemeId: snapshot.schemeId,
       schemeName: snapshot.schemeName,
       schemeTier: snapshot.schemeTier,
@@ -229,6 +280,7 @@ function saleCommissionWith(sale: Sale, input: CommissionInput, at: Lookups): Sa
     repName: rep?.name ?? sale.repId,
     frozen: false,
     needsScheme: needsCommissionScheme(sale),
+    voided: isVoidSale(sale, at.voidOrders),
     currency: sale.currency,
   };
 
@@ -343,7 +395,8 @@ export function computeRepAggregates(
 ): RepAggregate[] {
   const currency = options.currency ?? input.products[0]?.currency ?? "USD";
   const rows = computeSaleCommissions(input);
-  const snapshots = frozenSnapshots(input.sales);
+  const voidOrders = voidOrderIds(input.orders ?? []);
+  const snapshots = frozenSnapshots(input.sales, voidOrders);
   const repById = new Map(input.reps.map((r) => [r.id, r]));
 
   const byRep = new Map<string, SaleCommission[]>();
@@ -379,6 +432,8 @@ export function computeRepAggregates(
     let ownerShareMinor = 0;
     let ownerKeepsMinor = 0;
     let needsSchemeCount = 0;
+    let voidedShareMinor = 0;
+    let voidedCount = 0;
     let lastSaleAt: string | null = null;
     let lastSaleTime = Number.NEGATIVE_INFINITY;
 
@@ -391,6 +446,14 @@ export function computeRepAggregates(
         lastSaleAt = row.sale.soldAt;
       }
       if (row.currency !== currency) continue;
+      // A void row keeps its place in history and its snapshot, and is reported on
+      // its own line — but it is added to nothing. Counting it would pay a share on
+      // money that never arrived (gate P5/G2).
+      if (row.voided) {
+        voidedShareMinor += row.repShareMinor;
+        voidedCount += 1;
+        continue;
+      }
       saleCount += 1;
       units += row.sale.quantity;
       revenueMinor += row.revenueMinor;
@@ -426,6 +489,8 @@ export function computeRepAggregates(
       balanceMinor: line?.balanceMinor ?? 0,
       lastSaleAt,
       needsSchemeCount,
+      voidedShareMinor,
+      voidedCount,
       rank: 0,
     };
   });
@@ -459,6 +524,8 @@ export function computeTeamCommissions(
     settledMinor: 0,
     outstandingMinor: 0,
     needsSchemeCount: 0,
+    voidedShareMinor: 0,
+    voidedCount: 0,
     activeRepCount: 0,
   };
   for (const rep of reps) {
@@ -474,6 +541,8 @@ export function computeTeamCommissions(
     total.settledMinor += rep.settledMinor;
     total.outstandingMinor += rep.balanceMinor;
     total.needsSchemeCount += rep.needsSchemeCount;
+    total.voidedShareMinor += rep.voidedShareMinor;
+    total.voidedCount += rep.voidedCount;
     if (rep.status === "active") total.activeRepCount += 1;
   }
 
@@ -504,6 +573,8 @@ export function computeRepTrends(
   );
   for (const row of computeSaleCommissions(input)) {
     if (row.currency !== currency) continue;
+    // A month's sparkline must not show a peak the rep was never paid for.
+    if (row.voided) continue;
     const idx = slot.get(monthKey(new Date(row.sale.soldAt)));
     if (idx === undefined) continue;
     let track = series.get(row.repId);

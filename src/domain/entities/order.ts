@@ -29,6 +29,54 @@ export const DELIVERY_ALLOCATION_LABELS: Record<DeliveryAllocation, string> = {
 };
 
 /**
+ * Where an order stands.
+ *
+ * In a cash-on-delivery market this is not decoration: a large share of orders come
+ * back, and an order that came back is not revenue no matter how it was recorded.
+ */
+export type OrderStatus =
+  /** With the courier, not yet delivered. Goods are out; there is no revenue yet. */
+  | "pending"
+  /** The customer took it and paid. Revenue is real from here. */
+  | "delivered"
+  /** Came back. Nothing collected, and the delivery was paid out and back. */
+  | "returned"
+  /** Never went out, or was stopped before dispatch. Nothing happened at all. */
+  | "cancelled";
+
+export const ORDER_STATUSES: OrderStatus[] = ["pending", "delivered", "returned", "cancelled"];
+
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  pending: "في الطريق",
+  delivered: "مُسلَّمة",
+  returned: "راجعة",
+  cancelled: "ملغاة",
+};
+
+/**
+ * Where the money is, once an order has been delivered.
+ *
+ * Separate from the status because they answer different questions. COD cash sits with
+ * the courier for days or weeks in this market, so «سلّمت» and «استلمت المال» are two
+ * facts and the app must not merge them (gate P5/G3).
+ */
+export type CollectionStatus =
+  /** Delivered, but the cash is still with the courier or the company. */
+  | "withCourier"
+  /** The merchant has it. The only figure that is actually spendable. */
+  | "collected";
+
+export const COLLECTION_LABELS: Record<CollectionStatus, string> = {
+  withCourier: "عند التوصيل",
+  collected: "بيدك",
+};
+
+/** Void orders earn nothing and owe no commission. */
+export function isVoidOrder(status: OrderStatus): boolean {
+  return status === "returned" || status === "cancelled";
+}
+
+/**
  * A delivery order: one trip to one customer, carrying one or more sales.
  *
  * `Sale` remains the line item and is NOT rewritten by this feature — it gains an
@@ -73,6 +121,28 @@ export interface Order {
   /** How `deliveryPaid` is spread over the lines for per-product profit. */
   deliveryAllocation: DeliveryAllocation;
 
+  /**
+   * Where it stands. Absent is read as `delivered` so an order written before P5 keeps
+   * meaning what it meant — a recorded sale WAS a completed one.
+   */
+  status?: OrderStatus;
+  /**
+   * Where the money is, once delivered. Absent is read as `collected`, for the same
+   * reason: before this phase there was nothing else it could have meant.
+   */
+  collection?: CollectionStatus;
+  /**
+   * What the RETURN leg cost, in major units, when the order came back.
+   *
+   * Asked, not guessed. Some couriers charge the full fare again, some charge half,
+   * some charge nothing for a failed delivery — and a guessed figure presented as fact
+   * is worse than an asked one (gate P5/G5). The UI offers `deliveryPaid` as the
+   * starting value because a round trip usually costs what the trip cost.
+   */
+  returnCost?: number;
+  /** ISO timestamp the status last changed, for the ledger. */
+  statusAt?: string;
+
   customerName?: string;
   customerPhone?: string;
   /** Where it went. Free text: governorates and districts are not a fixed list here. */
@@ -113,6 +183,16 @@ export function deliveryMargin(order: Pick<Order, "deliveryCharged" | "deliveryP
   const charged = Number.isFinite(order.deliveryCharged) ? order.deliveryCharged : 0;
   const paid = Number.isFinite(order.deliveryPaid) ? order.deliveryPaid : 0;
   return charged - paid;
+}
+
+/** An order's status, defaulting the way a pre-P5 row must be read. */
+export function orderStatus(order: Pick<Order, "status">): OrderStatus {
+  return order.status ?? "delivered";
+}
+
+/** An order's collection state, defaulting the same way. */
+export function orderCollection(order: Pick<Order, "collection">): CollectionStatus {
+  return order.collection ?? "collected";
 }
 
 /** The default a new order opens with, so the merchant types the amount and nothing else. */

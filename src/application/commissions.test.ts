@@ -16,6 +16,7 @@ import {
   type CommissionAssignment,
   type CommissionScheme,
   type CommissionSnapshot,
+  type Order,
   type Product,
   type Rep,
   type Sale,
@@ -559,5 +560,209 @@ describe("toMajor", () => {
     expect(toMajor(500, CURRENCY)).toBe(5);
     expect(toMajor(-300, CURRENCY)).toBe(-3);
     expect(toMajor(0, CURRENCY)).toBe(0);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// P5 — a returned trip owes nobody. The snapshot stays; the balance changes.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function order(id: string, o: Partial<Order> = {}): Order {
+  return {
+    id,
+    currency: CURRENCY,
+    placedAt: "2026-06-10T00:00:00.000Z",
+    deliveryCharged: 5,
+    deliveryPaid: 4,
+    deliveryAllocation: "byValue",
+    createdAt: "2026-06-10T00:00:00.000Z",
+    updatedAt: "2026-06-10T00:00:00.000Z",
+    ...o,
+  };
+}
+
+/** One frozen sale of 20 (cost 10, half split = 5) riding trip `O1`. */
+function tripSale(): Sale {
+  return frozen(
+    sale({ id: "S1", repId: "R1", orderId: "O1" }),
+    product(),
+    scheme(),
+    rep(),
+  );
+}
+
+describe("commission reverses on a void trip, and the snapshot stands (gate P5/G2)", () => {
+  const s = tripSale();
+
+  it("delivered: the frozen 500 is earned and owed", () => {
+    const [agg] = computeRepAggregates(
+      input({ sales: [s], orders: [order("O1", { status: "delivered" })] }),
+      { currency: CURRENCY },
+    );
+    expect(agg.repShareMinor).toBe(500);
+    expect(agg.earnedMinor).toBe(500);
+    expect(agg.balanceMinor).toBe(500);
+    expect(agg.voidedShareMinor).toBe(0);
+    expect(agg.voidedCount).toBe(0);
+  });
+
+  it("returned: the balance drops by exactly that share, and says why", () => {
+    const [agg] = computeRepAggregates(
+      input({ sales: [s], orders: [order("O1", { status: "returned" })] }),
+      { currency: CURRENCY },
+    );
+    expect(agg.repShareMinor).toBe(0);
+    expect(agg.earnedMinor).toBe(0);
+    expect(agg.balanceMinor).toBe(0);
+    // Not silently dropped: the reversed share is reported on its own line.
+    expect(agg.voidedShareMinor).toBe(500);
+    expect(agg.voidedCount).toBe(1);
+  });
+
+  it("cancelled reverses the same way returned does", () => {
+    const [agg] = computeRepAggregates(
+      input({ sales: [s], orders: [order("O1", { status: "cancelled" })] }),
+      { currency: CURRENCY },
+    );
+    expect(agg.earnedMinor).toBe(0);
+    expect(agg.voidedShareMinor).toBe(500);
+  });
+
+  it("the frozen snapshot on the sale is untouched by any of it", () => {
+    const before = JSON.stringify(s.commissionSnapshot);
+    computeRepAggregates(input({ sales: [s], orders: [order("O1", { status: "returned" })] }), {
+      currency: CURRENCY,
+    });
+    expect(JSON.stringify(s.commissionSnapshot)).toBe(before);
+    // And the row still reports what was agreed — it is simply marked void.
+    const rows = computeSaleCommissions(
+      input({ sales: [s], orders: [order("O1", { status: "returned" })] }),
+    );
+    expect(rows[0].frozen).toBe(true);
+    expect(rows[0].voided).toBe(true);
+    expect(rows[0].repShareMinor).toBe(500);
+  });
+
+  it("marking it delivered again restores the balance exactly (gate P5/G4)", () => {
+    const at = (status: Order["status"]) =>
+      computeRepAggregates(input({ sales: [s], orders: [order("O1", { status })] }), {
+        currency: CURRENCY,
+      })[0];
+    const before = at("delivered");
+    const during = at("returned");
+    const after = at("delivered");
+    expect(during.balanceMinor).toBe(0);
+    expect(after.balanceMinor).toBe(before.balanceMinor);
+    expect(after.repShareMinor).toBe(before.repShareMinor);
+    expect(after.voidedShareMinor).toBe(0);
+  });
+
+  it("a payment already made against a returned trip shows up as an overpayment", () => {
+    const [agg] = computeRepAggregates(
+      input({
+        sales: [s],
+        orders: [order("O1", { status: "returned" })],
+        settlements: [settlement({ amountMinor: 500 })],
+      }),
+      { currency: CURRENCY },
+    );
+    // The 500 was paid and the 500 is no longer earned: the rep is 500 ahead, and
+    // the figure is never clamped to zero.
+    expect(agg.settledMinor).toBe(500);
+    expect(agg.balanceMinor).toBe(-500);
+  });
+
+  it("a pending trip is not void — the split stands until the trip settles", () => {
+    const [agg] = computeRepAggregates(
+      input({ sales: [s], orders: [order("O1", { status: "pending" })] }),
+      { currency: CURRENCY },
+    );
+    expect(agg.earnedMinor).toBe(500);
+    expect(agg.voidedCount).toBe(0);
+  });
+
+  it("no orders at all leaves every share standing (gate P5/G6)", () => {
+    const [agg] = computeRepAggregates(input({ sales: [s] }), { currency: CURRENCY });
+    expect(agg.earnedMinor).toBe(500);
+    expect(agg.voidedShareMinor).toBe(0);
+  });
+
+  it("a loose sale is never void, whatever else came back", () => {
+    const loose = frozen(sale({ id: "S2", repId: "R1" }), product(), scheme(), rep());
+    const [agg] = computeRepAggregates(
+      input({ sales: [s, loose], orders: [order("O1", { status: "returned" })] }),
+      { currency: CURRENCY },
+    );
+    expect(agg.earnedMinor).toBe(500);
+    expect(agg.voidedShareMinor).toBe(500);
+  });
+
+  it("only the void trip's OWN lines are reversed", () => {
+    const other = frozen(
+      sale({ id: "S3", repId: "R1", orderId: "O2" }),
+      product(),
+      scheme(),
+      rep(),
+    );
+    const [agg] = computeRepAggregates(
+      input({
+        sales: [s, other],
+        orders: [order("O1", { status: "returned" }), order("O2", { status: "delivered" })],
+      }),
+      { currency: CURRENCY },
+    );
+    expect(agg.earnedMinor).toBe(500);
+    expect(agg.voidedShareMinor).toBe(500);
+    expect(agg.saleCount).toBe(1);
+  });
+
+  it("the team total reverses too, and reports the reversal", () => {
+    const team = computeTeamCommissions(
+      input({ sales: [s], orders: [order("O1", { status: "returned" })] }),
+      { currency: CURRENCY },
+    );
+    expect(team.repShareMinor).toBe(0);
+    expect(team.outstandingMinor).toBe(0);
+    expect(team.voidedShareMinor).toBe(500);
+    expect(team.voidedCount).toBe(1);
+  });
+
+  it("the sparkline does not show a peak the rep was never paid for", () => {
+    const live = computeRepTrends(
+      input({ sales: [s], orders: [order("O1", { status: "delivered" })] }),
+      { currency: CURRENCY, now: new Date("2026-06-20T00:00:00.000Z"), months: 3 },
+    );
+    const voided = computeRepTrends(
+      input({ sales: [s], orders: [order("O1", { status: "returned" })] }),
+      { currency: CURRENCY, now: new Date("2026-06-20T00:00:00.000Z"), months: 3 },
+    );
+    expect(live.get("R1")).toEqual([0, 0, 500]);
+    expect(voided.get("R1")).toEqual([0, 0, 0]);
+  });
+});
+
+describe("frozenSnapshots with a void set", () => {
+  it("drops only the splits of the trips named", () => {
+    // Distinct prices so each snapshot is identifiable by its own frozen revenue.
+    const a = frozen(
+      sale({ id: "A", repId: "R1", orderId: "O1", unitPrice: 20 }),
+      product(),
+      scheme(),
+      rep(),
+    );
+    const b = frozen(
+      sale({ id: "B", repId: "R1", orderId: "O2", unitPrice: 30 }),
+      product(),
+      scheme(),
+      rep(),
+    );
+    const c = frozen(sale({ id: "C", repId: "R1", unitPrice: 40 }), product(), scheme(), rep());
+    const revenues = (voidOrders?: Set<string>) =>
+      frozenSnapshots([a, b, c], voidOrders).map((s) => s.revenueMinor);
+    expect(revenues()).toEqual([2000, 3000, 4000]);
+    expect(revenues(new Set(["O1"]))).toEqual([3000, 4000]);
+    expect(revenues(new Set(["O1", "O2"]))).toEqual([4000]);
+    // An empty set removes nothing: it is not "everything is void".
+    expect(revenues(new Set())).toEqual([2000, 3000, 4000]);
   });
 });

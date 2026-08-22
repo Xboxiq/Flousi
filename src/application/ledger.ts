@@ -1,9 +1,14 @@
-import type {
-  AccountingPeriod,
-  Product,
-  Rep,
-  Sale,
-  Settlement,
+import {
+  ORDER_STATUS_LABELS,
+  orderStatus,
+  voidOrderIds,
+  type AccountingPeriod,
+  type Order,
+  type OrderStatus,
+  type Product,
+  type Rep,
+  type Sale,
+  type Settlement,
 } from "@/domain";
 import { profitForSale } from "./analytics";
 import { frozenSnapshots, toMajor } from "./commissions";
@@ -60,6 +65,13 @@ export function computeSettlements(input: {
   reps: readonly Rep[];
   sales: readonly Sale[];
   periods: readonly AccountingPeriod[];
+  /**
+   * The trips those sales rode. A returned or cancelled trip earns nobody a share,
+   * so its splits are absent from `earned` while the payments already made against
+   * them stay in `paid` — which is exactly the overpayment the merchant needs to
+   * see, as a negative `outstanding` (gate P5/G2).
+   */
+  orders?: readonly Order[];
   /** Restricts to one rep's own payments and their own earned share. */
   scope?: { repId: string } | "none";
 }): SettlementsView {
@@ -104,7 +116,7 @@ export function computeSettlements(input: {
     l.paid += r.amount;
     l.count += 1;
   }
-  for (const snap of frozenSnapshots(sales)) {
+  for (const snap of frozenSnapshots(sales, voidOrderIds(input.orders ?? []))) {
     const l = line(snap.currency);
     l.earned += toMajor(snap.repShareMinor, snap.currency);
   }
@@ -156,6 +168,14 @@ export interface Movement {
    *   reveals nothing about the purchase price on its own.
    */
   secondaryKind?: "profit" | "repShare";
+  /**
+   * The sale rode a trip that came back or was cancelled. The row stays in the log —
+   * it happened, and the merchant paid to ship it — but no figure on it is money he
+   * kept, so no total counts it and no colour claims it came in (gate P5/G2).
+   */
+  voided?: boolean;
+  /** The trip's state, when the row belongs to one. Absent for a loose sale. */
+  status?: OrderStatus;
   /** Deep link for the row, when the event has a screen of its own. */
   href?: string;
 }
@@ -182,6 +202,12 @@ export function computeLedger(input: {
   periods: readonly AccountingPeriod[];
   products: readonly Product[];
   reps: readonly Rep[];
+  /**
+   * The trips the sales rode. A sale on a returned or cancelled trip is marked
+   * `voided` and painted as no movement rather than as income (gate P5/G2). Omit
+   * and every sale reads as delivered, which is what a pre-P4 sale is.
+   */
+  orders?: readonly Order[];
   currency: string;
   /** How many rows to return. Omit for all of them. */
   limit?: number;
@@ -210,6 +236,9 @@ export function computeLedger(input: {
     scope === undefined ? true : scope === "none" ? false : subject.repId === scope.repId;
   const productById = new Map(products.map((p) => [p.id, p]));
   const repById = new Map(reps.map((r) => [r.id, r]));
+  const statusByOrder = new Map(
+    (input.orders ?? []).map((o) => [o.id, orderStatus(o)] as const),
+  );
 
   const all: Movement[] = [];
 
@@ -220,17 +249,33 @@ export function computeLedger(input: {
     const rep = sale.repId ? repById.get(sale.repId) : undefined;
     const snapshot = sale.commissionSnapshot;
     const share = snapshot ? toMajor(snapshot.repShareMinor, snapshot.currency) : undefined;
+    // A loose sale has no trip and therefore no state: it reads as it always did.
+    const status = sale.orderId ? statusByOrder.get(sale.orderId) : undefined;
+    const voided = status === "returned" || status === "cancelled";
+    const who = rep ? ` · ${rep.name}` : "";
     all.push({
       id: `sale:${sale.id}`,
       kind: "sale",
-      direction: "in",
+      // A void sale moved no money in. Green on it would be colour spent on a
+      // figure that never arrived (§13).
+      direction: voided ? "none" : "in",
       at: sale.soldAt,
       title: product?.name ?? "منتج محذوف",
-      detail: rep ? `بيع · ${rep.name}` : "بيع",
+      detail: voided ? `${ORDER_STATUS_LABELS[status]}${who}` : `بيع${who}`,
       amount: p.revenue,
       currency: sale.currency || currency,
-      secondary: costs ? p.netProfit : share,
-      secondaryKind: costs ? "profit" : share === undefined ? undefined : "repShare",
+      // Nothing was earned and nothing is owed on a void row, so no second figure
+      // is attached — an amount with a strike through it says the rest.
+      secondary: voided ? undefined : costs ? p.netProfit : share,
+      secondaryKind: voided
+        ? undefined
+        : costs
+          ? "profit"
+          : share === undefined
+            ? undefined
+            : "repShare",
+      voided: voided || undefined,
+      status,
       href: product ? `/products/view?id=${product.id}` : undefined,
     });
   }

@@ -64,12 +64,20 @@ export type {
   OrderLineInput,
   DeliveryAllocation,
   DeliveryShare,
+  OrderStatus,
+  CollectionStatus,
 } from "./entities/order";
 export {
   DELIVERY_ALLOCATIONS,
   DELIVERY_ALLOCATION_LABELS,
   deliveryMargin,
   defaultAllocation,
+  ORDER_STATUSES,
+  ORDER_STATUS_LABELS,
+  COLLECTION_LABELS,
+  isVoidOrder,
+  orderStatus,
+  orderCollection,
 } from "./entities/order";
 
 export {
@@ -77,11 +85,15 @@ export {
   calculateOrder,
   costsByProduct,
   splitDeliveryMargin,
+  orderOutcome,
+  voidOrderIds,
 } from "./services/order-calculator";
 export type {
   OrderLineResult,
   OrderResult,
   DeliverySplitResult,
+  OrderOutcome,
+  CashPosition,
 } from "./services/order-calculator";
 
 export type {

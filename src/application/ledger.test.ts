@@ -5,6 +5,7 @@ import {
   makeCostBreakdown,
   type AccountingPeriod,
   type CommissionScheme,
+  type Order,
   type Product,
   type Rep,
   type Sale,
@@ -498,5 +499,179 @@ describe("withholding costs from the ledger (gate P3/G4)", () => {
     });
     expect(v.rows[0].amount).toBe(50);
     expect(v.rows[0].secondary).toBeUndefined();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// P5 — a void trip in the log and in the payable.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function order(id: string, o: Partial<Order> = {}): Order {
+  return {
+    id,
+    currency: IQD,
+    placedAt: "2026-08-05T00:00:00.000Z",
+    deliveryCharged: 5,
+    deliveryPaid: 4,
+    deliveryAllocation: "byValue",
+    createdAt: "2026-08-05T00:00:00.000Z",
+    updatedAt: "2026-08-05T00:00:00.000Z",
+    ...o,
+  };
+}
+
+describe("computeLedger — a void row is not income (gate P5/G2)", () => {
+  const s = sale({ id: "S1", repId: "R1", orderId: "O1" });
+
+  it("delivered reads exactly as it always did", () => {
+    const v = computeLedger({
+      sales: [s],
+      settlements: [],
+      periods: [],
+      products: [product()],
+      reps: [rep()],
+      orders: [order("O1", { status: "delivered" })],
+      currency: IQD,
+    });
+    expect(v.rows[0].direction).toBe("in");
+    expect(v.rows[0].voided).toBeUndefined();
+    expect(v.rows[0].detail).toBe("بيع · سارة");
+    expect(v.rows[0].secondaryKind).toBe("profit");
+  });
+
+  it("returned is painted as no movement and named as what happened", () => {
+    const v = computeLedger({
+      sales: [s],
+      settlements: [],
+      periods: [],
+      products: [product()],
+      reps: [rep()],
+      orders: [order("O1", { status: "returned" })],
+      currency: IQD,
+    });
+    expect(v.rows[0].direction).toBe("none");
+    expect(v.rows[0].voided).toBe(true);
+    expect(v.rows[0].status).toBe("returned");
+    expect(v.rows[0].detail).toBe("راجعة · سارة");
+    // No profit and no share are attached: neither figure is real on a void row.
+    expect(v.rows[0].secondary).toBeUndefined();
+    expect(v.rows[0].secondaryKind).toBeUndefined();
+  });
+
+  it("cancelled says «ملغاة», not «راجعة»", () => {
+    const v = computeLedger({
+      sales: [s],
+      settlements: [],
+      periods: [],
+      products: [product()],
+      reps: [rep()],
+      orders: [order("O1", { status: "cancelled" })],
+      currency: IQD,
+    });
+    expect(v.rows[0].detail).toBe("ملغاة · سارة");
+  });
+
+  it("the row STAYS in the log and still counts as a sale event", () => {
+    const v = computeLedger({
+      sales: [s],
+      settlements: [],
+      periods: [],
+      products: [product()],
+      reps: [rep()],
+      orders: [order("O1", { status: "returned" })],
+      currency: IQD,
+    });
+    // It happened, and the merchant paid to ship it. Hiding it would erase history.
+    expect(v.total).toBe(1);
+    expect(v.counts.sale).toBe(1);
+    expect(v.rows[0].amount).toBe(100);
+  });
+
+  it("a sale with no trip is never void, even beside one that came back", () => {
+    const v = computeLedger({
+      sales: [sale({ id: "loose" }), s],
+      settlements: [],
+      periods: [],
+      products: [product()],
+      reps: [rep()],
+      orders: [order("O1", { status: "returned" })],
+      currency: IQD,
+    });
+    const loose = v.rows.find((r) => r.id === "sale:loose");
+    expect(loose?.direction).toBe("in");
+    expect(loose?.voided).toBeUndefined();
+  });
+
+  it("omitting orders entirely leaves every row as income (gate P5/G6)", () => {
+    const v = computeLedger({
+      sales: [s],
+      settlements: [],
+      periods: [],
+      products: [product()],
+      reps: [rep()],
+      currency: IQD,
+    });
+    expect(v.rows[0].direction).toBe("in");
+    expect(v.rows[0].status).toBeUndefined();
+  });
+
+  it("a scoped session sees its own void row, without a profit figure either way", () => {
+    const v = computeLedger({
+      sales: [s],
+      settlements: [],
+      periods: [],
+      products: [product()],
+      reps: [rep()],
+      orders: [order("O1", { status: "returned", repId: "R1" })],
+      currency: IQD,
+      scope: { repId: "R1" },
+      costs: false,
+    });
+    expect(v.rows).toHaveLength(1);
+    expect(v.rows[0].voided).toBe(true);
+    expect(v.rows[0].secondary).toBeUndefined();
+  });
+});
+
+describe("computeSettlements — earned drops when a trip comes back (gate P5/G2)", () => {
+  const s = frozen(sale({ id: "S1", repId: "R1", orderId: "O1" }));
+
+  it("delivered: 20 earned against 20 paid leaves nothing outstanding", () => {
+    const v = computeSettlements({
+      settlements: [settlement({ amountMinor: 2_000 })],
+      reps: [rep()],
+      sales: [s],
+      periods: [],
+      orders: [order("O1", { status: "delivered" })],
+    });
+    const line = v.totals.find((t) => t.currency === IQD);
+    expect(line?.earned).toBe(20);
+    expect(line?.paid).toBe(20);
+    expect(line?.outstanding).toBe(0);
+  });
+
+  it("returned: the payment stands, the earning does not, and the gap is visible", () => {
+    const v = computeSettlements({
+      settlements: [settlement({ amountMinor: 2_000 })],
+      reps: [rep()],
+      sales: [s],
+      periods: [],
+      orders: [order("O1", { status: "returned" })],
+    });
+    const line = v.totals.find((t) => t.currency === IQD);
+    expect(line?.earned).toBe(0);
+    // The money already left the till: it is reported as an overpayment, not erased.
+    expect(line?.paid).toBe(20);
+    expect(line?.outstanding).toBe(-20);
+  });
+
+  it("no orders supplied leaves the earning exactly where it was", () => {
+    const v = computeSettlements({
+      settlements: [],
+      reps: [rep()],
+      sales: [s],
+      periods: [],
+    });
+    expect(v.totals.find((t) => t.currency === IQD)?.earned).toBe(20);
   });
 });
