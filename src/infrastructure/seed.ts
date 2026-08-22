@@ -7,6 +7,8 @@ import type {
   NewRep,
   NewRole,
   NewCommissionScheme,
+  OrderStatus,
+  CollectionStatus,
 } from "@/domain";
 import { CommissionCalculator, defaultCommissionSchemeParams, makeCostBreakdown } from "@/domain";
 import {
@@ -518,10 +520,11 @@ export async function seedIfEmpty(): Promise<void> {
     });
   }
 
-  // Three delivery trips, so /orders opens on the case this phase exists for: one
-  // fee carrying several products. The middle one is SUBSIDISED — charged 5,000 and
-  // paid 6,500 — because a merchant needs to see that state at least once to learn
-  // that the screen reports it.
+  // Five delivery trips, so /orders opens on the cases these phases exist for: one
+  // fee carrying several products, and every state money can be in. The second is
+  // SUBSIDISED (charged 5,000, paid 6,500), the fourth is still with the courier and
+  // the fifth came BACK, because a merchant needs to see each state at least once to
+  // learn that the screen reports it (gate P5/G3).
   const catalogue = await productRepository.list();
   const pick = (name: string) => catalogue.find((p) => p.name.includes(name));
   const trips: Array<{
@@ -531,6 +534,9 @@ export async function seedIfEmpty(): Promise<void> {
     area: string;
     customer: string;
     lines: Array<{ name: string; qty: number }>;
+    status?: OrderStatus;
+    collection?: CollectionStatus;
+    returnCost?: number;
   }> = [
     {
       charged: 5_000,
@@ -556,6 +562,29 @@ export async function seedIfEmpty(): Promise<void> {
       customer: "زبون الجادرية",
       lines: [{ name: "دفتر", qty: 1 }, { name: "طقم", qty: 1 }, { name: "كوب", qty: 2 }],
     },
+    // Delivered, and the cash is still with the courier: earned, not spendable.
+    {
+      charged: 5_000,
+      paid: 4_000,
+      day: 19,
+      area: "الأعظمية",
+      customer: "زبون الأعظمية",
+      lines: [{ name: "وشاح", qty: 2 }],
+      status: "delivered",
+      collection: "withCourier",
+    },
+    // Came back. The goods are on the shelf again; the two delivery legs are the
+    // only real loss, and the rep's share on it falls away.
+    {
+      charged: 5_000,
+      paid: 4_000,
+      day: 22,
+      area: "الشعلة",
+      customer: "زبون الشعلة",
+      lines: [{ name: "طقم", qty: 1 }],
+      status: "returned",
+      returnCost: 4_000,
+    },
   ];
 
   const seniorForTrips = reps.find((r) => r.status === "active");
@@ -578,6 +607,9 @@ export async function seedIfEmpty(): Promise<void> {
       deliveryAllocation: "byValue",
       customerName: trip.customer,
       customerArea: trip.area,
+      status: trip.status,
+      collection: trip.collection,
+      returnCost: trip.returnCost,
     });
     for (const line of lines) {
       await saleRepository.create({

@@ -40,12 +40,17 @@ export function SettlementsView() {
   const reps = useDataStore((s) => s.reps);
   const sales = useDataStore((s) => s.sales);
   const periods = useDataStore((s) => s.periods);
+  const orders = useDataStore((s) => s.orders);
   const settings = useDataStore((s) => s.settings);
   const access = useAccess();
 
   const view = useMemo(
-    () => computeSettlements({ settlements, reps, sales, periods, scope: access.salesScope }),
-    [settlements, reps, sales, periods, access.salesScope],
+    () =>
+      // `orders` is what lets a returned trip stop counting as earned. The payment
+      // already made against it stays in `paid`, so the overpayment is visible as a
+      // negative outstanding rather than silently absorbed (gate P5/G2).
+      computeSettlements({ settlements, reps, sales, periods, orders, scope: access.salesScope }),
+    [settlements, reps, sales, periods, orders, access.salesScope],
   );
 
   const money = (n: number, currency: string) =>

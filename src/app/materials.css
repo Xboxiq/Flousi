@@ -1116,3 +1116,97 @@
     border-radius: 2px 2px 0 0;
     background-color: inherit;
   }
+
+  /* ───────────────── الصندوق — the till (P5) ─────────────────
+     «كم ربحت» and «كم عندي» are different questions, so the money's STATE is
+     drawn as physical distance from the merchant's hand, not as a fourth
+     proportional bar (the app already has three, and a repeated idiom is the
+     slop the client forbids).
+
+     One lit drawer holds what is spendable. Behind its front panel sit two
+     shallower bays for money that exists but is not his yet. Figures are
+     PRINTED at full size in every bay — nothing is scaled — so no compartment
+     can imply a proportion the arithmetic does not support (§11b). */
+  .till-front {
+    /* the drawer's front panel: a milled lip the eye reads as "this side is
+       yours, that side is not". A real edge, not a 1px divider. */
+    position: relative;
+    height: 7px;
+    border-radius: 4px;
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--fg) 13%, transparent),
+      color-mix(in srgb, var(--fg) 5%, transparent)
+    );
+    box-shadow:
+      inset 0 1px 0 var(--neu-hi),
+      0 1px 0 var(--neu-hi);
+  }
+  [data-theme="dark"] .till-front {
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.03)
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.09),
+      0 1px 0 rgba(0, 0, 0, 0.5);
+  }
+  .till-front::after {
+    /* the pull, centred: the one detail that makes it a drawer and not a rule */
+    content: "";
+    position: absolute;
+    inset-inline: 42%;
+    top: 2px;
+    height: 3px;
+    border-radius: 2px;
+    background-color: color-mix(in srgb, var(--fg) 28%, transparent);
+  }
+
+  /* a bay for money that is real but not in hand: sunk, quieter than the shell */
+  .till-bay {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 14px;
+    background-color: var(--sunken);
+    box-shadow:
+      inset 0 2px 6px rgba(18, 26, 38, 0.18),
+      inset 0 -1px 0 var(--neu-hi);
+  }
+  [data-theme="dark"] .till-bay {
+    box-shadow:
+      inset 0 2px 7px rgba(0, 0, 0, 0.75),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  }
+  /* the texture names WHY the bay is not the drawer, per the app's grammar
+     (§11a): hatch = a remainder you have not got, dots = a quieted reading. */
+  .till-bay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.5;
+  }
+  .till-bay--waiting::before {
+    background-image: repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--fg) 15%, transparent) 0 1.5px,
+      transparent 1.5px 7px
+    );
+  }
+  .till-bay--road::before {
+    background-image: radial-gradient(
+      color-mix(in srgb, var(--fg) 17%, transparent) 1px,
+      transparent 1.3px
+    );
+    background-size: 6px 6px;
+  }
+  /* money that left and did not come back: struck across, never a bay of its own,
+     because a loss is not a compartment of a gain (§11b). */
+  .till-loss {
+    position: relative;
+    border-radius: 12px;
+    background-color: color-mix(in srgb, var(--danger) 9%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger) 26%, transparent);
+  }

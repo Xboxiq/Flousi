@@ -1,9 +1,12 @@
 import {
   calculateOrder,
   costsByProduct,
-  deliveryMargin,
+  isVoidOrder,
+  orderOutcome,
+  orderStatus,
   type Order,
   type OrderLineInput,
+  type OrderOutcome,
   type OrderResult,
   type Product,
   type Rep,
@@ -19,6 +22,12 @@ export interface OrderRow {
   /** Product name per line, for display without a second join. */
   names: string[];
   result: OrderResult;
+  /**
+   * What the trip actually DID, given its state. `result` is what it would make if
+   * it completed; these two are the same figure only for a delivered trip, and the
+   * screen must never print one while meaning the other (gate P5/G3).
+   */
+  outcome: OrderOutcome;
   repName?: string;
   /** How many distinct products the trip carried. */
   lineCount: number;
@@ -34,6 +43,12 @@ export interface OrdersView {
   subsidised: number;
   /** Sum of the delivery margins, in the account currency. */
   deliveryMarginTotal: number;
+  /** How many trips are still on the road. */
+  pending: number;
+  /** Delivered trips whose cash is still with the courier. */
+  withCourier: number;
+  /** Trips that came back or were cancelled. */
+  voided: number;
   /**
    * Sales that are NOT lines of any order — every sale recorded before P4, and every
    * one recorded straight from a product page. Reported rather than hidden, because
@@ -93,11 +108,13 @@ export function computeOrders(input: {
         quantity: l.quantity,
         unitPrice: l.unitPrice,
       }));
+      const result = calculateOrder({ order, lines: inputs, costsByProduct: costs });
       return {
         order,
         lines,
         names: lines.map((l) => nameById.get(l.productId) ?? "منتج محذوف"),
-        result: calculateOrder({ order, lines: inputs, costsByProduct: costs }),
+        result,
+        outcome: orderOutcome({ order, result }),
         repName: order.repId ? repById.get(order.repId) : undefined,
         lineCount: lines.length,
         units: lines.reduce((s, l) => s + Math.max(0, l.quantity), 0),
@@ -105,11 +122,18 @@ export function computeOrders(input: {
     })
     .sort((a, b) => (b.order.placedAt ?? "").localeCompare(a.order.placedAt ?? ""));
 
+  // A trip that never arrived did not lose money on its delivery MARGIN — it lost
+  // the delivery outright, which the cash reading reports. Counting it here too
+  // would double-count the same loss under two different names.
+  const settled = rows.filter((r) => !isVoidOrder(orderStatus(r.order)));
   return {
     rows: input.limit ? rows.slice(0, input.limit) : rows,
     total: rows.length,
-    subsidised: rows.filter((r) => r.result.deliveryMargin < 0).length,
-    deliveryMarginTotal: rows.reduce((s, r) => s + r.result.deliveryMargin, 0),
+    subsidised: settled.filter((r) => r.result.deliveryMargin < 0).length,
+    deliveryMarginTotal: settled.reduce((s, r) => s + r.result.deliveryMargin, 0),
+    pending: rows.filter((r) => orderStatus(r.order) === "pending").length,
+    withCourier: rows.filter((r) => r.outcome.cash === "withCourier").length,
+    voided: rows.filter((r) => isVoidOrder(orderStatus(r.order))).length,
     looseSales,
   };
 }
@@ -120,37 +144,68 @@ export function computeOrders(input: {
  * This is the figure the app was blind to before P4. A merchant who charges a fixed
  * fee «on the customer» can be losing money on every trip without a line anywhere
  * telling him.
+ *
+ * REALISED, not contracted (P5): a trip that came back collected no delivery fee and
+ * paid for two legs, and a cancelled trip neither charged nor paid. Reading the
+ * order's stored figures regardless of state would credit the merchant with fees he
+ * never received.
  */
 export interface DeliveryReading {
+  /** Delivery money actually collected. A returned trip contributes nothing. */
   charged: number;
+  /** Delivery actually paid out, including the return leg. */
   paid: number;
   margin: number;
+  /** Trips that have settled — delivered, returned or cancelled. */
   trips: number;
-  /** Trips that lost money on delivery. */
+  /** Settled trips that lost money on delivery. */
   subsidised: number;
   /** margin / charged, or 0 when nothing was charged. */
   rate: number;
+  /**
+   * Trips still on the road, excluded from every figure above. A fee that has not
+   * been collected is not a fee, and a courier not yet paid is not a cost.
+   */
+  inFlight: number;
 }
 
 export function computeDelivery(orders: readonly Order[]): DeliveryReading {
   let charged = 0;
   let paid = 0;
+  let trips = 0;
   let subsidised = 0;
+  let inFlight = 0;
   for (const order of orders) {
+    const status = orderStatus(order);
+    if (status === "pending") {
+      inFlight += 1;
+      continue;
+    }
+    trips += 1;
+    if (status === "cancelled") continue;
     const c = Number.isFinite(order.deliveryCharged) ? order.deliveryCharged : 0;
     const p = Number.isFinite(order.deliveryPaid) ? order.deliveryPaid : 0;
+    const back = Number.isFinite(order.returnCost) ? (order.returnCost as number) : 0;
+    if (status === "returned") {
+      // Nothing was collected on a trip that came back, and the courier was paid
+      // for both legs. That is the whole cost of a return (gate P5/G1).
+      paid += p + back;
+      subsidised += 1;
+      continue;
+    }
     charged += c;
     paid += p;
-    if (deliveryMargin(order) < 0) subsidised += 1;
+    if (c - p < 0) subsidised += 1;
   }
   const margin = charged - paid;
   return {
     charged,
     paid,
     margin,
-    trips: orders.length,
+    trips,
     subsidised,
     rate: charged === 0 ? 0 : margin / charged,
+    inFlight,
   };
 }
 

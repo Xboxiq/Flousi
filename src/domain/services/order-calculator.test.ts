@@ -3,10 +3,21 @@ import {
   allocateDelivery,
   calculateOrder,
   costsByProduct,
+  orderOutcome,
   splitDeliveryMargin,
 } from "./order-calculator";
 import { makeCostBreakdown } from "../entities/cost-breakdown";
-import { deliveryMargin, type DeliveryAllocation, type OrderLineInput } from "../entities/order";
+import {
+  deliveryMargin,
+  isVoidOrder,
+  orderCollection,
+  orderStatus,
+  ORDER_STATUSES,
+  type CollectionStatus,
+  type DeliveryAllocation,
+  type OrderLineInput,
+  type OrderStatus,
+} from "../entities/order";
 import type { Product } from "../entities/product";
 import { ProfitCalculator } from "./profit-calculator";
 
@@ -545,5 +556,204 @@ describe("allocation lands on the currency's PAYABLE unit", () => {
         expect(parts.reduce((s, p) => s + p.amount, 0), `n=${n} paid=${paid}`).toBe(paid);
       }
     }
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// orderOutcome — phase P5. `calculateOrder` says what the order WOULD make;
+// this says what it DID, and for every order that is not delivered the two differ.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** One order, three lines, priced so the completed figures are round and checkable. */
+function trip(
+  o: Partial<{
+    status: OrderStatus;
+    collection: CollectionStatus;
+    returnCost: number;
+    deliveryCharged: number;
+    deliveryPaid: number;
+  }> = {},
+) {
+  const lines = [line("a", "P1", 1, 60_000), line("b", "P2", 2, 20_000)];
+  const products = new Map([
+    ["P1", product("P1", 60_000, 40_000).costs],
+    ["P2", product("P2", 20_000, 12_000).costs],
+  ]);
+  const ord = {
+    currency: IQD,
+    deliveryCharged: o.deliveryCharged ?? 5_000,
+    deliveryPaid: o.deliveryPaid ?? 4_000,
+    deliveryAllocation: "byValue" as DeliveryAllocation,
+    status: o.status,
+    collection: o.collection,
+    returnCost: o.returnCost,
+  };
+  const result = calculateOrder({ order: ord, lines, costsByProduct: products });
+  return { order: ord, result, outcome: orderOutcome({ order: ord, result }) };
+}
+
+describe("orderOutcome — a return does not cost the purchase price (gate P5/G1)", () => {
+  it("returned: nothing collected, no goods cost, loss = delivery out AND back", () => {
+    const { outcome } = trip({ status: "returned", returnCost: 4_000 });
+    expect(outcome.collected).toBe(0);
+    // The goods came back. The merchant still owns them; the purchase price was
+    // not consumed, so counting it would invent a loss he did not take.
+    expect(outcome.goodsCost).toBe(0);
+    expect(outcome.deliveryOut).toBe(8_000);
+    expect(outcome.netProfit).toBe(-8_000);
+  });
+
+  it("the completed reading of the SAME order is a profit — the state is what differs", () => {
+    const done = trip({ status: "delivered" });
+    // 100,000 collected in goods + 5,000 delivery − 64,000 goods − 4,000 courier
+    expect(done.outcome.collected).toBe(105_000);
+    expect(done.outcome.goodsCost).toBe(64_000);
+    expect(done.outcome.netProfit).toBe(37_000);
+    // Same lines, same prices, only the status changed:
+    expect(trip({ status: "returned", returnCost: 4_000 }).outcome.netProfit).toBe(-8_000);
+  });
+
+  it("cancelled never went out: no revenue, no cost, no loss", () => {
+    const { outcome } = trip({ status: "cancelled" });
+    expect(outcome).toMatchObject({
+      collected: 0,
+      goodsCost: 0,
+      deliveryOut: 0,
+      netProfit: 0,
+      cash: "none",
+    });
+  });
+});
+
+describe("orderOutcome — the return's cost is entered, not guessed (gate P5/G5)", () => {
+  it("a courier who charges nothing for the return leg costs only the outbound trip", () => {
+    const { outcome } = trip({ status: "returned", deliveryPaid: 4_000, returnCost: 0 });
+    expect(outcome.deliveryOut).toBe(4_000);
+    expect(outcome.netProfit).toBe(-4_000);
+  });
+
+  it("a courier who charges half charges half", () => {
+    const { outcome } = trip({ status: "returned", deliveryPaid: 4_000, returnCost: 2_000 });
+    expect(outcome.deliveryOut).toBe(6_000);
+    expect(outcome.netProfit).toBe(-6_000);
+  });
+
+  it("a return that cost MORE than the outbound leg is reported at its real cost", () => {
+    const { outcome } = trip({ status: "returned", deliveryPaid: 4_000, returnCost: 7_500 });
+    expect(outcome.deliveryOut).toBe(11_500);
+    expect(outcome.netProfit).toBe(-11_500);
+  });
+
+  it("an absent returnCost is read as zero, never as a silent guess", () => {
+    const { outcome } = trip({ status: "returned", deliveryPaid: 4_000 });
+    // The FORM defaults the field to deliveryPaid; the calculator does not invent it.
+    expect(outcome.deliveryOut).toBe(4_000);
+  });
+});
+
+describe("orderOutcome — «ربحت» is not «بيدي» (gate P5/G3)", () => {
+  it("four states give four different readings, and none of them is the others", () => {
+    const inFlight = trip({ status: "pending" }).outcome;
+    const withCourier = trip({ status: "delivered", collection: "withCourier" }).outcome;
+    const inHand = trip({ status: "delivered", collection: "collected" }).outcome;
+    const void_ = trip({ status: "returned", returnCost: 4_000 }).outcome;
+
+    expect(inFlight.cash).toBe("none");
+    expect(withCourier.cash).toBe("withCourier");
+    expect(inHand.cash).toBe("inHand");
+    expect(void_.cash).toBe("none");
+
+    // Earned and spendable are the same 37,000 in two different places — the app must
+    // not add them, and must not present either as the other.
+    expect(withCourier.netProfit).toBe(37_000);
+    expect(inHand.netProfit).toBe(37_000);
+    expect(withCourier.cash).not.toBe(inHand.cash);
+  });
+
+  it("pending realises nothing: goods are out, but no revenue exists yet", () => {
+    const { outcome } = trip({ status: "pending" });
+    expect(outcome).toMatchObject({ collected: 0, goodsCost: 0, netProfit: 0, cash: "none" });
+  });
+
+  it("commission is owed only on a delivered order", () => {
+    expect(trip({ status: "delivered" }).outcome.commissionOwed).toBe(true);
+    expect(trip({ status: "pending" }).outcome.commissionOwed).toBe(false);
+    expect(trip({ status: "returned" }).outcome.commissionOwed).toBe(false);
+    expect(trip({ status: "cancelled" }).outcome.commissionOwed).toBe(false);
+  });
+
+  it("collection does not change what was earned, only where it sits", () => {
+    const a = trip({ status: "delivered", collection: "withCourier" }).outcome;
+    const b = trip({ status: "delivered", collection: "collected" }).outcome;
+    expect(a.netProfit).toBe(b.netProfit);
+    expect(a.collected).toBe(b.collected);
+    expect(a.commissionOwed).toBe(b.commissionOwed);
+  });
+});
+
+describe("orderOutcome — status is reversible and rewrites nothing (gate P5/G4)", () => {
+  it("every status round-trips back to the same figures", () => {
+    const baseline = trip({ status: "delivered" }).outcome;
+    for (const status of ORDER_STATUSES) {
+      const moved = trip({ status, returnCost: 4_000 }).outcome;
+      expect(moved.status).toBe(status);
+      const back = trip({ status: "delivered" }).outcome;
+      expect(back).toEqual(baseline);
+    }
+  });
+
+  it("the outcome never mutates the order or the calculated result", () => {
+    const { order: ord, result } = trip({ status: "returned", returnCost: 4_000 });
+    const ordBefore = JSON.stringify(ord);
+    const resultBefore = JSON.stringify(result);
+    orderOutcome({ order: ord, result });
+    expect(JSON.stringify(ord)).toBe(ordBefore);
+    // The frozen arithmetic still says what the order WOULD have made; only the
+    // outcome says what it did.
+    expect(JSON.stringify(result)).toBe(resultBefore);
+    expect(result.netProfit).toBe(37_000);
+  });
+
+  it("every status is covered — no state falls through to a default reading", () => {
+    const seen = ORDER_STATUSES.map((status) => trip({ status }).outcome.status);
+    expect(seen).toEqual(ORDER_STATUSES);
+    expect(new Set(seen).size).toBe(ORDER_STATUSES.length);
+  });
+});
+
+describe("orderOutcome — a pre-P5 order still reads as money in hand (gate P5/G6)", () => {
+  it("no status and no collection reads as delivered and collected", () => {
+    const { outcome } = trip();
+    expect(outcome.status).toBe("delivered");
+    expect(outcome.cash).toBe("inHand");
+    expect(outcome.netProfit).toBe(37_000);
+    expect(outcome.commissionOwed).toBe(true);
+  });
+
+  it("orderStatus/orderCollection read absence as the state the row actually had", () => {
+    expect(orderStatus({})).toBe("delivered");
+    expect(orderCollection({})).toBe("collected");
+    expect(orderStatus({ status: "returned" })).toBe("returned");
+    expect(orderCollection({ collection: "withCourier" })).toBe("withCourier");
+  });
+
+  it("isVoidOrder names exactly the two states that realise nothing", () => {
+    expect(ORDER_STATUSES.filter(isVoidOrder)).toEqual(["returned", "cancelled"]);
+  });
+});
+
+describe("orderOutcome — a subsidised trip that comes back costs both legs", () => {
+  it("charging less than the courier costs makes the return hurt twice", () => {
+    // 5,000 charged against 6,500 paid: the trip was already subsidised.
+    const done = trip({ status: "delivered", deliveryCharged: 5_000, deliveryPaid: 6_500 }).outcome;
+    const back = trip({
+      status: "returned",
+      deliveryCharged: 5_000,
+      deliveryPaid: 6_500,
+      returnCost: 6_500,
+    }).outcome;
+    expect(done.netProfit).toBe(34_500);
+    expect(back.deliveryOut).toBe(13_000);
+    expect(back.netProfit).toBe(-13_000);
   });
 });

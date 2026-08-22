@@ -30,7 +30,14 @@ import {
   type DistributionPart,
 } from "@/presentation/components/objects/distribution-bar";
 import { Sparkline } from "@/presentation/components/objects/sparkline";
-import { formatCurrency, formatDate, formatNumber, formatPercent } from "@/presentation/lib/format";
+import {
+  NOUNS,
+  countedNoun,
+  formatCurrency,
+  formatDate,
+  formatNumber,
+  formatPercent,
+} from "@/presentation/lib/format";
 import { REP_STATUS_LABELS } from "@/presentation/lib/labels";
 import { cn } from "@/presentation/lib/cn";
 import { BalanceDevice, Figure } from "./balance-device";
@@ -66,6 +73,7 @@ export function RepsList() {
   const schemes = useDataStore((s) => s.commissionSchemes);
   const assignments = useDataStore((s) => s.commissionAssignments);
   const settlements = useDataStore((s) => s.settlements);
+  const orders = useDataStore((s) => s.orders);
   const settings = useDataStore((s) => s.settings);
 
   const [scope, setScope] = useState<Scope>("month");
@@ -84,9 +92,21 @@ export function RepsList() {
       schemes,
       assignments,
       settlements,
+      // Passed so a returned or cancelled trip stops counting as earnings: the money
+      // never arrived, so no share is owed on it (gate P5/G2).
+      orders,
       defaultCommissionSchemeId: settings.defaultCommissionSchemeId,
     }),
-    [sales, products, reps, schemes, assignments, settlements, settings.defaultCommissionSchemeId],
+    [
+      sales,
+      products,
+      reps,
+      schemes,
+      assignments,
+      settlements,
+      orders,
+      settings.defaultCommissionSchemeId,
+    ],
   );
 
   /* What is OWED is always the whole history: a payable does not reset with a
@@ -425,6 +445,22 @@ function RepCard({
             hint={`${count(row.saleCount)} عملية`}
           />
         </div>
+
+        {/* A balance that silently fell is a balance the rep will dispute. The share
+            that was agreed and then returned is named, so the drop has a reason on the
+            same card as the figure (gate P5/G2). */}
+        {row.voidedShareMinor !== 0 && (
+          <p className="flex flex-wrap items-baseline gap-x-1.5 text-[11px] leading-relaxed text-muted">
+            <span>سقط بالرجيع:</span>
+            <bdi dir="ltr" className="font-mono font-semibold text-fg">
+              {money(toMajor(row.voidedShareMinor, row.currency))}
+            </bdi>
+            <span className="text-subtle">
+              من {countedNoun(row.voidedCount, NOUNS.order, { locale })} رجعت أو
+              أُلغيت. ما اتُّفق عليه محفوظ في السجل.
+            </span>
+          </p>
+        )}
 
         <div>
           <div className="flex items-baseline justify-between gap-3 text-[11px]">

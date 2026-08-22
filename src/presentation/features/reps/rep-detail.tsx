@@ -52,6 +52,8 @@ import {
 } from "@/presentation/components/objects/distribution-bar";
 import { MagnitudeRings } from "@/presentation/components/objects/magnitude-rings";
 import {
+  NOUNS,
+  countedNoun,
   formatCurrency,
   formatDate,
   formatNumber,
@@ -101,6 +103,7 @@ export function RepDetail({ id }: { id: string }) {
   const schemes = useDataStore((s) => s.commissionSchemes);
   const assignments = useDataStore((s) => s.commissionAssignments);
   const settlements = useDataStore((s) => s.settlements);
+  const orders = useDataStore((s) => s.orders);
   const periods = useDataStore((s) => s.periods);
   const settings = useDataStore((s) => s.settings);
   const archiveRep = useDataStore((s) => s.archiveRep);
@@ -123,9 +126,21 @@ export function RepDetail({ id }: { id: string }) {
       schemes,
       assignments,
       settlements,
+      // Passed so a returned or cancelled trip stops counting as earnings: the money
+      // never arrived, so no share is owed on it (gate P5/G2).
+      orders,
       defaultCommissionSchemeId: settings.defaultCommissionSchemeId,
     }),
-    [sales, products, reps, schemes, assignments, settlements, settings.defaultCommissionSchemeId],
+    [
+      sales,
+      products,
+      reps,
+      schemes,
+      assignments,
+      settlements,
+      orders,
+      settings.defaultCommissionSchemeId,
+    ],
   );
 
   const rep = useMemo(() => reps.find((r) => r.id === id), [reps, id]);
@@ -375,7 +390,15 @@ export function RepDetail({ id }: { id: string }) {
           earned={toMajor(agg.earnedMinor, agg.currency)}
           settled={toMajor(agg.settledMinor, agg.currency)}
           money={money}
-          caption="من حصصه المجمّدة فقط، فما لم يُجمَّد بعد ليس دينًا."
+          caption={
+            agg.voidedShareMinor !== 0
+              ? `من حصصه المجمّدة فقط، فما لم يُجمَّد بعد ليس دينًا. وسقط بالرجيع ${money(
+                  toMajor(agg.voidedShareMinor, agg.currency),
+                )} من ${countedNoun(agg.voidedCount, NOUNS.order, {
+                  locale: settings.locale,
+                })} رجعت أو أُلغيت.`
+              : "من حصصه المجمّدة فقط، فما لم يُجمَّد بعد ليس دينًا."
+          }
         />
 
         <Card>
