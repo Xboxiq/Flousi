@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Package, Plus, Truck, Warning } from "@phosphor-icons/react";
 import { computeDelivery, computeOrders, type OrderRow } from "@/application/orders";
 import { computeCash } from "@/application/cash";
-import { AccessPolicy, DELIVERY_ALLOCATION_LABELS } from "@/domain";
+import { AccessPolicy, DELIVERY_ALLOCATION_LABELS, isFreeDelivery } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { useAccess } from "@/presentation/hooks/use-access";
 import { PageHeader } from "@/presentation/components/layout/page-header";
@@ -207,6 +207,13 @@ export function OrdersView() {
               </span>
             </div>
 
+            {delivery.freeTrips > 0 && (
+              <p className="text-xs leading-relaxed text-muted">
+                توصيل مجاني تحمّلت أجرته في{" "}
+                {countedNoun(delivery.freeTrips, NOUNS.order, { locale: settings.locale })}. هذا
+                عرض اخترته، لا خسارة.
+              </p>
+            )}
             {delivery.subsidised > 0 && (
               <p className="flex items-start gap-2 rounded-[var(--radius-md)] bg-danger-soft p-3 text-xs leading-relaxed text-danger">
                 <Warning size={15} weight="bold" className="mt-0.5 shrink-0" />
@@ -349,7 +356,12 @@ function OrderRowView({
             <Badge tone={isVoid ? "danger" : state === "inHand" ? "success" : "neutral"}>
               {stateLabel(state, audience)}
             </Badge>
-            {subsidised && canSeeCosts && <Badge tone="danger">توصيل بالخسارة</Badge>}
+            {r.discountTotal > 0 && <Badge tone="accent">عرض</Badge>}
+            {/* An offer the merchant CHOSE, named as one — never scolded as a loss. */}
+            {isFreeDelivery(row.order) && <Badge tone="accent">توصيل مجاني</Badge>}
+            {subsidised && canSeeCosts && !isFreeDelivery(row.order) && (
+              <Badge tone="danger">توصيل بالخسارة</Badge>
+            )}
           </span>
           <span className="mt-0.5 block truncate text-xs text-muted">
             {/* «صنف واحد» at 1 and «3 أصناف» at 3: the noun agrees with the count,
@@ -466,7 +478,16 @@ function OrderRowView({
                 </dl>
               ) : (
                 <dl className="flex flex-col gap-1.5 rounded-[var(--radius-md)] bg-sunken p-3 text-xs">
-                  <Row label="أصناف" value={money(r.goodsRevenue)} />
+                  {r.discountTotal > 0 && (
+                    <>
+                      <Row label="الأصناف قبل العرض" value={money(r.listRevenue)} />
+                      <Row label="الخصم" value={money(r.discountTotal)} tone="danger" />
+                    </>
+                  )}
+                  <Row
+                    label={r.discountTotal > 0 ? "أصناف بعد العرض" : "أصناف"}
+                    value={money(r.goodsRevenue)}
+                  />
                   <Row label="توصيل مقبوض" value={money(r.deliveryCharged)} />
                   <Row
                     label={state === "pending" ? "المتوقّع" : "المحصّل"}

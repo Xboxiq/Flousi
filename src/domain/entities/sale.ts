@@ -25,6 +25,17 @@ export interface Sale {
    * this — additively adding one optional field is the whole change (gate P4/G0).
    */
   orderId?: string;
+  /**
+   * This line's allocated share of its order's discount, in major units.
+   *
+   * DENORMALISED on purpose: the order holds the offer, but revenue is read per sale
+   * everywhere (the ledger, the dashboard, the commission engine), and a reader that
+   * had to re-run the order allocation to know what one sale brought in would be a
+   * reader that sometimes forgets to. Written once at record time by the same
+   * allocation that computed the order's own figures, so the two can never disagree
+   * (gate P6/G1). Absent = no offer, which is every sale recorded before P6.
+   */
+  discount?: number;
   notes?: string;
 
   /** The rep credited with this sale. Absent = the owner sold it directly. */

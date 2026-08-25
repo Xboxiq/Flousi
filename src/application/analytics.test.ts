@@ -42,6 +42,23 @@ describe("profitForSale", () => {
     expect(sp.revenue).toBe(0);
     expect(sp.netProfit).toBe(0);
   });
+
+  it("a sale's offer share comes off revenue ONCE, here at the boundary (gate P6/G1)", () => {
+    const sp = profitForSale(sale({ quantity: 2, discount: 20 }), product());
+    // 200 list − 20 offer; the costs stay computed on the invoiced price.
+    expect(sp.revenue).toBe(180);
+    expect(sp.totalCost).toBe(80);
+    expect(sp.netProfit).toBe(100);
+    expect(sp.margin).toBeCloseTo(100 / 180, 5);
+  });
+
+  it("a corrupt or negative discount is no discount, never a bonus", () => {
+    for (const discount of [Number.NaN, -5]) {
+      const sp = profitForSale(sale({ discount }), product());
+      expect(sp.revenue).toBe(100);
+      expect(sp.netProfit).toBe(60);
+    }
+  });
 });
 
 describe("computeDashboard", () => {

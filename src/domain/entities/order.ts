@@ -143,6 +143,17 @@ export interface Order {
   /** ISO timestamp the status last changed, for the ledger. */
   statusAt?: string;
 
+  /**
+   * The offer on this order, if one was given. Absent = full price, which is every
+   * order recorded before P6 and most orders after it.
+   *
+   * FREE DELIVERY is deliberately NOT a discount shape: it is `deliveryCharged: 0`
+   * with `deliveryPaid` intact — a cost the merchant absorbed, not a price he cut.
+   * Folding it in here would subtract it from the goods and show the product weaker
+   * than it is (gate P6/G2).
+   */
+  discount?: OrderDiscount;
+
   customerName?: string;
   customerPhone?: string;
   /** Where it went. Free text: governorates and districts are not a fixed list here. */
@@ -155,6 +166,37 @@ export interface Order {
 }
 
 export type NewOrder = Omit<Order, "id" | "createdAt" | "updatedAt">;
+
+export type DiscountKind = "percent" | "fixed";
+
+export const DISCOUNT_KIND_LABELS: Record<DiscountKind, string> = {
+  percent: "نسبة",
+  fixed: "مبلغ",
+};
+
+/**
+ * An offer, in the three shapes the research found actually happen here: a
+ * percentage on the order, a fixed amount on the order, and either of those on a
+ * single line («خصم على صنف واحد» is `lineId` + either kind).
+ */
+export interface OrderDiscount {
+  kind: DiscountKind;
+  /**
+   * `percent`: 0..100, same convention as the cost breakdown's percent components.
+   * `fixed`: major units. Either way the discount is clamped so it can never exceed
+   * the goods it discounts (gate P6/G4).
+   */
+  value: number;
+  /** Restricts the offer to one line. Absent = the whole order's goods. */
+  lineId?: string;
+}
+
+/** Reads the trip as a free-delivery offer: the fee was waived, the cost was not. */
+export function isFreeDelivery(
+  order: Pick<Order, "deliveryCharged" | "deliveryPaid">,
+): boolean {
+  return order.deliveryCharged === 0 && order.deliveryPaid > 0;
+}
 
 /** One line of an order, as the caller hands it to the calculator. */
 export interface OrderLineInput {

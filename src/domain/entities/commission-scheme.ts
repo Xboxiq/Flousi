@@ -55,8 +55,14 @@ export interface CommissionSchemeParams {
    * the expensive kind of change. Default `afterDiscount` — the rep shares the cost
    * of the discount he granted, which is what stops a rep discounting freely.
    */
-  discountTreatment?: "afterDiscount" | "beforeDiscount";
+  discountTreatment?: DiscountTreatment;
 }
+
+/**
+ * Whether the rep's basis is taken before or after an order offer. The client's
+ * decision, verbatim: «خيار لكل طريقة عمولة» — per scheme, never global.
+ */
+export type DiscountTreatment = "afterDiscount" | "beforeDiscount";
 
 /**
  * A named commission rule. Deleting one is an archive, never a removal: an

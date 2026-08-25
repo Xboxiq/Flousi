@@ -1,13 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus, Trash, Truck } from "@phosphor-icons/react";
+import { Plus, Tag, Trash, Truck } from "@phosphor-icons/react";
 import {
+  CommissionCalculator,
   DELIVERY_ALLOCATIONS,
   DELIVERY_ALLOCATION_LABELS,
   calculateOrder,
   costsByProduct,
   type DeliveryAllocation,
+  type DiscountKind,
+  type OrderDiscount,
   type OrderLineInput,
 } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
@@ -45,6 +48,8 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
   const reps = useDataStore((s) => s.reps);
   const settings = useDataStore((s) => s.settings);
   const periods = useDataStore((s) => s.periods);
+  const schemes = useDataStore((s) => s.commissionSchemes);
+  const assignments = useDataStore((s) => s.commissionAssignments);
   const createOrder = useDataStore((s) => s.createOrder);
   const access = useAccess();
 
@@ -61,7 +66,19 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
   const [repId, setRepId] = useState(access.repId ?? "");
   const [customerName, setCustomerName] = useState("");
   const [customerArea, setCustomerArea] = useState("");
+  /* "" = no offer. The kind, the value and the target line together make the offer. */
+  const [offerKind, setOfferKind] = useState<"" | DiscountKind>("");
+  const [offerValue, setOfferValue] = useState<number | null>(null);
+  const [offerLine, setOfferLine] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const discount: OrderDiscount | undefined = useMemo(
+    () =>
+      offerKind === "" || offerValue === null || offerValue <= 0
+        ? undefined
+        : { kind: offerKind, value: offerValue, lineId: offerLine || undefined },
+    [offerKind, offerValue, offerLine],
+  );
 
   const money = (n: number) =>
     formatCurrency(n, { currency: settings.currency, locale: settings.locale });
@@ -91,11 +108,12 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
           deliveryCharged: charged ?? 0,
           deliveryPaid: paid ?? 0,
           deliveryAllocation: allocation,
+          discount,
         },
         lines: lines.map((l) => ({ id: l.key, productId: l.productId, quantity: l.quantity, unitPrice: l.unitPrice })),
         costsByProduct: costsByProduct(products),
       }),
-    [lines, charged, paid, allocation, products, settings.currency],
+    [lines, charged, paid, allocation, discount, products, settings.currency],
   );
 
   const onSave = async () => {
@@ -103,6 +121,8 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
     setBusy(true);
     try {
       const now = new Date().toISOString();
+      const rep = activeReps.find((r) => r.id === repId) ?? null;
+      const discountByKey = new Map(result.lines.map((r) => [r.lineId, r.discountShare]));
       await createOrder({
         order: {
           currency: settings.currency,
@@ -112,14 +132,50 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
           deliveryCharged: charged ?? 0,
           deliveryPaid: paid ?? 0,
           deliveryAllocation: allocation,
+          discount,
           customerName: customerName.trim() || undefined,
           customerArea: customerArea.trim() || undefined,
         },
-        lines: lines.map((l) => ({
-          productId: l.productId,
-          quantity: l.quantity,
-          unitPrice: l.unitPrice,
-        })),
+        lines: lines.map((l) => {
+          const product = products.find((p) => p.id === l.productId);
+          const lineDiscount = discountByKey.get(l.key) || undefined;
+          /* Freeze the split BY VALUE at record time, per line — the same rule the
+             single-sale dialog has always followed. P4 shipped order lines WITHOUT
+             this, so a trip's sales resolved live forever: they created no debt in
+             the balance, and a later scheme edit rewrote their history (gate P6/G5).
+             The line's discount share is frozen with it, under the scheme's own
+             treatment (gate P6/G3). Undefined when no rule resolves: the sale still
+             records and surfaces as fixable. */
+          const commissionSnapshot =
+            rep && product
+              ? CommissionCalculator.snapshot({
+                  sale: {
+                    unitPrice: l.unitPrice,
+                    quantity: l.quantity,
+                    currency: settings.currency,
+                    repId: rep.id,
+                    discount: lineDiscount,
+                  },
+                  costs: product.costs,
+                  rep,
+                  resolution: CommissionCalculator.resolveScheme({
+                    productId: l.productId,
+                    repId: rep.id,
+                    assignments,
+                    schemes,
+                    accountDefaultSchemeId: settings.defaultCommissionSchemeId,
+                  }),
+                  calculatedAt: now,
+                })
+              : undefined;
+          return {
+            productId: l.productId,
+            quantity: l.quantity,
+            unitPrice: l.unitPrice,
+            discount: lineDiscount,
+            commissionSnapshot,
+          };
+        }),
       });
       onClose();
     } finally {
@@ -304,11 +360,13 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
               {money(result.deliveryMargin)}
             </bdi>
             <span className="text-muted">
-              {result.deliveryMargin < 0
-                ? ": أنت تدفع فوق ما تقبض"
-                : result.deliveryMargin > 0
-                  ? ": التوصيل يربحك"
-                  : ": متعادل"}
+              {(charged ?? 0) === 0 && (paid ?? 0) > 0
+                ? ": توصيل مجاني، تتحمّل أجرته عرضاً"
+                : result.deliveryMargin < 0
+                  ? ": أنت تدفع فوق ما تقبض"
+                  : result.deliveryMargin > 0
+                    ? ": التوصيل يربحك"
+                    : ": متعادل"}
             </span>
           </p>
 
@@ -327,6 +385,101 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
           <p className="text-xs leading-relaxed text-subtle">
             ربح الطلبية لا يتغيّر بهذا الخيار أبداً؛ التوزيع يحرّك التكلفة بين الأصناف فقط،
             كي يبقى «ربح المنتج» تقديراً معلناً لا رقماً مخفيّاً.
+          </p>
+        </section>
+
+        {/* ── the offer ── */}
+        <section className="flex flex-col gap-3 rounded-[var(--radius-md)] border border-border-soft bg-surface p-4">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+            <h3 className="flex items-center gap-2 text-sm font-semibold text-fg">
+              <Tag size={15} weight="bold" className="text-muted" />
+              عرض على هذه الطلبية
+            </h3>
+            <Segmented
+              aria-label="نوع العرض"
+              value={offerKind}
+              onChange={(next: "" | DiscountKind) => {
+                setOfferKind(next);
+                if (next === "") {
+                  setOfferValue(null);
+                  setOfferLine("");
+                } else if (offerValue === null) {
+                  setOfferValue(next === "percent" ? 10 : 5_000);
+                }
+              }}
+              options={[
+                { label: "بلا عرض", value: "" as const },
+                { label: "نسبة", value: "percent" as const },
+                { label: "مبلغ", value: "fixed" as const },
+              ]}
+            />
+          </div>
+
+          {offerKind !== "" && (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field
+                label={offerKind === "percent" ? "النسبة" : "مبلغ الخصم"}
+                htmlFor="offer-value"
+                helper={
+                  offerKind === "percent"
+                    ? "من قيمة الأصناف، لا من أجرة التوصيل."
+                    : "لا يمكن أن يتجاوز قيمة ما يخصمه."
+                }
+              >
+                <Input
+                  id="offer-value"
+                  type="number"
+                  min={0}
+                  max={offerKind === "percent" ? 100 : undefined}
+                  step={offerKind === "percent" ? 1 : 500}
+                  trailing={offerKind === "percent" ? "%" : settings.currency}
+                  value={offerValue ?? ""}
+                  onChange={(e) =>
+                    setOfferValue(e.target.value === "" ? null : Math.max(0, Number(e.target.value)))
+                  }
+                />
+              </Field>
+              <Field
+                label="على ماذا؟"
+                htmlFor="offer-line"
+                helper="الطلبية كلها، أو صنف واحد منها."
+              >
+                <Select
+                  id="offer-line"
+                  value={offerLine}
+                  onChange={(e) => setOfferLine(e.target.value)}
+                  options={[
+                    { label: "الطلبية كلها", value: "" },
+                    ...lines.map((l) => ({
+                      label: sellable.find((p) => p.id === l.productId)?.name ?? "صنف",
+                      value: l.key,
+                    })),
+                  ]}
+                />
+              </Field>
+            </div>
+          )}
+
+          {result.discountTotal > 0 && (
+            <p className="text-sm">
+              <span className="text-muted">قبل العرض </span>
+              <bdi dir="ltr" className="font-mono text-muted line-through decoration-[1.5px]">
+                {money(result.listRevenue)}
+              </bdi>
+              <span className="text-muted"> · الخصم </span>
+              <bdi dir="ltr" className="font-mono font-semibold text-fg">
+                {money(result.discountTotal)}
+              </bdi>
+              <span className="text-muted"> · الأصناف بعد العرض </span>
+              <bdi dir="ltr" className="font-mono font-bold text-fg">
+                {money(result.goodsRevenue)}
+              </bdi>
+            </p>
+          )}
+
+          <p className="text-xs leading-relaxed text-subtle">
+            التوصيل المجاني ليس من هنا: اترك «مقبوض من الزبون» صفراً في التوصيل، فهو تكلفة
+            تتحمّلها لا خصم على سعر الأصناف.
           </p>
         </section>
 
