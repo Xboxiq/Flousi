@@ -1210,3 +1210,59 @@
     background-color: color-mix(in srgb, var(--danger) 9%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger) 26%, transparent);
   }
+
+  /* ───────────────── سلّم الكشف — the disclosure ladder (P7) ─────────────────
+     The client's chosen shape by name: «رقم واحد ثم سلّم كشف». The number stands
+     alone at the top; everything else hangs on ONE rail as rungs. The rail is a
+     carved groove and each rung PLUGS INTO IT with a milled pin, so the ladder is
+     a physical object, not a stack of cards that happen to be siblings. */
+  .ladder {
+    position: relative;
+    /* room for the rail on the reading side */
+    padding-inline-start: 26px;
+  }
+  .ladder::before {
+    content: "";
+    position: absolute;
+    inset-block: 14px;
+    inset-inline-start: 8px;
+    width: 5px;
+    border-radius: 3px;
+    background-color: var(--sunken);
+    box-shadow:
+      inset 0 1px 3px rgba(18, 26, 38, 0.28),
+      inset 0 -1px 0 var(--neu-hi),
+      1px 0 0 var(--neu-hi);
+  }
+  [data-theme="dark"] .ladder::before {
+    box-shadow:
+      inset 0 1px 3px rgba(0, 0, 0, 0.85),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .ladder-rung {
+    position: relative;
+  }
+  /* the pin: the latch's connection to the rail, at the latch row's height */
+  .ladder-rung::before {
+    content: "";
+    position: absolute;
+    top: 30px;
+    inset-inline-start: -22px;
+    width: 18px;
+    height: 5px;
+    border-radius: 3px;
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--fg) 16%, transparent),
+      color-mix(in srgb, var(--fg) 7%, transparent)
+    );
+    box-shadow: inset 0 1px 0 var(--neu-hi);
+  }
+  /* an OPEN rung's pin is the accent: the rung the merchant is standing on */
+  .ladder-rung[data-open="true"]::before {
+    background-image: none;
+    background-color: var(--accent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
