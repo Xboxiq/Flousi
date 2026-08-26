@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserSwitch } from "@phosphor-icons/react";
 import { Button, Dialog, Field, Input } from "@/presentation/components/ui";
 import { useDataStore } from "@/presentation/stores/data-store";
@@ -23,7 +23,17 @@ export function RoleMarker() {
   const [open, setOpen] = useState(false);
   const [pin, setPin] = useState("");
   const [wrong, setWrong] = useState(false);
+  const [shaking, setShaking] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  /* The error reverts to neutral on its own after it has been read (transitions.dev
+     №12's hold-then-revert): a red border that stays forever teaches the eye to
+     ignore red. Typing cancels it immediately (the onChange below). */
+  useEffect(() => {
+    if (!wrong) return;
+    const t = setTimeout(() => setWrong(false), 3500);
+    return () => clearTimeout(t);
+  }, [wrong]);
 
   if (access.isOwner) return null;
 
@@ -35,7 +45,11 @@ export function RoleMarker() {
     try {
       const ok = await returnToOwner(pin);
       if (!ok) {
+        // The shake is the feedback that the lock HEARD the wrong code; re-armed
+        // per failure so a second wrong entry shakes again.
         setWrong(true);
+        setShaking(true);
+        setPin("");
         return;
       }
       setOpen(false);
@@ -89,6 +103,10 @@ export function RoleMarker() {
         }
       >
         <Field label="الرمز" htmlFor="owner-pin" error={wrong ? "الرمز غير صحيح." : undefined}>
+          <div
+            className={shaking ? "shake-wrong" : undefined}
+            onAnimationEnd={() => setShaking(false)}
+          >
           <Input
             id="owner-pin"
             type="password"
@@ -103,6 +121,7 @@ export function RoleMarker() {
             }}
             onKeyDown={(e) => e.key === "Enter" && void leave()}
           />
+          </div>
         </Field>
       </Dialog>
     </>

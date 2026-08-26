@@ -1267,39 +1267,121 @@
       0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
   }
 
-  /* ───────────────── REVEAL: disclosure content entering (P8) ─────────────────
-     For content that appears when a latch opens — a ladder rung, an order row's
-     panel. Enter only: closing is the user asking for it GONE, and an exit
-     animation there would be the interface disobeying for 200ms. `@starting-style`
-     needs no JS and degrades to the instant appearance we shipped before it.
-     Purpose: preventing a jarring change — a tall block otherwise teleports in. */
-  .reveal {
+  /* ───────────── DISCLOSE: height-true disclosure (P9, transitions.dev №21) ────
+     P8's reveal faded the content in but the LAYOUT still teleported — everything
+     below the rung jumped. `grid-template-rows: 0fr ↔ 1fr` animates the height
+     itself with no JS measurement (the one case the animate skill tolerates height
+     for), and the inner element carries the fade. The content stays MOUNTED, so
+     open/close are symmetric and interruptible mid-tween — a second tap retargets
+     from wherever the tween is, which conditional rendering could never do.
+     Durations are the app's own tokens, not the snippet's defaults. */
+  .disclose {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--motion-base) var(--ease-out);
+  }
+  .disclose > * {
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity var(--motion-base) var(--ease-out);
+  }
+  .disclose[data-open="true"] {
+    grid-template-rows: 1fr;
+  }
+  .disclose[data-open="true"] > * {
     opacity: 1;
-    transform: translateY(0);
-    transition:
-      opacity var(--motion-base) var(--ease-out),
-      transform var(--motion-base) var(--ease-out);
   }
-  @starting-style {
-    .reveal {
-      opacity: 0;
-      transform: translateY(-4px);
-    }
-  }
-  /* the row-panel variant: opened tens of times a day, so faster and subtler */
-  .reveal-fast {
-    opacity: 1;
-    transform: translateY(0);
-    transition:
-      opacity var(--motion-fast) var(--ease-out),
-      transform var(--motion-fast) var(--ease-out);
-  }
-  @starting-style {
-    .reveal-fast {
-      opacity: 0;
-      transform: translateY(-3px);
-    }
+  /* the row-panel variant: opened tens of times a day, so faster */
+  .disclose-fast,
+  .disclose-fast > * {
+    transition-duration: var(--motion-fast);
   }
   /* Reduced motion needs nothing here: the app-wide rule in globals.css flattens
-     every transition to 0.01ms, which returns these to the instant appearance they
-     replaced. A per-class variant would be dead code under that !important. */
+     every transition to 0.01ms, which is the instant appearance these replaced. */
+
+  /* ─────────── SEG-PILL: the segmented control's travelling body (P9) ───────────
+     transitions.dev №16, on the app's own material: the moulded accent body is one
+     measured pill that slides (and re-rows, when the group wraps) between options.
+     Anchored with physical left/top on purpose — offsetLeft is geometric, so the
+     anchor must be too, or RTL would double-flip it. */
+  .seg-pill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+    border-radius: 9999px;
+    opacity: 0;
+    transition:
+      transform var(--motion-base) var(--ease-out),
+      width var(--motion-base) var(--ease-out),
+      height var(--motion-base) var(--ease-out);
+  }
+  .seg-pill[data-still] {
+    transition: none;
+  }
+
+  /* ─────────────── SHAKE-WRONG: the lock said no (P9, transitions.dev №12) ──────
+     For a wrong PIN: a percussive left/right hint with overshoot, each leg on its
+     own easing segment. An animation, not a transition, because it is a one-shot
+     the element returns from on its own; React re-arms it per failure. */
+  .shake-wrong {
+    animation: flousi-shake-wrong 420ms both;
+  }
+  @keyframes flousi-shake-wrong {
+    0% {
+      transform: translateX(0);
+      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    15% {
+      transform: translateX(-6px);
+      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    35% {
+      transform: translateX(6px);
+      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    55% {
+      transform: translateX(-4px);
+      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    75% {
+      transform: translateX(4px);
+      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    90% {
+      transform: translateX(-1px);
+      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  /* ─────────────── ICON-SWAP: two icons, one slot (P9, transitions.dev №9) ──────
+     Both icons stay mounted and stacked; the active one is sharp at full scale and
+     the other sits blurred, shrunk and transparent underneath. A transition, not
+     keyframes, so a mid-swap tap retargets from wherever the tween is. The first
+     child shows at rest; data-swapped="true" exchanges them. */
+  .icon-swap {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+  }
+  .icon-swap > * {
+    grid-area: 1 / 1;
+    transition:
+      opacity var(--motion-base) var(--ease-out),
+      transform var(--motion-base) var(--ease-out),
+      filter var(--motion-base) var(--ease-out);
+  }
+  .icon-swap > :last-child,
+  .icon-swap[data-swapped="true"] > :first-child {
+    opacity: 0;
+    transform: scale(0.6);
+    filter: blur(3px);
+  }
+  .icon-swap[data-swapped="true"] > :last-child {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }

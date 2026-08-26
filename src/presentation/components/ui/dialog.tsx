@@ -37,9 +37,23 @@ export function Dialog({
   const descId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
 
+  /* The latest onClose, held in a ref. Callers pass `onClose={() => setOpen(false)}`
+     inline — a NEW function identity on every parent render — and with `onClose` in
+     the effect's dependencies the focus effect re-ran on EVERY render while the
+     sheet was open. Its cleanup then yanked focus back to the trigger and the setup
+     re-focused the close button, so the first keystroke a user typed into any
+     dialog field stole the rest of their typing: «9999↵» became one 9 in the field
+     and an Enter on «إغلاق», closing the sheet with no error. Found by driving the
+     wrong-PIN path in P9; the fix is the standard latest-ref, so the effect runs
+     once per OPEN, not once per render. */
+  const closeRef = useRef(onClose);
+  useEffect(() => {
+    closeRef.current = onClose;
+  });
+
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeRef.current();
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
 
@@ -57,7 +71,7 @@ export function Dialog({
       document.body.style.overflow = "";
       returnTo?.focus?.({ preventScroll: true });
     };
-  }, [open, onClose]);
+  }, [open]);
 
   return (
     <AnimatePresence>

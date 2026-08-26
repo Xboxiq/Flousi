@@ -1,59 +1,86 @@
 {
-  "version": 1,
-  "skills": {
-    "animate": {
-      "source": "delphi-ai/animate-skill",
-      "sourceType": "github",
-      "skillPath": "SKILL.md",
-      "computedHash": "bf758e2d7aa41c5e722540b604b31f351831857e8dda354deb94954b9121c27b"
-    },
-    "antfu-design": {
-      "source": "antfu/skills",
-      "sourceType": "github",
-      "skillPath": "skills/antfu-design/SKILL.md",
-      "computedHash": "3fb42ec43179f38f60106e1ba20f46d660d54e916f9362e4c89ba0abaeaa3dfc"
-    },
-    "brandkit": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "skillPath": "skills/brandkit/SKILL.md",
-      "computedHash": "b63012f3c3d21197e0185d3e9cc7ec40c589fb10e0b5a32a561739de31aa3f20"
-    },
-    "design-taste-frontend": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "skillPath": "skills/taste-skill/SKILL.md",
-      "computedHash": "6d838b246d0e35d0b53f4f23f98ba7a1dd561937e64f7d0c7553b0928e376c3e"
-    },
-    "frontend-ui-engineering": {
-      "source": "addyosmani/agent-skills",
-      "sourceType": "github",
-      "skillPath": "skills/frontend-ui-engineering/SKILL.md",
-      "computedHash": "cb4e981ecb5f701b451fc4e937a38049b49fd4523f213e06cffbd00b007060dc"
-    },
-    "pick-ui-library": {
-      "source": "emilkowalski/skills",
-      "sourceType": "github",
-      "skillPath": "skills/pick-ui-library/SKILL.md",
-      "computedHash": "f8d4d2cf4677bf54b14f35f62a741add93541bfcb67863315a40164365161b49"
-    },
-    "prototype": {
-      "source": "emilkowalski/skills",
-      "sourceType": "github",
-      "skillPath": "skills/prototype/SKILL.md",
-      "computedHash": "f246d1f47566481d9207e1aa574bdee5454257d862919a6591283e9af2f57eab"
-    },
-    "vercel-react-best-practices": {
-      "source": "vercel-labs/agent-skills",
-      "sourceType": "github",
-      "skillPath": "skills/react-best-practices/SKILL.md",
-      "computedHash": "3219a1944e404ffc14d1d9d6aef6dd2e3855b81387ee0a044ccbfe14d34c2357"
-    },
-    "web-design-guidelines": {
-      "source": "antfu/skills",
-      "sourceType": "github",
-      "skillPath": "skills/web-design-guidelines/SKILL.md",
-      "computedHash": "65a2e7d85753383ae0f88df15475d58b9e39723e9c4bb6891421d6144a85f79c"
-    }
+ "version": 1,
+ "skills": {
+  "animate": {
+   "source": "delphi-ai/animate-skill",
+   "sourceType": "github",
+   "skillPath": "SKILL.md",
+   "computedHash": "bf758e2d7aa41c5e722540b604b31f351831857e8dda354deb94954b9121c27b"
+  },
+  "antfu-design": {
+   "source": "antfu/skills",
+   "sourceType": "github",
+   "skillPath": "skills/antfu-design/SKILL.md",
+   "computedHash": "3fb42ec43179f38f60106e1ba20f46d660d54e916f9362e4c89ba0abaeaa3dfc"
+  },
+  "brandkit": {
+   "source": "Leonxlnx/taste-skill",
+   "sourceType": "github",
+   "skillPath": "skills/brandkit/SKILL.md",
+   "computedHash": "b63012f3c3d21197e0185d3e9cc7ec40c589fb10e0b5a32a561739de31aa3f20"
+  },
+  "design-taste-frontend": {
+   "source": "Leonxlnx/taste-skill",
+   "sourceType": "github",
+   "skillPath": "skills/taste-skill/SKILL.md",
+   "computedHash": "6d838b246d0e35d0b53f4f23f98ba7a1dd561937e64f7d0c7553b0928e376c3e"
+  },
+  "frontend-ui-engineering": {
+   "source": "addyosmani/agent-skills",
+   "sourceType": "github",
+   "skillPath": "skills/frontend-ui-engineering/SKILL.md",
+   "computedHash": "cb4e981ecb5f701b451fc4e937a38049b49fd4523f213e06cffbd00b007060dc"
+  },
+  "pick-ui-library": {
+   "source": "emilkowalski/skills",
+   "sourceType": "github",
+   "skillPath": "skills/pick-ui-library/SKILL.md",
+   "computedHash": "f8d4d2cf4677bf54b14f35f62a741add93541bfcb67863315a40164365161b49"
+  },
+  "prototype": {
+   "source": "emilkowalski/skills",
+   "sourceType": "github",
+   "skillPath": "skills/prototype/SKILL.md",
+   "computedHash": "f246d1f47566481d9207e1aa574bdee5454257d862919a6591283e9af2f57eab"
+  },
+  "vercel-react-best-practices": {
+   "source": "vercel-labs/agent-skills",
+   "sourceType": "github",
+   "skillPath": "skills/react-best-practices/SKILL.md",
+   "computedHash": "3219a1944e404ffc14d1d9d6aef6dd2e3855b81387ee0a044ccbfe14d34c2357"
+  },
+  "web-design-guidelines": {
+   "source": "antfu/skills",
+   "sourceType": "github",
+   "skillPath": "skills/web-design-guidelines/SKILL.md",
+   "computedHash": "65a2e7d85753383ae0f88df15475d58b9e39723e9c4bb6891421d6144a85f79c"
+  },
+  "transitions-dev": {
+   "source": "Jakubantalik/transitions.dev",
+   "sourceType": "github",
+   "skillPath": "skills/transitions-dev/SKILL.md",
+   "commit": "ef497bb64867ce569689730198fc66f49db56317",
+   "computedHash": "fb83c5ef1dfe746aacb9932048be66581566845a4e28956dd4653ca56e12e5fe"
+  },
+  "transitions-polish": {
+   "source": "Jakubantalik/transitions.dev",
+   "sourceType": "github",
+   "skillPath": "skills/transitions-polish/SKILL.md",
+   "commit": "ef497bb64867ce569689730198fc66f49db56317",
+   "computedHash": "365a5bf179c8f53ccd8233d807f5a65a3c4311c90ff645305b7d5f983bb2e33e"
   }
+ },
+ "studied": {
+  "rare-ui": {
+   "source": "swamimalode07/rare-ui",
+   "sourceType": "github",
+   "commit": "fa71f440cf286d97c496c604ea7cdbfdc2e3c140",
+   "note": "a shadcn component registry, not a skill. Adapted pieces carry attribution comments in Flousi source."
+  },
+  "beautifului.dev": {
+   "source": "https://www.beautifului.dev/",
+   "sourceType": "web",
+   "note": "AI-interface primitives (thinking states, streaming, approval cards). Flousi has no AI surface; recorded so the next reader does not re-derive that conclusion."
+  }
+ }
 }

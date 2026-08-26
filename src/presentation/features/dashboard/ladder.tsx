@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { CaretDown } from "@phosphor-icons/react";
 import { cn } from "@/presentation/lib/cn";
 
@@ -37,6 +38,12 @@ export function Rung({
   onToggle: () => void;
   children: React.ReactNode;
 }) {
+  /* Mounted on FIRST open and kept mounted after: the height tween needs the
+     content in the DOM to be symmetric and interruptible, but mounting it on page
+     load would fetch the rung's heavy imports (the chart) before anyone asked —
+     the exact cost P7 measured out of the first load. A ratchet: set in the latch
+     handler, never unset. */
+  const [everOpened, setEverOpened] = useState(open);
   return (
     <section
       data-open={open}
@@ -44,7 +51,10 @@ export function Rung({
     >
       <button
         type="button"
-        onClick={onToggle}
+        onClick={() => {
+          setEverOpened(true);
+          onToggle();
+        }}
         aria-expanded={open}
         /* wrap, so a phone-width latch drops the summary to its own line instead of
            squeezing the title into a five-line sliver beside it */
@@ -67,7 +77,16 @@ export function Rung({
           )}
         />
       </button>
-      {open && <div className="reveal border-t border-border-soft p-5">{children}</div>}
+      {/* Mounted always, disclosed by height (transitions.dev №21): the tween is
+          symmetric and interruptible, and everything below FOLLOWS instead of
+          jumping. `inert` keeps the closed content out of the tab order. */}
+      <div className="disclose" data-open={open} inert={open ? undefined : true}>
+        <div>
+          {everOpened && (
+            <div className="border-t border-border-soft p-5">{children}</div>
+          )}
+        </div>
+      </div>
     </section>
   );
 }

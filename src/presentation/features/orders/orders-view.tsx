@@ -315,6 +315,8 @@ function OrderRowView({
   audience: "owner" | "rep";
 }) {
   const [open, setOpen] = useState(false);
+  /* Mounted on first open, kept after — the same rule as the ladder's rungs. */
+  const [everOpened, setEverOpened] = useState(false);
   const r = row.result;
   const o = row.outcome;
   const state = stateOf(row.order);
@@ -330,7 +332,10 @@ function OrderRowView({
           settles for order summaries on a phone. */}
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          setEverOpened(true);
+          setOpen((v) => !v);
+        }}
         aria-expanded={open}
         className="grid w-full grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-1 py-3.5 text-start transition-colors hover:bg-surface-2"
       >
@@ -409,8 +414,10 @@ function OrderRowView({
         </span>
       </button>
 
-      {open && (
-        <div className="reveal-fast flex flex-col gap-4 pb-4">
+      <div className="disclose disclose-fast" data-open={open} inert={open ? undefined : true}>
+        <div>
+          {everOpened && (
+            <div className="flex flex-col gap-4 pb-4">
           <div className="grid gap-4 sm:grid-cols-[1fr_18rem]">
             <ul className="flex flex-col">
               {row.lines.map((line, i) => {
@@ -533,8 +540,10 @@ function OrderRowView({
           {/* The control spans the row: a segmented group of four in an 18rem column
               wrapped into a 2×2 block that read as a keypad, not as a state. */}
           {canRecord && <OrderStatusControl order={row.order} />}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </li>
   );
 }
