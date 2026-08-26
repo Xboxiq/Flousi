@@ -1266,3 +1266,40 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.4),
       0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
   }
+
+  /* ───────────────── REVEAL: disclosure content entering (P8) ─────────────────
+     For content that appears when a latch opens — a ladder rung, an order row's
+     panel. Enter only: closing is the user asking for it GONE, and an exit
+     animation there would be the interface disobeying for 200ms. `@starting-style`
+     needs no JS and degrades to the instant appearance we shipped before it.
+     Purpose: preventing a jarring change — a tall block otherwise teleports in. */
+  .reveal {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity var(--motion-base) var(--ease-out),
+      transform var(--motion-base) var(--ease-out);
+  }
+  @starting-style {
+    .reveal {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+  /* the row-panel variant: opened tens of times a day, so faster and subtler */
+  .reveal-fast {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity var(--motion-fast) var(--ease-out),
+      transform var(--motion-fast) var(--ease-out);
+  }
+  @starting-style {
+    .reveal-fast {
+      opacity: 0;
+      transform: translateY(-3px);
+    }
+  }
+  /* Reduced motion needs nothing here: the app-wide rule in globals.css flattens
+     every transition to 0.01ms, which returns these to the instant appearance they
+     replaced. A per-class variant would be dead code under that !important. */

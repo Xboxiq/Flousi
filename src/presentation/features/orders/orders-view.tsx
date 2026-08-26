@@ -410,7 +410,7 @@ function OrderRowView({
       </button>
 
       {open && (
-        <div className="flex flex-col gap-4 pb-4">
+        <div className="reveal-fast flex flex-col gap-4 pb-4">
           <div className="grid gap-4 sm:grid-cols-[1fr_18rem]">
             <ul className="flex flex-col">
               {row.lines.map((line, i) => {

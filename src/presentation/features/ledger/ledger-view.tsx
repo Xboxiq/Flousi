@@ -13,6 +13,7 @@ import {
 import { computeLedger, type Movement, type MovementKind } from "@/application/ledger";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { useAccess } from "@/presentation/hooks/use-access";
+import { useUrlState } from "@/presentation/hooks/use-url-state";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
   Button,
@@ -56,7 +57,13 @@ export function LedgerView() {
   const settings = useDataStore((s) => s.settings);
   const access = useAccess();
 
-  const [filter, setFilter] = useState<Filter>("all");
+  /* In the URL, so a reload keeps the reading and «التسويات فقط» can be a bookmark. */
+  const [filter, setFilter] = useUrlState<Filter>("kind", "all", [
+    "all",
+    "sale",
+    "settlement",
+    "periodClose",
+  ]);
   const [shown, setShown] = useState(PAGE);
 
   const view = useMemo(

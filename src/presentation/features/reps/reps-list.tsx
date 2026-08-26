@@ -11,6 +11,7 @@ import {
   type RepAggregate,
 } from "@/application/commissions";
 import { useDataStore } from "@/presentation/stores/data-store";
+import { useUrlState } from "@/presentation/hooks/use-url-state";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
   Badge,
@@ -76,7 +77,7 @@ export function RepsList() {
   const orders = useDataStore((s) => s.orders);
   const settings = useDataStore((s) => s.settings);
 
-  const [scope, setScope] = useState<Scope>("month");
+  const [scope, setScope] = useUrlState<Scope>("scope", "month", ["month", "all"]);
   const [addOpen, setAddOpen] = useState(false);
 
   const money = (n: number) =>

@@ -67,7 +67,7 @@ export function Rung({
           )}
         />
       </button>
-      {open && <div className="border-t border-border-soft p-5">{children}</div>}
+      {open && <div className="reveal border-t border-border-soft p-5">{children}</div>}
     </section>
   );
 }

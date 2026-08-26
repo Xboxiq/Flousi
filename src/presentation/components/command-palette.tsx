@@ -7,6 +7,7 @@ import { MagnifyingGlass, ArrowRight } from "@phosphor-icons/react";
 import type { Capability } from "@/domain";
 import { visibleNavGroups } from "./layout/nav-config";
 import { useAccess } from "@/presentation/hooks/use-access";
+import { useDataStore } from "@/presentation/stores/data-store";
 import { useUiStore } from "@/presentation/stores/ui-store";
 import { easeOut } from "@/presentation/lib/motion";
 import { cn } from "@/presentation/lib/cn";
@@ -78,6 +79,8 @@ export function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const access = useAccess();
+  const products = useDataStore((s) => s.products);
+  const reps = useDataStore((s) => s.reps);
 
   const commands = useMemo<Command[]>(() => {
     // Both halves are filtered: the nav entries by `visibleNavGroups`, and the
@@ -90,11 +93,42 @@ export function CommandPalette() {
     return [...actions, ...nav];
   }, [access]);
 
+  /* The merchant's own DATA as jump targets: type «وشاح» and land on the product,
+     type a rep's name and land on their profile. Gated by the same capabilities as
+     the screens they open, and archived rows stay out — a door to a retired record
+     is a refusal one tap away. */
+  const records = useMemo<Command[]>(() => {
+    const out: Command[] = [];
+    if (access.can("viewProducts")) {
+      for (const p of products) {
+        if (p.status !== "active") continue;
+        out.push({
+          label: p.name,
+          group: "المنتجات",
+          href: `/products/view?id=${p.id}`,
+          keywords: [p.sku, p.category].filter(Boolean).join(" "),
+        });
+      }
+    }
+    if (access.can("viewTeam")) {
+      for (const r of reps) {
+        if (r.status !== "active") continue;
+        out.push({ label: r.name, group: "الفريق", href: `/reps/view?id=${r.id}` });
+      }
+    }
+    return out;
+  }, [products, reps, access]);
+
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
+    /* At rest the palette lists screens and actions only — dumping the whole
+       catalogue into an unfiltered list would bury the six doors the merchant
+       actually opens. Records join the results the moment there is a query. */
     if (!q) return commands;
-    return commands.filter((c) => (c.label + " " + (c.keywords ?? "")).toLowerCase().includes(q));
-  }, [commands, query]);
+    return [...commands, ...records].filter((c) =>
+      (c.label + " " + (c.keywords ?? "")).toLowerCase().includes(q),
+    );
+  }, [commands, records, query]);
 
   // Global ⌘K / Ctrl+K
   useEffect(() => {
