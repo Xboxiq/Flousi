@@ -67,3 +67,22 @@ paths from P1.
     typecheck · lint · 412 tests · build   clean
     overflow sweep, 15 routes × 5 widths   none
     cost-leak sweep under a rep session    nothing leaked, /dashboard still refused
+
+## G6 — the app installs like an app
+CHECK: the merchant's actual habit — this is opened daily on a phone.
+EXPECT: a web manifest (Arabic, RTL, standalone), the brand mark as real icons at
+192/512/apple-touch/favicon — drawn from the app's OWN LogoMark glyph on the accent
+tile, not a generic template — and the five Next.js template SVGs deleted from
+`public/` along with the default Next favicon.
+EVIDENCE: fetched from the exported build —
+
+    manifest: فلوسي | standalone | dir rtl | icons 3
+    icon-192/icon-512/apple-touch-icon/favicon.ico → all 200
+
+And a resolution bug caught before it shipped: a relative `./manifest.webmanifest`
+resolves against the PAGE, so on `/dashboard/` it pointed at
+`/dashboard/manifest.webmanifest` — a 404. Next does not apply `basePath` to
+metadata URLs, so the links are prefixed explicitly and verified under BOTH
+deployments: `/manifest.webmanifest` at the root and `/Flousi/manifest.webmanifest`
+under the Pages base path. Inside the manifest the paths stay relative — they
+resolve against the manifest's own URL, which is correct in both.
