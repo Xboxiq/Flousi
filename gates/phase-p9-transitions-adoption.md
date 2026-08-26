@@ -69,4 +69,55 @@ EVIDENCE: `npm run typecheck && npm run lint && npm test && npm run build`, the
 overflow sweep, the leak sweep, renders light/dark × 1440/360.
 
 ## Closing evidence
-pending
+
+`npm run typecheck && npm run lint && npm test && npm run build` → clean, 412 tests.
+Overflow sweep (15 routes × 5 widths): none. Cost-leak sweep under a rep session:
+nothing leaked. All figures below read off the LIVE exported build.
+
+### G0 — vendored and pinned
+`transitions-dev` and `transitions-polish` registered as live skills the moment they
+were copied in; `skills-lock.json` carries commit `ef497bb` with content hashes, and a
+`studied` section records rare-ui (`fa71f44`) and beautifului.dev with their verdicts.
+
+### G1 — height-true disclosure
+    .disclose: grid-template-rows | 0.2s (app tokens, not snippet defaults)
+    open rung resolves to its real height (1357.8px on the seeded dashboard)
+    chart still lazy: 29 js files before opening the rung → 30 after (P7's win kept)
+Content mounts on FIRST open and stays mounted after — a ratchet state, because
+always-mounted would have refetched Recharts on page load and erased P7's measured
+−348 KB, and conditional-render would have made the tween one-directional.
+
+### G2 — the pill slides
+    before click: matrix(1,0,0,1, 243, 4) w=59px
+    after  click: matrix(1,0,0,1,  86, 4) w=76px   (transform, width, height tween)
+In RTL the x moved LEFT for a later option — offsetLeft is geometric, which is why
+the pill is anchored with physical left/top (the one sanctioned exception to
+logical-properties-only, documented at the class). ~29 call sites lifted by editing
+one component. Still: `proofs/p9/segmented-pill-light-1440.png` — the moulded accent
+body sits under «تسويات» with the labels riding above it.
+
+### G3 — the wrong PIN shakes, and driving it caught a REAL P3-era bug
+The shake works: class present mid-animation, error shown, field cleared for retry,
+sheet stays open, auto-revert after the hold (`proofs/p9/pin-wrong-light-1440.png`).
+
+The bug the drive exposed: `Dialog`'s focus effect depended on the UNSTABLE inline
+`onClose` every caller passes, so the effect re-ran on every parent render while a
+sheet was open — its cleanup yanked focus back to the trigger and the setup
+re-focused «إغلاق». The first keystroke a user typed into ANY dialog field stole the
+rest of their typing: «9999↵» became one 9 in the field and an Enter on the close
+button, closing the sheet with no error at all. The keydown/focusin trace:
+
+    key:9@owner-pin → focus→(trigger) → focus→إغلاق → key:9@BUTTON ×3 → Enter@BUTTON
+
+Fixed with the standard latest-ref (assigned in an effect, per the React compiler
+rule), so the focus effect runs once per OPEN. Re-driven: all four digits and the
+Enter land on `owner-pin`, the error shows, the sheet stays. This affected every
+dialog in the app since P1 and was invisible to the typecheck, the linter, the tests
+AND the screenshots — only DRIVING the surface found it.
+
+### G4 — the icon swap
+    sun at rest (light theme): opacity 0 / blur(3px)  → after toggle: opacity 1
+Both icons stay mounted in one grid slot; a transition, not keyframes, so a mid-swap
+tap retargets.
+
+### G5 — deliberately not taken: as listed above, unchanged.
