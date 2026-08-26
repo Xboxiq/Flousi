@@ -48,3 +48,23 @@ and pre-flight folded into `flousi-anti-slop-gate`), `VoltAgent/awesome-design-m
 (reference URLs recorded in the plan), `ckissi/kinetics` and `Subhan-code/Amicro`
 (component galleries — mined for spring/easing values, recorded in MASTER §5),
 `DietrichGebert/ponytail` agents surface, `pols.dev/slop.md` (folded into the gate).
+
+## Batch 3 (client instruction, 2026-08-26): beautifului.dev · rare-ui · transitions.dev
+
+| skill / source | from | what it is here for |
+| --- | --- | --- |
+| `transitions-dev` | github.com/Jakubantalik/transitions.dev | 32 portable CSS transitions, each namespaced `t-*` with semantic custom properties and a reduced-motion guard. The house source for micro-transitions from now on. First adoptions: the grid-rows accordion (the ladder and order panels), the sliding segmented pill, the wrong-PIN shake, the theme icon swap |
+| `transitions-polish` | github.com/Jakubantalik/transitions.dev | The tuning half: the motion-token scale and the rules for open/close asymmetry, hover in/out, stagger offsets. Used to REVIEW motion, not to add it |
+
+**Studied, adapted inline rather than vendored:**
+
+* `swamimalode07/rare-ui` — a shadcn registry of 16 Motion components, not a skill.
+  Most are showpieces the anti-slop gate would reject on a finance app (fluid WebGL
+  orb, gravity letters, emoji reactions). What maps to real Flousi objects is
+  adapted in place with an attribution comment: the OTP-style rolling input
+  (the owner-PIN sheet). The folder fan-out was already built independently in v4
+  (`report-folder.tsx`) — convergent, not copied.
+* `https://www.beautifului.dev/` — AI-interface primitives (thinking states,
+  streaming text, approval cards, diff tables). Flousi has no AI surface, so almost
+  nothing applies today. Recorded so the next reader does not re-derive that
+  conclusion. If an AI feature ever lands, start there.

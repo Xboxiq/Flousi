@@ -1,4 +1,4 @@
-import { COST_LINES, ProfitCalculator, type CostLine, type Product, type Sale } from "@/domain";
+import { COST_LINES, Money, ProfitCalculator, type CostLine, type Product, type Sale } from "@/domain";
 
 export interface SaleProfit {
   sale: Sale;
@@ -103,13 +103,34 @@ export function profitForSale(sale: Sale, product: Product | undefined): SalePro
     currency: sale.currency,
     quantity: sale.quantity,
   });
+  // The sale's share of its order's offer. Revenue is what the customer actually
+  // paid, so the discount comes off HERE — once, at the boundary every reader goes
+  // through — and never screen by screen (gate P6/G1). Costs are untouched: an 8%
+  // marketplace fee is charged on what was invoiced.
+  const discount = Money.fromMajor(
+    Number.isFinite(sale.discount) ? Math.max(0, sale.discount as number) : 0,
+    sale.currency,
+  );
+  if (discount.isZero()) {
+    return {
+      sale,
+      product,
+      revenue: r.revenue,
+      totalCost: r.totalCost,
+      netProfit: r.netProfit,
+      margin: r.margin,
+      costByLine: r.costByLine,
+    };
+  }
+  const revenue = Money.fromMajor(r.revenue, sale.currency).subtract(discount);
+  const netProfit = revenue.subtract(Money.fromMajor(r.totalCost, sale.currency));
   return {
     sale,
     product,
-    revenue: r.revenue,
+    revenue: revenue.amount,
     totalCost: r.totalCost,
-    netProfit: r.netProfit,
-    margin: r.margin,
+    netProfit: netProfit.amount,
+    margin: revenue.isZero() ? 0 : netProfit.amount / revenue.amount,
     costByLine: r.costByLine,
   };
 }

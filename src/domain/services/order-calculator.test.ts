@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   allocateDelivery,
+  allocateDiscount,
   calculateOrder,
   costsByProduct,
   orderOutcome,
@@ -9,6 +10,7 @@ import {
 import { makeCostBreakdown } from "../entities/cost-breakdown";
 import {
   deliveryMargin,
+  isFreeDelivery,
   isVoidOrder,
   orderCollection,
   orderStatus,
@@ -755,5 +757,186 @@ describe("orderOutcome — a subsidised trip that comes back costs both legs", (
     expect(done.netProfit).toBe(34_500);
     expect(back.deliveryOut).toBe(13_000);
     expect(back.netProfit).toBe(-13_000);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// P6 — offers. The parts must sum to the whole, and a discount can never
+// exceed what it discounts.
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("allocateDiscount — a discount reduces what was collected, exactly (gate P6/G1)", () => {
+  const three = [line("a", "P1", 1, 60_000), line("b", "P2", 1, 30_000), line("c", "P3", 1, 10_000)];
+
+  it("a percentage spreads in proportion to line value", () => {
+    const parts = allocateDiscount({
+      lines: three,
+      discount: { kind: "percent", value: 10 },
+      currency: IQD,
+    });
+    expect(parts.map((p) => p.amount)).toEqual([6_000, 3_000, 1_000]);
+  });
+
+  it("a fixed amount spreads the same way and sums exactly", () => {
+    const parts = allocateDiscount({
+      lines: three,
+      discount: { kind: "fixed", value: 5_000 },
+      currency: IQD,
+    });
+    expect(parts.reduce((s, p) => s + p.amount, 0)).toBe(5_000);
+    expect(parts.map((p) => p.amount)).toEqual([3_000, 1_500, 500]);
+  });
+
+  it("a single-line offer lands on that line alone", () => {
+    const parts = allocateDiscount({
+      lines: three,
+      discount: { kind: "fixed", value: 5_000, lineId: "b" },
+      currency: IQD,
+    });
+    expect(parts.map((p) => p.amount)).toEqual([0, 5_000, 0]);
+  });
+
+  it("an amount that does not divide evenly still sums EXACTLY, in whole dinars", () => {
+    const equal = [line("a", "P", 1, 10_000), line("b", "P", 1, 10_000), line("c", "P", 1, 10_000)];
+    const parts = allocateDiscount({
+      lines: equal,
+      discount: { kind: "fixed", value: 5_000 },
+      currency: IQD,
+    });
+    const amounts = parts.map((p) => p.amount).sort((x, y) => y - x);
+    expect(amounts).toEqual([1_667, 1_667, 1_666]);
+    expect(parts.every((p) => Number.isInteger(p.amount))).toBe(true);
+  });
+
+  it("no discount, an empty order, or a corrupt value discounts nothing", () => {
+    expect(allocateDiscount({ lines: three, discount: undefined, currency: IQD }).every((p) => p.amount === 0)).toBe(true);
+    expect(allocateDiscount({ lines: [], discount: { kind: "fixed", value: 5_000 }, currency: IQD })).toEqual([]);
+    expect(
+      allocateDiscount({ lines: three, discount: { kind: "fixed", value: Number.NaN }, currency: IQD }).every(
+        (p) => p.amount === 0,
+      ),
+    ).toBe(true);
+  });
+});
+
+describe("allocateDiscount — never more than what it discounts (gate P6/G4)", () => {
+  const two = [line("a", "P1", 1, 20_000), line("b", "P2", 1, 10_000)];
+
+  it("a fixed discount larger than the goods is capped at the goods", () => {
+    const parts = allocateDiscount({
+      lines: two,
+      discount: { kind: "fixed", value: 999_999 },
+      currency: IQD,
+    });
+    expect(parts.reduce((s, p) => s + p.amount, 0)).toBe(30_000);
+  });
+
+  it("a percentage past 100 is 100, and a negative one is nothing", () => {
+    const all = allocateDiscount({ lines: two, discount: { kind: "percent", value: 150 }, currency: IQD });
+    expect(all.reduce((s, p) => s + p.amount, 0)).toBe(30_000);
+    const none = allocateDiscount({ lines: two, discount: { kind: "percent", value: -10 }, currency: IQD });
+    expect(none.every((p) => p.amount === 0)).toBe(true);
+  });
+
+  it("a single-line cap is that LINE's revenue, not the order's", () => {
+    const parts = allocateDiscount({
+      lines: two,
+      discount: { kind: "fixed", value: 999_999, lineId: "b" },
+      currency: IQD,
+    });
+    expect(parts.map((p) => p.amount)).toEqual([0, 10_000]);
+  });
+
+  it("a lineId that matches nothing discounts nothing, never the whole order", () => {
+    const parts = allocateDiscount({
+      lines: two,
+      discount: { kind: "percent", value: 10, lineId: "ghost" },
+      currency: IQD,
+    });
+    expect(parts.every((p) => p.amount === 0)).toBe(true);
+  });
+
+  it("the identity holds across a sweep of awkward amounts", () => {
+    for (const value of [1, 333, 999, 1_001, 4_999, 12_345, 29_999, 30_000, 31_000]) {
+      const parts = allocateDiscount({ lines: two, discount: { kind: "fixed", value }, currency: IQD });
+      const total = parts.reduce((s, p) => s + p.amount, 0);
+      expect(total, `value=${value}`).toBe(Math.min(value, 30_000));
+      expect(parts.every((p) => Number.isInteger(p.amount)), `value=${value}`).toBe(true);
+    }
+  });
+});
+
+describe("calculateOrder with an offer — listRevenue − discountTotal = goodsRevenue", () => {
+  const products = new Map([
+    ["P1", product("P1", 60_000, 40_000).costs],
+    ["P2", product("P2", 30_000, 18_000).costs],
+  ]);
+  const lines = [line("a", "P1", 1, 60_000), line("b", "P2", 2, 30_000)];
+
+  it("a 10% order offer moves every figure downstream, once", () => {
+    const r = calculateOrder({
+      order: {
+        currency: IQD,
+        deliveryCharged: 5_000,
+        deliveryPaid: 4_000,
+        deliveryAllocation: "byValue",
+        discount: { kind: "percent", value: 10 },
+      },
+      lines,
+      costsByProduct: products,
+    });
+    expect(r.listRevenue).toBe(120_000);
+    expect(r.discountTotal).toBe(12_000);
+    expect(r.goodsRevenue).toBe(108_000);
+    // collected is what the customer actually handed over
+    expect(r.collected).toBe(113_000);
+    expect(r.listRevenue - r.discountTotal).toBe(r.goodsRevenue);
+    // the lines' parts are the whole
+    expect(r.lines.reduce((s, l) => s + l.discountShare, 0)).toBe(r.discountTotal);
+    expect(r.lines.reduce((s, l) => s + l.revenue, 0)).toBe(r.goodsRevenue);
+    // and net profit dropped by exactly the discount vs the same order without it
+    const plain = calculateOrder({
+      order: { currency: IQD, deliveryCharged: 5_000, deliveryPaid: 4_000, deliveryAllocation: "byValue" },
+      lines,
+      costsByProduct: products,
+    });
+    expect(plain.netProfit - r.netProfit).toBe(12_000);
+  });
+
+  it("no offer leaves every P4 figure byte-identical", () => {
+    const r = calculateOrder({
+      order: { currency: IQD, deliveryCharged: 5_000, deliveryPaid: 4_000, deliveryAllocation: "byValue" },
+      lines,
+      costsByProduct: products,
+    });
+    expect(r.listRevenue).toBe(r.goodsRevenue);
+    expect(r.discountTotal).toBe(0);
+    expect(r.lines.every((l) => l.discountShare === 0 && l.listRevenue === l.revenue)).toBe(true);
+  });
+});
+
+describe("free delivery is a cost absorbed, not a price cut (gate P6/G2)", () => {
+  const products = new Map([["P1", product("P1", 60_000, 40_000).costs]]);
+
+  it("the goods keep their margin; the delivery margin carries the whole offer", () => {
+    const free = calculateOrder({
+      order: { currency: IQD, deliveryCharged: 0, deliveryPaid: 4_000, deliveryAllocation: "orderOnly" },
+      lines: [line("a", "P1", 1, 60_000)],
+      costsByProduct: products,
+    });
+    // No discount anywhere near the goods:
+    expect(free.discountTotal).toBe(0);
+    expect(free.goodsRevenue).toBe(60_000);
+    expect(free.goodsProfit).toBe(20_000);
+    // The absorbed trip is delivery's loss, in delivery's column:
+    expect(free.deliveryMargin).toBe(-4_000);
+    expect(free.netProfit).toBe(16_000);
+  });
+
+  it("isFreeDelivery reads waived-fee-with-real-cost and nothing else", () => {
+    expect(isFreeDelivery({ deliveryCharged: 0, deliveryPaid: 4_000 })).toBe(true);
+    expect(isFreeDelivery({ deliveryCharged: 5_000, deliveryPaid: 4_000 })).toBe(false);
+    // A trip with no delivery at all is not an offer:
+    expect(isFreeDelivery({ deliveryCharged: 0, deliveryPaid: 0 })).toBe(false);
   });
 });

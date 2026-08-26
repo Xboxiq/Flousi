@@ -1,6 +1,7 @@
 import {
   calculateOrder,
   costsByProduct,
+  isFreeDelivery,
   isVoidOrder,
   orderOutcome,
   orderStatus,
@@ -163,6 +164,13 @@ export interface DeliveryReading {
   /** margin / charged, or 0 when nothing was charged. */
   rate: number;
   /**
+   * Delivered trips whose fee was WAIVED while the courier was still paid — the
+   * free-delivery offer. Their cost is in `paid` and `margin` like any other, but
+   * they are not counted `subsidised`: the merchant chose this, and a warning that
+   * scolds a deliberate offer as a mistake teaches him to ignore warnings (P6/G2).
+   */
+  freeTrips: number;
+  /**
    * Trips still on the road, excluded from every figure above. A fee that has not
    * been collected is not a fee, and a courier not yet paid is not a cost.
    */
@@ -175,6 +183,7 @@ export function computeDelivery(orders: readonly Order[]): DeliveryReading {
   let trips = 0;
   let subsidised = 0;
   let inFlight = 0;
+  let freeTrips = 0;
   for (const order of orders) {
     const status = orderStatus(order);
     if (status === "pending") {
@@ -195,7 +204,8 @@ export function computeDelivery(orders: readonly Order[]): DeliveryReading {
     }
     charged += c;
     paid += p;
-    if (c - p < 0) subsidised += 1;
+    if (isFreeDelivery(order)) freeTrips += 1;
+    else if (c - p < 0) subsidised += 1;
   }
   const margin = charged - paid;
   return {
@@ -206,6 +216,7 @@ export function computeDelivery(orders: readonly Order[]): DeliveryReading {
     subsidised,
     rate: charged === 0 ? 0 : margin / charged,
     inFlight,
+    freeTrips,
   };
 }
 

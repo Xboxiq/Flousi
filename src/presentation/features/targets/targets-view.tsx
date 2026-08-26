@@ -6,6 +6,7 @@ import type { TargetMetric } from "@/domain";
 import { computeTargets, type TargetRow } from "@/application/targets";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { useAccess } from "@/presentation/hooks/use-access";
+import { useUrlState } from "@/presentation/hooks/use-url-state";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
   Badge,
@@ -85,7 +86,11 @@ export function TargetsView() {
    * every render instead of seeding state from async data means the load order
    * cannot decide what a session is shown.
    */
-  const [chosen, setMetric] = useState<TargetMetric>("netProfit");
+  const [chosen, setMetric] = useUrlState<TargetMetric>("metric", "netProfit", [
+    "netProfit",
+    "revenue",
+    "units",
+  ]);
   const metric: TargetMetric = canSeeCosts ? chosen : chosen === "netProfit" ? "revenue" : chosen;
   const [editing, setEditing] = useState<TargetRow | null>(null);
 

@@ -10,7 +10,13 @@ import type {
   OrderStatus,
   CollectionStatus,
 } from "@/domain";
-import { CommissionCalculator, defaultCommissionSchemeParams, makeCostBreakdown } from "@/domain";
+import {
+  allocateDiscount,
+  CommissionCalculator,
+  defaultCommissionSchemeParams,
+  makeCostBreakdown,
+  type OrderDiscount,
+} from "@/domain";
 import {
   productRepository,
   saleRepository,
@@ -520,11 +526,11 @@ export async function seedIfEmpty(): Promise<void> {
     });
   }
 
-  // Five delivery trips, so /orders opens on the cases these phases exist for: one
+  // Seven delivery trips, so /orders opens on the cases these phases exist for: one
   // fee carrying several products, and every state money can be in. The second is
-  // SUBSIDISED (charged 5,000, paid 6,500), the fourth is still with the courier and
-  // the fifth came BACK, because a merchant needs to see each state at least once to
-  // learn that the screen reports it (gate P5/G3).
+  // SUBSIDISED (charged 5,000, paid 6,500), the fourth is still with the courier, the
+  // fifth came BACK (gate P5/G3), the sixth carries a 10% OFFER and the seventh is
+  // FREE DELIVERY — an absorbed cost, not a price cut (gates P6/G1, P6/G2).
   const catalogue = await productRepository.list();
   const pick = (name: string) => catalogue.find((p) => p.name.includes(name));
   const trips: Array<{
@@ -537,6 +543,7 @@ export async function seedIfEmpty(): Promise<void> {
     status?: OrderStatus;
     collection?: CollectionStatus;
     returnCost?: number;
+    discount?: OrderDiscount;
   }> = [
     {
       charged: 5_000,
@@ -585,6 +592,31 @@ export async function seedIfEmpty(): Promise<void> {
       status: "returned",
       returnCost: 4_000,
     },
+    // A 10% offer on the whole trip: the discount comes off the goods, spreads over
+    // the lines exactly, and shrinks the rep's frozen basis (afterDiscount default).
+    {
+      charged: 5_000,
+      paid: 4_000,
+      day: 25,
+      area: "المنصور",
+      customer: "زبون المنصور",
+      lines: [{ name: "وشاح", qty: 1 }, { name: "دفتر", qty: 1 }],
+      discount: { kind: "percent", value: 10 },
+      status: "delivered",
+      collection: "collected",
+    },
+    // Free delivery: the fee is waived, the courier is still paid. The goods keep
+    // their price and their margin; the trip's own column carries the absorbed cost.
+    {
+      charged: 0,
+      paid: 4_000,
+      day: 26,
+      area: "زيونة",
+      customer: "زبون زيونة",
+      lines: [{ name: "شمعة", qty: 3 }],
+      status: "delivered",
+      collection: "collected",
+    },
   ];
 
   const seniorForTrips = reps.find((r) => r.status === "active");
@@ -605,13 +637,49 @@ export async function seedIfEmpty(): Promise<void> {
       deliveryCharged: trip.charged,
       deliveryPaid: trip.paid,
       deliveryAllocation: "byValue",
+      discount: trip.discount,
       customerName: trip.customer,
       customerArea: trip.area,
       status: trip.status,
       collection: trip.collection,
       returnCost: trip.returnCost,
     });
-    for (const line of lines) {
+    // The offer's share per line, from the same allocation the app itself uses.
+    const shares = allocateDiscount({
+      lines: lines.map((l, k) => ({
+        id: `s${k}`,
+        productId: l.product.id,
+        quantity: l.qty,
+        unitPrice: l.product.sellingPrice,
+      })),
+      discount: trip.discount,
+      currency: CURRENCY,
+    });
+    for (const [k, line] of lines.entries()) {
+      const lineDiscount = shares[k]?.amount || undefined;
+      // Frozen like every other seeded sale (gate P6/G5). P4's seed skipped this,
+      // which is what the «بلا نظام قسمة» badge on the team screen was counting.
+      const commissionSnapshot = seniorForTrips
+        ? CommissionCalculator.snapshot({
+            sale: {
+              unitPrice: line.product.sellingPrice,
+              quantity: line.qty,
+              currency: CURRENCY,
+              repId: seniorForTrips.id,
+              discount: lineDiscount,
+            },
+            costs: line.product.costs,
+            rep: seniorForTrips,
+            resolution: CommissionCalculator.resolveScheme({
+              productId: line.product.id,
+              repId: seniorForTrips.id,
+              assignments,
+              schemes,
+              accountDefaultSchemeId: defaultSchemeId,
+            }),
+            calculatedAt: placedAt,
+          })
+        : undefined;
       await saleRepository.create({
         productId: line.product.id,
         quantity: line.qty,
@@ -621,6 +689,8 @@ export async function seedIfEmpty(): Promise<void> {
         periodId: activePeriod?.id,
         repId: seniorForTrips?.id,
         orderId: created.id,
+        discount: lineDiscount,
+        commissionSnapshot,
       });
     }
   }

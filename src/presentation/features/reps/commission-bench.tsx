@@ -18,6 +18,7 @@ import {
   type LossPolicy,
   type ProfitBasis,
   type RoundingBeneficiary,
+  type DiscountTreatment,
 } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { PageHeader } from "@/presentation/components/layout/page-header";
@@ -71,6 +72,8 @@ interface Draft {
   profitBasis: ProfitBasis;
   lossPolicy: LossPolicy;
   roundingBeneficiary: RoundingBeneficiary;
+  /** Is the rep's basis taken before or after an order offer? (P6, the client's «خيار لكل طريقة عمولة») */
+  discountTreatment: DiscountTreatment;
 }
 
 const KIND_OPTIONS = (["profitShare", "fixedPerUnit", "percentOfPrice"] as const).map((k) => ({
@@ -89,6 +92,10 @@ const ROUND_OPTIONS = (["owner", "rep"] as const).map((r) => ({
   label: ROUNDING_BENEFICIARY_LABELS[r],
   value: r,
 }));
+const DISCOUNT_OPTIONS = [
+  { label: "بعد الخصم", value: "afterDiscount" as const },
+  { label: "قبل الخصم", value: "beforeDiscount" as const },
+];
 
 /** The client's own example, verbatim: bought at 10, the rep sells at 20, ship 2. */
 const CLIENT_EXAMPLE = { price: 20, purchase: 10, shipping: 2, quantity: 1 };
@@ -105,6 +112,7 @@ const BLANK: Draft = {
       profitBasis: p.profitBasis,
       lossPolicy: p.lossPolicy,
       roundingBeneficiary: p.roundingBeneficiary,
+      discountTreatment: p.discountTreatment ?? "afterDiscount",
     };
   })(),
 };
@@ -119,6 +127,9 @@ function fromScheme(scheme: CommissionScheme, currency: string): Draft {
     profitBasis: scheme.profitBasis,
     lossPolicy: scheme.lossPolicy,
     roundingBeneficiary: scheme.roundingBeneficiary,
+    // Absent on every pre-P6 scheme, and absent MEANS afterDiscount (the stored
+    // default), so the control shows the truth rather than an empty state.
+    discountTreatment: scheme.discountTreatment ?? "afterDiscount",
   };
 }
 
@@ -346,6 +357,7 @@ export function CommissionBench() {
         profitBasis: draft.profitBasis,
         lossPolicy: draft.lossPolicy,
         roundingBeneficiary: draft.roundingBeneficiary,
+        discountTreatment: draft.discountTreatment,
       });
       setOverride(null);
       setError(null);
@@ -654,6 +666,25 @@ export function CommissionBench() {
                   </span>
                 )}
               </div>
+            </Field>
+
+            <Field
+              label="لو كان على الطلبية عرض"
+              htmlFor="scheme-discount"
+              labelsGroup
+              helper={
+                draft.discountTreatment === "afterDiscount"
+                  ? "حصّته من بعد الخصم: المندوب يشارك في كلفة العرض الذي يمنحه، فلا يتساهل به."
+                  : "حصّته من قبل الخصم: العرض كلّه على حسابك أنت."
+              }
+            >
+              <Segmented
+                id="scheme-discount"
+                aria-labelledby="scheme-discount-label"
+                options={DISCOUNT_OPTIONS}
+                value={draft.discountTreatment}
+                onChange={(discountTreatment) => set({ discountTreatment })}
+              />
             </Field>
 
             <Field

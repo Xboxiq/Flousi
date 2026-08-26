@@ -23,6 +23,16 @@ export interface CommissionBasisInput {
   currency: string;
   costs: CostBreakdown;
   profitBasis: ProfitBasis;
+  /**
+   * The line's allocated share of an order discount, major units, already clamped by
+   * `allocateDiscount`. Subtracted from REVENUE only — the cost components keep
+   * being computed on the actual unit price, because a marketplace fee of 8% is
+   * charged on what was invoiced, not on what the merchant wished he had invoiced.
+   *
+   * Whether it applies at all is the SPLIT's decision (`discountTreatment`, gate
+   * P6/G3); `basis` itself always honours what it is handed.
+   */
+  discount?: number;
 }
 
 export interface CommissionBasisResult {
@@ -83,7 +93,7 @@ export interface SchemeResolution {
 }
 
 export interface CommissionSnapshotInput {
-  sale: Pick<Sale, "unitPrice" | "quantity" | "currency" | "repId">;
+  sale: Pick<Sale, "unitPrice" | "quantity" | "currency" | "repId" | "discount">;
   costs: CostBreakdown;
   /** The credited rep, for the name copy. null when the sale has no rep. */
   rep: Pick<Rep, "id" | "name"> | null;
@@ -180,7 +190,11 @@ export class CommissionCalculator {
     }
     const unitPurchase = ProfitCalculator.componentCost(input.costs.purchase, unitPrice);
 
-    const revenue = unitPrice.multiply(quantity);
+    const discount = Money.fromMajor(
+      Number.isFinite(input.discount) ? Math.max(0, input.discount as number) : 0,
+      currency,
+    );
+    const revenue = unitPrice.multiply(quantity).subtract(discount);
     const totalCost = unitCost.multiply(quantity);
     const netProfit = revenue.subtract(totalCost);
     const basis =
@@ -216,6 +230,11 @@ export class CommissionCalculator {
       currency: input.currency,
       costs: input.costs,
       profitBasis: p.profitBasis,
+      // The scheme's own choice (the client's: «خيار لكل طريقة عمولة»). The default,
+      // afterDiscount, makes the rep share the cost of the discount he granted —
+      // which is what stops a rep discounting freely. beforeDiscount leaves the
+      // basis whole and the merchant carries the offer alone (gate P6/G3).
+      discount: p.discountTreatment === "beforeDiscount" ? 0 : input.discount,
     });
 
     const basisMinor = b.basis.minorUnits;
@@ -382,6 +401,7 @@ export class CommissionCalculator {
       currency: sale.currency,
       costs,
       params,
+      discount: sale.discount,
     });
 
     return {

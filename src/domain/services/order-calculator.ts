@@ -9,6 +9,7 @@ import {
   type DeliveryAllocation,
   type DeliveryShare,
   type Order,
+  type OrderDiscount,
   type OrderLineInput,
   type OrderStatus,
 } from "../entities/order";
@@ -25,7 +26,11 @@ export interface OrderLineResult {
   productId: string;
   quantity: number;
   unitPrice: number;
-  /** unitPrice × quantity. */
+  /** unitPrice × quantity — the price BEFORE any offer. */
+  listRevenue: number;
+  /** This line's share of the order's discount. Zero when there is no offer. */
+  discountShare: number;
+  /** listRevenue − discountShare: what this line actually brought in. */
   revenue: number;
   /** The product's own costs at this price and quantity, delivery NOT included. */
   productCost: number;
@@ -42,7 +47,11 @@ export interface OrderLineResult {
 
 export interface OrderResult {
   currency: string;
-  /** Sum of the lines' revenue. Delivery is NOT in here. */
+  /** Sum of the lines' PRE-offer revenue. */
+  listRevenue: number;
+  /** What the offer gave away. `listRevenue − discountTotal = goodsRevenue`, exactly. */
+  discountTotal: number;
+  /** Sum of the lines' revenue AFTER the offer. Delivery is NOT in here. */
   goodsRevenue: number;
   /** What the customer paid for delivery. */
   deliveryCharged: number;
@@ -139,6 +148,65 @@ export function allocateDelivery(input: {
   }));
 }
 
+
+/**
+ * Spreads one offer across the lines it targets, so the parts sum EXACTLY to the
+ * discount — the same law and the same payable-unit machinery as `allocateDelivery`.
+ *
+ * The total is CLAMPED before it is spread: a percentage outside 0..100 is folded
+ * back into range, and a fixed amount larger than the goods it targets is capped at
+ * those goods. A discount that invents negative revenue is not a state the store can
+ * hold (gate P6/G4). A `lineId` that matches nothing discounts nothing, because
+ * silently widening a single-line offer to the whole order would give away money the
+ * merchant never offered.
+ */
+export function allocateDiscount(input: {
+  lines: readonly OrderLineInput[];
+  discount: OrderDiscount | undefined;
+  currency: string;
+}): DeliveryShare[] {
+  const { lines, discount, currency } = input;
+  const zeros = lines.map((l) => ({ lineId: l.id, amount: 0 }));
+  if (!discount || lines.length === 0 || !Number.isFinite(discount.value)) return zeros;
+
+  const step = payableStepMinor(currency);
+  const unitsOf = (l: OrderLineInput) =>
+    Math.round(
+      (Money.fromMajor(l.unitPrice, currency).minorUnits * Math.max(0, l.quantity)) / step,
+    );
+
+  const targeted = discount.lineId ? lines.filter((l) => l.id === discount.lineId) : lines;
+  const targetUnits = targeted.map(unitsOf);
+  const targetTotal = targetUnits.reduce((a, b) => a + b, 0);
+
+  let totalUnits: number;
+  if (discount.kind === "percent") {
+    const ratio = Math.min(100, Math.max(0, discount.value)) / 100;
+    totalUnits = Math.round(targetTotal * ratio);
+  } else {
+    const asked = Math.round(Money.fromMajor(Math.max(0, discount.value), currency).minorUnits / step);
+    totalUnits = Math.min(targetTotal, asked);
+  }
+  if (totalUnits <= 0 || targeted.length === 0) return zeros;
+
+  const shares = targetUnits.map((u) =>
+    targetTotal === 0 ? 0 : Math.trunc((totalUnits * u) / targetTotal),
+  );
+  let remainder = totalUnits - shares.reduce((a, b) => a + b, 0);
+  // Largest line first, one payable unit at a time — the same hand-out as delivery.
+  const order = targeted.map((_, i) => i).sort((a, b) => targetUnits[b] - targetUnits[a]);
+  for (let k = 0; remainder > 0 && k < order.length * 2; k += 1) {
+    shares[order[k % order.length]] += 1;
+    remainder -= 1;
+  }
+
+  const byId = new Map(targeted.map((l, i) => [l.id, shares[i]]));
+  return lines.map((l) => ({
+    lineId: l.id,
+    amount: Money.fromMinor((byId.get(l.id) ?? 0) * step, currency).amount,
+  }));
+}
+
 /**
  * The whole order: goods, delivery on both sides, and each line with its share.
  *
@@ -154,7 +222,7 @@ export function allocateDelivery(input: {
 export function calculateOrder(input: {
   order: Pick<
     Order,
-    "currency" | "deliveryCharged" | "deliveryPaid" | "deliveryAllocation"
+    "currency" | "deliveryCharged" | "deliveryPaid" | "deliveryAllocation" | "discount"
   >;
   lines: readonly OrderLineInput[];
   /** Cost breakdown per product id. A missing product contributes revenue only. */
@@ -172,7 +240,11 @@ export function calculateOrder(input: {
     beneficiary: input.beneficiary,
   });
   const shareById = new Map(shares.map((s) => [s.lineId, s.amount]));
+  const discountShares = allocateDiscount({ lines, discount: order.discount, currency });
+  const discountById = new Map(discountShares.map((s) => [s.lineId, s.amount]));
 
+  let listRevenue = Money.zero(currency);
+  let discountTotal = Money.zero(currency);
   let goodsRevenue = Money.zero(currency);
   let goodsCost = Money.zero(currency);
   const results: OrderLineResult[] = [];
@@ -187,12 +259,16 @@ export function calculateOrder(input: {
           quantity: line.quantity,
         })
       : null;
-    const revenue = Money.fromMajor(line.unitPrice, currency).multiply(
+    const list = Money.fromMajor(line.unitPrice, currency).multiply(
       Math.max(0, line.quantity),
     );
+    const discountShare = Money.fromMajor(discountById.get(line.id) ?? 0, currency);
+    const revenue = list.subtract(discountShare);
     const productCost = Money.fromMajor(priced?.totalCost ?? 0, currency);
     const deliveryShare = Money.fromMajor(shareById.get(line.id) ?? 0, currency);
 
+    listRevenue = listRevenue.add(list);
+    discountTotal = discountTotal.add(discountShare);
     goodsRevenue = goodsRevenue.add(revenue);
     goodsCost = goodsCost.add(productCost);
 
@@ -201,6 +277,8 @@ export function calculateOrder(input: {
       productId: line.productId,
       quantity: line.quantity,
       unitPrice: line.unitPrice,
+      listRevenue: list.amount,
+      discountShare: discountShare.amount,
       revenue: revenue.amount,
       productCost: productCost.amount,
       deliveryShare: deliveryShare.amount,
@@ -222,6 +300,8 @@ export function calculateOrder(input: {
 
   return {
     currency,
+    listRevenue: listRevenue.amount,
+    discountTotal: discountTotal.amount,
     goodsRevenue: goodsRevenue.amount,
     deliveryCharged: charged.amount,
     collected: collected.amount,

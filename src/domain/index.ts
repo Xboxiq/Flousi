@@ -29,6 +29,7 @@ export type {
   LossPolicy,
   RoundingBeneficiary,
   CommissionSchemeStatus,
+  DiscountTreatment,
 } from "./entities/commission-scheme";
 export {
   DEFAULT_REP_RATIO,
@@ -66,6 +67,8 @@ export type {
   DeliveryShare,
   OrderStatus,
   CollectionStatus,
+  OrderDiscount,
+  DiscountKind,
 } from "./entities/order";
 export {
   DELIVERY_ALLOCATIONS,
@@ -78,6 +81,8 @@ export {
   isVoidOrder,
   orderStatus,
   orderCollection,
+  isFreeDelivery,
+  DISCOUNT_KIND_LABELS,
 } from "./entities/order";
 
 export {
@@ -87,6 +92,7 @@ export {
   splitDeliveryMargin,
   orderOutcome,
   voidOrderIds,
+  allocateDiscount,
 } from "./services/order-calculator";
 export type {
   OrderLineResult,

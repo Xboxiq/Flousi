@@ -1328,3 +1328,116 @@ describe("CommissionCalculator — حراسة الانحدار", () => {
     expect(shares(r)).toEqual([1000, 1001]);
   });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// P6 — the discount and the scheme's treatment of it (gate P6/G3).
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("CommissionCalculator — discountTreatment «خيار لكل طريقة عمولة»", () => {
+  // One sale: 100 revenue, 60 purchase cost, 10 discount share. Half split.
+  const base = {
+    unitPrice: 100,
+    quantity: 1,
+    currency: USD,
+    costs: makeCostBreakdown(purchase(60)),
+    discount: 10,
+  };
+
+  it("afterDiscount (the default): the rep shares the cost of the offer", () => {
+    const r = CommissionCalculator.split({
+      ...base,
+      params: params({ repRatio: 0.5, discountTreatment: "afterDiscount" }),
+    });
+    // basis = (100 − 10) − 60 = 30 → rep 15
+    expect(r.revenue.amount).toBe(90);
+    expect(r.basis.amount).toBe(30);
+    expect(shares(r)).toEqual([1_500, 1_500]);
+  });
+
+  it("an absent treatment IS afterDiscount — the stored default from P4", () => {
+    const r = CommissionCalculator.split({
+      ...base,
+      params: params({ repRatio: 0.5 }),
+    });
+    expect(r.basis.amount).toBe(30);
+  });
+
+  it("beforeDiscount: the merchant carries the offer alone", () => {
+    const r = CommissionCalculator.split({
+      ...base,
+      params: params({ repRatio: 0.5, discountTreatment: "beforeDiscount" }),
+    });
+    // basis = 100 − 60 = 40 → rep 20, and the merchant's keep absorbs the 10
+    expect(r.revenue.amount).toBe(100);
+    expect(r.basis.amount).toBe(40);
+    expect(shares(r)).toEqual([2_000, 2_000]);
+  });
+
+  it("the two treatments differ by exactly the rep's share of the discount", () => {
+    const after = CommissionCalculator.split({
+      ...base,
+      params: params({ repRatio: 0.5, discountTreatment: "afterDiscount" }),
+    });
+    const before = CommissionCalculator.split({
+      ...base,
+      params: params({ repRatio: 0.5, discountTreatment: "beforeDiscount" }),
+    });
+    expect(before.repShare.amount - after.repShare.amount).toBe(5);
+  });
+
+  it("no discount: both treatments are the same split, byte for byte", () => {
+    for (const discountTreatment of ["afterDiscount", "beforeDiscount"] as const) {
+      const r = CommissionCalculator.split({
+        ...base,
+        discount: 0,
+        params: params({ repRatio: 0.5, discountTreatment }),
+      });
+      expect(r.basis.amount).toBe(40);
+      expect(shares(r)).toEqual([2_000, 2_000]);
+    }
+  });
+
+  it("a discount deep enough to make the sale a loss meets the loss policy", () => {
+    // (100 − 45) − 60 = −5: the offer turned the sale into a loss.
+    const ownerOnly = CommissionCalculator.split({
+      ...base,
+      discount: 45,
+      params: params({ repRatio: 0.5, lossPolicy: "ownerOnly" }),
+    });
+    expect(ownerOnly.basis.amount).toBe(-5);
+    expect(ownerOnly.repShare.amount).toBe(0);
+    expect(ownerOnly.lossApplied).toBe(true);
+    const shared = CommissionCalculator.split({
+      ...base,
+      discount: 45,
+      params: params({ repRatio: 0.5, lossPolicy: "shared" }),
+    });
+    expect(shared.repShare.amount).toBeLessThan(0);
+  });
+
+  it("a corrupt or negative discount is zero, never NaN and never a bonus", () => {
+    for (const discount of [Number.NaN, -10, Number.POSITIVE_INFINITY]) {
+      const r = CommissionCalculator.split({
+        ...base,
+        discount,
+        params: params({ repRatio: 0.5 }),
+      });
+      expect(Number.isFinite(r.basis.amount)).toBe(true);
+      // Treated as no discount at all: the undiscounted basis of 40.
+      expect(r.basis.amount).toBe(40);
+    }
+  });
+
+  it("the snapshot freezes the discounted figures, so history holds the offer", () => {
+    const s = CommissionCalculator.snapshot({
+      sale: { unitPrice: 100, quantity: 1, currency: USD, repId: "rep-R1", discount: 10 },
+      costs: makeCostBreakdown(purchase(60)),
+      rep: rep(),
+      resolution: { scheme: scheme("half", 0.5), tier: "accountDefault" },
+      calculatedAt: ISO,
+    });
+    expect(s?.revenueMinor).toBe(9_000);
+    expect(s?.basisMinor).toBe(3_000);
+    expect(s?.repShareMinor).toBe(1_500);
+  });
+});

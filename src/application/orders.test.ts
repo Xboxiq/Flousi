@@ -196,6 +196,7 @@ describe("computeDelivery — the reading that did not exist before P4", () => {
       subsidised: 0,
       rate: 0,
       inFlight: 0,
+      freeTrips: 0,
     });
     expect(Number.isFinite(d.rate)).toBe(true);
   });
@@ -360,5 +361,49 @@ describe("computeDelivery is a REALISED reading (gate P5/G1)", () => {
     expect(d.trips).toBe(3);
     expect(d.inFlight).toBe(1);
     expect(d.subsidised).toBe(1);
+  });
+});
+
+describe("computeDelivery — free delivery is an offer, not a mistake (gate P6/G2)", () => {
+  it("a waived fee with a real courier cost counts free, never subsidised", () => {
+    const d = computeDelivery([
+      order({ status: "delivered", deliveryCharged: 0, deliveryPaid: 4_000 }),
+    ]);
+    expect(d.freeTrips).toBe(1);
+    expect(d.subsidised).toBe(0);
+    // The cost is still real and still in the margin:
+    expect(d.paid).toBe(4_000);
+    expect(d.margin).toBe(-4_000);
+  });
+
+  it("a trip that CHARGED and still lost stays subsidised — that one is a mistake", () => {
+    const d = computeDelivery([
+      order({ status: "delivered", deliveryCharged: 5_000, deliveryPaid: 6_500 }),
+    ]);
+    expect(d.subsidised).toBe(1);
+    expect(d.freeTrips).toBe(0);
+  });
+
+  it("a trip with no delivery either way is neither", () => {
+    const d = computeDelivery([
+      order({ status: "delivered", deliveryCharged: 0, deliveryPaid: 0 }),
+    ]);
+    expect(d.freeTrips).toBe(0);
+    expect(d.subsidised).toBe(0);
+  });
+});
+
+describe("computeOrders carries the offer through (gate P6/G1)", () => {
+  it("a discounted trip's collected figure is after the offer", () => {
+    const v = computeOrders({
+      orders: [order({ discount: { kind: "percent", value: 10 } })],
+      sales: [sale({ id: "a", orderId: "O1", productId: "P1", discount: 6_000 })],
+      products,
+      reps: [],
+    });
+    // 60,000 goods − 6,000 offer + 5,000 delivery
+    expect(v.rows[0].result.listRevenue).toBe(60_000);
+    expect(v.rows[0].result.discountTotal).toBe(6_000);
+    expect(v.rows[0].result.collected).toBe(59_000);
   });
 });
