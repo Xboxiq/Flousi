@@ -258,7 +258,7 @@ function MovementRow({ movement, locale }: { movement: Movement; locale: string 
   );
 
   return (
-    <li className="border-b border-border-soft last:border-b-0">
+    <li data-row className="border-b border-border-soft last:border-b-0">
       {m.href ? (
         <Link
           href={m.href}

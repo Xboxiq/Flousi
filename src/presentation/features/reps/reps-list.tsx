@@ -12,13 +12,13 @@ import {
 } from "@/application/commissions";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { useUrlState } from "@/presentation/hooks/use-url-state";
+import { Ladder, Rung } from "@/presentation/features/dashboard/ladder";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
   Badge,
   Button,
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
   EmptyState,
@@ -32,8 +32,6 @@ import {
 } from "@/presentation/components/objects/distribution-bar";
 import { Sparkline } from "@/presentation/components/objects/sparkline";
 import {
-  NOUNS,
-  countedNoun,
   formatCurrency,
   formatDate,
   formatNumber,
@@ -79,6 +77,7 @@ export function RepsList() {
 
   const [scope, setScope] = useUrlState<Scope>("scope", "month", ["month", "all"]);
   const [addOpen, setAddOpen] = useState(false);
+  const [splitOpen, setSplitOpen] = useState(false);
 
   const money = (n: number) =>
     formatCurrency(n, { currency: settings.currency, locale: settings.locale });
@@ -263,23 +262,33 @@ export function RepsList() {
           caption="الرصيد مشتقّ دائمًا: الحصص المجمّدة ناقص التسويات."
         />
 
-        <Card>
-          <CardHeader className="flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-            <div>
-              <CardTitle>قسمة الأرباح</CardTitle>
-              <CardDescription>
-                الأساس المقسوم بين حصتك وحصص المندوبين، {SCOPE_WORD[scope]}.
-              </CardDescription>
-            </div>
+        {/* The split was open beside the balance and the two competed: the balance is
+            the daily question («كم له؟»), the split is a weekly diagnostic. Latched, it
+            still states its own headline while closed (VISUAL-LAW §15). */}
+        <Ladder solo className="self-start">
+          <Rung
+            title="قسمة الأرباح"
+            hint={SCOPE_WORD[scope]}
+            open={splitOpen}
+            onToggle={() => setSplitOpen((v) => !v)}
+            summary={
+              <span className="font-mono text-sm font-semibold text-fg">
+                {share(
+                  windowTeam.basisMinor === 0
+                    ? 0
+                    : windowTeam.repShareMinor / windowTeam.basisMinor,
+                )}
+              </span>
+            }
+          >
+            <div className="flex flex-col gap-3">
             <Segmented
-              className="self-start sm:ms-auto"
+              className="self-start"
               aria-label="نطاق القراءة"
               options={SCOPES}
               value={scope}
               onChange={setScope}
             />
-          </CardHeader>
-          <CardContent>
             {split ? (
               <DistributionBar
                 parts={split.parts}
@@ -314,8 +323,9 @@ export function RepsList() {
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+            </div>
+          </Rung>
+        </Ladder>
       </div>
 
       {/* the count is a figure, so it is a bdi island rather than digits loose in
@@ -394,7 +404,7 @@ function RepCard({
   const pct = drawn ? Math.max(4, pull * 100) : 0;
 
   return (
-    <Card className="bento-hover cursor-pointer" onClick={onOpen}>
+    <Card data-row className="bento-hover cursor-pointer" onClick={onOpen}>
       <CardHeader>
         <div className="min-w-0">
           {/* the whole card is clickable for the mouse, and the name is a real
@@ -440,28 +450,11 @@ function RepCard({
             value={money(toMajor(row.repShareMinor, row.currency))}
             hint={SCOPE_WORD[scope]}
           />
-          <Figure
-            label="القطع المبيعة"
-            value={count(row.units)}
-            hint={`${count(row.saleCount)} عملية`}
-          />
+          {/* «القطع المبيعة» and the reversal note both moved to the rep's own
+              profile: a card in a list answers «كم له؟», and every extra figure on it
+              is one the eye has to sort past to answer that (VISUAL-LAW §15). */}
         </div>
 
-        {/* A balance that silently fell is a balance the rep will dispute. The share
-            that was agreed and then returned is named, so the drop has a reason on the
-            same card as the figure (gate P5/G2). */}
-        {row.voidedShareMinor !== 0 && (
-          <p className="flex flex-wrap items-baseline gap-x-1.5 text-[11px] leading-relaxed text-muted">
-            <span>سقط بالرجيع:</span>
-            <bdi dir="ltr" className="font-mono font-semibold text-fg">
-              {money(toMajor(row.voidedShareMinor, row.currency))}
-            </bdi>
-            <span className="text-subtle">
-              من {countedNoun(row.voidedCount, NOUNS.order, { locale })} رجعت أو
-              أُلغيت. ما اتُّفق عليه محفوظ في السجل.
-            </span>
-          </p>
-        )}
 
         <div>
           <div className="flex items-baseline justify-between gap-3 text-[11px]">

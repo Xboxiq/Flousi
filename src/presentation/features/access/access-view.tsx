@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import {
   IdentificationBadge,
-  Info,
   Lock,
   LockOpen,
   PencilSimple,
@@ -37,6 +36,7 @@ import {
   Skeleton,
 } from "@/presentation/components/ui";
 import { cn } from "@/presentation/lib/cn";
+import { Ladder, Rung } from "@/presentation/features/dashboard/ladder";
 import { RoleDialog } from "./role-dialog";
 
 /**
@@ -63,6 +63,7 @@ export function AccessView() {
   const [switching, setSwitching] = useState<Role | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<Role | null>(null);
   const [pinOpen, setPinOpen] = useState(false);
+  const [whyOpen, setWhyOpen] = useState(false);
 
   const activeReps = useMemo(() => reps.filter((r) => r.status === "active"), [reps]);
 
@@ -91,47 +92,61 @@ export function AccessView() {
       />
 
       <div className="flex flex-col gap-6">
-        {/* The sentence that must be on the screen, not only in a doc. */}
-        <div className="flex items-start gap-3 rounded-[var(--radius-lg)] border border-border bg-sunken p-4">
-          <span className="squircle size-9 shrink-0 text-muted" aria-hidden>
-            <Info size={17} weight="bold" />
-          </span>
-          <p className="text-sm leading-relaxed text-muted">
-            هذه <span className="font-semibold text-fg">أوضاع عرض على هذا الجهاز</span>، وليست
-            حسابات دخول. فلوسي يعمل كله داخل متصفّحك بلا خادم، ومن يحمل الجهاز يستطيع قراءة
-            المخزَّن فيه. فالدور يضبط ما يُعرَض وما يُسمَح به، وهو تنظيم حقيقي ونافع: تُعطي
-            مندوبك جهازاً يفتح على صفحته وحدها، وتُبعد أسعار الشراء عن شاشة مشتركة، وتمنع نقرة
-            خاطئة على «إغلاق الشهر». لكنه لا يحمي البيانات من شخص يملك الجهاز ويعرف ما يفعل.
-          </p>
-        </div>
+        {/* The claim that must be read before anything else on this screen (gate
+            P3/G0) IS the latch: a closed rung states its own answer, so the sentence
+            is at rest in bold and the four clauses of reasoning behind it are one tap
+            away, word for word. It used to be a five-clause paragraph in a bordered
+            note, on the screen a merchant opens in order to hand a device to someone
+            else (VISUAL-LAW §15). */}
+        <Ladder solo>
+          <Rung
+            title="هذه أوضاع عرض على هذا الجهاز، وليست حسابات دخول"
+            hint="ما الذي يضبطه الدور، وما لا يضبطه."
+            open={whyOpen}
+            onToggle={() => setWhyOpen((v) => !v)}
+          >
+            <p className="max-w-[68ch] text-sm leading-relaxed text-muted">
+              فلوسي يعمل كله داخل متصفّحك بلا خادم، ومن يحمل الجهاز يستطيع قراءة المخزَّن فيه.
+              فالدور يضبط ما يُعرَض وما يُسمَح به، وهو تنظيم حقيقي ونافع: تُعطي مندوبك جهازاً
+              يفتح على صفحته وحدها، وتُبعد أسعار الشراء عن شاشة مشتركة، وتمنع نقرة خاطئة على
+              «إغلاق الشهر». لكنه لا يحمي البيانات من شخص يملك الجهاز ويعرف ما يفعل.
+            </p>
+            <p className="mt-3 max-w-[68ch] text-sm leading-relaxed text-muted">
+              ورمز الرجوع يُخزَّن كبصمة مشفَّرة لا كأرقام، وهذا يمنع قراءته بنظرة على المخزَّن،
+              لا أكثر.
+            </p>
+          </Rung>
+        </Ladder>
 
+        {/* One line and one verb, so it is one ROW and not a card with a void where
+            the paragraph used to be: shortening the copy without shortening the box
+            just moves the noise into empty space (VISUAL-LAW §10). */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex-col items-stretch gap-3 sm:flex-row sm:items-center">
             <div>
               <CardTitle>رمز الرجوع</CardTitle>
               <CardDescription>
                 {pinSet
-                  ? "الرجوع إلى وضع المالك يطلب الرمز. الرمز مخزَّن كبصمة مشفَّرة لا كأرقام، وهذا يمنع قراءته بنظرة على المخزَّن، لا أكثر."
-                  : "لا رمز محدَّد، فالرجوع إلى وضع المالك بنقرة واحدة. حدِّد رمزاً إن كنت ستسلّم الجهاز لغيرك."}
+                  ? "الرجوع إلى وضع المالك يطلب الرمز."
+                  : "لا رمز محدَّد، فالرجوع إلى وضع المالك بنقرة واحدة."}
               </CardDescription>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:ms-auto">
               <Button
                 variant="secondary"
+                size="sm"
                 leadingIcon={pinSet ? <Lock size={16} /> : <LockOpen size={16} />}
                 onClick={() => setPinOpen(true)}
               >
                 {pinSet ? "تغيير الرمز" : "تحديد رمز"}
               </Button>
               {pinSet && (
-                <Button variant="ghost" onClick={() => void setPin(null)}>
+                <Button variant="ghost" size="sm" onClick={() => void setPin(null)}>
                   إزالة الرمز
                 </Button>
               )}
             </div>
-          </CardContent>
+          </CardHeader>
         </Card>
 
         <Card>
@@ -139,7 +154,7 @@ export function AccessView() {
             <div>
               <CardTitle>الأدوار</CardTitle>
               <CardDescription>
-                دور المالك ثابت ولا يُعدَّل ولا يُحذف، فهو طريق الرجوع دائماً.
+                دور المالك ثابت: هو طريق الرجوع دائماً.
               </CardDescription>
             </div>
           </CardHeader>
@@ -234,7 +249,10 @@ function RoleRow({
   const granted = owner ? CAPABILITIES.length : AccessPolicy.sanitise(role.capabilities).length;
 
   return (
-    <li className="flex flex-col gap-3 border-b border-border-soft py-4 last:border-b-0 sm:flex-row sm:items-start">
+    <li
+      data-row
+      className="flex flex-col gap-3 border-b border-border-soft py-4 last:border-b-0 sm:flex-row sm:items-start"
+    >
       <span className="squircle size-10 shrink-0 text-muted" aria-hidden>
         <IdentificationBadge size={19} weight="bold" />
       </span>

@@ -29,6 +29,7 @@ import type { Product, Sale } from "@/domain";
 import { formatCurrency, formatDate, formatPercent } from "@/presentation/lib/format";
 import { MagnitudeRings } from "@/presentation/components/objects/magnitude-rings";
 import { SlideToCommit } from "@/presentation/components/interactive/slide-to-commit";
+import { Ladder, Rung } from "@/presentation/features/dashboard/ladder";
 
 export function PeriodsView() {
   const loaded = useDataStore((s) => s.loaded);
@@ -40,6 +41,7 @@ export function PeriodsView() {
   const openPeriod = useDataStore((s) => s.openPeriod);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
   /**
    * The month being sealed, PINNED at the moment the dialog opens. Committing
    * swaps the store's active period underneath the open dialog — without the
@@ -129,14 +131,28 @@ export function PeriodsView() {
           <CardContent>
             <SummaryGrid summary={liveSummary} money={money} locale={settings.locale} live />
             <ExportButtons label={active.label} periodId={active.id} products={products} sales={sales} />
-            <BreakdownTable
-              periodLabel={active.label}
-              periodId={active.id}
-              products={products}
-              sales={sales}
-              money={money}
-              locale={settings.locale}
-            />
+            {/* Six columns per product, one of them a percentage, standing open under
+                the month's own four figures: the question «أي منتج ربّحني» is asked
+                when it is asked, not every time this screen opens. Behind a latch the
+                table keeps every column it had (VISUAL-LAW §15). */}
+            <Ladder solo className="mt-5">
+              <Rung
+                flat
+                title="الربح حسب المنتج"
+                hint="الوحدات والإيراد والتكلفة والهامش، لكل منتج في هذه الفترة."
+                open={breakdownOpen}
+                onToggle={() => setBreakdownOpen((v) => !v)}
+              >
+                <BreakdownTable
+                  periodLabel={active.label}
+                  periodId={active.id}
+                  products={products}
+                  sales={sales}
+                  money={money}
+                  locale={settings.locale}
+                />
+              </Rung>
+            </Ladder>
           </CardContent>
         </Card>
       ) : (
@@ -291,16 +307,13 @@ function BreakdownTable({
   const report = buildPeriodReport(periodLabel, periodId, products, sales);
   if (report.rows.length === 0) {
     return (
-      <p className="mt-5 border-t border-border pt-4 text-sm text-muted">
+      <p className="text-sm text-muted">
         لا توجد مبيعات مسجّلة في هذه الفترة بعد. سجّل مبيعات من صفحة المنتج لبناء أرباح الشهر.
       </p>
     );
   }
   return (
-    <div className="mt-5 border-t border-border pt-4">
-      <h3 className="mb-2 text-xs font-medium text-subtle">
-        الربح حسب المنتج
-      </h3>
+    <div>
       <Table>
         <THead>
           <TR>
@@ -317,7 +330,7 @@ function BreakdownTable({
             const isTotal = row[0] === "الإجمالي";
             const net = Number(row[5]);
             return (
-              <TR key={i} className={isTotal ? "font-semibold" : ""}>
+              <TR key={i} data-row className={isTotal ? "font-semibold" : ""}>
                 <TD className={isTotal ? "font-semibold" : "font-medium"}>{String(row[0])}</TD>
                 <TD className="text-start"><Money className="text-muted">{String(row[2])}</Money></TD>
                 <TD className="text-start"><Money>{money(Number(row[3]))}</Money></TD>

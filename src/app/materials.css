@@ -1258,6 +1258,16 @@
     );
     box-shadow: inset 0 1px 0 var(--neu-hi);
   }
+  /* One latch, no rail: a groove holding a single rung is a groove holding nothing,
+     and inside a grid it stretched to the neighbour's height and read as a divider
+     (P11). */
+  .ladder-solo {
+    padding-inline-start: 0;
+  }
+  .ladder-solo::before,
+  .ladder-solo > .ladder-rung::before {
+    content: none;
+  }
   /* an OPEN rung's pin is the accent: the rung the merchant is standing on */
   .ladder-rung[data-open="true"]::before {
     background-image: none;

@@ -13,8 +13,27 @@ import { cn } from "@/presentation/lib/cn";
  * is stood on one step, and letting them all open would quietly rebuild the wall
  * of indicators this phase exists to tear down.
  */
-export function Ladder({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("ladder flex flex-col gap-4", className)}>{children}</div>;
+export function Ladder({
+  children,
+  className,
+  solo,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  /**
+   * One rung and no rail.
+   *
+   * A rail is what makes several latches ONE object; with a single latch it is a
+   * groove holding nothing, and on /reps it stretched to the height of the device
+   * beside it and read as a divider. A lone latch is just a latch (P11).
+   */
+  solo?: boolean;
+}) {
+  return (
+    <div className={cn("ladder flex flex-col gap-4", solo && "ladder-solo", className)}>
+      {children}
+    </div>
+  );
 }
 
 export function Rung({
@@ -23,6 +42,7 @@ export function Rung({
   summary,
   open,
   onToggle,
+  flat,
   children,
 }: {
   title: string;
@@ -36,6 +56,9 @@ export function Rung({
   summary?: React.ReactNode;
   open: boolean;
   onToggle: () => void;
+  /** No shell of its own: for a rung that hangs INSIDE a card, where a raised
+   *  surface would be a card in a card. */
+  flat?: boolean;
   children: React.ReactNode;
 }) {
   /* Mounted on FIRST open and kept mounted after: the height tween needs the
@@ -47,7 +70,10 @@ export function Rung({
   return (
     <section
       data-open={open}
-      className="ladder-rung rounded-[var(--radius-2xl)] bg-surface shadow-card"
+      className={cn(
+        "ladder-rung rounded-[var(--radius-2xl)]",
+        flat ? "border-t border-border-soft" : "bg-surface shadow-card",
+      )}
     >
       <button
         type="button"
@@ -58,7 +84,10 @@ export function Rung({
         aria-expanded={open}
         /* wrap, so a phone-width latch drops the summary to its own line instead of
            squeezing the title into a five-line sliver beside it */
-        className="flex w-full flex-wrap items-center gap-x-4 gap-y-2 rounded-[var(--radius-2xl)] p-5 text-start transition-colors hover:bg-surface-2"
+        className={cn(
+          "flex w-full flex-wrap items-center gap-x-4 gap-y-2 rounded-[var(--radius-2xl)] text-start transition-colors hover:bg-surface-2",
+          flat ? "px-1 py-4" : "p-5",
+        )}
       >
         <span className="me-auto min-w-[11rem] flex-1">
           <span className="block text-sm font-semibold text-fg">{title}</span>
@@ -83,7 +112,9 @@ export function Rung({
       <div className="disclose" data-open={open} inert={open ? undefined : true}>
         <div>
           {everOpened && (
-            <div className="border-t border-border-soft p-5">{children}</div>
+            <div className={cn("border-t border-border-soft", flat ? "px-1 py-4" : "p-5")}>
+              {children}
+            </div>
           )}
         </div>
       </div>

@@ -31,7 +31,6 @@ import {
   countedNoun,
   formatCurrency,
   formatDate,
-  formatPercent,
   formatSignedPercent,
 } from "@/presentation/lib/format";
 import { cn } from "@/presentation/lib/cn";
@@ -81,7 +80,6 @@ export function DashboardView() {
 
   const money = (n: number) =>
     formatCurrency(n, { currency: settings.currency, locale: settings.locale });
-  const share = (r: number) => formatPercent(r, { locale: settings.locale, digits: 0 });
 
   const activePeriod = useMemo(() => periods.find((p) => p.status === "open"), [periods]);
   const cash = useMemo(
@@ -204,7 +202,6 @@ export function DashboardView() {
         <CashTill
           reading={cash}
           money={money}
-          share={share}
           showLoss
           windowLabel={activePeriod?.label}
           audience={access.salesScope === undefined ? "owner" : "rep"}

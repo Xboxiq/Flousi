@@ -1,5 +1,5 @@
 import { chromium } from "/opt/node22/lib/node_modules/playwright/index.mjs";
-const BASE = "http://localhost:8123";
+const BASE = process.env.BASE || "http://localhost:8123";
 const ROUTES = [
   "/dashboard/",
   "/products/",
