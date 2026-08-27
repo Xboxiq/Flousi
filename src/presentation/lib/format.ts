@@ -21,27 +21,57 @@ function fractionDigits(currency: string): number {
   return ZERO_DECIMAL.has(currency) ? 0 : 2;
 }
 
+/**
+ * Resolve the locale and currency, treating an explicitly PASSED nullish value as
+ * absent.
+ *
+ * `{ ...DEFAULTS, ...opts }` does not do that: `{ currency: undefined }` overrides
+ * the default WITH undefined, and callers pass exactly that all day
+ * (`{ currency: product.currency }`). `Intl.NumberFormat` then throws «Currency code
+ * is required with currency style» from inside a render, which in a local-first app
+ * blanks the whole screen. Found by the P10 corruption sweep, on a product row with
+ * no currency — but the same hole was open to any caller with an optional field.
+ */
+function resolve(opts: FormatOptions): Required<FormatOptions> {
+  return {
+    locale: opts.locale ?? DEFAULTS.locale,
+    currency: opts.currency ?? DEFAULTS.currency,
+  };
+}
+
 export function formatCurrency(amount: number, opts: FormatOptions = {}): string {
-  const { locale, currency } = { ...DEFAULTS, ...opts };
+  const { locale, currency } = resolve(opts);
   const digits = fractionDigits(currency);
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-    numberingSystem: "latn",
-    minimumFractionDigits: digits,
-    maximumFractionDigits: digits,
-  }).format(Number.isFinite(amount) ? amount : 0);
+  const value = Number.isFinite(amount) ? amount : 0;
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      numberingSystem: "latn",
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    }).format(value);
+  } catch {
+    /* An unknown or malformed currency code still must not take a screen down: the
+       figure is the point, so it is printed plainly with the code beside it. */
+    return `${formatNumber(value, { locale, digits })} ${currency}`.trim();
+  }
 }
 
 export function formatCurrencyCompact(amount: number, opts: FormatOptions = {}): string {
-  const { locale, currency } = { ...DEFAULTS, ...opts };
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-    numberingSystem: "latn",
-    notation: "compact",
-    maximumFractionDigits: 1,
-  }).format(Number.isFinite(amount) ? amount : 0);
+  const { locale, currency } = resolve(opts);
+  const value = Number.isFinite(amount) ? amount : 0;
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      numberingSystem: "latn",
+      notation: "compact",
+      maximumFractionDigits: 1,
+    }).format(value);
+  } catch {
+    return `${formatNumber(value, { locale, digits: 1 })} ${currency}`.trim();
+  }
 }
 
 export function formatPercent(ratio: number, opts: { locale?: string; digits?: number } = {}): string {

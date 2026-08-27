@@ -4,12 +4,46 @@
  */
 const PREFIX = "flousi:";
 
+/**
+ * Does the stored value have the same SHAPE as the fallback the caller expects?
+ *
+ * `JSON.parse(...) as T` was a lie: it told the compiler the value is a `T` while
+ * nothing had checked it, and every screen downstream trusted that. A value that
+ * parsed but held the wrong shape — `null`, or an object where a list was expected —
+ * reached the read models and crashed them with `x.filter is not a function`, which
+ * in a local-first app with no server means a BLANK screen on every route, including
+ * the one that would let the merchant export or reset. One bad value bricked the app
+ * unrecoverably. Found by the P10 corruption sweep.
+ *
+ * The check is deliberately shallow: shape, not contents. A deep validator here
+ * would be a second copy of the domain's own rules, drifting from them silently.
+ */
+function shapeMatches(value: unknown, fallback: unknown): boolean {
+  /* A null/undefined fallback declares NO expectation — `get<number | null>(k, null)`
+     is a caller saying "give me whatever is there and I will check it myself". Judging
+     such a value against `typeof null` rejected every valid reading, which is how this
+     guard first broke the schema-version stamp. */
+  if (fallback === null || fallback === undefined) return true;
+  if (Array.isArray(fallback)) return Array.isArray(value);
+  if (fallback !== null && typeof fallback === "object") {
+    return value !== null && typeof value === "object" && !Array.isArray(value);
+  }
+  // A primitive fallback (a version number, a flag): accept the same primitive type.
+  return typeof value === typeof fallback;
+}
+
 export const storage = {
   get<T>(key: string, fallback: T): T {
     if (typeof window === "undefined") return fallback;
     try {
       const raw = window.localStorage.getItem(PREFIX + key);
-      return raw ? (JSON.parse(raw) as T) : fallback;
+      if (!raw) return fallback;
+      const parsed: unknown = JSON.parse(raw);
+      /* An unusable value reads as ABSENT rather than being handed on. It is left in
+         storage untouched: a merchant's only copy of their data is not something this
+         function gets to delete on a hunch, and a later version that understands the
+         shape can still recover it. */
+      return shapeMatches(parsed, fallback) ? (parsed as T) : fallback;
     } catch {
       return fallback;
     }

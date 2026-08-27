@@ -144,7 +144,20 @@ export function ProductsList() {
                   onClick={() => router.push(`/products/view?id=${product.id}`)}
                 >
                   <TD>
-                    <div className="font-medium text-fg">{product.name}</div>
+                    {/* The whole row is clickable for the mouse, and the NAME is a real
+                        link so the keyboard has the same road — the pattern the reps
+                        cards already follow. Without the link this row was reachable
+                        by pointer only: no tab stop, no Enter, no open-in-new-tab, and
+                        nothing for a screen reader to announce as a destination. The
+                        link stops the bubble so the row's own handler cannot fire a
+                        second navigation on top of it. */}
+                    <Link
+                      href={`/products/view?id=${product.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="rounded-[var(--radius-sm)] font-medium text-fg outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+                    >
+                      {product.name}
+                    </Link>
                     {product.sku && (
                       <div className="font-mono text-xs text-subtle" dir="ltr">{product.sku}</div>
                     )}
