@@ -10,8 +10,6 @@ export interface CashTillProps {
   reading: CashReading;
   /** Locale + currency aware money formatter. */
   money: (n: number) => string;
-  /** Share formatter for the one derived ratio this object prints. */
-  share: (n: number) => string;
   /** Withheld from a session that may not read costs: a loss is a cost. */
   showLoss?: boolean;
   /**
@@ -46,7 +44,6 @@ export interface CashTillProps {
 export function CashTill({
   reading,
   money,
-  share,
   showLoss = true,
   windowLabel,
   audience = "owner",
@@ -54,11 +51,6 @@ export function CashTill({
 }: CashTillProps) {
   const mine = audience === "owner";
   const r = reading;
-  const out = r.awaiting + r.inFlight.expected;
-  const total = r.spendable + out;
-  /* «most of my money is stuck with the couriers» is the actionable reading, and it
-     is a ratio, so it is said once in words rather than drawn as a fourth bar. */
-  const stuck = total > 0 ? out / total : 0;
 
   return (
     <section className={cn("device flex flex-col gap-5 p-5 sm:p-6", className)}>
@@ -72,9 +64,7 @@ export function CashTill({
             {windowLabel ? ` · ${windowLabel}` : ""}
           </p>
           <p className="text-xs leading-relaxed text-muted">
-            {mine
-              ? "المحصّل من الطلبيات المُسلَّمة التي وصلك مالها. وما تحت الخط ليس بيدك بعد."
-              : "قيمة طلبياتك المُسلَّمة التي وصل مالها. وما تحت الخط لم يُحصّل بعد، وحصّتك منه لا تُحسب قبل ذلك."}
+            {mine ? "ما تقدر تصرفه اليوم" : "قيمة طلبياتك التي وصل مالها"}
           </p>
         </div>
       </header>
@@ -96,48 +86,24 @@ export function CashTill({
           label="عند التوصيل"
           /* The colon form, never «1 طلبية»: Arabic agrees the noun with the count,
              so a template that works at 3 is wrong at 1 and at 11. */
-          note={
-            r.withCourier.trips === 0
-              ? "لا شيء عند شركات التوصيل."
-              : `${countedNoun(r.withCourier.trips, NOUNS.order)} سُلّمت ولم يوصلك مالها بعد.`
-          }
+          note={r.withCourier.trips === 0 ? "لا شيء عند شركات التوصيل." : "سُلّمت ولم يوصلك مالها"}
           amount={money(r.awaiting)}
         />
         <Bay
           kind="road"
           icon={<Truck size={16} weight="bold" />}
           label="في الطريق"
-          note={
-            r.inFlight.trips === 0
-              ? "لا طلبية على الطريق."
-              : `${countedNoun(r.inFlight.trips, NOUNS.order)} لم تُسلَّم، والمبلغ متوقّع لا محقّق.`
-          }
+          note={r.inFlight.trips === 0 ? "لا طلبية على الطريق." : "متوقّع، لا محقّق"}
           amount={money(r.inFlight.expected)}
           provisional
         />
       </div>
 
-      {total > 0 && (
-        <p className="text-xs leading-relaxed text-muted">
-          {out === 0 ? (
-            mine ? "كل مالك بيدك، لا شيء معلّق." : "كل طلبياتك حُصّلت، لا شيء معلّق."
-          ) : (
-            <>
-              <bdi dir="ltr" className="font-mono font-semibold text-fg">
-                {share(stuck)}
-              </bdi>{" "}
-              {mine ? "من مالك ما زال خارج يدك." : "من قيمة طلبياتك لم تُحصّل بعد."}
-            </>
-          )}
-        </p>
-      )}
-
       {showLoss && r.lost.trips > 0 && (
         <p className="till-loss flex items-start gap-2 p-3 text-xs leading-relaxed text-danger">
           <ArrowUUpLeft size={15} weight="bold" className="mt-0.5 shrink-0" />
           <span>
-            رجعت أو أُلغيت {countedNoun(r.lost.trips, NOUNS.order)}. الأصناف عندك ولم تُصرف
-            قيمتها، والذي خسرته فعلاً هو أجرة التوصيل:{" "}
+            رجعت أو أُلغيت {countedNoun(r.lost.trips, NOUNS.order)}: خسرتَ أجرة التوصيل{" "}
             <bdi dir="ltr" className="font-mono font-bold">
               {money(Math.abs(r.lost.netProfit))}
             </bdi>

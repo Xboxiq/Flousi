@@ -58,9 +58,13 @@ import {
   ROUNDING_BENEFICIARY_LABELS,
 } from "@/presentation/lib/labels";
 import { cn } from "@/presentation/lib/cn";
+import { Ladder, Rung } from "@/presentation/features/dashboard/ladder";
 import { SchemeOverrides } from "./scheme-overrides";
 import { SchemeTiles } from "./scheme-tiles";
 import { SplitPreview } from "./split-preview";
+
+/** The four follow-up readings, one open at a time (P11). */
+type BenchRung = "column" | "crumb" | "loss" | "recent" | "overrides";
 
 interface Draft {
   name: string;
@@ -160,6 +164,7 @@ export function CommissionBench() {
   const [override, setOverride] = useState<Draft | null>(null);
   const [example, setExample] = useState(CLIENT_EXAMPLE);
   const [lossPrice, setLossPrice] = useState<number | null>(null);
+  const [rung, setRung] = useState<BenchRung | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -390,10 +395,12 @@ export function CommissionBench() {
     await saveSettings({ ...settings, defaultCommissionSchemeId: selected.id });
   };
 
+  const toggleRung = (id: BenchRung) => setRung((cur) => (cur === id ? null : id));
+
   const header = (
     <PageHeader
       title="إعدادات القسمة"
-      description="اضبط القاعدة، والأرقام تحت كل خيار تشرح نفسها."
+      description="اضبط القاعدة والأرقام تشرح نفسها."
       actions={
         <>
           {/* A confirmation is not a profit figure, so it stays in neutral ink and
@@ -479,10 +486,10 @@ export function CommissionBench() {
       <Card>
         <CardHeader className="flex-col items-stretch gap-2 sm:flex-row sm:items-center">
           <div>
+            {/* The tiles print the share and the binding count themselves, so a
+                description saying that they do was a sentence about the screen rather
+                than about the merchant's money (VISUAL-LAW §15). */}
             <CardTitle>أنظمة القسمة</CardTitle>
-            <CardDescription>
-              كل نظام يعرض حصة المندوب في المثال أدناه، وعدد ما يرتبط به.
-            </CardDescription>
           </div>
           {!isDefault && (
             <Button variant="secondary" size="sm" className="sm:ms-auto" onClick={makeDefault}>
@@ -508,7 +515,11 @@ export function CommissionBench() {
         </CardContent>
       </Card>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+      {/* The workbench column got SHORTER when its two secondary devices moved onto
+          the ladder, and two equal columns then left a 350px void under it. The form
+          takes the wide track and the bench a fixed sticky rail beside it, which is
+          also the better fit for a panel of two figures (VISUAL-LAW §10). */}
+      <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <Card>
           <CardHeader>
             <div>
@@ -560,8 +571,12 @@ export function CommissionBench() {
                     onChange={(e) => set({ repPercent: parseFloat(e.target.value) || 0 })}
                   />
                 </Field>
-                {/* the rail reads the ratio back, with the merchant's own default
-                    struck on the scale so leaving it is a visible move */}
+                {/* The rail's job is the COMPARISON: how far the typed share stands
+                    from the account's default, which is struck on the scale. It used
+                    to print the value in a badge as well, so one number appeared four
+                    times on this screen — in the field, on the badge, in the helper
+                    and in the caption's parenthetical. The field holds it, the helper
+                    names the default, the rail shows the distance (VISUAL-LAW §15). */}
                 <div className="rail relative h-7 overflow-hidden rounded-[10px]">
                   <div
                     className="rail-fill absolute inset-y-0 start-0 rounded-[10px] bg-accent"
@@ -572,18 +587,8 @@ export function CommissionBench() {
                     className="absolute inset-y-1 w-[2px] bg-fg/45"
                     style={{ insetInlineStart: `${DEFAULT_REP_RATIO * 100}%` }}
                   />
-                  <span
-                    className="rail-badge px-1.5 py-[3px] text-[10px] font-bold text-fg"
-                    style={{
-                      insetInlineStart: `max(4px, calc(${railPct}% - 40px))`,
-                    }}
-                  >
-                    <Money>{share(params.repRatio ?? 0)}</Money>
-                  </span>
                 </div>
-                <span className="text-[11px] text-subtle">
-                  الخط الرأسي هو افتراضك ({share(DEFAULT_REP_RATIO)}) وما بعده حصة إضافية له.
-                </span>
+                <span className="text-[11px] text-subtle">الخط الرأسي هو افتراضك.</span>
               </div>
             )}
 
@@ -705,7 +710,7 @@ export function CommissionBench() {
             <div className="flex flex-wrap items-center gap-3 border-t border-border pt-4">
               {isDefault ? (
                 <span className="text-[11px] text-subtle">
-                  هذا هو الافتراضي للحساب، فاختر افتراضيًا آخر قبل أرشفته.
+                  الافتراضي للحساب لا يُؤرشف قبل اختيار غيره.
                 </span>
               ) : (
                 <Button
@@ -732,11 +737,12 @@ export function CommissionBench() {
             same shape product-form uses for the profit panel). */}
         <div className="flex flex-col gap-4 lg:sticky lg:top-20 lg:self-start">
           <div className="clay px-5 pt-4 pb-5">
+            {/* The client's own example used to be spelled out in words here as
+                well: «اشتريته بعشرة، باعه المندوب بعشرين، والتوصيل باثنين» over four
+                labelled fields already holding 20, 10 and 2. The fields ARE the
+                sentence (VISUAL-LAW §15). */}
             <span className="text-sm font-semibold text-fg">المثال، رقمًا رقمًا</span>
-            <p className="mt-1 text-[12px] text-muted">
-              اشتريتَه بعشرة، باعه المندوب بعشرين، والتوصيل باثنين.
-            </p>
-            <div className="mt-3.5 grid gap-3 sm:grid-cols-2">
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <Field label="سعر البيع" htmlFor="ex-price">
                 <Input
                   id="ex-price"
@@ -797,17 +803,28 @@ export function CommissionBench() {
             locale={locale}
           />
 
-          <div className="clay px-4 pt-4 pb-2">
-            <div className="flex items-baseline justify-between">
-              <span className="text-xs font-semibold text-subtle">ما يُقسم من السعر</span>
-              <span className="text-[11px] text-subtle">لكل وحدة</span>
-            </div>
+        </div>
+      </div>
+
+      {/* Four secondary readings used to stand open under the workbench: the
+          per-unit column, the leftover-unit case, the two loss policies side by side,
+          and the last real operation. Thirty-one figures at rest, on a screen whose
+          job is to shape ONE rule. The workbench keeps its example and its split;
+          everything that answers a follow-up question hangs on the ladder, whole
+          (VISUAL-LAW §15). */}
+      <Ladder className="mt-5">
+        <Rung
+          title="ما يُقسم من السعر"
+          hint="عمود السعر لكل وحدة: ما خرج تكلفةً وما بقي أساساً"
+          open={rung === "column"}
+          onToggle={() => toggleRung("column")}
+        >
+          <div>
             <PriceColumn
               price={example.price}
               costs={columnCosts}
               netProfit={unitSplit.basis.amount}
               format={money}
-              className="mt-2"
             />
             {excluded.length > 0 && (
               <ul className="mt-2 flex flex-col gap-1 border-t border-border pt-2">
@@ -823,12 +840,19 @@ export function CommissionBench() {
               </ul>
             )}
           </div>
+        </Rung>
 
-          {draft.kind === "profitShare" && (
-            <div className="clay flex flex-col gap-1.5 px-4 py-3.5">
-              <span className="text-[11px] text-subtle">
-                الوحدة الصغرى: حصة المندوب بأصغر وحدة من العملة تحت كل خيار
-              </span>
+        {/* Titled for the CASE, not for the setting: the field above is already called
+            «الوحدة الصغرى غير القابلة للقسمة» and prints the chosen side, so a latch
+            repeating both was the same fact three times (VISUAL-LAW §15). */}
+        {draft.kind === "profitShare" && (
+          <Rung
+            title="الوحدة المتبقّية في هذا المثال"
+            hint="حصة المندوب بأصغر وحدة من العملة تحت كل خيار"
+            open={rung === "crumb"}
+            onToggle={() => toggleRung("crumb")}
+          >
+            <div className="flex flex-col gap-1.5">
               <div className="flex flex-wrap gap-x-6 gap-y-2">
                 <CrumbCase
                   label={`إلى ${ROUNDING_BENEFICIARY_LABELS.owner}`}
@@ -847,59 +871,56 @@ export function CommissionBench() {
                   : "هذا الأساس ينقسم تمامًا، فلا وحدة متبقّية أصلًا."}
               </span>
             </div>
-          )}
-        </div>
-      </div>
+          </Rung>
+        )}
 
-      <Card className="mt-5">
-        <CardHeader className="flex-col items-stretch gap-3 sm:flex-row sm:items-end">
-          <div>
-            <CardTitle>لو خسرت العملية</CardTitle>
-            <CardDescription>
-              نفس التكاليف بسعر خاسر، والسياستان مطبوعتان جنبًا إلى جنب.
-            </CardDescription>
-          </div>
-          <div className="sm:ms-auto sm:w-40">
-            <Field label="سعر خاسر" htmlFor="loss-price">
-              <Input
-                id="loss-price"
-                type="number"
-                min={0}
-                leading={symbol}
-                value={lossPrice === null ? lossPriceValue || "" : lossPrice || ""}
-                onChange={(e) => setLossPrice(parseFloat(e.target.value) || 0)}
-              />
-            </Field>
-          </div>
-        </CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-2">
-          <LossCase
-            title={LOSS_POLICY_LABELS.ownerOnly}
-            split={lossCases.ownerOnly}
-            applied={draft.lossPolicy === "ownerOnly"}
-            money={money}
-          />
-          <LossCase
-            title={LOSS_POLICY_LABELS.shared}
-            split={lossCases.shared}
-            applied={draft.lossPolicy === "shared"}
-            money={money}
-          />
-        </CardContent>
-      </Card>
-
-      {recent && (
-        <Card className="mt-5">
-          <CardHeader>
-            <div>
-              <CardTitle>على آخر عملية فعلية</CardTitle>
-              <CardDescription>
-                {recent.product.name} · {formatDate(recent.sale.soldAt, { locale })} ·{" "}
-                {count(recent.sale.quantity)} قطعة
-              </CardDescription>
+        <Rung
+          title="لو خسرت العملية"
+          hint="نفس التكاليف بسعر خاسر، والسياستان جنباً إلى جنب"
+          open={rung === "loss"}
+          onToggle={() => toggleRung("loss")}
+        >
+          <div className="flex flex-col gap-4">
+            <div className="sm:w-40">
+              <Field label="سعر خاسر" htmlFor="loss-price">
+                <Input
+                  id="loss-price"
+                  type="number"
+                  min={0}
+                  leading={symbol}
+                  value={lossPrice === null ? lossPriceValue || "" : lossPrice || ""}
+                  onChange={(e) => setLossPrice(parseFloat(e.target.value) || 0)}
+                />
+              </Field>
             </div>
-          </CardHeader>
-          <CardContent>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <LossCase
+                title={LOSS_POLICY_LABELS.ownerOnly}
+                split={lossCases.ownerOnly}
+                applied={draft.lossPolicy === "ownerOnly"}
+                money={money}
+              />
+              <LossCase
+                title={LOSS_POLICY_LABELS.shared}
+                split={lossCases.shared}
+                applied={draft.lossPolicy === "shared"}
+                money={money}
+              />
+            </div>
+          </div>
+        </Rung>
+
+        {recent && (
+          <Rung
+            title="على آخر عملية فعلية"
+            hint="آخر عملية مسجّلة فعلاً، وكيف انقسم أساسها"
+            open={rung === "recent"}
+            onToggle={() => toggleRung("recent")}
+          >
+            <p className="mb-3 text-[12px] text-muted">
+              {recent.product.name} · {formatDate(recent.sale.soldAt, { locale })} ·{" "}
+              {count(recent.sale.quantity)} قطعة
+            </p>
             {recentParts ? (
               <DistributionBar
                 parts={recentParts.parts}
@@ -926,13 +947,21 @@ export function CommissionBench() {
                 />
               </div>
             )}
-          </CardContent>
-        </Card>
-      )}
+          </Rung>
+        )}
 
-      <div className="mt-5">
-        <SchemeOverrides />
-      </div>
+        {/* Four selects, a table and a precedence probe: a second workbench under the
+            first. It answers «لماذا طُبّق هذا النظام على هذه الحالة؟», which is a
+            question asked when it is asked (VISUAL-LAW §15). */}
+        <Rung
+          title="الاستثناءات وترتيب الأولوية"
+          hint="الأخصّ يفوز، والسلسلة مُجرَّبة على حالة بالأسفل"
+          open={rung === "overrides"}
+          onToggle={() => toggleRung("overrides")}
+        >
+          <SchemeOverrides />
+        </Rung>
+      </Ladder>
     </>
   );
 }

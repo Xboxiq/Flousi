@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { HandCoins, Receipt } from "@phosphor-icons/react";
+import { Receipt } from "@phosphor-icons/react";
 import { computeSettlements, type CurrencyTotal } from "@/application/ledger";
+import { Ladder, Rung } from "@/presentation/features/dashboard/ladder";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { useAccess } from "@/presentation/hooks/use-access";
 import { PageHeader } from "@/presentation/components/layout/page-header";
@@ -15,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
   EmptyState,
+  Money,
   Skeleton,
   Table,
   THead,
@@ -43,6 +45,7 @@ export function SettlementsView() {
   const orders = useDataStore((s) => s.orders);
   const settings = useDataStore((s) => s.settings);
   const access = useAccess();
+  const [totalsOpen, setTotalsOpen] = useState(false);
 
   const view = useMemo(
     () =>
@@ -84,25 +87,35 @@ export function SettlementsView() {
       />
 
       <div className="flex flex-col gap-6">
+        {/* One line per currency, three figures each: with two currencies that was a
+            twelve-figure device standing over a four-row list. Latched, with the one
+            figure that answers «كم بقي عليّ؟» on the closed latch (VISUAL-LAW §15). */}
         {view.totals.length > 0 && (
-          <div className="device flex flex-col gap-5 p-5 sm:p-6">
-            <div className="flex items-center gap-2.5">
-              <span className="squircle size-9 text-accent">
-                <HandCoins size={18} weight="bold" />
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-fg">المستحق والمدفوع</p>
-                <p className="text-xs text-muted">
-                  سطر لكل عملة. لا تُجمع العملات على بعضها، فلا يحفظ فلوسي أسعار صرف.
-                </p>
-              </div>
-            </div>
+          <Ladder solo>
+            <Rung
+              title="المستحق والمدفوع"
+              hint="سطر لكل عملة، ولا تُجمع العملات."
+              open={totalsOpen}
+              onToggle={() => setTotalsOpen((v) => !v)}
+              /* Neutral ink, like the line it summarises: «ما زال مستحقًّا» is a
+                 liability the merchant owes his own team, not a loss he took, and
+                 §13 spends danger on profit that went the wrong way. Painted red on
+                 the latch and neutral inside, one figure had two meanings. */
+              summary={
+                <Money className="font-semibold text-fg">
+                  {money(view.totals[0].outstanding, view.totals[0].currency)}
+                </Money>
+              }
+            >
+          <div className="flex flex-col gap-5">
             <ul className="flex flex-col divide-y divide-border-soft [&>li]:py-4 [&>li:first-child]:pt-0 [&>li:last-child]:pb-0">
               {view.totals.map((line) => (
                 <CurrencyLine key={line.currency} line={line} money={money} />
               ))}
             </ul>
           </div>
+            </Rung>
+          </Ladder>
         )}
 
         <Card>
@@ -161,7 +174,7 @@ export function SettlementsView() {
                     </THead>
                     <TBody>
                       {view.rows.map((r) => (
-                        <TR key={r.settlement.id}>
+                        <TR key={r.settlement.id} data-row>
                           <TD>
                             {r.settlement.repId && !r.repArchived ? (
                               <Link

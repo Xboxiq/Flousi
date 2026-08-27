@@ -140,6 +140,7 @@ export function ProductsList() {
               {rows.map(({ product, result }) => (
                 <TR
                   key={product.id}
+                  data-row
                   className="cursor-pointer"
                   onClick={() => router.push(`/products/view?id=${product.id}`)}
                 >

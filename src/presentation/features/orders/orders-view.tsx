@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Package, Plus, Truck, Warning } from "@phosphor-icons/react";
+import { Package, Plus, Warning } from "@phosphor-icons/react";
 import { computeDelivery, computeOrders, type OrderRow } from "@/application/orders";
 import { computeCash } from "@/application/cash";
 import { AccessPolicy, DELIVERY_ALLOCATION_LABELS, isFreeDelivery } from "@/domain";
@@ -17,11 +17,13 @@ import {
   CardHeader,
   CardTitle,
   EmptyState,
+  Money,
   Skeleton,
 } from "@/presentation/components/ui";
 import { PaceRail } from "@/presentation/components/objects/pace-rail";
 import { CashTill } from "@/presentation/components/objects/cash-till";
 import { OrderStatusControl, STATE_MARK, stateLabel, stateOf } from "./order-status-control";
+import { Ladder, Rung } from "@/presentation/features/dashboard/ladder";
 import {
   NOUNS,
   countedNoun,
@@ -55,6 +57,7 @@ export function OrdersView() {
 
   const [shown, setShown] = useState(PAGE);
   const [building, setBuilding] = useState(false);
+  const [deliveryOpen, setDeliveryOpen] = useState(false);
 
   const view = useMemo(
     () =>
@@ -94,7 +97,6 @@ export function OrdersView() {
 
   const money = (n: number) =>
     formatCurrency(n, { currency: settings.currency, locale: settings.locale });
-  const share = (r: number) => formatPercent(r, { locale: settings.locale, digits: 0 });
   const canRecord = access.can("recordSales");
   const canSeeCosts = access.can("viewCosts");
 
@@ -114,12 +116,11 @@ export function OrdersView() {
     <>
       <PageHeader
         title="الطلبيات"
-        /* The subsidised COUNT is a cost fact: it says the merchant paid couriers more
-           than he charged. Withheld from a session that may not read costs, the same
-           way the row's own badge already is (gate P3/G4). */
-        description={`طلبيات: ${formatNumber(view.total, { locale: settings.locale })}${
-          canSeeCosts && view.subsidised > 0 ? ` · توصيل بالخسارة: ${view.subsidised}` : ""
-        }`}
+        /* The subsidised COUNT used to be stated here too. It is a cost fact the
+           delivery latch already reports, in full, with its own «من أصل» whole: two
+           places for one number is one place too many, and the header is the one that
+           cannot explain itself (VISUAL-LAW §15). */
+        description={`طلبيات: ${formatNumber(view.total, { locale: settings.locale })}`}
         actions={
           canRecord ? (
             <Button
@@ -139,26 +140,29 @@ export function OrdersView() {
         <CashTill
           reading={cash}
           money={money}
-          share={share}
           showLoss={canSeeCosts}
           windowLabel={activePeriod?.label}
           audience={access.salesScope === undefined ? "owner" : "rep"}
         />
 
+        {/* The delivery reading is a DIAGNOSTIC, not a daily question: «هل توصيلي
+            يخسر؟» is asked weekly at most, so it sits behind a latch that states its
+            own answer while closed. Before P11 it stood open beside the till and the
+            two competed — 18 figures in a summary that answers one question, which is
+            what «صعب ومعقد» was pointing at (VISUAL-LAW §15). */}
         {canSeeCosts && delivery.trips > 0 && (
-          <div className="device flex flex-col gap-4 p-5 sm:p-6">
-            <div className="flex items-center gap-2.5">
-              <span className="squircle size-9 text-accent">
-                <Truck size={18} weight="bold" />
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-fg">التوصيل: مقبوض مقابل مدفوع</p>
-                <p className="text-xs text-muted">
-                  لا يُطرح أحدهما من الآخر، فالفرق بينهما هو ربح التوصيل أو خسارته.
-                </p>
-              </div>
-            </div>
-
+          <Ladder solo>
+            <Rung
+              title="التوصيل: مقبوض مقابل مدفوع"
+              open={deliveryOpen}
+              onToggle={() => setDeliveryOpen((v) => !v)}
+              summary={
+                <Money polarity={delivery.margin} className="font-semibold">
+                  {money(delivery.margin)}
+                </Money>
+              }
+            >
+          <div className="flex flex-col gap-4">
             {/* The fill is what the merchant KEPT of the delivery money, and the
                 hatched remainder is what went to the couriers. The first version
                 filled it with `paid / charged`, so a FULLER green bar meant MORE of
@@ -171,9 +175,7 @@ export function OrdersView() {
               }
               elapsed={0}
               tone={delivery.margin < 0 ? "danger" : delivery.margin > 0 ? "success" : "muted"}
-              label={`بقي لك ${money(delivery.margin)} من ${money(
-                delivery.charged,
-              )} قُبضت على التوصيل، والباقي ذهب لأجرة الشركة`}
+              label={`بقي لك ${money(delivery.margin)} من ${money(delivery.charged)} قُبضت على التوصيل`}
             />
 
             <div className="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-2 text-sm">
@@ -210,8 +212,8 @@ export function OrdersView() {
             {delivery.freeTrips > 0 && (
               <p className="text-xs leading-relaxed text-muted">
                 توصيل مجاني تحمّلت أجرته في{" "}
-                {countedNoun(delivery.freeTrips, NOUNS.order, { locale: settings.locale })}. هذا
-                عرض اخترته، لا خسارة.
+                {countedNoun(delivery.freeTrips, NOUNS.order, { locale: settings.locale })}: عرض
+                اخترته، لا خسارة.
               </p>
             )}
             {delivery.subsidised > 0 && (
@@ -223,12 +225,13 @@ export function OrdersView() {
                       produces, so the count goes after the colon instead. */}
                   رحلات دفعتَ فيها على التوصيل أكثر مما قبضت:{" "}
                   {formatNumber(delivery.subsidised, { locale: settings.locale })} من أصل{" "}
-                  {formatNumber(delivery.trips, { locale: settings.locale })}. راجع أجرتك أو ما
-                  تتقاضاه من الزبون.
+                  {formatNumber(delivery.trips, { locale: settings.locale })}.
                 </span>
               </p>
             )}
           </div>
+            </Rung>
+          </Ladder>
         )}
 
         <Card>
@@ -236,7 +239,7 @@ export function OrdersView() {
             <div>
               <CardTitle>الرحلات</CardTitle>
               <CardDescription>
-                الأحدث أولاً. الأجرة مرّة واحدة لكل رحلة، لا لكل صنف.
+                الأحدث أولاً.
                 {view.looseSales > 0 &&
                   ` وهناك ${countedNoun(view.looseSales, NOUNS.sale, {
                     locale: settings.locale,
@@ -277,17 +280,21 @@ export function OrdersView() {
                     />
                   ))}
                 </ul>
-                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border-soft pt-4">
-                  <p className="text-xs text-muted">
-                    ظهر {formatNumber(view.rows.length, { locale: settings.locale })} من{" "}
-                    {formatNumber(view.total, { locale: settings.locale })}
-                  </p>
-                  {view.rows.length < view.total && (
+                {/* A pagination counter is only news while something is BEING held
+                    back. Shown always, «ظهر 7 من 7» repeated the header's own count
+                    at the bottom of the same screen and read as a figure to check
+                    (VISUAL-LAW §15). */}
+                {view.rows.length < view.total && (
+                  <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border-soft pt-4">
+                    <p className="text-xs text-muted">
+                      ظهر {formatNumber(view.rows.length, { locale: settings.locale })} من{" "}
+                      {formatNumber(view.total, { locale: settings.locale })}
+                    </p>
                     <Button variant="secondary" size="sm" onClick={() => setShown((n) => n + PAGE)}>
                       عرض المزيد
                     </Button>
-                  )}
-                </div>
+                  </div>
+                )}
               </>
             )}
           </CardContent>
@@ -327,7 +334,7 @@ function OrderRowView({
   const subsidised = r.deliveryMargin < 0 && !isVoid;
 
   return (
-    <li className="border-b border-border-soft last:border-b-0">
+    <li data-row className="border-b border-border-soft last:border-b-0">
       {/* Collapsed to one line, opened on tap — the pattern the checkout research
           settles for order summaries on a phone. */}
       <button
@@ -368,15 +375,15 @@ function OrderRowView({
               <Badge tone="danger">توصيل بالخسارة</Badge>
             )}
           </span>
+          {/* WHERE and WHEN — the two things that identify a trip in a list. The item
+              and piece counts moved into the panel, which lists every line with its own
+              quantity anyway, and the rep's name with them: a five-part meta line under
+              a code is not a row a merchant scans (VISUAL-LAW §15). */}
           <span className="mt-0.5 block truncate text-xs text-muted">
-            {/* «صنف واحد» at 1 and «3 أصناف» at 3: the noun agrees with the count,
-                so the phrase comes from `countedNoun`, never from a template. */}
-            {countedNoun(row.lineCount, NOUNS.item, { locale })} ·{" "}
-            {countedNoun(row.units, NOUNS.piece, { locale })}
-            {row.order.customerArea ? ` · ${row.order.customerArea}` : ""}
-            {row.repName ? ` · ${row.repName}` : ""}
-            {" · "}
-            {formatDate(row.order.placedAt, { locale })}
+            {row.order.customerArea ? `${row.order.customerArea} · ` : ""}
+            {/* Day and month, no year: every trip in this list is inside one period, so
+                the year was a figure repeated on every row that distinguished none. */}
+            {formatDate(row.order.placedAt, { locale, month: "short", day: "numeric" })}
           </span>
         </span>
         <span className="shrink-0 text-end">

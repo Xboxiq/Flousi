@@ -138,9 +138,7 @@ export function TargetsView() {
         /* The colon form avoids Arabic number agreement, which changes shape at
            1, 2 (dual), 3–10 and 11+ — «3 هدفًا» is simply wrong Arabic, and a
            dashboard line is not the place to conjugate. */
-        description={`${monthLabel(month)} · أهداف محدّدة: ${view.withTarget}${
-          view.behind > 0 ? ` · متأخّرة عن الوتيرة: ${view.behind}` : ""
-        }`}
+        description={`${monthLabel(month)} · أهداف محدّدة: ${view.withTarget}`}
         actions={
           <Segmented aria-label="ما يُقاس" options={metrics} value={metric} onChange={setMetric} />
         }
@@ -159,10 +157,13 @@ export function TargetsView() {
           <CardHeader>
             <div>
               <CardTitle>أهداف الفريق</CardTitle>
+              {/* The standing mark on each rail is taught once, on the account's own
+                  band above, where the caption «مضى ٨٧٪ من الشهر» sits beside it. It
+                  was explained here a second time, which made this the one paragraph
+                  left standing at rest on this screen (VISUAL-LAW §15). */}
               <CardDescription>
-                هدف كل مندوب يُقاس بمبيعاته وحده، والخط القائم في كل مسطرة هو ما مضى من
-                الشهر.
-                {canEdit ? " المندوب بلا هدف يظهر هنا كي تحدّده، لا كي يختفي." : ""}
+                هدف كل مندوب يُقاس بمبيعاته وحده.
+                {canEdit ? " والمندوب بلا هدف يظهر هنا كي تحدّده، لا كي يختفي." : ""}
               </CardDescription>
             </div>
           </CardHeader>
@@ -291,7 +292,7 @@ function AccountReading({
                 {row.fromOverride && " (هدف هذا الشهر)"}
               </>
             ) : (
-              "لا هدف محدّد لهذا الشهر — تُقاس النتيجة بمعدّلك بدلًا منه."
+              "لا هدف محدّد لهذا الشهر، فتُقاس النتيجة بمعدّلك بدلًا منه."
             )}
           </p>
         </div>
@@ -337,10 +338,11 @@ function AccountReading({
             attainment={p.attainment}
             elapsed={p.elapsed}
             tone={tone}
-            label={`${formatPercent(p.attainment, { locale: settings.locale })} من الهدف، و${elapsedWord(
-              p.elapsed,
-              settings.locale,
-            )}`}
+            /* The label used to append «ومضى ٨٧٪ من الشهر», which is the caption
+               printed directly above the rail. A screen reader heard the month's
+               elapsed share twice per rail; an eye read a third percentage next to
+               two others (VISUAL-LAW §15). */
+            label={`${formatPercent(p.attainment, { locale: settings.locale })} من الهدف`}
           />
           <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-fg/70">
             {/* The remainder is the reading a merchant acts on: what is LEFT to
@@ -351,12 +353,10 @@ function AccountReading({
                 {fmt(p.met ? p.surplus : p.remaining)}
               </bdi>
             </span>
-            <span>
-              الوتيرة{" "}
-              <bdi dir="ltr" className="font-mono font-semibold text-fg">
-                {formatPercent(p.pace, { locale: settings.locale, digits: 0 })}
-              </bdi>
-            </span>
+            {/* `pace` is attainment DIVIDED BY elapsed: a third percentage derived
+                from the two already on screen, and one nobody acts on. The verdict it
+                supports («في الوتيرة» / «متأخّر عن الوتيرة») is stated above in
+                words, which is the part a merchant uses (VISUAL-LAW §15). */}
           </div>
         </div>
       )}
@@ -380,7 +380,10 @@ function SubjectRow({
   const tone = toneFor(row);
 
   return (
-    <li className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-3 border-b border-border-soft py-4 last:border-b-0 sm:grid-cols-[13.5rem_1fr_auto]">
+    <li
+      data-row
+      className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-3 border-b border-border-soft py-4 last:border-b-0 sm:grid-cols-[13.5rem_1fr_auto]"
+    >
       <div className="min-w-0">
         <span className="block truncate font-medium text-fg">{row.name}</span>
         <span className="mt-0.5 block text-xs text-muted">
@@ -410,7 +413,7 @@ function SubjectRow({
               tone={tone}
               label={`${row.name}: ${formatPercent(p.attainment, {
                 locale: settings.locale,
-              })} من الهدف، و${elapsedWord(p.elapsed, settings.locale)}`}
+              })} من الهدف`}
             />
             {/* The elapsed share is a fact about the MONTH, not about this row: it
                 is stated once on the card's own header instead of once per rep. */}
@@ -428,11 +431,10 @@ function SubjectRow({
       </div>
 
       <div className="flex items-center gap-2 justify-self-end">
-        {p.hasTarget && (
-          <Badge tone={p.met ? "success" : p.onPace ? "neutral" : "danger"}>
-            {formatPercent(p.attainment, { locale: settings.locale, digits: 0 })}
-          </Badge>
-        )}
+        {/* The attainment percentage stood here as a third statement of one fact:
+            the rail draws it, the line above it names the verdict in words, and the
+            badge printed the number again. The rail and the word stay (VISUAL-LAW
+            §15). */}
         {row.fromOverride && <Badge tone="neutral">هذا الشهر</Badge>}
         {canEdit && (
           <Button

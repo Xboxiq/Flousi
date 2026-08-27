@@ -7,11 +7,6 @@ import { useDataStore } from "@/presentation/stores/data-store";
 import {
   Badge,
   Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   Dialog,
   Field,
   Select,
@@ -163,15 +158,11 @@ export function SchemeOverrides() {
   }, [probeRep, probeProduct, assignments, schemes, settings.defaultCommissionSchemeId]);
 
   return (
-    <Card>
-      <CardHeader className="flex-col items-stretch gap-1">
-        <CardTitle>الاستثناءات وترتيب الأولوية</CardTitle>
-        <CardDescription>
-          الأخصّ يفوز: المنتج مع المندوب، ثم المنتج، ثم المندوب، ثم الافتراضي للحساب.
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent className="flex flex-col gap-5">
+    /* The title and the precedence line moved onto the rung's own latch when this
+       device was hung on the bench's ladder (P11): a card inside a rung would be a
+       card in a card, and the chain is now stated once instead of twice. */
+    <>
+      <div className="flex flex-col gap-5">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="المنتج" htmlFor="ov-product">
             <Select
@@ -235,7 +226,7 @@ export function SchemeOverrides() {
             </THead>
             <TBody>
               {rows.map((a) => (
-                <TR key={a.id}>
+                <TR key={a.id} data-row>
                   <TD>
                     <Badge>{SCHEME_TIER_LABELS[assignmentTier(a)]}</Badge>
                   </TD>
@@ -260,6 +251,7 @@ export function SchemeOverrides() {
           {rows.map((a) => (
             <li
               key={a.id}
+              data-row
               className="clay-inset flex items-center gap-3 rounded-[var(--radius-lg)] p-3"
             >
               <span className="min-w-0 flex-1">
@@ -338,7 +330,7 @@ export function SchemeOverrides() {
             </ul>
           )}
         </div>
-      </CardContent>
+      </div>
 
       <Dialog
         open={pendingRemove !== null}
@@ -366,6 +358,6 @@ export function SchemeOverrides() {
           الاستثناء وحده يُزال، ولا يتغيّر شيء في العمليات المسجّلة: حصصها مجمّدة على قاعدتها.
         </p>
       </Dialog>
-    </Card>
+    </>
   );
 }

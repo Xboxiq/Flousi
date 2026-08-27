@@ -1,5 +1,5 @@
 import { chromium } from "/opt/node22/lib/node_modules/playwright/index.mjs";
-const BASE = "http://localhost:8123";
+const BASE = process.env.BASE || "http://localhost:8123";
 /* The four screens that read the most: the ladder's till + detail, the catalogue,
    the trips, and the team's derived balances. */
 const ROUTES = ["/dashboard/", "/products/", "/orders/", "/reps/"];

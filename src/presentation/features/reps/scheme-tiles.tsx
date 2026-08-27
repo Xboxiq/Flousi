@@ -51,6 +51,7 @@ export function SchemeTiles({
         return (
           <button
             key={scheme.id}
+            data-row
             type="button"
             aria-pressed={selected}
             onClick={() => onSelect(scheme.id)}

@@ -1,6 +1,6 @@
 # Interaction sweeps
 
-Three scripts that DRIVE the built app rather than reading it. They exist because of
+Four scripts that MEASURE or DRIVE the built app rather than reading its source. They exist because of
 one repeated lesson in this project: every defect that mattered was invisible to the
 typechecker, the linter, the tests **and the screenshots**. P9's focus thief broke
 every dialog in the app since P1 and only surfaced when a script typed into a field.
@@ -14,9 +14,27 @@ npm run build
 node scripts/sweeps/sweep-writes.mjs      # every store mutation, through its real UI
 node scripts/sweeps/sweep-keyboard.mjs    # anything clickable a keyboard cannot reach
 node scripts/sweeps/sweep-corrupt.mjs     # the app against a mangled localStorage
+node scripts/sweeps/sweep-density.mjs     # the quiet ceiling (VISUAL-LAW §15), at rest
 ```
 
-Override the port with `BASE=http://localhost:9999 node …` where the script supports it.
+Override the port with `BASE=http://localhost:9999 node …`. All four honour it.
+
+## sweep-density and the rule about metrics
+
+The density gate measures a screen AT REST — before any disclosure is opened — against
+the budget in VISUAL-LAW §15. It is the one sweep that can be wrong about the app
+rather than the app being wrong, and in P11 it was wrong four times: it read the
+Odometer's hidden drum digits, it read `sm:hidden` duplicates off a detached clone, it
+counted the currency abbreviation «د.ع.» as two sentences, and it lost every full stop
+that sat at an element boundary. Two of those flattered the screens.
+
+So the rule is: **when the gate and the screen disagree, examine the counter first.**
+Every recalibration lives in a comment beside the number it changed, with the case that
+forced it. Contorting a money row to satisfy a number nobody measured is the wrong
+repair — and a metric that flatters the screen is worse than no metric.
+
+Rows are declared by the app (`data-row`), not guessed: a screen with rows and no tag
+reads as all-summary and fails LOUD.
 
 ## What each one asserts
 

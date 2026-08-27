@@ -14,7 +14,8 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,md}\"",
     "sweep:writes": "node scripts/sweeps/sweep-writes.mjs",
     "sweep:keyboard": "node scripts/sweeps/sweep-keyboard.mjs",
-    "sweep:corrupt": "node scripts/sweeps/sweep-corrupt.mjs"
+    "sweep:corrupt": "node scripts/sweeps/sweep-corrupt.mjs",
+    "sweep:density": "node scripts/sweeps/sweep-density.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
