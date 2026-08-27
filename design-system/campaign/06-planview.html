@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Flousi — 06 plan view</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+/* ── FRAME 06 · plan view ────────────────────────────────────────────────────
+   Camera: straight down, 90°. The only frame in the set with no horizon at all,
+   so nothing recedes and every object reads as a PART: this is the parts diagram
+   of the brand, laid out on a strict measured grid with its own tick rule.
+   Light: still from above, which at this angle means each body throws a short
+   shadow offset a few degrees, not a long cast one.
+   Ground: deep ink blue — the darkest ground in the set after frame 04, and the
+   only one where bone-white objects are the bright thing.
+   Type: no headline. Small mono captions under each part, and the frame's index
+   set enormous in the corner, cropped. */
+.frame { background: #0f1621; color: #e8edf5; }
+
+.deck {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(58% 46% at 44% -6%, rgba(120,150,196,0.22), rgba(15,22,33,0) 66%),
+    linear-gradient(184deg, #131b28 0%, #0e141e 62%, #0a0f17 100%);
+}
+
+/* the measure rule: this is a diagram, so it carries a scale */
+.rule {
+  position: absolute; left: 150px; right: 150px; top: 232px; height: 1px;
+  background: rgba(190,208,232,0.26);
+}
+.rule i {
+  position: absolute; top: -7px; width: 1px; height: 8px;
+  background: rgba(190,208,232,0.34);
+}
+.rule i.long { height: 15px; top: -15px; background: rgba(190,208,232,0.5); }
+
+/* ── the parts ──────────────────────────────────────────────────────────────
+   Seen from directly above: a top face and a hair of the wall on two sides,
+   which is all a 90° camera can see of a body. */
+.part { position: absolute; }
+/* every caption on ONE baseline. Hung off each body's own bottom edge they
+   stepped up and down with the parts' heights and the strip stopped reading as a
+   measured row. */
+.part .cap {
+  position: absolute; left: 0; top: 258px;
+  font-family: "Plex", monospace; font-weight: 500; font-size: 17px;
+  letter-spacing: 0.08em; color: rgba(200,216,238,0.72);
+}
+.part .cap b {
+  display: block; margin-top: 6px;
+  font-family: "Cairo", sans-serif; font-weight: 600; font-size: 15px;
+  letter-spacing: 0; color: rgba(184,202,226,0.5);
+}
+
+/* a ceramic plate from the price column.
+   Seen from directly above, a body has no visible walls — so what tells you it is
+   machined is the EDGE and the fittings: a dark outer rim, a lit inner rim, two
+   drilled seats and a milled slot. Without them a plan view is just a rounded
+   rectangle, which is the generic card this whole system refuses. */
+.plate90 {
+  position: relative;
+  border-radius: 14px;
+  background: linear-gradient(158deg, #fffdf8, #f2eee5 54%, #ddd6c8);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.95),
+    inset 0 -2px 0 rgba(120,106,84,0.25),
+    inset 0 0 0 2px rgba(120,106,84,0.22),
+    9px 11px 20px -6px rgba(4,8,14,0.72);
+}
+/* the milled slot: where this plate seats onto the one below it */
+.plate90::before {
+  content: ""; position: absolute; left: 14%; right: 14%; top: 50%; height: 8px;
+  margin-top: -4px; border-radius: 4px;
+  background: linear-gradient(180deg, rgba(96,82,58,0.34), rgba(255,255,255,0.5));
+}
+/* two drilled seats */
+.plate90::after {
+  content: ""; position: absolute; left: 22px; right: 22px; top: 20px; height: 13px;
+  background:
+    radial-gradient(circle 6px at 6px 6px, rgba(70,58,40,0.55), rgba(70,58,40,0) 70%),
+    radial-gradient(circle 6px at calc(100% - 6px) 6px, rgba(70,58,40,0.55), rgba(70,58,40,0) 70%);
+}
+/* the accent plate: the keep, and the only accent surface on this frame */
+.plate90.keep {
+  background: linear-gradient(158deg, #58a0ff, var(--accent) 52%, var(--accent-deep));
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 0 rgba(4,40,100,0.5),
+    inset 0 0 0 2px rgba(4,40,100,0.4),
+    9px 11px 20px -6px rgba(4,8,14,0.72);
+}
+.plate90.keep::before { background: linear-gradient(180deg, rgba(4,34,84,0.5), rgba(255,255,255,0.34)); }
+.plate90.keep::after {
+  background:
+    radial-gradient(circle 6px at 6px 6px, rgba(4,32,80,0.6), rgba(4,32,80,0) 70%),
+    radial-gradient(circle 6px at calc(100% - 6px) 6px, rgba(4,32,80,0.6), rgba(4,32,80,0) 70%);
+}
+
+/* the segmented pill in soft plastic */
+.pill90 {
+  border-radius: 34px; padding: 9px; display: flex; gap: 7px;
+  background: linear-gradient(158deg, #eaeff6, #d5dde8 58%, #bcc7d4);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.9),
+    inset 0 -3px 7px rgba(20,32,50,0.28),
+    9px 11px 20px -6px rgba(4,8,14,0.68);
+}
+.pill90 span { flex: 1; border-radius: 26px; background: rgba(30,46,68,0.16); }
+.pill90 span.on {
+  background: linear-gradient(168deg, #ffffff, #eef2f7);
+  box-shadow: 0 2px 5px rgba(6,14,26,0.4), inset 0 1px 0 #fff;
+}
+
+/* a chrome pin off the ladder rail */
+.pin90 {
+  border-radius: 9px;
+  background: linear-gradient(168deg, #fdfefe 0%, #cfd7de 38%, #98a3af 62%, #e8eef3 82%, #7f8b98 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 -2px 3px rgba(6,12,20,0.55),
+    9px 11px 18px -6px rgba(4,8,14,0.74);
+}
+
+/* a cut length of the pace rail, with its hatched remainder */
+.rail90 {
+  border-radius: 26px; padding: 6px;
+  background: linear-gradient(158deg, #f6f3ec, #e5dfd3 60%, #cdc5b6);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.9),
+    9px 11px 20px -6px rgba(4,8,14,0.68);
+}
+.rail90 .chan {
+  position: relative; height: 100%; border-radius: 20px; overflow: hidden;
+  background: #ddd6c9;
+  box-shadow: inset 0 3px 6px rgba(70,58,42,0.4);
+}
+.rail90 .fill {
+  position: absolute; inset: 0 auto 0 0; width: 58%; border-radius: 20px 4px 4px 20px;
+  background: linear-gradient(168deg, #4a93ff, var(--accent) 54%, var(--accent-deep));
+}
+.rail90 .rest { position: absolute; inset: 0 0 0 58%; }
+
+/* ── type ───────────────────────────────────────────────────────────────────*/
+.index {
+  position: absolute; right: -34px; bottom: -136px;
+  font-family: "Plex", monospace; font-weight: 500; font-size: 460px; line-height: 1;
+  letter-spacing: -0.02em; color: rgba(190,210,238,0.09);
+}
+.note {
+  position: absolute; left: 150px; bottom: 132px; width: 520px;
+  font-weight: 600; font-size: 26px; line-height: 1.5; color: rgba(214,228,246,0.82);
+}
+.note em {
+  display: block; margin-top: 12px; font-style: normal; font-weight: 500; font-size: 19px;
+  line-height: 1.6; color: rgba(184,202,226,0.5);
+}
+.wm { position: absolute; left: 150px; top: 132px; --wm: 1; }
+.wm .name { color: #eaeff7; }
+.tag {
+  position: absolute; right: 150px; top: 138px;
+  font-weight: 600; font-size: 15px; letter-spacing: 0.28em; color: rgba(184,202,226,0.4);
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="deck"></div>
+
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">Flousi</span>
+  </div>
+  <div class="tag">CAMPAIGN 06 · THE PARTS</div>
+
+  <div class="rule">
+    <i class="long" style="left:0"></i>
+    <i style="left:12.5%"></i><i style="left:25%"></i><i style="left:37.5%"></i>
+    <i class="long" style="left:50%"></i>
+    <i style="left:62.5%"></i><i style="left:75%"></i><i style="left:87.5%"></i>
+    <i class="long" style="left:100%"></i>
+  </div>
+
+  <!-- one strip, five parts, all centred on the same axis and captioned on the
+       same baseline: the wide frame is used as a bench, not as four quadrants. -->
+  <div class="part" style="left:150px; top:334px; width:300px; height:192px;">
+    <div class="plate90" style="width:100%; height:100%;"></div>
+    <span class="cap">01<b>صفيحة من عمود السعر</b></span>
+  </div>
+
+  <div class="part" style="left:486px; top:355px; width:252px; height:150px;">
+    <div class="plate90 keep" style="width:100%; height:100%;"></div>
+    <span class="cap" style="top:237px;">02<b>ما يبقى لك</b></span>
+  </div>
+
+  <div class="part" style="left:776px; top:380px; width:336px; height:100px;">
+    <div class="pill90" style="width:100%; height:100%;">
+      <span></span><span class="on"></span><span></span>
+    </div>
+    <span class="cap" style="top:212px;">03<b>مفتاح الاختيار</b></span>
+  </div>
+
+  <div class="part" style="left:1150px; top:401px; width:132px; height:58px;">
+    <div class="pin90" style="width:100%; height:100%;"></div>
+    <span class="cap" style="top:191px;">04<b>مسمار الدرجة</b></span>
+  </div>
+
+  <div class="part" style="left:1320px; top:395px; width:450px; height:70px;">
+    <div class="rail90" style="width:100%; height:100%;">
+      <div class="chan">
+        <div class="fill"></div>
+        <div class="rest hatch"></div>
+      </div>
+    </div>
+    <span class="cap" style="top:203px;">05<b>مسطرة الوتيرة، وما تبقّى منها</b></span>
+  </div>
+
+  <div class="index">06</div>
+
+  <p class="note">
+    خمس قطع تقيس مالك
+    <em>لا أيقونة ولا زخرفة: كل جسم في فلوسي له وظيفة قياس واحدة، وهذه هي القطع.</em>
+  </p>
+
+  <div class="grain light"></div>
+</div>
+</body>
+</html>

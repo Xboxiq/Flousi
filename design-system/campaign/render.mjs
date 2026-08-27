@@ -12,6 +12,9 @@ const SHOTS = [
   ["03-macro.html", "03-macro"],
   ["04-night.html", "04-night"],
   ["05-editorial.html", "05-editorial"],
+  ["06-planview.html", "06-planview"],
+  ["07-wide.html", "07-wide"],
+  ["08-split.html", "08-split"],
 ];
 const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const ctx = await b.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 2 });
