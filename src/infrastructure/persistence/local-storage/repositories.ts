@@ -37,14 +37,26 @@ import type {
   OrderRepository,
 } from "@/domain";
 import { systemClock, uuidGenerator } from "@/infrastructure/system";
-import { isOwnerRole, ownerRole } from "@/domain";
+import { isOwnerRole, makeCostBreakdown, ownerRole } from "@/domain";
 import { storage, STORAGE_KEYS } from "./storage";
 
 const nowIso = () => systemClock.now().toISOString();
 
 export class LocalProductRepository implements ProductRepository {
   async list(): Promise<Product[]> {
-    return storage.get<Product[]>(STORAGE_KEYS.products, []);
+    const rows = storage.get<Product[]>(STORAGE_KEYS.products, []);
+    /* A row with no usable cost breakdown is repaired to a ZERO breakdown on read,
+       never handed on as-is: the calculators reach straight for `costs.purchase`, and
+       a row missing it crashed every screen that priced a product. The project's own
+       doctrine for an unreadable record is to degrade to a labelled placeholder
+       («منتج محذوف», the zeroed commission row) rather than to crash — this is that
+       rule applied one layer lower. Zero costs read as "not yet costed", which is
+       exactly what a row with no cost structure is; storage is left untouched, so
+       nothing is silently rewritten under the merchant. Found by the P10 sweep. */
+    if (!rows.some((p) => !p?.costs?.purchase)) return rows;
+    return rows.map((p) =>
+      p?.costs?.purchase ? p : { ...p, costs: makeCostBreakdown(p?.costs ?? {}) },
+    );
   }
   async getById(id: string): Promise<Product | null> {
     return (await this.list()).find((p) => p.id === id) ?? null;

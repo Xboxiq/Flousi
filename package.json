@@ -11,7 +11,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,md}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,md}\"",
+    "sweep:writes": "node scripts/sweeps/sweep-writes.mjs",
+    "sweep:keyboard": "node scripts/sweeps/sweep-keyboard.mjs",
+    "sweep:corrupt": "node scripts/sweeps/sweep-corrupt.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { NOUNS, countedNoun } from "./format";
+import { NOUNS, countedNoun, formatCurrency, formatCurrencyCompact } from "./format";
 
 describe("countedNoun — Arabic agrees the noun with the count", () => {
   const piece = (n: number) => countedNoun(n, NOUNS.piece);
@@ -47,5 +47,39 @@ describe("countedNoun — Arabic agrees the noun with the count", () => {
       else expect(out.startsWith(String(n))).toBe(true);
       if (n >= 3 && n <= 10) expect(out.endsWith("قطع")).toBe(true);
     }
+  });
+});
+
+describe("formatCurrency — a formatter must never take a screen down (P10)", () => {
+  it("an explicitly undefined currency falls back instead of throwing", () => {
+    // `{ ...DEFAULTS, ...opts }` used to override the default WITH undefined, and
+    // Intl then threw «Currency code is required with currency style» inside a
+    // render — a blank screen in a local-first app. Callers pass exactly this shape.
+    expect(() => formatCurrency(1000, { currency: undefined })).not.toThrow();
+    expect(formatCurrency(1000, { currency: undefined })).toBe(formatCurrency(1000));
+  });
+
+  it("an explicitly undefined locale falls back too", () => {
+    expect(formatCurrency(1000, { locale: undefined })).toBe(formatCurrency(1000));
+  });
+
+  it("an unknown currency code still prints the FIGURE, with the code beside it", () => {
+    const out = formatCurrency(1500, { currency: "NOTACODE" });
+    expect(out).toContain("1,500");
+    expect(out).toContain("NOTACODE");
+  });
+
+  it("the compact form is guarded the same way", () => {
+    expect(() => formatCurrencyCompact(2_500_000, { currency: undefined })).not.toThrow();
+    expect(formatCurrencyCompact(1500, { currency: "NOTACODE" })).toContain("NOTACODE");
+  });
+
+  it("a non-finite amount reads as zero, not as NaN", () => {
+    expect(formatCurrency(Number.NaN)).toBe(formatCurrency(0));
+    expect(formatCurrency(Number.POSITIVE_INFINITY)).toBe(formatCurrency(0));
+  });
+
+  it("a valid pair is untouched by the guard", () => {
+    expect(formatCurrency(1000, { currency: "IQD", locale: "ar-IQ" })).toContain("1,000");
   });
 });
