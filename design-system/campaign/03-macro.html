@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Flousi — 03 macro</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+/* ── FRAME 03 · product macro ────────────────────────────────────────────────
+   Camera: close and low, 34° above the object's own plane — shallow enough that
+   surfaces still read as surfaces (the first cut of this frame sat at 64° and
+   flattened the whole till into a white band with no form at all).
+   The object is larger than the frame on every side, so it is cropped by four
+   edges: this is the only frame in the set where you cannot see the whole thing.
+   Value range is the point of a macro: a bright ceramic rim, a genuinely DARK
+   sunken bay, and one chrome catch with a hard specular. Light from above (§2).
+   Type: no headline. One reading, one label pair, and the mark. */
+.frame { background: #efe8dd; color: #241f18; }
+
+.room {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(40% 34% at 34% -8%, #ffffff, rgba(255,255,255,0) 70%),
+    linear-gradient(186deg, #f4efe6 0%, #e6dcce 58%, #cabfad 100%);
+}
+
+.stage { position: absolute; inset: 0; perspective: 1250px; perspective-origin: 38% 46%; }
+.till {
+  /* pulled back from the first framing, which cropped so close that the two
+     cavities filled the frame and neither the catch nor the money in the bay was
+     visible: a macro still needs ONE subject, not just texture. */
+  position: absolute; left: -300px; top: -330px; width: 2420px; height: 1290px;
+  transform-style: preserve-3d;
+  transform: rotateX(34deg) rotateZ(-7deg);
+}
+
+/* the tray's top face: the machined ceramic surface the money sits in */
+.face {
+  position: absolute; inset: 0; border-radius: 70px;
+  background:
+    linear-gradient(168deg, #fffdf9 0%, #f6f0e6 26%, #e9e0d1 62%, #cec2ae 100%);
+  box-shadow:
+    inset 0 4px 0 rgba(255,255,255,0.95),
+    inset 0 -30px 70px rgba(112,94,68,0.22),
+    0 60px 120px -40px rgba(84,68,46,0.55);
+}
+/* the milled channel that separates the two bays, catching a line of light */
+.channel {
+  position: absolute; left: 1130px; top: 120px; width: 24px; height: 870px;
+  border-radius: 13px;
+  background: linear-gradient(90deg, #b6a993, #8d8069 46%, #cfc4b0);
+  box-shadow: inset 0 0 6px rgba(60,48,30,0.5), 1px 0 0 rgba(255,255,255,0.7);
+}
+
+/* ── the bays: real cavities, not texture patches ────────────────────────── */
+.bay {
+  position: absolute; border-radius: 40px;
+  background: linear-gradient(178deg, #9b8e79 0%, #b3a68f 34%, #cabda6 100%);
+  box-shadow:
+    inset 0 22px 34px rgba(52,40,22,0.55),
+    inset 0 -6px 0 rgba(255,255,255,0.5),
+    inset 0 0 0 2px rgba(120,104,78,0.35);
+  overflow: hidden;
+}
+.bay .tex { position: absolute; inset: 0; opacity: 0.5; }
+.bay.dots .tex {
+  background-image: radial-gradient(rgba(40,30,16,0.42) 2px, transparent 2.2px);
+  background-size: 22px 22px;
+  opacity: 0.55;
+}
+/* what the cavity is FOR: a stack of collected money, sunk into the left bay */
+.wad {
+  position: absolute; left: 86px; bottom: 64px; width: 660px; height: 210px;
+  border-radius: 14px; transform: rotate(-1.4deg);
+  background: linear-gradient(172deg, #fdfbf6, #efe7d9 52%, #d9cdb8);
+  box-shadow:
+    0 3px 0 #e6dccb, 0 7px 0 #ded3c0, 0 11px 0 #d5c9b4,
+    0 16px 26px rgba(48,36,18,0.42);
+}
+
+/* one chrome part per frame: the catch, machined, with a hard specular ───── */
+.catch {
+  position: absolute; left: 190px; top: 1046px; width: 980px; height: 92px;
+  border-radius: 52px;
+}
+.catch::after {
+  content: ""; position: absolute; left: 6%; right: 52%; top: 20%; height: 22%;
+  border-radius: 60px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), #ffffff 46%, rgba(255,255,255,0));
+  filter: blur(1.2px);
+}
+/* the screw seats that say the part is fitted, not drawn */
+.catch .seat {
+  position: absolute; top: 50%; width: 26px; height: 26px; margin-top: -13px;
+  border-radius: 50%;
+  background: radial-gradient(60% 60% at 40% 30%, #ffffff, #9aa3ad 58%, #5c6672);
+  box-shadow: inset 0 -1px 2px rgba(10,16,24,0.6), 0 1px 0 rgba(255,255,255,0.7);
+}
+
+/* depth of field: the far end goes soft, the near rim stays sharp */
+.dof {
+  position: absolute; inset: 0;
+  backdrop-filter: blur(11px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.9) 16%, rgba(0,0,0,0) 44%);
+  mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.9) 16%, rgba(0,0,0,0) 44%);
+}
+.dof.near {
+  backdrop-filter: blur(7px);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,0) 13%);
+  mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,0) 13%);
+}
+
+/* the reading, sitting in the sharp zone beside the cavity it belongs to */
+/* moved off the chrome: the figure was sitting on the catch's own specular, which
+   is the one hard highlight in the frame and must stay unbroken. */
+.read { position: absolute; right: 520px; top: 648px; text-align: right; }
+.read .n { font-size: 74px; color: #1c1812; text-shadow: 0 1px 0 rgba(255,255,255,0.6); }
+.read .l { margin-top: 12px; font-weight: 600; font-size: 21px; color: rgba(36,31,24,0.56); }
+.read .l b { font-weight: 700; color: var(--accent); }
+
+.ar {
+  position: absolute; right: 100px; top: 128px; text-align: right;
+  font-weight: 800; font-size: 52px; letter-spacing: -0.015em; color: #201b14;
+}
+.ar span {
+  display: block; margin-top: 14px; max-width: 460px;
+  font-weight: 500; font-size: 21px; line-height: 1.6; color: rgba(36,31,24,0.55);
+}
+.wm { position: absolute; left: 100px; bottom: 84px; --wm: 0.95; }
+.tag {
+  position: absolute; right: 100px; bottom: 88px; text-align: right;
+  font-weight: 600; font-size: 15px; letter-spacing: 0.28em; color: rgba(36,31,24,0.4);
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="room"></div>
+
+  <div class="stage">
+    <div class="till">
+      <div class="face"></div>
+
+      <div class="bay" style="left:120px; top:120px; width:960px; height:870px;">
+        <div class="tex hatch"></div>
+        <div class="wad"></div>
+      </div>
+      <div class="channel"></div>
+      <div class="bay dots" style="left:1214px; top:120px; width:1080px; height:870px;">
+        <div class="tex"></div>
+      </div>
+
+      <div class="catch chrome">
+        <span class="seat" style="left:74px;"></span>
+        <span class="seat" style="right:74px;"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dof"></div>
+  <div class="dof near"></div>
+
+  <div class="ar">
+    عند التوصيل
+    <span>شُلمت، ولم يوصلك مالها بعد. الصندوق يعرف الفرق.</span>
+  </div>
+
+  <div class="read">
+    <div class="n fig">195,000</div>
+    <div class="l">بيد المندوب · <b>د.ع.</b></div>
+  </div>
+
+  <div class="tag">CAMPAIGN 03 · THE TILL</div>
+
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">Flousi</span>
+  </div>
+
+  <div class="grain"></div>
+</div>
+</body>
+</html>

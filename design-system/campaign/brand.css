@@ -1,0 +1,219 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Flousi — campaign brand system (one system, five art directions)
+
+   Constants across the whole set, so five very different frames still read as
+   one brand photographed five times:
+
+   · TYPE      Cairo for display and copy, IBM Plex Mono 500 for every figure.
+               Two weights per frame, never three. Figures in latn numerals.
+   · LIGHT     One source, ALWAYS from above (VISUAL-LAW §2). RTL mirrors the
+               layout, and a side-lit object flips its own physics.
+   · MATERIAL  Matte ceramic bodies · one chrome part per frame · glass at most
+               once · brushed steel for the editorial frame. Every body carries
+               three shadows: contact, cast, edge (§3).
+   · OBJECTS   Only Flousi's own instruments: the plate stack (price column),
+               the till drawer with its lip and sunken bay, the pace rail with a
+               hatched remainder, the odometer drum, the ladder rail with milled
+               pins, the segmented pill. No generic UI cards, no app screens.
+   · COLOR     Accent is a CODE, not decoration (§13): it marks the one thing
+               being measured, once per frame, and never fills a background.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: "Cairo";
+  src: url("fonts/cairo-arabic.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-display: block;
+  unicode-range: U+600-6FF, U+750-77F, U+870-88E, U+FB50-FDFF, U+FE70-FEFF, U+200C-200E;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("fonts/cairo-latin.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-display: block;
+  unicode-range: U+0-FF, U+131, U+152-153, U+2000-206F, U+2C60-2C7F;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("fonts/cairo-latin-ext.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-display: block;
+  unicode-range: U+100-2BA, U+1E00-1E9F, U+2020-2027;
+}
+@font-face {
+  font-family: "Plex";
+  src: url("fonts/plex-mono-500.woff2") format("woff2");
+  font-weight: 500;
+  font-display: block;
+}
+@font-face {
+  font-family: "Plex";
+  src: url("fonts/plex-mono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: block;
+}
+
+:root {
+  /* the app's own tokens, unchanged */
+  --accent: #0a6cff;
+  --accent-deep: #0a4fc4;
+  --ink: #0d1320;
+  --danger: #e5484d;
+
+  /* campaign grounds: one per frame, never reused */
+  --bone: #f2eee7;
+  --cool: #dbe1e9;
+  --warm: #f6f3ee;
+  --night: #090b10;
+  --steel: #b9bcc0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html,
+body {
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+}
+
+.frame {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  font-family: "Cairo", system-ui, sans-serif;
+  font-kerning: normal;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Every figure on every frame, in one place: mono 500, wide, latn. */
+.fig {
+  font-family: "Plex", ui-monospace, monospace;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "zero" 0;
+  letter-spacing: 0.06em;
+}
+
+/* ── The wordmark ───────────────────────────────────────────────────────────
+   The app's mark exactly: an accent tile with the growth glyph, and Flousi in
+   Cairo 700 with tight tracking. Scaled by --wm, never redrawn. */
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--wm, 1) * 10px);
+  --tile: calc(var(--wm, 1) * 34px);
+}
+.wordmark .tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--tile);
+  height: var(--tile);
+  border-radius: calc(var(--tile) * 0.29);
+  background: linear-gradient(178deg, #2a82ff, var(--accent) 55%, var(--accent-deep));
+  box-shadow:
+    inset 0 calc(var(--tile) * 0.03) 0 rgba(255, 255, 255, 0.55),
+    inset 0 calc(var(--tile) * -0.05) calc(var(--tile) * 0.1) rgba(4, 32, 84, 0.5),
+    0 calc(var(--tile) * 0.08) calc(var(--tile) * 0.22) rgba(8, 40, 100, 0.28);
+}
+.wordmark .tile svg { width: 56%; height: 56%; display: block; }
+.wordmark .name {
+  font-weight: 700;
+  font-size: calc(var(--wm, 1) * 30px);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+/* ── Grain ─────────────────────────────────────────────────────────────────
+   Film grain, not an atmospheric gradient: a fixed-seed turbulence at a low
+   opacity so a flat ground still reads as a photographed surface. */
+.grain {
+  position: absolute;
+  inset: -10%;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'>\
+<filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' seed='7'/>\
+<feColorMatrix type='saturate' values='0'/></filter>\
+<rect width='300' height='300' filter='url(%23g)'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.16;
+}
+.grain.light { mix-blend-mode: screen; opacity: 0.1; }
+
+/* ── Materials ─────────────────────────────────────────────────────────────
+   Each is a face turning under one overhead light, not a colour swatch. */
+
+/* matte ceramic: soft top highlight, body shading, contact + cast shadow */
+.ceramic {
+  background: linear-gradient(174deg, #ffffff 0%, #f7f4ef 42%, #e8e2d8 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -3px 6px rgba(120, 106, 86, 0.14),
+    0 2px 2px rgba(60, 50, 36, 0.14),
+    0 26px 44px -14px rgba(60, 50, 36, 0.3);
+}
+
+/* chrome: banded environment reflection, horizon line, hard specular */
+.chrome {
+  background: linear-gradient(
+    177deg,
+    #f8fafc 0%,
+    #cfd6de 16%,
+    #9aa5b1 33%,
+    #e9eef4 47%,
+    #5f6b78 52%,
+    #8b97a4 62%,
+    #dfe6ed 82%,
+    #a7b1bc 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -2px 4px rgba(20, 28, 40, 0.4),
+    0 3px 3px rgba(20, 28, 40, 0.22),
+    0 30px 50px -18px rgba(20, 28, 40, 0.42);
+}
+
+/* soft plastic: deeper body, wide diffuse highlight, no hard specular */
+.plastic {
+  background: linear-gradient(175deg, #f0f3f7 0%, #dfe5ec 46%, #c3ccd7 100%);
+  box-shadow:
+    inset 0 2px 1px rgba(255, 255, 255, 0.85),
+    inset 0 -4px 8px rgba(52, 66, 84, 0.18),
+    0 2px 2px rgba(32, 44, 60, 0.16),
+    0 22px 38px -16px rgba(32, 44, 60, 0.34);
+}
+
+/* brushed steel: fine directional tooling under a broad sheen */
+.brushed {
+  background-image:
+    linear-gradient(101deg, rgba(255, 255, 255, 0.5) 4%, rgba(255, 255, 255, 0) 26%,
+      rgba(0, 0, 0, 0.07) 58%, rgba(255, 255, 255, 0.28) 84%, rgba(0, 0, 0, 0.05) 100%),
+    repeating-linear-gradient(96deg, rgba(255, 255, 255, 0.5) 0 1px, rgba(0, 0, 0, 0.05) 1px 2px,
+      rgba(255, 255, 255, 0.16) 2px 3px, rgba(0, 0, 0, 0.03) 3px 4.5px),
+    linear-gradient(178deg, #d7dade, #a8adb3 58%, #c6cacf);
+}
+
+/* glass: what is behind it, softened, plus a lit top edge */
+.glassy {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05) 42%,
+    rgba(255, 255, 255, 0.12));
+  backdrop-filter: blur(18px) saturate(1.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -30px 60px -30px rgba(255, 255, 255, 0.16);
+}
+
+/* the hatched remainder — the app's own §11 pattern, at poster scale */
+.hatch {
+  background-image: repeating-linear-gradient(
+    -52deg,
+    rgba(30, 40, 56, 0.16) 0 2px,
+    rgba(30, 40, 56, 0) 2px 9px
+  );
+}
