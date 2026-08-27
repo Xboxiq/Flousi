@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Flousi B — 04 vault</title>
+<link rel="stylesheet" href="brand-b.css">
+<style>
+/* ── B4 · the vault ──────────────────────────────────────────────────────────
+   The cinematic frame of this direction, and not Style A's: there a glass slab
+   stood at eye level in cold blue light with the headline cropped at the bottom.
+   Here the camera looks DOWN into a black room, one amber pool on a polished
+   floor, and the object sits inside the pool with its reflection stretching
+   toward the viewer. The type is small and high; the only large element is a
+   mono figure at the bottom right, cropped by the edge.
+   Dominant: black, one warm pool, brass. The cold spark sits on the figure. */
+.frame { background: #06060a; color: #f1ebe1; }
+
+.room {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(38% 30% at 52% 4%, rgba(226,162,76,0.16), rgba(6,6,10,0) 60%),
+    linear-gradient(182deg, #0c0c11 0%, #07070b 54%, #040406 100%);
+}
+/* the pool: one hard-edged spill of amber on the floor, thrown from above */
+.pool {
+  position: absolute; left: 700px; top: 340px; width: 900px; height: 580px;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, rgba(240,186,110,0.4), rgba(200,140,60,0.14) 62%, rgba(200,140,60,0) 78%);
+  filter: blur(16px);
+}
+/* and the fainter bloom it throws up into the air above itself */
+.bloom {
+  position: absolute; left: 700px; top: 120px; width: 760px; height: 420px;
+  background: radial-gradient(closest-side, rgba(232,168,80,0.14), rgba(232,168,80,0) 74%);
+  filter: blur(30px); mix-blend-mode: screen;
+}
+
+/* ── the object, in the pool ─────────────────────────────────────────────────*/
+.stage { position: absolute; inset: 0; perspective: 2000px; perspective-origin: 54% 40%; }
+.till {
+  position: absolute; left: 792px; top: 560px; width: 600px; height: 250px;
+  transform-style: preserve-3d; transform: rotateX(60deg) rotateZ(-18deg);
+}
+.till .tray {
+  position: absolute; inset: 0; border-radius: 22px;
+  background: linear-gradient(168deg, rgba(120,110,96,0.4), rgba(30,26,22,0.6));
+  backdrop-filter: blur(8px);
+  box-shadow:
+    inset 0 2px 0 rgba(255,238,204,0.6),
+    inset 0 -2px 0 rgba(210,172,104,0.24),
+    0 40px 70px -30px rgba(0,0,0,0.9);
+}
+.till .bay {
+  position: absolute; border-radius: 12px; overflow: hidden;
+  background: rgba(12,10,8,0.55);
+  box-shadow: inset 0 6px 12px rgba(0,0,0,0.8), inset 0 -1px 0 rgba(255,232,180,0.3);
+}
+.till .money {
+  position: absolute; left: 18px; bottom: 16px; right: 18px; height: 52px;
+  border-radius: 6px;
+  background: linear-gradient(172deg, #f0e7d5, #cabc9f 60%, #9a8d75);
+  box-shadow: 0 3px 0 #b9ab8f, 0 7px 10px rgba(0,0,0,0.6);
+}
+.till .w1 {
+  position: absolute; left: 0; top: 100%; width: 100%; height: 48px;
+  transform-origin: top center; transform: rotateX(90deg);
+  background: linear-gradient(180deg, #f4dda6, #c9a25c 42%, #7d5f2a);
+  border-radius: 0 0 14px 14px;
+  box-shadow: inset 0 1px 0 rgba(255,248,224,0.9);
+}
+.till .w2 {
+  position: absolute; left: 100%; top: 0; width: 48px; height: 100%;
+  transform-origin: left center; transform: rotateY(-90deg);
+  background: linear-gradient(180deg, #d8b878, #7a5c2a);
+}
+
+/* the reflection: the object again, mirrored into the polished floor */
+/* the reflection sits directly under the body and is short: at 300px tall and
+   offset it read as a second grey object lying beside the till. */
+.mirror {
+  position: absolute; left: 812px; top: 806px; width: 560px; height: 190px;
+  transform: scaleY(-0.5) rotateZ(-18deg); transform-origin: top center;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(226,180,110,0.3), rgba(226,180,110,0.02) 78%);
+  filter: blur(12px);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0) 76%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0) 76%);
+}
+
+/* ── type: small and high, with one very large figure cropped low right ─────*/
+.topline {
+  position: absolute; left: 112px; right: 112px; top: 96px;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 40px;
+  font-weight: 700; font-size: 25px; letter-spacing: 0.02em; color: #f0eae0;
+}
+.topline .k {
+  font-family: "Plex", monospace; font-weight: 500; font-size: 15px;
+  letter-spacing: 0.3em; color: rgba(236,224,204,0.42);
+}
+.huge {
+  /* fully legible, still large and low. Cropped at right:-30 the last 0 was cut in
+     half and the amount could be misread, which a money brand cannot ship for the
+     sake of a bleed. */
+  position: absolute; right: 66px; bottom: 40px;
+  font-family: "Plex", monospace; font-weight: 500; font-size: 172px; line-height: 1;
+  letter-spacing: 0.02em;
+  color: rgba(244,226,190,0.9);
+  text-shadow: 0 0 60px rgba(226,162,76,0.35);
+}
+.hugelab {
+  position: absolute; right: 72px; bottom: 244px;
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 19px; color: rgba(236,224,204,0.6);
+}
+.dek {
+  position: absolute; left: 112px; bottom: 168px; width: 470px;
+  font-weight: 500; font-size: 21px; line-height: 1.62; color: rgba(232,220,200,0.5);
+}
+.wm { position: absolute; left: 112px; bottom: 92px; --wm: 0.95; }
+.wm .name { color: #f1ebe1; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="room"></div>
+  <div class="pool"></div>
+  <div class="bloom"></div>
+
+  <div class="mirror"></div>
+
+  <div class="stage">
+    <div class="till">
+      <div class="tray"></div>
+      <div class="bay" style="left:30px; top:30px; width:250px; height:190px;">
+        <div class="money"></div>
+      </div>
+      <div class="bay" style="left:310px; top:30px; width:260px; height:190px;"></div>
+      <div class="w1"></div>
+      <div class="w2"></div>
+    </div>
+  </div>
+
+  <div class="topline">
+    <span>ما بيدك الآن، لا ما ربحته على الورق</span>
+    <span class="k">STYLE B · 04 THE VAULT</span>
+  </div>
+
+  <p class="dek">المندوب يحمل مالك أسبوعين. الصندوق يفصل ما بيدك عمّا هو عند غيرك، بالدينار.</p>
+
+  <div class="hugelab"><span class="spark"></span> بيدك · د.ع.</div>
+  <div class="huge">4,949,500</div>
+
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#2a1c05" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#2a1c05" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">Flousi</span>
+  </div>
+
+  <div class="grain"></div>
+</div>
+</body>
+</html>

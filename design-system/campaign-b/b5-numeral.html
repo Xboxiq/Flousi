@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Flousi B — 05 numeral</title>
+<link rel="stylesheet" href="brand-b.css">
+<style>
+/* ── B5 · the numeral ────────────────────────────────────────────────────────
+   The experimental frame. Style A's outlier made a LETTER into a steel part;
+   this one makes the FIGURE the object: one month's cash, set in brass foil at
+   330px and cropped by two edges, with a smoked glass bar laid across it so the
+   digits behind the glass shift and cool. The figure is the hero, not the copy.
+   Camera: flat-on. Ground: sand, the lightest ground of this direction, so the
+   brass has something warm to sit against rather than black.
+   Type: the only Arabic is a narrow column rotated along the reading edge.
+   Dominant: sand and brass. */
+.frame { background: var(--sand); color: #241d12; }
+
+.stock {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(56% 42% at 70% -8%, #f3e9d6, rgba(243,233,214,0) 66%),
+    linear-gradient(186deg, #e3d8c2 0%, #d6c9b1 52%, #bcae94 100%);
+}
+.fibre {
+  position: absolute; inset: 0; opacity: 0.42;
+  background-image:
+    repeating-linear-gradient(11deg, rgba(110,88,52,0.06) 0 1px, rgba(0,0,0,0) 1px 5px),
+    repeating-linear-gradient(-79deg, rgba(110,88,52,0.05) 0 1px, rgba(0,0,0,0) 1px 7px);
+}
+
+/* ── the figure as the object ───────────────────────────────────────────────*/
+.numeral {
+  /* raised out of the bottom crop and set so the glass bar can lie ACROSS it.
+     In the first cut the bar floated above the figure on empty stock, so it read
+     as a grey rectangle and the refraction — the entire idea of the frame — never
+     happened. Glass needs something behind it. */
+  /* NOT cropped at the leading digit: at left:-140 the 4 lost its stem and the
+     figure read as «1,949,500». A money brand does not print a number that can be
+     misread for the sake of a crop. The glass is what interrupts it now. */
+  position: absolute; left: 44px; bottom: 172px;
+  font-family: "Plex", monospace; font-weight: 500;
+  font-size: 296px; line-height: 1; letter-spacing: 0.005em;
+  filter: drop-shadow(0 3px 0 rgba(255,250,236,0.6)) drop-shadow(0 -2px 0 rgba(96,70,26,0.3))
+          drop-shadow(0 30px 34px rgba(90,66,26,0.34));
+}
+
+/* the glass bar laid across it: where it crosses, the digits go cool and shift */
+.bar {
+  position: absolute; left: -60px; right: 300px; top: 716px; height: 168px;
+  border-radius: 12px;
+  background: linear-gradient(178deg, rgba(70,66,60,0.32), rgba(24,22,20,0.3) 52%, rgba(60,56,50,0.34));
+  backdrop-filter: blur(7px) saturate(0.7) brightness(1.06);
+  box-shadow:
+    inset 0 2px 0 rgba(255,246,220,0.6),
+    inset 0 -2px 0 rgba(120,96,58,0.3),
+    0 26px 40px -20px rgba(50,36,10,0.5);
+}
+/* the bar's own two arrises, which is what says «this is a solid, not a tint» */
+.bar::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 3px; height: 1px;
+  background: linear-gradient(90deg, rgba(255,248,226,0), rgba(255,248,226,0.75), rgba(255,248,226,0));
+}
+.bar::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px;
+  background: linear-gradient(90deg, rgba(90,66,26,0), rgba(90,66,26,0.4), rgba(90,66,26,0));
+}
+
+/* a brass pin resting on the bar: the one small solid body in the frame */
+.pin {
+  position: absolute; left: 1310px; top: 758px; width: 196px; height: 58px;
+  border-radius: 14px; transform: rotate(-2deg);
+}
+
+/* ── type: one narrow column, rotated on the reading edge ───────────────────*/
+/* one line only, rotated on the reading edge: the two-part version stacked its
+   own halves on top of each other once rotated. */
+.side {
+  position: absolute; right: 92px; top: 46%;
+  transform: translateY(-50%) rotate(-90deg); transform-origin: center;
+  white-space: nowrap;
+  font-weight: 800; font-size: 38px; letter-spacing: -0.01em; color: #241d12;
+}
+.aside {
+  position: absolute; left: 118px; bottom: 84px; width: 560px;
+  font-weight: 500; font-size: 19px; line-height: 1.6; color: rgba(36,29,18,0.5);
+}
+.lab {
+  position: absolute; left: 118px; top: 190px;
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 700; font-size: 24px; color: rgba(36,29,18,0.75);
+}
+.sub {
+  position: absolute; left: 118px; top: 236px; width: 520px;
+  font-weight: 500; font-size: 20px; line-height: 1.6; color: rgba(36,29,18,0.55);
+}
+.wm { position: absolute; left: 118px; top: 96px; --wm: 1; }
+.wm .name { color: #241d12; }
+.tag {
+  position: absolute; right: 96px; bottom: 92px;
+  font-family: "Plex", monospace; font-weight: 400; font-size: 15px;
+  letter-spacing: 0.3em; color: rgba(36,29,18,0.42);
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="stock"></div>
+  <div class="fibre"></div>
+
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#2a1c05" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#2a1c05" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">Flousi</span>
+  </div>
+
+  <div class="lab"><span class="spark"></span> بيدك · آب</div>
+  <p class="sub">رقم واحد يُصدَّق: ما تقدر تصرفه اليوم، بالدينار العراقي.</p>
+
+  <div class="numeral foil">4,949,500</div>
+  <div class="bar"></div>
+  <div class="pin brass"></div>
+
+  <div class="side">الرقم هو الجسم</div>
+  <p class="aside">لا شكل يزيّنه، ولا رسم يشرحه. ما تقدر تصرفه اليوم، مطبوعاً بالنحاس.</p>
+
+  <div class="tag">FLS · B / 05</div>
+
+  <div class="grain dark"></div>
+</div>
+</body>
+</html>

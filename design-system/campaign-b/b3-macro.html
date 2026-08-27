@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Flousi B — 03 macro</title>
+<link rel="stylesheet" href="brand-b.css">
+<style>
+/* ── B3 · macro, brass into glass ────────────────────────────────────────────
+   The close frame of this direction. Style A's macro was a ceramic till in warm
+   daylight; this is two materials MEETING: a brass catch entering the milled seat
+   of a smoked glass plate, shot close enough that the join fills the middle of
+   the frame.
+   Camera: close, low, rotated so the join runs on a diagonal.
+   Light: one amber key from above and behind, which puts a hard specular along
+   the brass and a lit arris on the glass, and leaves both undersides dark.
+   Type: no headline. One reading, upper left, and the marks. */
+.frame { background: #100d0a; color: #f2ece2; }
+
+.room {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(40% 34% at 62% -4%, rgba(240,186,110,0.3), rgba(16,13,10,0) 62%),
+    linear-gradient(184deg, #1b1611 0%, #100d0a 58%, #080706 100%);
+}
+
+.stage { position: absolute; inset: 0; perspective: 1400px; perspective-origin: 46% 42%; }
+.join {
+  position: absolute; left: -180px; top: -60px; width: 2340px; height: 1200px;
+  transform-style: preserve-3d;
+  transform: rotateX(52deg) rotateZ(-13deg);
+}
+
+/* the glass plate: big, smoked, its own seat milled into the near edge */
+.pane {
+  position: absolute; left: 700px; top: 180px; width: 1420px; height: 780px;
+  border-radius: 46px;
+  background: linear-gradient(172deg, rgba(96,88,78,0.42), rgba(26,23,20,0.6) 52%, rgba(60,54,46,0.5));
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 2px 0 rgba(255,238,204,0.55),
+    inset 0 -2px 0 rgba(210,172,104,0.2),
+    0 60px 90px -40px rgba(0,0,0,0.85);
+}
+/* the seat: a channel cut across the glass for the catch to sit in */
+.seat {
+  position: absolute; left: 700px; top: 700px; width: 1420px; height: 96px;
+  background: linear-gradient(180deg, rgba(10,8,6,0.6), rgba(120,96,58,0.24));
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.7), inset 0 -1px 0 rgba(255,232,180,0.28);
+}
+
+/* the brass catch, entering from the left and passing over the seat */
+.catch {
+  position: absolute; left: 60px; top: 660px; width: 1500px; height: 138px;
+  border-radius: 69px;
+}
+/* the specular: brass takes a tighter, warmer streak than chrome does */
+.catch::after {
+  content: ""; position: absolute; left: 5%; right: 42%; top: 20%; height: 22%;
+  border-radius: 80px;
+  background: linear-gradient(90deg, rgba(255,248,224,0), #fff8e0 44%, rgba(255,248,224,0));
+  filter: blur(1.4px);
+}
+/* two fitted seats, so the part is machined and not drawn */
+.catch .screw {
+  position: absolute; top: 50%; width: 34px; height: 34px; margin-top: -17px;
+  border-radius: 50%;
+  background: radial-gradient(62% 62% at 38% 30%, #fff4d4, #c19a52 56%, #6d5122);
+  box-shadow: inset 0 -2px 3px rgba(30,18,2,0.7), 0 1px 0 rgba(255,240,205,0.6);
+}
+
+/* the plate that the seat holds: one bone plate, edge-on, half in shadow */
+.wad {
+  position: absolute; left: 900px; top: 300px; width: 700px; height: 220px;
+  border-radius: 16px;
+  background: linear-gradient(172deg, #efe6d4, #cbbda2 56%, #8d8069);
+  box-shadow: 0 4px 0 #b9ab90, 0 9px 0 #a2957c, 0 20px 30px rgba(0,0,0,0.6);
+}
+
+/* depth of field: the far end of the join goes soft */
+.dof {
+  position: absolute; inset: 0;
+  backdrop-filter: blur(12px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.85) 18%, rgba(0,0,0,0) 46%);
+  mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.85) 18%, rgba(0,0,0,0) 46%);
+}
+
+.read { position: absolute; left: 110px; top: 150px; text-align: left; }
+.read .n { font-size: 66px; color: #f8f2e6; }
+.read .l {
+  margin-top: 12px; display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 19px; color: rgba(236,224,204,0.6);
+}
+.ar {
+  position: absolute; right: 104px; top: 152px; text-align: right; max-width: 520px;
+  font-weight: 800; font-size: 44px; letter-spacing: -0.015em; color: #f4eee3;
+}
+.ar span {
+  display: block; margin-top: 14px;
+  font-weight: 500; font-size: 20px; line-height: 1.6; color: rgba(236,224,204,0.5);
+}
+.wm { position: absolute; left: 104px; bottom: 92px; --wm: 0.95; }
+.wm .name { color: #f2ece2; }
+.tag {
+  position: absolute; right: 104px; bottom: 96px;
+  font-weight: 600; font-size: 15px; letter-spacing: 0.28em; color: rgba(236,224,204,0.38);
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="room"></div>
+
+  <div class="stage">
+    <div class="join">
+      <div class="pane"></div>
+      <div class="wad"></div>
+      <div class="seat"></div>
+      <div class="catch brass">
+        <span class="screw" style="left:150px;"></span>
+        <span class="screw" style="right:210px;"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dof"></div>
+
+  <div class="ar">
+    الهامش يُقاس هنا
+    <span>سعر البيع ناقص الشراء والتوصيل، قبل أي حصّة.</span>
+  </div>
+
+  <div class="read">
+    <div class="n fig">34.4%</div>
+    <div class="l"><span class="spark"></span> هامش هذه البيعة</div>
+  </div>
+
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#2a1c05" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#2a1c05" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">Flousi</span>
+  </div>
+  <div class="tag">STYLE B · 03 THE JOIN</div>
+
+  <div class="grain"></div>
+</div>
+</body>
+</html>
