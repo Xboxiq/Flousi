@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Flousi v5 — S4 القسمة</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+/* ── S4 · القسمة · the data-driven screen ────────────────────────────────────
+   The one screen built on a WHOLE: the month's revenue, divided. So the
+   composition starts with the division itself, full width, as a single bar with
+   four real parts, and everything below it is that bar broken out by rep.
+   Hierarchy: the whole → its parts → who holds which part → the rule that made
+   it. Density: the highest in the product, and it is carried by a table with one
+   figure per column and no chrome at all.
+   Navigation: masthead. No filter pill here — this screen has one truth per
+   month, and the month is chosen in the masthead's own line.
+   Focal point: the bar. Nothing else is full width, so nothing else competes. */
+
+.h1 { position:absolute; inset-inline:var(--marg); top:140px; display:flex; align-items:flex-end; justify-content:space-between; }
+.h1 h1 { font-size:46px; font-weight:800; letter-spacing:-0.03em; line-height:1; }
+.h1 .m { font-family:"Mono",monospace; font-weight:500; font-size:13px; letter-spacing:0.18em; color:var(--mute); }
+
+/* the whole, divided */
+.whole { position:absolute; inset-inline:var(--marg); top:228px; }
+.whole .top { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; }
+.whole .top .t { font-size:15px; color:var(--slate); }
+.whole .top .v { font-family:"Mono",monospace; font-weight:500; font-size:34px; direction:ltr; }
+.bar4 { display:flex; height:56px; gap:2px; }
+.bar4 > span { position:relative; display:block; }
+.bar4 .p1 { background:var(--ink); }
+.bar4 .p2 { background:var(--blue); }
+.bar4 .p3 { background:#b9c0cc; }
+.bar4 .p4 {
+  background:rgba(11,15,22,0.09);
+  background-image:repeating-linear-gradient(-52deg, rgba(11,15,22,0.18) 0 1.5px, transparent 1.5px 8px);
+}
+.keys { display:flex; gap:40px; margin-top:16px; }
+.key { display:flex; align-items:baseline; gap:10px; font-size:13.5px; color:var(--slate); }
+.key i { width:9px; height:9px; border-radius:1px; display:block; transform:translateY(-1px); }
+.key b { font-family:"Mono",monospace; font-weight:500; font-size:14.5px; color:var(--ink); direction:ltr; }
+
+/* the breakout table */
+.tbl { position:absolute; inset-inline:var(--marg); top:436px; }
+.tbl .ch {
+  display:grid; grid-template-columns:1.3fr 168px 168px 150px 1fr;
+  gap:28px; padding:0 8px 10px; border-bottom:1px solid var(--line-strong);
+}
+.tbl .ch span { font-family:"Mono",monospace; font-weight:500; font-size:11px; letter-spacing:0.18em; color:var(--mute); }
+.tbl .ch span.r { text-align:left; }
+.tr {
+  display:grid; grid-template-columns:1.3fr 168px 168px 150px 1fr;
+  gap:28px; align-items:center; padding:22px 8px; border-bottom:1px solid var(--line);
+}
+.tr .who { }
+.tr .who b { display:block; font-size:17px; font-weight:700; }
+.tr .who em { display:block; font-style:normal; font-size:13px; color:var(--slate); margin-top:4px; }
+.tr .num { font-family:"Mono",monospace; font-weight:500; font-size:19px; direction:ltr; text-align:left; }
+.tr .num.mute { color:var(--slate); }
+.tr .rule2 { font-size:13.5px; color:var(--slate); }
+.tr .rule2 b { display:block; color:var(--ink); font-weight:700; font-size:14px; margin-bottom:3px; }
+.tr .share { display:flex; align-items:center; gap:14px; }
+.tr .share .rail { flex:1; }
+.tr .share .pc { font-family:"Mono",monospace; font-weight:500; font-size:14px; color:var(--slate); width:44px; text-align:left; direction:ltr; }
+.tr.total { border-bottom:0; padding-top:26px; }
+.tr.total .who b { font-size:18px; }
+.tr.total .num { font-size:24px; }
+
+.note {
+  position:absolute; inset-inline-start:var(--marg); bottom:60px; width:720px;
+  padding-top:18px; border-top:1px solid var(--line);
+  font-size:13.5px; line-height:1.65; color:var(--slate);
+}
+.note b { color:var(--ink); }
+.acts2 { position:absolute; inset-inline-end:var(--marg); bottom:66px; display:flex; gap:10px; }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <header class="masthead">
+    <span class="mark">
+      <span class="tile"><svg viewBox="0 0 16 16" fill="none"><path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#f8f6f2" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 5.5H13V8.5" stroke="#f8f6f2" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="name">Flousi</span>
+    </span>
+    <nav class="nav">
+      <a href="#">اليوم</a>
+      <a href="#">الرحلات</a>
+      <a href="#" aria-current="page">القسمة</a>
+      <a href="#">الفريق</a>
+      <a href="#">الشهر</a>
+    </nav>
+    <span class="who">أغسطس 2026</span>
+  </header>
+
+  <div class="h1">
+    <h1>كيف انقسم الشهر</h1>
+    <span class="m">BASIS · IQD · FROZEN AT SALE TIME</span>
+  </div>
+
+  <section class="whole">
+    <div class="top">
+      <span class="t">إيراد الشهر، مقسوماً على أربعة أجزاء حقيقية</span>
+      <span class="v">5,164,500</span>
+    </div>
+    <div class="bar4">
+      <span class="p1" style="flex:0 0 34.4%"></span>
+      <span class="p2" style="flex:0 0 14.9%"></span>
+      <span class="p3" style="flex:0 0 45.2%"></span>
+      <span class="p4" style="flex:0 0 5.5%"></span>
+    </div>
+    <div class="keys">
+      <span class="key"><i style="background:var(--ink)"></i>ما بقي لك <b>1,775,580</b></span>
+      <span class="key"><i style="background:var(--blue)"></i>حصص المندوبين <b>769,420</b></span>
+      <span class="key"><i style="background:#b9c0cc"></i>كلفة الشراء <b>2,334,920</b></span>
+      <span class="key"><i class="p4" style="background:rgba(11,15,22,0.14)"></i>التوصيل والمرتجع <b>284,580</b></span>
+    </div>
+  </section>
+
+  <section class="tbl">
+    <div class="ch">
+      <span>REP · SCHEME</span><span class="r">BASIS</span><span class="r">HIS SHARE</span><span class="r">SETTLED</span><span>SHARE OF BASIS</span>
+    </div>
+
+    <div class="tr">
+      <span class="who"><b>ليث العبيدي</b><em>مناصفة الربح الأولى · 45% من صافي الربح</em></span>
+      <span class="num">1,452,120</span>
+      <span class="num">653,454</span>
+      <span class="num mute">1,165,000</span>
+      <span class="share"><span class="rail"><i class="blue" style="width:45%"></i></span><span class="pc">45%</span></span>
+    </div>
+
+    <div class="tr">
+      <span class="who"><b>سعد الجبوري</b><em>نسبة الهامش الرفيع · 30% بعد كلفة الشراء</em></span>
+      <span class="num">2,148,987</span>
+      <span class="num">644,696</span>
+      <span class="num mute">1,350,000</span>
+      <span class="share"><span class="rail"><i class="blue" style="width:30%"></i></span><span class="pc">30%</span></span>
+    </div>
+
+    <div class="tr">
+      <span class="who"><b>نور الحسن</b><em>مؤرشف · لا مبيعات هذا الشهر</em></span>
+      <span class="num mute">0</span>
+      <span class="num mute">0</span>
+      <span class="num mute">185,000</span>
+      <span class="share"><span class="rail"></span><span class="pc">0%</span></span>
+    </div>
+
+    <div class="tr total">
+      <span class="who"><b>المجموع</b><em>ثلاث قسمات مختلفة، ولا واحدة منها تُقدَّر بالنية</em></span>
+      <span class="num">3,601,107</span>
+      <span class="num">1,298,150</span>
+      <span class="num">2,700,000</span>
+      <span class="share"><span class="rail"><i class="ink" style="width:36%; background:var(--ink)"></i></span><span class="pc">36%</span></span>
+    </div>
+  </section>
+
+  <p class="note">
+    كل حصّة في هذا الجدول مُجمَّدة بالقاعدة التي كانت سارية <b>لحظة البيع</b>، لا بالقاعدة الحالية.
+    تغيير نسبة اليوم لا يعيد كتابة الشهر الماضي، وهذا هو الفرق بين سجل ومزاج.
+  </p>
+  <div class="acts2">
+    <button class="btn">سجّل تسوية</button>
+    <button class="btn quiet">صدّر الجدول</button>
+  </div>
+</div>
+</body>
+</html>

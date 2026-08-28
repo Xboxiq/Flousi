@@ -1,0 +1,265 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   FLOUSI UI v5 — «آلة تحريرية» / The Editorial Instrument
+   A product design language, not a screen theme.
+
+   THE IDEA
+   An accountant's ledger printed by a Swiss press. Money is set like a headline;
+   everything else gets out of its way. Structure comes from RULES and SPACE, not
+   from boxes: there is no card in this system. What is raised is raised because a
+   hand touches it, and nothing else is raised at all.
+
+   WHAT IT REJECTS, ON PURPOSE
+   · cards, and cards inside cards          · widget dashboards
+   · a sidebar on every screen              · shadowed floating panels
+   · 16-24px radii everywhere               · icons where a word is clearer
+   · gradients as atmosphere                · motion as spectacle
+
+   THE SEVEN CONSTANTS (every screen honours all seven)
+   1 TYPE      Cairo 300..900 for language; IBM Plex Mono 500 for every figure,
+               always latn numerals, always tabular. Figures never share a weight
+               with prose, so a number is recognisable before it is read.
+   2 COLOUR    ink on paper, one blue. Blue is reserved: the primary action, or
+               the one measured quantity. Green and red are verdicts about money
+               and appear nowhere else.
+   3 RHYTHM    4px base · 8px vertical step · a 12-column editorial grid with a
+               40px gutter and a 72px margin (56 on tablet, 20 on phone).
+   4 GEOMETRY  2px radius on surfaces, 999px on the single pill control. Nothing
+               in between, so «rounded» carries meaning instead of taste.
+   5 SURFACE   paper (base), bone (recessed instrument), ink (night). Separation
+               is a 1px hairline at 10% ink. Elevation exists only under the
+               cursor and only 1px.
+   6 ICON      three hairline glyphs at 1.25px, and only where no word fits.
+   7 MOTION    140ms in, 200ms out, ease-out. It reports state: a selected row
+               grows a 2px rule, a pressed control drops 1px. Nothing decorates.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@font-face { font-family:"Cairo"; src:url("../campaign/fonts/cairo-arabic.woff2") format("woff2");
+  font-weight:200 1000; font-display:block;
+  unicode-range:U+600-6FF,U+750-77F,U+870-88E,U+FB50-FDFF,U+FE70-FEFF,U+200C-200E; }
+@font-face { font-family:"Cairo"; src:url("../campaign/fonts/cairo-latin.woff2") format("woff2");
+  font-weight:200 1000; font-display:block;
+  unicode-range:U+0-FF,U+131,U+152-153,U+2000-206F,U+2C60-2C7F; }
+@font-face { font-family:"Cairo"; src:url("../campaign/fonts/cairo-latin-ext.woff2") format("woff2");
+  font-weight:200 1000; font-display:block; unicode-range:U+100-2BA,U+1E00-1E9F,U+2020-2027; }
+@font-face { font-family:"Mono"; src:url("../campaign/fonts/plex-mono-500.woff2") format("woff2");
+  font-weight:500; font-display:block; }
+@font-face { font-family:"Mono"; src:url("../campaign/fonts/plex-mono-400.woff2") format("woff2");
+  font-weight:400; font-display:block; }
+
+:root {
+  /* colour */
+  --ink: #0b0f16;
+  --graphite: #2a3140;
+  --slate: #5d6675;
+  --mute: #8b93a1;
+  --paper: #f8f6f2;
+  --bone: #ece8e0;
+  --line: rgba(11,15,22,0.11);
+  --line-strong: rgba(11,15,22,0.24);
+  --blue: #0a5ce8;
+  --blue-ink: #0846b0;
+  --green: #12724a;
+  --red: #b8342b;
+
+  /* night surface, for the one dark screen */
+  --night: #0b0e13;
+  --night-2: #141922;
+  --night-line: rgba(233,238,246,0.13);
+  --night-fg: #eef1f6;
+
+  /* rhythm */
+  --u: 4px;
+  --gut: 40px;
+  --marg: 72px;
+
+  /* geometry */
+  --r: 2px;
+  --r-pill: 999px;
+
+  /* motion */
+  --in: 140ms;
+  --out: 200ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:1600px; height:1000px; overflow:hidden; }
+body {
+  font-family:"Cairo", system-ui, sans-serif;
+  background:var(--paper); color:var(--ink);
+  -webkit-font-smoothing:antialiased; text-rendering:geometricPrecision;
+}
+.screen { position:relative; width:1600px; height:1000px; overflow:hidden; background:var(--paper); }
+.screen.night { background:var(--night); color:var(--night-fg); }
+
+/* ── figures ────────────────────────────────────────────────────────────────*/
+.n {
+  font-family:"Mono", ui-monospace, monospace; font-weight:500;
+  font-variant-numeric:tabular-nums; letter-spacing:0.01em;
+}
+.n.lead { letter-spacing:-0.01em; }
+.unit { font-size:0.42em; color:var(--slate); margin-inline-start:0.4em; }
+
+/* ── the masthead: the only navigation chrome, and it is a RULE, not a bar ──
+   No sidebar in this system. The masthead is a line of type over a hairline;
+   the current section is the one in ink, and it is the only one in ink. */
+.masthead {
+  position:absolute; inset-inline:var(--marg); top:44px;
+  display:flex; align-items:baseline; gap:36px;
+  padding-bottom:18px; border-bottom:1px solid var(--line);
+}
+.mark { display:flex; align-items:center; gap:9px; margin-inline-end:auto; }
+.mark .tile {
+  width:26px; height:26px; border-radius:var(--r);
+  background:var(--ink); display:grid; place-items:center;
+}
+.mark .tile svg { width:15px; height:15px; display:block; }
+.mark .name { font-weight:800; font-size:20px; letter-spacing:-0.02em; }
+.nav { display:flex; align-items:baseline; gap:26px; font-size:15px; font-weight:600; }
+.nav a { color:var(--mute); text-decoration:none; padding-bottom:2px; }
+.nav a[aria-current] {
+  color:var(--ink);
+  box-shadow:0 2px 0 var(--ink);   /* the current section, marked by a rule */
+}
+.masthead .who {
+  font-family:"Mono", monospace; font-weight:400; font-size:12.5px;
+  letter-spacing:0.16em; color:var(--mute);
+}
+.screen.night .masthead { border-color:var(--night-line); }
+.screen.night .mark .tile { background:var(--night-fg); }
+.screen.night .mark .tile svg path { stroke:var(--night); }
+.screen.night .nav a { color:rgba(238,241,246,0.45); }
+.screen.night .nav a[aria-current] { color:var(--night-fg); box-shadow:0 2px 0 var(--night-fg); }
+.screen.night .masthead .who { color:rgba(238,241,246,0.4); }
+
+/* ── labels and rules ───────────────────────────────────────────────────────*/
+.lab {
+  font-family:"Mono", monospace; font-weight:500; font-size:11.5px;
+  letter-spacing:0.2em; color:var(--mute); text-transform:uppercase;
+}
+.lab-ar { font-family:"Cairo"; font-weight:700; font-size:13px; letter-spacing:0.06em; color:var(--slate); text-transform:none; }
+.rule { height:1px; background:var(--line); }
+.rule.strong { background:var(--line-strong); }
+.rule.ink { height:2px; background:var(--ink); }
+
+/* ── the one pill control: a segmented switch ───────────────────────────────*/
+.seg {
+  display:inline-flex; padding:3px; gap:2px;
+  background:var(--bone); border-radius:var(--r-pill);
+}
+.seg button {
+  font:inherit; font-weight:600; font-size:14px; color:var(--slate);
+  padding:8px 18px; border:0; background:transparent; border-radius:var(--r-pill);
+  cursor:pointer; transition:color var(--in) var(--ease);
+}
+.seg button[aria-pressed="true"] {
+  background:var(--paper); color:var(--ink);
+  box-shadow:0 1px 0 rgba(11,15,22,0.1), inset 0 0 0 1px rgba(11,15,22,0.05);
+}
+
+/* ── actions: text-first. The primary is the only filled thing on a screen ──*/
+.btn {
+  font:inherit; font-weight:700; font-size:15px; letter-spacing:0.01em;
+  padding:14px 26px; border:1px solid var(--line-strong); border-radius:var(--r);
+  background:transparent; color:var(--ink); cursor:pointer;
+  transition:background var(--in) var(--ease), transform var(--in) var(--ease),
+             border-color var(--in) var(--ease);
+}
+.btn:hover { background:var(--bone); }
+.btn.primary {
+  background:var(--blue); border-color:var(--blue); color:#fff;
+  padding-inline:34px;
+}
+.btn.primary:hover { background:var(--blue-ink); border-color:var(--blue-ink); }
+.btn.is-pressed { transform:translateY(1px); }
+.btn.is-focus { outline:2px solid var(--blue); outline-offset:3px; }
+.btn[disabled], .btn.is-disabled {
+  color:var(--mute); border-color:var(--line); background:transparent; cursor:not-allowed;
+}
+.btn.primary.is-disabled { background:var(--bone); border-color:var(--bone); color:var(--mute); }
+.btn.quiet { border-color:transparent; padding-inline:14px; color:var(--slate); }
+.btn.danger { border-color:rgba(184,52,43,0.35); color:var(--red); }
+
+/* ── fields: a rule under the value, never a box around it ──────────────────*/
+.field { display:block; }
+.field > .k { display:block; margin-bottom:9px; }
+.field .ctl {
+  display:flex; align-items:baseline; gap:10px;
+  padding:10px 2px; border-bottom:1.5px solid var(--line-strong);
+  transition:border-color var(--in) var(--ease);
+}
+.field .ctl:hover { border-color:var(--slate); }
+.field.is-focus .ctl { border-color:var(--blue); box-shadow:0 1.5px 0 var(--blue); }
+.field.is-error .ctl { border-color:var(--red); box-shadow:0 1.5px 0 var(--red); }
+/* A value is Cairo unless it is a FIGURE. Plex Mono carries no Arabic, so setting
+   an Arabic value in it made the browser fall back glyph by glyph and the word lost
+   its joins: «زيونة» came out as «ز ي و ن ة». Figures opt in with .num. */
+.field .val { font-weight:700; font-size:24px; color:var(--ink); letter-spacing:-0.01em; }
+.field .val.num {
+  font-family:"Mono", monospace; font-weight:500; font-size:26px; letter-spacing:0.01em;
+  direction:ltr;
+}
+.field .val.ph { color:var(--mute); font-weight:600; }
+.field .suffix { font-size:14px; font-weight:600; color:var(--slate); margin-inline-start:auto; }
+.field .msg { margin-top:8px; font-size:13px; color:var(--slate); }
+.field.is-error .msg { color:var(--red); font-weight:600; }
+
+/* ── the instrument: the one recessed surface a screen may use ──────────────*/
+.inst {
+  background:var(--bone); border-radius:var(--r);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.7), inset 0 0 0 1px rgba(11,15,22,0.06);
+}
+.screen.night .inst {
+  background:var(--night-2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), inset 0 0 0 1px var(--night-line);
+}
+
+/* ── the rail: the app's own measure, redrawn square and quiet ──────────────*/
+.rail { position:relative; height:10px; background:rgba(11,15,22,0.09); border-radius:1px; overflow:hidden; }
+.rail > i { position:absolute; inset:0 auto 0 0; background:var(--ink); border-radius:1px; }
+.rail > i.blue { background:var(--blue); }
+.rail > i.green { background:var(--green); }
+.rail > i.red { background:var(--red); }
+.rail > b {
+  position:absolute; top:-3px; bottom:-3px; width:1.5px; background:var(--ink); opacity:0.55;
+}
+.rail.hatch::after {
+  content:""; position:absolute; inset:0 0 0 var(--fill, 0%);
+  background-image:repeating-linear-gradient(-52deg, rgba(11,15,22,0.16) 0 1.5px, transparent 1.5px 7px);
+}
+
+/* ── rows: the list is the product. Rules, no boxes. ───────────────────────*/
+.rows { display:flex; flex-direction:column; }
+.row {
+  display:grid; align-items:center; gap:24px;
+  padding:18px 10px; border-bottom:1px solid var(--line);
+  transition:background var(--in) var(--ease);
+  position:relative;
+}
+.row:hover { background:rgba(11,15,22,0.025); }
+.row.is-selected { background:rgba(10,92,232,0.05); }
+.row.is-selected::before {
+  content:""; position:absolute; inset-block:0; inset-inline-start:0; width:2px; background:var(--blue);
+}
+.row .id { font-family:"Mono", monospace; font-weight:500; font-size:13px; color:var(--mute); letter-spacing:0.06em; }
+/* stacked, not inline: as spans in one grid cell the title and its meta ran
+   together into «...مرينوزيونة» */
+.row .ttl { display:block; font-weight:700; font-size:16px; }
+.row .sub { display:block; font-size:13px; color:var(--slate); margin-top:3px; }
+/* LTR run: a leading minus inside an RTL row was rendering after the digits
+   («8,000−»), which is the wrong sign in the wrong place on a money column */
+.row .amt {
+  font-family:"Mono", monospace; font-weight:500; font-size:19px;
+  direction:ltr; text-align:left;
+}
+.row .amt.pos { color:var(--green); }
+.row .amt.neg { color:var(--red); }
+
+/* state words, not badges: one word in colour, no pill */
+.state { font-size:12.5px; font-weight:700; letter-spacing:0.02em; }
+.state.hand { color:var(--green); }
+.state.out  { color:var(--slate); }
+.state.back { color:var(--red); }
+
+/* ── the three icons this system allows ────────────────────────────────────*/
+.ico { width:16px; height:16px; display:block; stroke:currentColor; stroke-width:1.25; fill:none; }

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Flousi v5 — S3 تسجيل رحلة</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+/* ── S3 · تسجيل رحلة · the focused task ──────────────────────────────────────
+   One job, and the screen refuses everything else: no masthead nav, no list, no
+   secondary content. The composition is a single narrow column of fields (the
+   task) with a live consequence pinned to the other edge (the split), and a
+   dismissal in the corner — the only way out that is not «record».
+   Content density: five inputs. Interaction pattern: type, watch the split move,
+   commit. The three states that matter are visible AT ONCE, because a task screen
+   is where states live: one field focused, one field in error, and the primary
+   action disabled until the error clears.
+   Focal point: the field under the cursor. The split is deliberately quieter than
+   the fields — it answers, it does not ask. */
+
+.taskbar {
+  position:absolute; inset-inline:var(--marg); top:44px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding-bottom:16px; border-bottom:1px solid var(--line);
+}
+.taskbar .t { display:flex; align-items:baseline; gap:14px; }
+.taskbar .t b { font-size:19px; font-weight:800; letter-spacing:-0.01em; }
+.taskbar .t span { font-size:14px; color:var(--slate); }
+.taskbar .x {
+  font:inherit; font-weight:600; font-size:14px; color:var(--slate);
+  background:transparent; border:0; cursor:pointer; display:flex; align-items:center; gap:8px;
+}
+
+/* the column of work */
+.work { position:absolute; inset-inline-start:var(--marg); top:150px; width:660px; }
+.work .step { display:flex; align-items:baseline; gap:14px; margin-bottom:34px; }
+.work .step .i { font-family:"Mono",monospace; font-weight:400; font-size:12px; color:var(--mute); }
+.work .step h1 { font-size:34px; font-weight:800; letter-spacing:-0.025em; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:30px 40px; }
+.grid2 .wide { grid-column:1 / -1; }
+
+/* the product line already added: a row, not a card */
+.lines { margin-top:38px; padding-top:20px; border-top:1px solid var(--line-strong); }
+.lines .h { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:6px; }
+.lines .ln {
+  display:grid; grid-template-columns:1fr 92px 132px 28px; gap:20px; align-items:baseline;
+  padding:15px 2px; border-bottom:1px solid var(--line);
+}
+.lines .ln .nm { font-weight:700; font-size:15.5px; }
+.lines .ln .nm em { display:block; font-style:normal; font-weight:500; font-size:13px; color:var(--slate); margin-top:3px; }
+.lines .ln .q, .lines .ln .p { font-family:"Mono",monospace; font-weight:500; font-size:16px; direction:ltr; }
+.lines .ln .p { text-align:left; }
+.lines .ln .rm { color:var(--mute); cursor:pointer; }
+.lines .add {
+  margin-top:16px; font:inherit; font-weight:700; font-size:14.5px; color:var(--blue);
+  background:transparent; border:0; cursor:pointer; padding:4px 0;
+}
+
+/* the commit bar: primary is the only filled thing, and it is disabled while the
+   form is invalid. The reason sits beside it, not in a toast. */
+.commit {
+  position:absolute; inset-inline-start:var(--marg); bottom:56px; width:660px;
+  padding-top:22px; border-top:1px solid var(--line-strong);
+  display:flex; align-items:center; gap:18px;
+}
+.commit .why { font-size:13.5px; color:var(--red); font-weight:600; }
+
+/* the consequence: pinned, recessed, quiet */
+.split {
+  position:absolute; inset-inline-end:var(--marg); top:150px; width:452px; padding:28px 28px 32px;
+}
+.split .k { display:flex; align-items:baseline; justify-content:space-between; }
+.split .pair { margin-top:22px; display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+.split .cell { padding:18px 20px; background:rgba(255,255,255,0.72); }
+.split .cell:last-child { background:rgba(255,255,255,0.42); }
+.split .cell .c { font-size:13px; color:var(--slate); }
+.split .cell .v { margin-top:8px; font-family:"Mono",monospace; font-weight:500; font-size:30px; direction:ltr; }
+.split .cell .v.pos { color:var(--green); }
+.split .cell .n2 { margin-top:6px; font-size:12.5px; color:var(--mute); }
+.split .meter { margin-top:24px; }
+.split .meter .cap { display:flex; justify-content:space-between; font-size:13px; color:var(--slate); margin-bottom:9px; }
+.split .lines2 { margin-top:26px; }
+.split .li {
+  display:flex; align-items:baseline; justify-content:space-between;
+  padding:10px 0; border-bottom:1px solid rgba(11,15,22,0.09); font-size:14px;
+}
+.split .li:first-child { border-top:1px solid rgba(11,15,22,0.09); }
+.split .li .v { font-family:"Mono",monospace; font-weight:500; font-size:15px; direction:ltr; }
+/* the same rule as the fields: an Arabic value never goes in the mono face */
+.split .li .v.txt { font-family:"Cairo"; font-weight:700; font-size:14px; direction:rtl; }
+.split .li .v.neg { color:var(--red); }
+.split .note { margin-top:20px; font-size:13px; line-height:1.6; color:var(--slate); }
+.split .note b { color:var(--ink); }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <div class="taskbar">
+    <span class="t"><b>رحلة جديدة</b><span>تُحسب الحصص لحظة الحفظ، وتُجمَّد كما هي اليوم</span></span>
+    <button class="x">إلغاء
+      <svg class="ico" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+    </button>
+  </div>
+
+  <section class="work">
+    <div class="step"><span class="i">01 / 02</span><h1>الرحلة</h1></div>
+
+    <div class="grid2">
+      <label class="field is-focus">
+        <span class="k lab-ar">المنطقة</span>
+        <span class="ctl"><span class="val">زيونة</span></span>
+        <span class="msg">آخر ثلاث رحلات لهذه المنطقة ربحت.</span>
+      </label>
+
+      <label class="field">
+        <span class="k lab-ar">المندوب</span>
+        <span class="ctl"><span class="val">ليث العبيدي</span>
+          <svg class="ico" viewBox="0 0 16 16" style="margin-inline-start:auto;color:var(--slate)"><path d="M4 6.5l4 4 4-4"/></svg>
+        </span>
+        <span class="msg">قسمة الأرباح الأولى · 45% له</span>
+      </label>
+
+      <label class="field">
+        <span class="k lab-ar">أجرة التوصيل على الزبون</span>
+        <span class="ctl"><span class="val num">5,000</span><span class="suffix">د.ع.</span></span>
+      </label>
+
+      <label class="field is-error">
+        <span class="k lab-ar">أجرة التوصيل التي دفعتها</span>
+        <span class="ctl"><span class="val ph">اكتب المبلغ</span><span class="suffix">د.ع.</span></span>
+        <span class="msg">مطلوب: بدونه لا نعرف إن كان التوصيل ربح أم خسر.</span>
+      </label>
+    </div>
+
+    <div class="lines">
+      <div class="h"><span class="lab">LINES · 2</span><span class="lab-ar">ما تحمله الرحلة</span></div>
+      <div class="ln">
+        <span class="nm">وشاح صوف مرينو<em>شراء 31,000 · هامش 44%</em></span>
+        <span class="q">2</span>
+        <span class="p">111,000</span>
+        <span class="rm">
+          <svg class="ico" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+        </span>
+      </div>
+      <div class="ln">
+        <span class="nm">دفتر جلدي قابل لإعادة التعبئة<em>شراء 24,000 · هامش 43%</em></span>
+        <span class="q">1</span>
+        <span class="p">42,000</span>
+        <span class="rm">
+          <svg class="ico" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+        </span>
+      </div>
+      <button class="add">أضف صنفاً</button>
+    </div>
+  </section>
+
+  <div class="commit">
+    <button class="btn primary is-disabled" disabled>احفظ الرحلة</button>
+    <span class="why">أكمل أجرة التوصيل المدفوعة أولاً</span>
+  </div>
+
+  <aside class="split inst">
+    <div class="k"><span class="lab">SPLIT · LIVE</span><span class="lab-ar">القسمة قبل الحفظ</span></div>
+
+    <div class="pair">
+      <div class="cell">
+        <div class="c">هذا لك</div>
+        <div class="v pos">42,000</div>
+        <div class="n2">بعد كل التكاليف</div>
+      </div>
+      <div class="cell">
+        <div class="c">هذا له</div>
+        <div class="v">34,364</div>
+        <div class="n2">ليث العبيدي</div>
+      </div>
+    </div>
+
+    <div class="meter">
+      <div class="cap"><span>حصته من الأساس</span><span class="n">45%</span></div>
+      <div class="rail"><i class="blue" style="width:45%"></i></div>
+    </div>
+
+    <div class="lines2">
+      <div class="li"><span>الإيراد</span><span class="v">153,000</span></div>
+      <div class="li"><span>الشراء</span><span class="v neg">−86,000</span></div>
+      <div class="li"><span>التوصيل · مقبوض</span><span class="v">5,000</span></div>
+      <div class="li"><span>التوصيل · مدفوع</span><span class="v neg txt">بانتظار الرقم</span></div>
+    </div>
+
+    <p class="note">الأرقام أعلاه محسوبة بأجرة توصيل مدفوعة <b>صفر</b>. أدخل ما دفعته فعلاً وسيتغيّر النصيبان أمامك.</p>
+  </aside>
+</div>
+</body>
+</html>

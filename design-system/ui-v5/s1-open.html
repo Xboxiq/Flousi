@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Flousi v5 — S1 الافتتاح</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+/* ── S1 · الافتتاح · type-dominant editorial ─────────────────────────────────
+   The screen a merchant opens. Composition: ONE figure at 176px on the reading
+   side, an editorial stack under it, and a wide empty column on the other side
+   carrying only the day's three facts as a numbered list of rules.
+   Hierarchy: figure → what it is → what it is not → the three facts → one verb.
+   Density: the lowest in the product. Navigation: the masthead only.
+   Focal point: the figure. Nothing else is allowed to compete with it. */
+
+.hero { position:absolute; inset-inline-start:var(--marg); top:184px; width:820px; }
+.hero .k { display:flex; align-items:center; gap:12px; }
+.hero .k .dot { width:7px; height:7px; border-radius:50%; background:var(--blue); }
+/* The figure is one LTR row so the unit stays welded to the digits: at 176px in an
+   RTL block the «د.ع.» was thrown to the left of the number and floated mid-screen,
+   and the digits themselves overran the column. */
+.hero .fig {
+  margin-top:14px; display:flex; align-items:baseline; gap:18px; direction:ltr;
+  font-size:132px; line-height:0.98; letter-spacing:-0.03em;
+}
+.hero .fig .unit { font-size:34px; letter-spacing:0.02em; margin:0; }
+.hero .said { margin-top:26px; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+.hero .not {
+  margin-top:12px; font-size:19px; font-weight:500; line-height:1.6; color:var(--slate);
+  max-width:600px;
+}
+
+/* the day's three facts: a numbered ledger, not three cards */
+.facts { position:absolute; inset-inline-end:var(--marg); top:190px; width:430px; }
+.facts > .h { display:flex; align-items:baseline; justify-content:space-between; }
+.fact {
+  display:grid; grid-template-columns:26px 1fr auto; align-items:baseline; gap:16px;
+  padding:20px 0; border-bottom:1px solid var(--line);
+}
+.fact:first-of-type { border-top:1px solid var(--line); }
+.fact .i { font-family:"Mono",monospace; font-weight:400; font-size:12px; color:var(--mute); }
+.fact .t { font-size:16px; font-weight:600; }
+.fact .t em { display:block; font-style:normal; font-weight:500; font-size:13.5px; color:var(--slate); margin-top:4px; }
+.fact .v { font-family:"Mono",monospace; font-weight:500; font-size:20px; }
+.fact .v.neg { color:var(--red); }
+.fact .v.mute { color:var(--mute); }
+
+/* the one verb on the screen, and the quiet way back to everything else */
+/* the verb sits directly under the sentence it answers, not stranded at the
+   bottom of the viewport 350px away from everything else */
+.act { position:absolute; inset-inline-start:var(--marg); top:646px; display:flex; align-items:center; gap:18px; }
+.act .aside { font-size:14px; color:var(--slate); }
+
+/* the月 window: a measure, not a widget. Bottom right, on the rule. */
+.window { position:absolute; inset-inline-end:var(--marg); top:640px; width:430px; }
+.window .top { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px; }
+.window .cap { font-size:13px; color:var(--slate); margin-top:10px; }
+.foot {
+  position:absolute; inset-inline:var(--marg); bottom:52px;
+  display:flex; justify-content:space-between; align-items:baseline;
+  padding-top:16px; border-top:1px solid var(--line);
+}
+.foot span { font-family:"Mono",monospace; font-weight:400; font-size:12px; letter-spacing:0.16em; color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <header class="masthead">
+    <span class="mark">
+      <span class="tile"><svg viewBox="0 0 16 16" fill="none"><path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#f8f6f2" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 5.5H13V8.5" stroke="#f8f6f2" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="name">Flousi</span>
+    </span>
+    <nav class="nav">
+      <a href="#" aria-current="page">اليوم</a>
+      <a href="#">الرحلات</a>
+      <a href="#">القسمة</a>
+      <a href="#">الفريق</a>
+      <a href="#">الشهر</a>
+    </nav>
+    <span class="who">MOSUL · OWNER</span>
+  </header>
+
+  <section class="hero">
+    <div class="k"><span class="dot"></span><span class="lab-ar">بيدك الآن · أغسطس 2026</span></div>
+    <div class="fig n lead"><span>4,949,500</span><span class="unit">د.ع.</span></div>
+    <p class="said">هذا ما تقدر تصرفه اليوم.</p>
+    <p class="not">ليس إيرادك، ولا ربحك على الورق. المبلغ الذي وصل يدك فعلاً بعد الشراء والتوصيل والمرتجع وحصص مندوبيك.</p>
+  </section>
+
+  <section class="facts">
+    <div class="h"><span class="lab">TODAY · 27 AUG</span><span class="lab-ar">ثلاث حقائق</span></div>
+    <div class="fact">
+      <span class="i">01</span>
+      <span class="t">عند المندوبين<em>شُلمت ولم يوصلك مالها</em></span>
+      <span class="v">195,000</span>
+    </div>
+    <div class="fact">
+      <span class="i">02</span>
+      <span class="t">على الطريق<em>لا طلبية معلّقة اليوم</em></span>
+      <span class="v mute">0</span>
+    </div>
+    <div class="fact">
+      <span class="i">03</span>
+      <span class="t">خسارة مرتجع<em>طلبية واحدة رجعت، وأجرتها عليك</em></span>
+      <span class="v neg">8,000</span>
+    </div>
+  </section>
+
+  <div class="act">
+    <button class="btn primary">سجّل رحلة</button>
+    <span class="aside">أو اضغط N من أي شاشة</span>
+  </div>
+
+  <section class="window">
+    <div class="top">
+      <span class="lab-ar">الشهر حتى الآن</span>
+      <span class="n" style="font-size:15px">62<span style="font-size:11px">%</span></span>
+    </div>
+    <div class="rail hatch" style="--fill:62%"><i class="blue" style="width:62%"></i><b style="inset-inline-start:78%"></b></div>
+    <p class="cap">ما بقي لك من كل دينار بعتَه. الخط القائم هو معدّلك في تموز.</p>
+  </section>
+
+  <footer class="foot">
+    <span>FLOUSI · V5 / S1 · THE OPEN</span>
+    <span>IQD · LOCAL ONLY</span>
+  </footer>
+</div>
+</body>
+</html>
