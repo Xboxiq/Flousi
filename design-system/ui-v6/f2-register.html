@@ -22,57 +22,60 @@
 .reg { position:absolute; inset:0; display:flex; gap:var(--grout); background:var(--gypsum); }
 
 .col { position:relative; }
-.col .hd { font-weight:800; font-size:13px; opacity:0.72; }
-.col .ans { margin-top:12px; font-weight:800; font-size:16.5px; letter-spacing:-0.01em; }
-.col .aux { margin-top:8px; font-size:12.5px; line-height:1.5; opacity:0.62; }
-.col .step { position:absolute; bottom:22px; inset-inline-start:24px;
-             font-family:"Mono",monospace; font-weight:500; font-size:11px;
-             letter-spacing:0.2em; opacity:0.42; direction:ltr; }
+.col .hd { font-weight:800; font-size:var(--t-name); opacity:0.72; }
+.col .ans { margin-top:12px; font-weight:800; font-size:var(--t-name-lg); letter-spacing:-0.01em; }
+.col .aux { margin-top:8px; font-size:var(--t-meta); line-height:1.5; opacity:0.62; }
+.col .step { position:absolute; bottom:var(--s3); inset-inline-end:var(--s3); font-family:"Mono",monospace; font-weight:500; font-size:var(--t-tag); letter-spacing:0.2em; opacity:0.55; }
 
 /* column 1 · what this is, and the only way out */
 .who { position:absolute; inset-inline:28px; top:36px; }
-.who h1 { font-size:30px; font-weight:800; letter-spacing:-0.03em; line-height:1.12; }
+.who h1 { font-size:var(--t-display); font-weight:800; letter-spacing:-0.03em; line-height:1.12; }
 .who .tag { display:block; margin-top:16px; color:var(--on-kiln-3); }
-.who .dt { margin-top:26px; font-size:13px; color:var(--on-kiln-2); line-height:1.6; }
-.leave { position:absolute; inset-inline-start:28px; bottom:32px; color:var(--on-kiln-2); font-size:13.5px; }
+.who .dt { margin-top:24px; font-size:var(--t-body); color:var(--on-kiln-2); line-height:1.6; }
+.leave { position:absolute; inset-inline-start:28px; bottom:32px; color:var(--on-kiln-2); font-size:var(--t-body); }
 
 /* column 4 · the work. Each line is a field; the caret is in the bright one. */
 .work { position:absolute; inset-inline:32px; top:36px; }
-.work > .hd { margin-bottom:18px; }
+.work > .hd { margin-bottom:16px; }
 .line {
   display:flex; align-items:baseline; justify-content:space-between; gap:20px;
-  padding:17px 20px; margin-bottom:var(--grout); background:var(--limestone-2);
+  padding:16px 20px; margin-bottom:var(--grout); background:var(--limestone-2);
 }
-.line .lt b { display:block; font-weight:800; font-size:15px; }
-.line .lt em { display:block; font-style:normal; margin-top:5px; font-size:12px; color:var(--on-stone-2); }
+.line .lt b { display:block; font-weight:800; font-size:var(--t-name); }
+.line .lt em { display:block; font-style:normal; margin-top:5px; font-size:var(--t-meta); color:var(--on-stone-2); }
 .line .rt { text-align:left; }
-.line .rt .cost { display:block; margin-top:6px; font-family:"Mono",monospace; font-weight:400;
-                  font-size:12px; color:var(--on-stone-3); direction:ltr; }
+.line .rt .cost { display:block; margin-top:8px; font-family:"Mono",monospace; font-weight:400;
+                  font-size:var(--m-sm); color:var(--on-stone-3); direction:ltr; }
 .entry {
-  display:flex; align-items:center; gap:10px; padding:21px 20px; background:var(--gypsum);
+  display:flex; align-items:center; gap:var(--s1); padding:var(--s3) var(--s3); background:var(--gypsum);
   clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
 }
-.entry span { font-weight:800; font-size:15px; color:var(--on-stone-3); }
-.entry i { display:block; width:2px; height:21px; background:var(--lapis); }
+.entry span { font-weight:800; font-size:var(--t-name); color:var(--on-stone-3); }
+.entry i { display:block; width:2px; height:20px; background:var(--lapis); }
  /* The totals sit at the FOOT of the ledger column, not under the last line, so
     the space between them and the entry field is the page's own breathing room
     rather than an unfinished bottom third. */
-.sums { position:absolute; inset-inline:32px; bottom:74px; display:flex; gap:var(--grout); }
-.sums > div { flex:1; padding:20px; background:var(--limestone-2); }
-.sums .hd { font-size:12.5px; margin-bottom:12px; }
+ /* The ledger's void is now bounded at both ends: the provenance line caps it
+    above the totals, so the space between the last line and the foot reads as a
+    page's breathing room rather than an unfinished third of a column. */
+.prov { position:absolute; inset-inline:var(--s4); bottom:152px;
+        display:flex; align-items:baseline; justify-content:space-between; gap:var(--s3); }
+.sums { position:absolute; inset-inline:var(--s4); bottom:var(--s7); display:flex; gap:var(--grout); }
+.sums > div { flex:1; padding:var(--s3); background:var(--limestone-2); }
+.sums .hd { font-size:var(--t-meta); margin-bottom:12px; }
 .focused { color:var(--lapis); }
 
 /* column 6 · the consequence, as the same partition law at trip scale */
-.eff { position:absolute; inset-inline:26px; top:36px; bottom:32px; display:flex; flex-direction:column; }
+.eff { position:absolute; inset-inline:24px; top:36px; bottom:32px; display:flex; flex-direction:column; }
 .eff .hd { color:var(--on-kiln-2); }
-.eff .tag { display:block; margin-top:10px; color:var(--on-kiln-3); }
+.eff .tag { display:block; margin-top:8px; color:var(--on-kiln-3); }
 .part { margin-top:24px; flex:1 1 auto; display:flex; flex-direction:column; gap:var(--grout); }
-.part > .f { padding:18px 20px; position:relative; }
-.part .pn { font-weight:800; font-size:13px; }
+.part > .f { padding:16px 20px; position:relative; }
+.part .pn { font-weight:800; font-size:var(--t-name); }
 .part .pp { position:absolute; bottom:16px; inset-inline-end:20px;
-            font-family:"Mono",monospace; font-weight:500; font-size:12.5px; opacity:0.55; }
-.eff .commit { margin-top:22px; width:100%; text-align:start; }
-.eff .why { margin-top:16px; font-size:12px; line-height:1.6; color:var(--on-kiln-3); }
+            font-family:"Mono",monospace; font-weight:500; font-size:var(--m-sm); opacity:0.55; }
+.eff .commit { margin-top:24px; width:100%; text-align:start; }
+.eff .why { margin-top:16px; font-size:var(--t-meta); line-height:1.6; color:var(--on-kiln-3); }
 </style>
 </head>
 <body>
@@ -94,7 +97,7 @@
       <div class="hd" style="color:var(--on-glaze-2)">المندوب</div>
       <div class="ans">ليث العبيدي</div>
       <div class="aux" style="color:var(--on-glaze-2)">مناصفة الربح الأولى<br>45% من صافي الربح</div>
-      <span class="step" style="color:var(--on-glaze-2); opacity:0.7">01 · SET</span>
+      <span class="step" style="color:var(--on-glaze-2); opacity:0.7"><span dir="ltr">01 · SET</span></span>
     </div>
 
     <!-- 3 · finished: the destination -->
@@ -102,7 +105,7 @@
       <div class="hd">الوجهة</div>
       <div class="ans">زيونة، بغداد</div>
       <div class="aux">12 كم من المخزن<br>ثالث رحلة هذا الأسبوع</div>
-      <span class="step">02 · SET</span>
+      <span class="step"><span dir="ltr">02 · SET</span></span>
     </div>
 
     <!-- 4 · the work, under the hand -->
@@ -131,51 +134,70 @@
             <span class="cost">COST 40,000</span>
           </span>
         </div>
+        <div class="line">
+          <span class="lt"><b>أكياس هدايا</b><em>30 قطعة × 2,000</em></span>
+          <span class="rt">
+            <span class="q f22 trail"><span class="n">60,000</span></span>
+            <span class="cost">COST 26,000</span>
+          </span>
+        </div>
+        <div class="line">
+          <span class="lt"><b>ستاندات عرض</b><em>8 قطع × 7,500</em></span>
+          <span class="rt">
+            <span class="q f22 trail"><span class="n">60,000</span></span>
+            <span class="cost">COST 34,000</span>
+          </span>
+        </div>
         <div class="entry"><i></i><span>أضف قطعة</span></div>
 
+      </div>
+
+      <div class="prov">
+        <span class="tag">FROZEN FROM PRICE LIST · 19 AUG</span>
+        <span class="tag">5 LINES · 108 UNITS</span>
       </div>
 
         <div class="sums">
           <div>
             <div class="hd">إجمالي البيع</div>
-            <span class="q f30"><span class="n">486,000</span></span>
+            <span class="q f30"><span class="n">606,000</span></span>
           </div>
           <div>
             <div class="hd">كلفة الشراء المجمَّدة</div>
-            <span class="q f30"><span class="n">268,000</span></span>
+            <span class="q f30"><span class="n">328,000</span></span>
           </div>
         </div>
-      <span class="step">03 · TYPING</span>
+      <span class="step"><span dir="ltr">03 · TYPING</span></span>
     </div>
 
     <!-- 5 · untouched -->
     <div class="col f bisq" style="flex:0 0 140px; padding:36px 20px">
       <div class="hd">التوصيل</div>
-      <div class="aux" style="margin-top:14px">يُحسب بعد إغلاق القطع. لا شيء يُطلب هنا الآن.</div>
-      <span class="step">04 · WAITING</span>
+      <div class="aux" style="margin-top:16px">يُحسب بعد إغلاق القطع.</div>
+      <span class="step"><span dir="ltr">04 · WAITING</span></span>
     </div>
 
     <!-- 6 · the consequence: the F1 law again, at the scale of one trip -->
     <div class="col f kiln" style="flex:1 1 auto">
       <div class="eff">
         <div class="hd">أثر هذه الرحلة على القسمة</div>
-        <span class="tag">LIVE · 486,000 DIVIDED</span>
+        <span class="tag">LIVE · 606,000 DIVIDED</span>
 
         <div class="part">
-          <div class="f gyp" style="flex:0 0 24.67%; color:var(--on-stone)">
+          <div class="f gyp" style="flex:0 0 25.23%; color:var(--on-stone)">
             <div class="pn">يبقى لك</div>
-            <span class="q f30" style="margin-top:12px"><span class="n">119,900</span></span>
-            <span class="pp">24.7%</span>
+            <span class="q f30" style="margin-top:12px"><span class="n">152,900</span></span>
+            <span class="pp">25.2%</span>
           </div>
-          <div class="f lapis" style="flex:0 0 20.19%">
+          <div class="f lapis" style="flex:0 0 20.64%">
             <div class="pn">حصة ليث</div>
-            <span class="q f22" style="margin-top:10px"><span class="n">98,100</span></span>
-            <span class="pp">20.2%</span>
+            <span class="q f22" style="margin-top:8px"><span class="n">125,100</span></span>
+            <span class="pp">20.6%</span>
           </div>
           <div class="f bisq" style="flex:1 1 auto">
             <div class="pn">كلفة الشراء</div>
-            <span class="q f22" style="margin-top:10px"><span class="n">268,000</span></span>
-            <span class="pp">55.1%</span>
+            <span class="q f22" style="margin-top:8px"><span class="n">328,000</span></span>
+            <span class="pp">54.1%</span>
           </div>
         </div>
 

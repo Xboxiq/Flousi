@@ -24,26 +24,26 @@
    Focal point: the pattern. This is the one screen where no single number is
    the answer. Glaze carries identity: ليث is lapis here exactly as on F1/F2/F4. */
 
-.head { position:absolute; inset-inline:56px; top:52px; display:flex; align-items:flex-start; justify-content:space-between; gap:64px; }
-.head h1 { font-size:38px; font-weight:800; letter-spacing:-0.03em; line-height:1; }
-.head .lede { margin-top:18px; max-width:56ch; font-size:14px; line-height:1.68; color:var(--on-stone-2); }
+.head { position:absolute; inset-inline:var(--s6); top:var(--s6); display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s7); }
+.head h1 { font-size:var(--t-display); font-weight:800; letter-spacing:-0.03em; line-height:1; }
+.head .lede { margin-top:var(--s3); max-width:56ch; font-size:var(--t-body); line-height:1.68; color:var(--on-stone-2); }
 .head .facts { display:flex; gap:var(--grout); flex:0 0 auto; }
-.head .facts > div { background:var(--limestone); padding:20px 22px 18px; min-width:186px; }
-.head .facts .k { font-weight:800; font-size:12px; color:var(--on-stone-2); }
-.head .facts .v { margin-top:12px; }
+.head .facts > div { background:var(--limestone); padding:var(--s3); min-width:184px; }
+.head .facts .k { font-weight:800; font-size:var(--t-name); color:var(--on-stone-2); }
+.head .facts .v { margin-top:var(--s2); }
 
-.plane { position:absolute; inset-inline:56px; top:252px; display:flex; gap:var(--grout); }
+.plane { position:absolute; inset-inline:var(--s6); top:252px; display:flex; gap:var(--grout); }
 .names { flex:0 0 356px; display:flex; flex-direction:column; gap:var(--grout); }
 .grid  { flex:1 1 auto; display:flex; flex-direction:column; gap:var(--grout); }
 
-.rw { flex:0 0 90px; background:var(--limestone); display:flex; align-items:center; gap:14px; padding:0 22px; }
+.rw { flex:0 0 90px; background:var(--limestone); display:flex; align-items:center; gap:var(--s2); padding:0 var(--s3); }
 .rw .g  { flex:0 0 12px; height:12px; }
 .rw .tx { flex:1 1 auto; min-width:0; }
-.rw b  { display:block; font-weight:800; font-size:17px; letter-spacing:-0.01em; }
-.rw em { display:block; margin-top:5px; font-style:normal; font-size:12.5px; color:var(--on-stone-2); }
+.rw b  { display:block; font-weight:800; font-size:var(--t-name-lg); letter-spacing:-0.01em; }
+.rw em { display:block; margin-top:var(--s1); font-style:normal; font-size:var(--t-meta); color:var(--on-stone-2); }
 .rw .yr { flex:0 0 auto; }
 .rw .yr .pct { display:block; margin-top:5px; font-family:"Mono",monospace; font-weight:400;
-               font-size:11.5px; color:var(--on-stone-3); direction:ltr; text-align:left; }
+               font-size:var(--m-sm); color:var(--on-stone-3); direction:ltr; text-align:left; }
 .rw.off b, .rw.off em { color:var(--on-stone-3); }
 
 .mrow { flex:0 0 90px; display:flex; gap:var(--grout); }
@@ -56,27 +56,27 @@
    in the same form — a centred square per month — and is told apart only by its
    kiln glaze. Drawing it as heights instead turned the foot of the plane back
    into a bar chart, which is the one thing this screen may not be. */
-.marg { position:absolute; inset-inline:56px; top:646px; display:flex; gap:var(--grout); }
+.marg { position:absolute; inset-inline:var(--s6); top:648px; display:flex; gap:var(--grout); }
 .marg .lbl { flex:0 0 356px; background:var(--kiln); color:var(--on-kiln);
-             display:flex; align-items:center; gap:14px; padding:0 22px; }
+             display:flex; align-items:center; gap:var(--s2); padding:0 var(--s3); }
 .marg .lbl .tx { flex:1 1 auto; }
-.marg .lbl b { display:block; font-weight:800; font-size:16px; }
-.marg .lbl em { display:block; margin-top:5px; font-style:normal; font-size:12px; color:var(--on-kiln-3); }
-.marg .cells { flex:1 1 auto; display:flex; gap:var(--grout); height:90px; }
+.marg .lbl b { display:block; font-weight:800; font-size:var(--t-name-lg); }
+.marg .lbl em { display:block; margin-top:var(--s1); font-style:normal; font-size:var(--t-meta); color:var(--on-kiln-3); }
+.marg .cells { flex:1 1 auto; display:flex; gap:var(--grout); height:88px; }
 .marg .cells > div { flex:1 1 0; background:var(--limestone); display:grid; place-items:center; }
 .marg .cells i { display:block; background:var(--kiln); aspect-ratio:1; }
 
-.months { position:absolute; inset-inline:56px; top:752px; display:flex; gap:var(--grout); }
+.months { position:absolute; inset-inline:var(--s6); top:752px; display:flex; gap:var(--grout); }
 .months .sp { flex:0 0 360px; }
 .months .mm { flex:1 1 auto; display:flex; gap:var(--grout); }
 .months .mm span { flex:1 1 0; text-align:center; font-family:"Mono",monospace; font-weight:500;
-                   font-size:11.5px; letter-spacing:0.08em; color:var(--on-stone-3); direction:ltr; }
+                   font-size:var(--m-sm); letter-spacing:0.08em; color:var(--on-stone-3); direction:ltr; }
 .months .mm span.y { color:var(--on-stone); font-weight:500; }
 
-.legend { position:absolute; inset-inline-start:56px; top:812px; max-width:66ch;
-          font-size:13px; line-height:1.65; color:var(--on-stone-2); }
-.foot { position:absolute; inset-inline:56px; bottom:44px; display:flex; align-items:baseline; justify-content:space-between; }
-.foot .back { font-size:13.5px; font-weight:800; }
+.legend { position:absolute; inset-inline-start:56px; top:800px; max-width:66ch;
+          font-size:var(--t-body); line-height:1.65; color:var(--on-stone-2); }
+.foot { position:absolute; inset-inline:var(--s6); bottom:var(--s5); display:flex; align-items:baseline; justify-content:space-between; }
+.foot .back { font-size:var(--t-name); font-weight:800; }
 .foot .tag { color:var(--on-stone-3); }
 
 /* The one interaction: a cell opens IN PLACE and grows away from the reading
@@ -86,8 +86,8 @@
         display:flex; align-items:center; gap:20px; padding:0 20px;
         clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
 .read .tx { flex:1 1 auto; white-space:nowrap; }
-.read b { display:block; font-weight:800; font-size:14px; }
-.read .of { margin-top:6px; font-family:"Mono",monospace; font-weight:400; font-size:10.5px;
+.read b { display:block; font-weight:800; font-size:var(--t-name); }
+.read .of { margin-top:8px; font-family:"Mono",monospace; font-weight:400; font-size:var(--t-tag);
             letter-spacing:0.12em; color:var(--on-kiln-3); direction:ltr; }
 </style>
 </head>
@@ -116,7 +116,7 @@
 
   <div class="marg">
     <div class="lbl">
-      <span class="tx"><b>الفريق كله، شهراً بشهر</b><em>مقياسه الخاص · أعلى شهر أغسطس</em></span>
+      <span class="tx"><b>الفريق كله</b><em>مقياس خاص · أعلى شهر أغسطس</em></span>
       <span class="q f22"><span class="n">4,898,820</span></span>
     </div>
     <div class="cells" id="cells"></div>
@@ -139,7 +139,7 @@
 
   <div class="read" id="read">
     <span class="q f30"><span class="n">268,400</span></span>
-    <span class="tx"><b>سعد الجبوري · مايو</b><span class="of">BEST MONTH · 81% OF MAX</span></span>
+    <span class="tx"><b>سعد الجبوري · مايو</b><span class="of">BEST MONTH · 81%</span></span>
   </div>
 
 </div>
@@ -203,10 +203,10 @@ document.getElementById("mm").innerHTML =
 const cell = grid.children[1].children[8];
 const box  = cell.getBoundingClientRect();
 const read = document.getElementById("read");
-read.style.width  = (box.width + 268) + "px";
+read.style.width  = (box.width + 208) + "px";
 read.style.height = box.height + "px";
 read.style.top    = box.top + "px";
-read.style.left   = (box.left - 268) + "px";
+read.style.left   = (box.left - 208) + "px";
 </script>
 </body>
 </html>

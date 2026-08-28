@@ -176,7 +176,16 @@ The moment any part of v6 is lifted into `src/`, the clause it contradicts is
 resolved here in writing, in this table, with the reason and the date. Nothing is
 resolved silently in either direction.
 
-**Two engineering laws v6 discovered, which bind every language here:**
+**v6.1 adds a third, and a script that enforces all of them.** `design-system/
+ui-v6/audit.mjs` runs seven checks — four on the files, three on the rendered DOM
+in Chromium — and fails the build on any of: a literal `font-size`, an off-lattice
+geometric value, a rule setting both `direction` and `inset-inline-*`, a text node
+under WCAG AA against its painted ground, a field over 240px tall with no foot, a
+clipped text or painted box, or two text boxes overlapping by more than 3px. It
+was written because six inks at 2.49–4.28:1 and an entire footer pushed off the
+plane survived four passes of looking at the screens.
+
+**Three engineering laws v6 discovered, which bind every language here:**
 
 1. `inset-inline-start/end` resolve against the **element's own** `direction`. An
    absolutely positioned mono stamp that sets `direction:ltr` on itself has its
@@ -187,6 +196,11 @@ resolved silently in either direction.
 2. A light-ground surface placed on a dark screen must **declare its own ink**. A
    limestone field inheriting a kiln page's light ink is unreadable, and this
    failed on ten surfaces across two screens before it was seen.
+3. A secondary ink is **never an alpha of the primary**. `rgba(ink, 0.40)` is a
+   dimmer, not a colour: on limestone it measures 2.49:1. Every secondary and
+   tertiary ink is a solid value chosen against its ground, and its ratio is
+   written next to it in the token block. An overlay that carries text must own
+   its background too, or its contrast becomes a property of what it sits over.
 
 ## ميزانية الحركة (من nova — تحمي السينمائية من أكل المقروئية)
 - Max **two simultaneously animating elements** on a product/data surface.

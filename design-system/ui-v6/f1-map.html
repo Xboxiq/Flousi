@@ -25,48 +25,63 @@
    Navigation: a spine of tiles on the TRAILING edge, so content keeps the
    reading edge. Nothing here is shared with any other screen but the spine. */
 
-.map { position:absolute; inset-block:0; inset-inline-start:0; inset-inline-end:80px;
+.map { position:absolute; inset-block:0; inset-inline-start:0; inset-inline-end:calc(var(--s7) + var(--grout));
        display:flex; gap:var(--grout); background:var(--gypsum); }
 .rest { flex:1 1 auto; display:flex; flex-direction:column; gap:var(--grout); }
 .rowB { flex:1 1 auto; display:flex; gap:var(--grout); }
 
-/* The percent stamp sits at each field's TRAILING-bottom corner, so the four
-   stamps read as one diagonal and the four labels as another. No `direction`
-   override here: it would flip this element's own inline axis and throw the
-   stamp back onto the reading edge (see the note in tile.css). */
-.pc { position:absolute; bottom:22px; inset-inline-end:26px;
-      font-family:"Mono",monospace; font-weight:500; font-size:26px;
-      letter-spacing:0.01em; opacity:0.5; }
-.f.kiln .pc { opacity:0.42; }
-/* A parent that has been subdivided lifts its own stamp clear of the nest, so it
-   shares a caption line with the tag instead of colliding with a child's. */
-.pc.raised { bottom:176px; }
+/* The stamp sits at each field's TRAILING-bottom corner, so the four stamps read
+   as one diagonal and the four labels as another. Solid ink, not an opacity:
+   0.5 of the field's own colour is a dimmer, not a colour decision.
+   No `direction` override — it would flip this element's own inline axis (see
+   the note at the foot of tile.css). */
+.pcx { position:absolute; bottom:var(--s3); inset-inline-end:var(--s3);
+       font-family:"Mono",monospace; font-weight:500; font-size:var(--m-lg);
+       letter-spacing:0.01em; color:var(--ink3); }
+.ncap .pcx { position:static; }
+/* A subdivided field's stamp joins the nest's caption line, so the two share a
+   baseline instead of being pinned to two different bottoms and missing. */
 
 .hung { max-width:min(100%, 46ch); }
-.hung .nm { margin-bottom:20px; }
-.hung .q  { margin-bottom:18px; }
+.hung .nm { margin-bottom:var(--s3); }
+.hung .q  { margin-bottom:var(--s3); }
+
+/* Clause 8 on the tallest field on the plane. The kept profit is itself a whole,
+   so it is partitioned — by category, along the field's LONGER axis, which for a
+   523×1000 column is vertical. Children carry the parent's glaze; only grout
+   separates them. This is what used to be 450px of residue. */
+.vnest { position:absolute; inset-inline:0; bottom:92px; height:356px;
+         display:flex; flex-direction:column; gap:var(--grout);
+         padding-top:var(--grout); background:var(--gypsum); }
+.vnest > .f { display:flex; align-items:center; justify-content:space-between;
+              gap:var(--s2); padding:0 var(--s5); }
+.vcap { position:absolute; inset-inline:var(--s5); bottom:460px;
+        display:flex; align-items:baseline; justify-content:space-between; }
 
 /* the second level of the same law: the biggest field is itself partitioned, by
    supplier, at true width. A share too small to hold a figure keeps only its
    name and its percent, which is the correct outcome and not a defect. */
 .nest { position:absolute; inset-inline:0; bottom:0; }
-.nest .tag { display:block; margin:0 44px 14px; }
+.ncap { display:flex; align-items:baseline; justify-content:space-between;
+        margin:0 var(--s5) var(--s2); }
 /* The children carry the SAME glaze as their parent, because they are the same
    money. Nothing separates them but grout: the gypsum ground showing through a
    4px cut. This is the whole point of clause 1 — the line is never drawn. */
-.nrow { display:flex; gap:var(--grout); height:154px;
+.nrow { display:flex; gap:var(--grout); height:164px;
         padding-top:var(--grout); background:var(--gypsum); }
-.nrow > .f { padding:18px 20px 0; }
-.nrow .np { position:absolute; bottom:16px; inset-inline-end:18px;
-            font-family:"Mono",monospace; font-weight:500; font-size:13px;
+.nrow > .f { padding:var(--s3) var(--s3) 0; }
+.nrow .np { position:absolute; bottom:var(--s3); inset-inline-end:var(--s3);
+            font-family:"Mono",monospace; font-weight:500; font-size:var(--m-sm);
             color:var(--on-stone-2); }
 
-/* the whole, named inside the part that answers it */
+/* the whole, named inside the part that answers it, and that part's own stamp */
 .whole { position:absolute; inset-inline:0; bottom:0; background:var(--gypsum);
-         color:var(--on-stone); padding:18px 44px 20px; }
-.whole b { display:block; font-weight:800; font-size:13.5px; }
-.whole span { display:block; margin-top:5px; font-family:"Mono",monospace; font-weight:500;
-              font-size:12px; letter-spacing:0.14em; color:var(--on-stone-2); direction:ltr; }
+         color:var(--on-stone); padding:var(--s2) var(--s5);
+         display:flex; align-items:center; justify-content:space-between; gap:var(--s3); }
+.whole b { display:block; font-weight:800; font-size:var(--t-name); }
+.whole .mm2 { display:block; margin-top:4px; font-family:"Mono",monospace; font-weight:500;
+              font-size:var(--t-tag); letter-spacing:0.14em; color:var(--on-stone-2); direction:ltr; }
+.whole .pcx { position:static; color:var(--on-stone-2); }
 </style>
 </head>
 <body>
@@ -79,15 +94,39 @@
       <div class="hung">
         <div class="nm big">ما بقي لك</div>
         <span class="q f76"><span class="n">1,775,580</span><span class="u">دينار عراقي</span></span>
-        <p class="note" style="font-size:15px; color:var(--on-kiln-2); max-width:30ch">
+        <p class="note" style="font-size:var(--t-body); color:var(--on-kiln-2); max-width:30ch">
           صافي ما تحتفظ به من أغسطس، بعد كلفة الشراء وحصص الفريق والتوصيل والمرتجع.
           لا يُقاس قبلها.
         </p>
       </div>
-      <span class="pc">34.4%</span>
+      <div class="vcap">
+        <span class="tag">NET PROFIT BY CATEGORY</span>
+        <span class="tag">SUMS TO 1,775,580</span>
+      </div>
+      <div class="vnest">
+        <div class="f kiln" style="flex:0 0 34.49%">
+          <span class="nm">حافظات جلد</span>
+          <span class="q f22 trail"><span class="n">612,400</span></span>
+        </div>
+        <div class="f kiln" style="flex:0 0 28.10%">
+          <span class="nm">شواحن سريعة</span>
+          <span class="q f22 trail"><span class="n">498,900</span></span>
+        </div>
+        <div class="f kiln" style="flex:0 0 20.93%">
+          <span class="nm">سماعات لاسلكية</span>
+          <span class="q f22 trail"><span class="n">371,600</span></span>
+        </div>
+        <div class="f kiln" style="flex:1 1 auto">
+          <span class="nm">أخرى</span>
+          <span class="q f22 trail"><span class="n">292,680</span></span>
+        </div>
+      </div>
       <div class="whole">
-        <b>من إيراد الشهر 5,164,500 دينار</b>
-        <span>216 SALES · 88 UNITS · JUL +46.2%</span>
+        <span>
+          <b>من إيراد الشهر 5,164,500 دينار</b>
+          <span class="mm2">216 SALES · 88 UNITS · JUL +46.2%</span>
+        </span>
+        <span class="pcx">34.4%</span>
       </div>
     </div>
 
@@ -105,29 +144,31 @@
           </p>
         </div>
         <div class="nest">
-          <span class="tag" style="color:var(--on-stone-3)">BY SUPPLIER · FROZEN PRICES</span>
+          <div class="ncap">
+            <span class="tag">BY SUPPLIER · FROZEN PRICES</span>
+            <span class="pcx raised">45.2%</span>
+          </div>
           <div class="nrow">
             <div class="f bisq" style="flex:0 0 41.04%">
-              <div class="nm" style="font-size:13px">مورّد الرصافة</div>
+              <div class="nm" style="font-size:var(--t-body)">مورّد الرصافة</div>
               <span class="q f22" style="margin-top:12px"><span class="n">958,300</span></span>
               <span class="np">41.0%</span>
             </div>
             <div class="f bisq" style="flex:0 0 27.50%">
-              <div class="nm" style="font-size:13px">مخزن الكرادة</div>
+              <div class="nm" style="font-size:var(--t-body)">مخزن الكرادة</div>
               <span class="q f22" style="margin-top:12px"><span class="n">642,100</span></span>
               <span class="np">27.5%</span>
             </div>
             <div class="f bisq" style="flex:0 0 21.95%">
-              <div class="nm" style="font-size:13px">استيراد مباشر</div>
+              <div class="nm" style="font-size:var(--t-body)">استيراد مباشر</div>
               <span class="np">21.9%</span>
             </div>
             <div class="f bisq" style="flex:1 1 auto">
-              <div class="nm" style="font-size:13px">متفرّقات</div>
+              <div class="nm" style="font-size:var(--t-body)">متفرّقات</div>
               <span class="np">9.5%</span>
             </div>
           </div>
         </div>
-        <span class="pc raised">45.2%</span>
       </div>
 
       <div class="rowB">
@@ -135,23 +176,23 @@
         <div class="f lapis p3" style="flex:0 0 73.04%">
           <div class="hung">
             <div class="nm">حصص المندوبين</div>
-            <span class="q f40" style="margin-top:14px"><span class="n">769,420</span><span class="u">دينار</span></span>
-            <p class="note sm" style="color:var(--on-glaze-2); max-width:40ch">
+            <span class="q f40" style="margin-top:16px"><span class="n">769,420</span><span class="u">دينار</span></span>
+            <p class="note" style="max-width:40ch">
               أربع قسمات مختلفة، كل واحدة بقاعدتها ولا واحدة منها تُقدَّر بالنية.
             </p>
           </div>
-          <span class="pc">14.9%</span>
+          <span class="pcx">14.9%</span>
         </div>
 
         <div class="f terra p3" style="flex:1 1 auto">
           <div class="hung">
             <div class="nm">التوصيل والمرتجع</div>
-            <span class="q f30" style="margin-top:14px"><span class="n">284,580</span><span class="u">دينار</span></span>
-            <p class="note sm" style="color:var(--on-glaze-2)">
+            <span class="q f30" style="margin-top:16px"><span class="n">284,580</span><span class="u">دينار</span></span>
+            <p class="note">
               مرتجعات: 11 من 216 بيعة.
             </p>
           </div>
-          <span class="pc">5.5%</span>
+          <span class="pcx">5.5%</span>
         </div>
       </div>
 

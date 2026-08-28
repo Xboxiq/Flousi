@@ -29,18 +29,18 @@
    with the largest gap. A control that changes a boundary belongs at that
    boundary and nowhere else. Focal point: the seam. */
 
-.band { position:absolute; inset-inline:0; top:0; height:236px; background:var(--limestone);
-        display:flex; align-items:flex-start; justify-content:space-between; gap:56px; padding:44px 56px 0; }
-.band h1 { font-size:40px; font-weight:800; letter-spacing:-0.035em; line-height:1; }
-.band .lede { margin-top:18px; max-width:62ch; font-size:14px; line-height:1.68; color:var(--on-stone-2); }
+.band { position:absolute; inset-inline:0; top:0; height:232px; background:var(--limestone);
+        display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s6); padding:var(--s5) var(--s6) 0; }
+.band h1 { font-size:var(--t-display); font-weight:800; letter-spacing:-0.035em; line-height:1; }
+.band .lede { margin-top:16px; max-width:62ch; font-size:var(--t-body); line-height:1.68; color:var(--on-stone-2); }
 .band .three { display:flex; gap:var(--grout); flex:0 0 auto; }
-.band .three > div { background:var(--limestone-2); padding:18px 22px 16px; min-width:178px; position:relative; }
-.band .three .k { font-weight:800; font-size:12px; color:var(--on-stone-2); }
+.band .three > div { background:var(--limestone-2); padding:var(--s3); min-width:184px; position:relative; }
+.band .three .k { font-weight:800; font-size:var(--t-name); color:var(--on-stone-2); }
 .band .three .v { margin-top:12px; }
 .band .three .owe { background:var(--kiln); color:var(--on-kiln); }
 .band .three .owe .k { color:var(--on-kiln-2); }
 
-.strips { position:absolute; inset-inline:0; top:240px; bottom:52px; display:flex; gap:var(--grout); background:var(--gypsum); }
+.strips { position:absolute; inset-inline:0; top:236px; bottom:52px; display:flex; gap:var(--grout); background:var(--gypsum); }
 .st { display:flex; flex-direction:column; gap:var(--grout); }
 .st > .f { position:relative; overflow:hidden; }
 
@@ -49,41 +49,53 @@
    cut pinned a caption to one corner and a figure to the other, and in a 237px
    strip they printed straight through each other. Nothing that can collide is
    positioned by corner. */
-.owed { padding:26px 24px; }
-.owed .nm2 { font-weight:800; font-size:19px; letter-spacing:-0.015em; }
-.owed .sc  { margin-top:6px; font-size:12.5px; opacity:0.72; }
-.owed .bot { position:absolute; inset-inline:24px; bottom:24px; }
-.owed .cap { display:block; margin-bottom:11px; font-weight:800; font-size:12.5px; opacity:0.72; }
+.owed { padding:var(--s4) var(--s4); }
+.owed .nm2 { font-weight:800; font-size:var(--t-name-lg); letter-spacing:-0.015em; }
+.owed .sc  { margin-top:var(--s1); font-size:var(--t-meta); opacity:0.72; }
+.owed .bot { position:absolute; inset-inline:var(--s4); bottom:var(--s4); }
+.owed .cap { display:block; margin-bottom:var(--s2); font-weight:800; font-size:var(--t-name); opacity:0.72; }
 
 /* below the seam: what has been paid, sealed */
-.paid { padding:24px 24px; }
-.paid .k2 { font-weight:800; font-size:12.5px; color:var(--on-kiln-2); }
-.paid .amt { margin-top:12px; }
-.paid .foot2 { position:absolute; inset-inline:24px; bottom:24px; display:flex;
-               align-items:baseline; justify-content:space-between; gap:18px; }
-.paid .last { font-size:12.5px; color:var(--on-kiln-3); }
-.paid .pc2 { flex:0 0 auto; font-family:"Mono",monospace; font-weight:500; font-size:13px;
-             color:var(--on-kiln-3); direction:ltr; }
-
+ /* Clause 8 on the four darkest fields on the plane. What has been paid is itself
+    a whole, so it is partitioned by settlement — along the field's LONGER axis:
+    horizontally in a 583px strip, vertically in a 237px one. Children carry the
+    parent's glaze; only grout separates them. This is what used to be 580px of
+    black residue. The field is a flex COLUMN so nothing here is corner-pinned. */
+.paid { padding:var(--s4) var(--s4) 0; display:flex; flex-direction:column; }
+.paid .k2 { font-weight:800; font-size:var(--t-name); color:var(--on-kiln-2); }
+.paid .amt { margin-top:var(--s2); }
+.paid .gap { flex:1 1 auto; min-height:var(--s3); }
+.paid .foot2 { display:flex; align-items:baseline; justify-content:space-between;
+               gap:var(--s3); margin-bottom:var(--s3); }
+.paid .last { font-size:var(--t-meta); color:var(--on-kiln-2); }
+.paid .pc2 { flex:0 0 auto; font-family:"Mono",monospace; font-weight:500;
+             font-size:var(--m-sm); color:var(--on-kiln-2);
+             direction:ltr; }   /* «61.8% SETTLED» reorders to «SETTLED 61.8%» without this */
+.snest { flex:0 0 auto; margin-inline:calc(-1 * var(--s4)); display:flex; flex-direction:row;
+         gap:var(--grout); padding-top:var(--grout); background:var(--gypsum); height:124px; }
+.snest > .f { padding:0 var(--s3); display:flex; flex-direction:column;
+              justify-content:center; gap:var(--s1); }
+.snest.vert { flex-direction:column; }
+.snest.vert > .f { flex-direction:row; align-items:center; justify-content:space-between; gap:var(--s2); }
+.snest .dt2 { font-weight:700; font-size:var(--t-meta); color:var(--on-kiln-2); }
 /* the sliver: a strip too narrow for a figure keeps its name and its verdict */
-.thin { padding:20px 10px; }
-.thin b { display:block; font-weight:800; font-size:12.5px; line-height:1.35; color:var(--on-kiln); }
-.thin .z { position:absolute; inset-inline-start:10px; bottom:56px; }
-.thin .v2 { position:absolute; inset-inline-start:10px; bottom:20px; font-size:11px; color:var(--on-kiln-3); line-height:1.4; }
+.thin { padding:var(--s3) 8px; }
+.thin b { display:block; font-weight:800; font-size:var(--t-name); line-height:1.35; color:var(--on-kiln); }
+.thin .z { position:absolute; inset-inline-start:8px; bottom:56px; }
+.thin .v2 { position:absolute; inset-inline-start:8px; bottom:20px; font-size:var(--t-tag); color:var(--on-kiln-3); line-height:1.4; }
 
 /* The control straddles the seam it would move. It is gypsum, not kiln: a kiln
    button on a kiln field is not a button, it is a sentence, which is exactly how
    the first cut of this screen printed it. */
-.settle { position:absolute; z-index:6; }
-.settle .act { background:var(--gypsum); color:var(--on-stone); font-size:14px; padding:16px 22px; }
-.settle .hint { display:block; margin-top:10px; font-family:"Mono",monospace; font-weight:400;
-                font-size:10.5px; letter-spacing:0.16em; color:var(--on-kiln-3); direction:ltr; }
+.settle { position:absolute; z-index:6; display:flex; flex-direction:column; align-items:flex-start; gap:var(--s1); padding:var(--s3); background:var(--gypsum); color:var(--on-stone); clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+.settle .act { background:transparent; color:var(--on-stone); font-size:var(--t-name); padding:0; clip-path:none; }
+.settle .hint { font-family:"Mono",monospace; font-weight:400; font-size:var(--t-tag); letter-spacing:0.16em; color:var(--on-stone-3); direction:ltr; }
 
 .navband { position:absolute; inset-inline:0; bottom:0; height:48px; display:flex; gap:var(--grout); background:var(--gypsum); }
 .navband .mk { flex:0 0 76px; background:var(--kiln); display:grid; place-items:center; }
 .navband .mk svg { width:20px; height:20px; }
 .navband a { flex:1 1 0; background:var(--kiln); color:var(--on-kiln-2); text-decoration:none;
-             display:grid; place-items:center; font-weight:800; font-size:13px; }
+             display:grid; place-items:center; font-weight:800; font-size:var(--t-name); }
 .navband a[aria-current] { background:var(--gypsum); color:var(--on-stone); }
 .navband .tag { flex:0 0 auto; background:var(--kiln); color:var(--on-kiln-3); display:grid;
                 place-items:center; padding-inline:24px; }
@@ -132,7 +144,13 @@
       <div class="f kiln paid" style="flex:0 0 64.76%">
         <div class="k2">دُفع له</div>
         <div class="amt"><span class="q f40"><span class="n">1,165,000</span></span></div>
-        <div class="foot2"><span class="last">آخر تسوية 12 أغسطس، نقداً</span><span class="pc2">64.8% SETTLED</span></div>
+        <div class="gap"></div>
+        <div class="foot2"><span class="last">ثلاث تسويات هذا الصيف</span><span class="pc2">64.8% SETTLED</span></div>
+        <div class="snest">
+          <div class="f kiln" style="flex:0 0 38.63%"><span class="dt2">12 أغسطس · نقداً</span><span class="q f22"><span class="n">450,000</span></span></div>
+          <div class="f kiln" style="flex:0 0 34.33%"><span class="dt2">28 يوليو · نقداً</span><span class="q f22"><span class="n">400,000</span></span></div>
+          <div class="f kiln" style="flex:1 1 auto"><span class="dt2">5 يوليو · تحويل</span><span class="q f22"><span class="n">315,000</span></span></div>
+        </div>
       </div>
     </div>
 
@@ -149,7 +167,13 @@
       <div class="f kiln paid" style="flex:0 0 61.80%">
         <div class="k2">دُفع له</div>
         <div class="amt"><span class="q f40"><span class="n">1,350,000</span></span></div>
-        <div class="foot2"><span class="last">آخر تسوية 2 أغسطس، تحويل</span><span class="pc2">61.8% SETTLED</span></div>
+        <div class="gap"></div>
+        <div class="foot2"><span class="last">ثلاث تسويات هذا الصيف</span><span class="pc2">61.8% SETTLED</span></div>
+        <div class="snest">
+          <div class="f kiln" style="flex:0 0 44.44%"><span class="dt2">2 أغسطس · تحويل</span><span class="q f22"><span class="n">600,000</span></span></div>
+          <div class="f kiln" style="flex:0 0 31.48%"><span class="dt2">19 يوليو · نقداً</span><span class="q f22"><span class="n">425,000</span></span></div>
+          <div class="f kiln" style="flex:1 1 auto"><span class="dt2">1 يوليو · نقداً</span><span class="q f22"><span class="n">325,000</span></span></div>
+        </div>
       </div>
     </div>
 
@@ -166,7 +190,12 @@
       <div class="f kiln paid" style="flex:0 0 41.90%">
         <div class="k2">دُفع لها</div>
         <div class="amt"><span class="q f30"><span class="n">306,000</span></span></div>
-        <div class="foot2"><span class="last">آخر تسوية 27 يوليو</span><span class="pc2">41.9%</span></div>
+        <div class="gap"></div>
+        <div class="foot2"><span class="last">تسويتان</span><span class="pc2">41.9%</span></div>
+        <div class="snest vert">
+          <div class="f kiln" style="flex:0 0 60.78%"><span class="dt2">27 يوليو · نقداً</span><span class="q f22 trail"><span class="n">186,000</span></span></div>
+          <div class="f kiln" style="flex:1 1 auto"><span class="dt2">12 يونيو · نقداً</span><span class="q f22 trail"><span class="n">120,000</span></span></div>
+        </div>
       </div>
     </div>
 
@@ -182,7 +211,7 @@
   </div>
 
   <div class="settle" id="settle">
-    <button class="act">سجّل تسوية لسعد</button>
+    <button class="act">سجّل تسوية</button>
     <span class="hint">MOVES THIS SEAM UP</span>
   </div>
 
@@ -206,8 +235,8 @@
 const strip = document.querySelectorAll(".strips .st")[1];
 const seam  = strip.children[1].getBoundingClientRect();
 const s = document.getElementById("settle");
-s.style.top  = (seam.top - 32) + "px";
-s.style.left = (seam.left + 34) + "px";
+s.style.top  = (seam.top - 46) + "px";
+s.style.left = (seam.left + 24) + "px";
 </script>
 </body>
 </html>

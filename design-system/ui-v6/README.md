@@ -20,6 +20,66 @@ So v6 keeps the brand constant (Cairo, IBM Plex Mono, latn, RTL by logical
 properties) and throws out the forms. Not by picking different shapes, which
 would only relocate the problem, but by deriving every shape from a single law.
 
+## v6.1 — the measured cut
+
+The first cut had the idea and lost the craft. The client's note was
+**«التصميم والأشكال كلها اختربت وضاعت تفاصيل التصميم»**, and it was right. Three
+faults, each measured rather than argued, each now checked by a script:
+
+**1 · Contrast.** Six of the nine ink-on-ground pairs failed WCAG AA. Every
+secondary ink was an alpha of the primary, which is a dimmer, not a colour
+decision: `rgba(23,19,15,0.40)` on limestone is **2.49:1**. Every ink is a solid
+value now, chosen against its ground, with its ratio written beside it in
+`tile.css`. Turquoise itself moved from `#14807A` (white 4.54:1, a hair over the
+line at any size) to `#0E5F5A` (**7.12:1**), because a person's glaze carries
+white text on five screens. Saffron takes kiln ink at **7.38:1**, never gypsum at
+2.38 — so the rule is: *the ink on a glaze is whichever ground passes.*
+
+**2 · The scale was not a scale.** Body text drifted across 11.5 / 12 / 12.5 / 13
+/ 13.5 / 14 / 14.5 / 15 / 16 / 16.5 / 17 / 19px — eleven sizes doing the work of
+four. There are six text steps and four mono steps now, as tokens. A literal
+`font-size` in a screen file is a build failure. Same for geometry: every padding,
+margin, gap and inset is a multiple of 4, audited, with 1px carets and 2px rules
+the only exceptions.
+
+**3 · Voids were leftovers, not negative space.** Because area is the encoding, a
+field's size comes from its amount, not its content — so a field holding 45% of
+the plane held one label in a corner and 690px of nothing. That is residue, not
+composition. Hence **clause 8**: a field over 240px tall carries a foot, and the
+honest foot is almost always *the next level of the same law*:
+
+| screen | what filled the void | how |
+|---|---|---|
+| F1 | the kept profit, by category | a **vertical** nest, because the field is 523×1000 |
+| F1 | the purchase cost, by supplier | a **horizontal** nest, because that field is wide |
+| F2 | five ledger lines, not three, and a provenance line capping the totals | the void is now bounded at both ends |
+| F4 | every paid field, by settlement | horizontal in a 583px strip, **vertical** in a 237px one |
+| F5 | each band's margin and its stamp | a foot row, except under 240px where the two-row form is used instead |
+
+A nest always partitions along the field's **longer** axis, and its children carry
+the parent's glaze: only grout separates them.
+
+## The audit
+
+    node design-system/ui-v6/audit.mjs      # needs the server on 8390
+
+Seven checks, four static and three live in Chromium, because every fault this
+language actually shipped was invisible in the source:
+
+| | check |
+|---|---|
+| A1 | no literal `font-size` anywhere — the scale is tokens or it is not a scale |
+| A2 | every geometric literal on the 4px half-step, or below 6px where it is a caret, a rule, or the grout |
+| A3 | no rule sets `direction` **and** `inset-inline-*` — that flips the element's own inline axis |
+| B1 | every rendered text node clears WCAG AA against its actual painted ground, at its real size and weight |
+| B2 | clause 8: every field over 240px tall carries a foot, unless it is a container or its own text already reaches 65% of its height |
+| B3 | nothing clipped: no text box and no painted box exceeds its clipping ancestor |
+| B4 | nothing overlapping: no two text boxes intersect by more than 3px |
+
+B4 is the one that would have caught «14.9%» printed through «769,420», B3 the
+foundry's footer pushed off the plane entirely, and B1 the six failing inks.
+All six screens pass.
+
 ## The law
 
 **AREA IS THE ONLY ENCODING.** This product exists to divide a whole, and a
@@ -107,6 +167,22 @@ looked at. Two of them are laws, not slips, and are recorded in
 * **F1's largest field had a 690px void.** Filling it with the second level of the
   same law — the purchase cost partitioned by supplier, separated only by grout —
   was better than shrinking the field or padding it with prose.
+
+And what the v6.1 audit caught, after all of the above had been eye-verified:
+
+* **The foundry's whole footer was off the plane.** A row set to `flex:1 1 auto`
+  grew past its share and pushed the last 48px out of a 1000px screen. Nobody saw
+  it in four passes of looking; the clipping check found it in one run.
+* **A gypsum-on-kiln overlay had no ground of its own.** F4's settlement control
+  read fine because it happened to sit over a dark field, but its contrast
+  depended on what was behind it. It is one gypsum block now, so the ratio is a
+  property of the control and not of its position.
+* **The 100px band could not carry clause 8.** Forcing a head and a foot into
+  F5's 14.9% band printed «أربع قسمات مختلفة» through «769,420». A field under
+  240px uses the two-row form: name and stamp share the top line, figure below.
+* **A mono stamp forced onto the tag step.** The first normalisation pass mapped
+  every monospaced run to 10.5px, shrinking four screens' figures. Mono has its
+  own four-step ladder now; a stamp is not a caption.
 
 ## Status
 
