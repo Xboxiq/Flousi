@@ -1,0 +1,192 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   FLOUSI UI v6 — «مساحات» / FIELDS
+   A second product design language, built to answer one objection: the last set
+   kept re-drawing the same shapes. So every shape here is new, and each one is
+   derived from a single law instead of chosen from taste.
+
+   THE LAW
+   AREA IS THE ONLY ENCODING. This product exists to divide a whole. A division
+   is a plane cut into parts, so a quantity is drawn as a FIELD whose area is its
+   amount, and never as a bar, a rail, a ring, a gauge, a sparkline or a row in a
+   ruled table. Two amounts are compared by standing their fields side by side.
+   Everything below follows from that law.
+
+   WHAT FOLLOWS FROM IT
+   1 NO LINES.     A field needs no border, because its own edge is its outline.
+                   The only separator is 4px of GROUT: the gypsum ground showing
+                   between two fields. The line here is subtractive, never drawn.
+   2 NO RADIUS.    Nothing is rounded, anywhere. The one soft form in the system
+                   is a 16px CHAMFER on the leading-bottom corner, and it means
+                   exactly one thing: a hand may touch this field. Cut = live.
+   3 GLAZE = WHO.  Each participant owns one glaze for life, at every scale, on
+                   every screen. Full glaze is a frozen fact; BISQUE (unglazed,
+                   ground-tinted) is a projection or a part that was never yours.
+   4 TYPE INSIDE.  A label lives inside the field it names, hung from that
+                   field's own leading-top corner, and its size is a function of
+                   the field's AREA. Hierarchy is emergent: the biggest share is
+                   physically the biggest type, because it is the biggest field.
+   5 TWO GROUNDS.  Limestone is the day; kiln is the sealed and the settled. One
+                   screen alone puts both on the same plane, at the seam.
+   6 RE-TILE.      Motion is never a slide or a fade. Fields grow and shrink
+                   along the lattice in 220ms, so a change in the numbers is seen
+                   as a change in the MAP.
+
+   BRAND CONSTANTS CARRIED OVER (v5 → v6): Cairo for language, IBM Plex Mono for
+   every figure, latn numerals, tabular, RTL by logical properties only, no em
+   dash in Arabic copy. The identity is the same company. The forms are not.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@font-face { font-family:"Cairo"; src:url("../campaign/fonts/cairo-arabic.woff2") format("woff2");
+  font-weight:200 1000; font-display:block;
+  unicode-range:U+600-6FF,U+750-77F,U+870-88E,U+FB50-FDFF,U+FE70-FEFF,U+200C-200E; }
+@font-face { font-family:"Cairo"; src:url("../campaign/fonts/cairo-latin.woff2") format("woff2");
+  font-weight:200 1000; font-display:block;
+  unicode-range:U+0-FF,U+131,U+152-153,U+2000-206F,U+2C60-2C7F; }
+@font-face { font-family:"Mono"; src:url("../campaign/fonts/plex-mono-500.woff2") format("woff2");
+  font-weight:500; font-display:block; }
+@font-face { font-family:"Mono"; src:url("../campaign/fonts/plex-mono-400.woff2") format("woff2");
+  font-weight:400; font-display:block; }
+
+:root {
+  /* the two grounds, and the grout between every pair of fields */
+  --gypsum: #fbf9f4;
+  --limestone: #ece5d8;
+  --limestone-2: #ded3bf;
+  --bisque: #d3c7b1;
+  --kiln: #17130f;
+  --kiln-2: #241d17;
+
+  /* the glazes. hue is identity, held for life */
+  --lapis: #1b4ba8;
+  --lapis-2: #12356f;
+  --turq: #14807a;
+  --saffron: #d9971a;
+  --terra: #ab4525;
+
+  /* ink */
+  --on-stone: #17130f;
+  --on-stone-2: rgba(23,19,15,0.58);
+  --on-stone-3: rgba(23,19,15,0.40);
+  --on-kiln: #f4efe4;
+  --on-kiln-2: rgba(244,239,228,0.60);
+  --on-kiln-3: rgba(244,239,228,0.38);
+  --on-glaze: #fbf9f4;
+  --on-glaze-2: rgba(251,249,244,0.66);
+
+  --grout: 4px;
+  --cut: 16px;
+  --retile: 220ms cubic-bezier(0.2,0.8,0.2,1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { -webkit-font-smoothing:antialiased; text-rendering:geometricPrecision; }
+body { font-family:"Cairo",sans-serif; background:#7d766a; }
+
+.screen {
+  position:relative; width:1600px; height:1000px; overflow:hidden;
+  background:var(--gypsum); color:var(--on-stone);
+  font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1;
+}
+.screen.dark { background:var(--kiln); color:var(--on-kiln); }
+
+/* ── the field ──────────────────────────────────────────────────────────────
+   A field is a plane with type hung inside it. It has no border and no radius.
+   `live` cuts the leading-bottom corner: in RTL that is the physical bottom
+   RIGHT, which is why the polygon is written in physical coordinates. */
+.f { position:relative; overflow:hidden; }
+.f.live { clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+ /* A stone field carries stone ink even when it sits on a kiln screen. Without
+    this the light ink of the dark ground was inherited straight onto limestone
+    and four of F2's six columns went nearly unreadable. */
+.f.stone  { background:var(--limestone);   color:var(--on-stone); }
+.f.stone2 { background:var(--limestone-2); color:var(--on-stone); }
+.f.bisq   { background:var(--bisque); color:rgba(23,19,15,0.72); }
+.f.kiln   { background:var(--kiln);  color:var(--on-kiln); }
+.f.kiln2  { background:var(--kiln-2); color:var(--on-kiln); }
+.f.gyp    { background:var(--gypsum); color:var(--on-stone); }
+.f.lapis  { background:var(--lapis); color:var(--on-glaze); }
+.f.turq   { background:var(--turq);  color:var(--on-glaze); }
+.f.saff   { background:var(--saffron); color:#17130f; }
+.f.terra  { background:var(--terra); color:var(--on-glaze); }
+
+/* the pad scale: a field's padding grows with the field, in the 4px lattice */
+.p1 { padding:16px; } .p2 { padding:24px; } .p3 { padding:32px; } .p4 { padding:44px; }
+
+/* ── type ────────────────────────────────────────────────────────────────────
+   Two labels only. `nm` names a field in language; `tag` stamps it in mono. */
+.nm  { font-weight:800; font-size:14px; letter-spacing:-0.005em; }
+.nm.big { font-size:19px; }
+.tag { font-family:"Mono",monospace; font-weight:500; font-size:10.5px; letter-spacing:0.22em; }
+.note { font-size:13px; line-height:1.62; }
+.note.sm { font-size:12px; line-height:1.55; }
+
+/* A figure is stacked over its unit and ranged to the field's leading edge. The
+   run is LTR so a comma group and a leading minus never reorder. */
+.q { display:block; direction:ltr; text-align:right; }
+[dir="rtl"] .q { text-align:right; }
+.q .n { display:block; font-family:"Mono",monospace; font-weight:500; line-height:0.92;
+        letter-spacing:-0.04em; font-size:var(--fs,40px); }
+.q .u { display:block; font-family:"Cairo",sans-serif; font-weight:700; direction:rtl;
+        margin-top:calc(var(--fs,40px) * 0.18); font-size:calc(var(--fs,40px) * 0.24);
+        letter-spacing:0; opacity:0.55; }
+.q.f108 { --fs:108px; } .q.f76 { --fs:76px; } .q.f56 { --fs:56px; }
+.q.f40  { --fs:40px;  } .q.f30 { --fs:30px; } .q.f22 { --fs:22px; } .q.f16 { --fs:16px; }
+
+/* ── the spine: navigation as a column of tiles, never a bar across the top ── */
+.spine {
+  position:absolute; inset-block:0; inset-inline-end:0; width:76px;
+  display:flex; flex-direction:column; gap:var(--grout); background:var(--gypsum);
+}
+.spine .mk { flex:0 0 76px; background:var(--kiln); display:grid; place-items:center; }
+.spine .mk svg { width:26px; height:26px; }
+.spine a {
+  flex:1; background:var(--limestone); color:var(--on-stone);
+  display:grid; place-items:center; text-decoration:none;
+  font-weight:800; font-size:12.5px; letter-spacing:-0.01em;
+  transition:background var(--retile);
+}
+.spine a[aria-current] { background:var(--kiln); color:var(--on-kiln); }
+.spine .when {
+  flex:0 0 60px; background:var(--limestone-2); display:grid; place-items:center;
+  font-family:"Mono",monospace; font-weight:500; font-size:10.5px; letter-spacing:0.14em;
+  color:var(--on-stone-2); direction:ltr;
+}
+
+/* ── the one control: a live field with a word in it ────────────────────────── */
+.act {
+  font:inherit; font-weight:800; font-size:15px; cursor:pointer; border:0;
+  padding:19px 26px; background:var(--kiln); color:var(--on-kiln);
+  clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+  transition:transform var(--retile), background var(--retile);
+}
+.act.blue { background:var(--lapis); color:var(--on-glaze); }
+.act.ghost { background:transparent; color:inherit; padding-inline:0; clip-path:none;
+  text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:1.5px; }
+
+/* ── one RTL trap, recorded because it cost four screens ─────────────────────
+   `inset-inline-start/end` resolve against the ELEMENT'S OWN direction, not its
+   parent's. So an absolutely positioned mono stamp that sets `direction:ltr` on
+   itself has its own inline axis flipped, and `inset-inline-end:20px` lands on
+   the physical RIGHT — the reading edge — in an RTL page. Every percent stamp in
+   v6 was silently on the wrong side of its field, and on F5 one printed straight
+   through the figure it belonged to.
+   The fix is not a physical property: a run of digits and a per cent sign is all
+   ET/EN under bidi, so it reorders correctly with no `direction` override at all.
+   Drop the override; keep the logical property.
+
+   A field shorter than it is wide is a ROW, and in a row the figure ranges to
+   the trailing edge so a column of figures aligns. The label still hangs from
+   the leading edge. This is the only exception to clause 4. */
+.q.trail { text-align:left; }
+
+/* ── states ────────────────────────────────────────────────────────────────────
+   Identity is a GLAZE; a verdict is an INK. Without that split, «success» would
+   have to borrow سعد's turquoise and «error» زينب's terracotta, and a person
+   would become a status. So a verdict never fills a field: it colours the words
+   inside one, and the field itself moves between the two grounds.
+   Focus is geometric: the leading corner cut DOUBLES and the field goes gypsum.
+   No ring is drawn, because nothing in this system is drawn. */
+.f.cut2 { clip-path:polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut),
+                            100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+.ink-bad  { color:var(--terra); }
+.ink-good { color:var(--turq); }

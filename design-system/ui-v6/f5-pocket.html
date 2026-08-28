@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Flousi v6 — F5 الجيب</title>
+<link rel="stylesheet" href="tile.css">
+<style>
+/* ── F5 · الجيب · the same language in a hand ─────────────────────────────────
+   Not one composition shrunk. On a 1600px plane a partition can run in two
+   directions; in a 390px hand it can only run in one, so the month's map becomes
+   BANDS whose heights are the amounts — the area law survives because the width
+   is constant and the height alone carries it.
+   What actually changes between the desk and the hand:
+     · direction  a two-axis partition becomes a one-axis stack
+     · navigation the spine and the bottom band both become a CORNER TAB, cut
+                  into the leading-bottom corner, which is where a thumb already
+                  rests. It opens upward into five words and closes to 56px.
+     · density    the trip list keeps the destination, the rep and one figure,
+                  and states the size with the weave's own square rather than a
+                  fifth column of numbers
+     · the task   keeps every field and docks its consequence above the keyboard,
+                  so the split stays visible while a thumb types
+   Three screens, three different states of the same navigation. */
+
+.page { position:absolute; inset:0; background:var(--kiln); }
+.rail { position:absolute; inset-inline:80px; top:34px; display:flex; gap:135px; }
+.cap { flex:0 0 390px; }
+.cap .t { font-family:"Mono",monospace; font-weight:500; font-size:10.5px; letter-spacing:0.22em; color:var(--on-kiln-3); }
+.cap b { display:block; margin-top:9px; font-weight:800; font-size:15px; color:var(--on-kiln); }
+
+.phones { position:absolute; inset-inline:80px; top:106px; display:flex; gap:135px; }
+/* A phone is a stone surface, and it carries stone ink even though the page it
+   lies on is kiln. Inheriting the dark page's light ink into three limestone
+   frames made every title on all three phones nearly invisible. */
+.ph { flex:0 0 390px; height:844px; position:relative; overflow:hidden;
+      background:var(--limestone); color:var(--on-stone); }
+
+/* the status line is one mono line, not a fake notch */
+.sb { height:34px; display:flex; align-items:center; justify-content:space-between; padding:0 18px;
+      font-family:"Mono",monospace; font-weight:500; font-size:10.5px; letter-spacing:0.12em;
+      color:var(--on-stone-3); direction:ltr; }
+
+/* A · the month as bands. Heights are the amounts. */
+.mhd { padding:16px 20px 20px; }
+.mhd .t2 { font-weight:800; font-size:13px; color:var(--on-stone-2); }
+.mhd .v2 { margin-top:12px; }
+.bands { position:absolute; inset-inline:0; top:176px; bottom:0; display:flex; flex-direction:column; gap:var(--grout);
+         background:var(--gypsum); }
+.bd { position:relative; padding:16px 20px; }
+.bd .n2 { font-weight:800; font-size:13.5px; }
+.bd .a2 { margin-top:10px; }
+.bd .p2 { position:absolute; bottom:14px; inset-inline-end:20px; font-family:"Mono",monospace;
+          font-weight:500; font-size:12px; opacity:0.5; }
+ /* the last band shares its line with the corner tab, so it keeps clear of it */
+.bd.tight { display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+            padding:12px 20px; padding-inline-start:78px; }
+.bd.tight .a2 { margin:0; }
+
+/* B · the list. Size is stated by the weave's own square, never by a bar. */
+.lhd { display:flex; align-items:baseline; justify-content:space-between; padding:14px 20px 16px; }
+.lhd b { font-weight:800; font-size:20px; letter-spacing:-0.02em; }
+.lhd span { font-family:"Mono",monospace; font-weight:500; font-size:10.5px; letter-spacing:0.18em; color:var(--on-stone-3); }
+ /* The open tab RESERVES its space instead of lying over the list. Overlaying it
+    buried the destination of the last two trips, which reads as text gone
+    missing rather than as a panel above content. A phone list shows five and
+    says so; the corner beside the tab carries the total of all seven. */
+.lst { position:absolute; inset-inline:0; top:104px; bottom:242px; display:flex; flex-direction:column;
+       gap:var(--grout); background:var(--gypsum); }
+.bsum { position:absolute; inset-inline-end:0; bottom:0; width:236px; height:238px;
+        background:var(--limestone-2); padding:20px; }
+.bsum .k6 { font-weight:800; font-size:12px; color:var(--on-stone-2); line-height:1.5; }
+.bsum .v6 { margin-top:14px; }
+.bsum .n6 { position:absolute; inset-inline-start:20px; bottom:20px; font-size:12px;
+            line-height:1.5; color:var(--on-stone-2); }
+.li2 { flex:1 1 0; background:var(--limestone); display:flex; align-items:center; gap:14px; padding:15px 20px; }
+.li2 .tx { flex:1 1 auto; min-width:0; }
+.li2 b { display:block; font-weight:800; font-size:15px; }
+.li2 em { display:block; margin-top:4px; font-style:normal; font-size:12px; color:var(--on-stone-2); }
+.li2 .am { flex:0 0 auto; }
+.li2 .cel { flex:0 0 42px; height:42px; background:var(--limestone-2); display:grid; place-items:center; }
+.li2 .cel i { display:block; aspect-ratio:1; }
+
+/* C · the task. Every field kept; the consequence docked above the keyboard. */
+.thd { display:flex; align-items:baseline; justify-content:space-between; padding:14px 20px 18px; }
+.thd b { font-weight:800; font-size:19px; letter-spacing:-0.02em; }
+.thd .x { font-weight:800; font-size:13px; color:var(--on-stone-2); }
+.fields { position:absolute; inset-inline:0; top:104px; bottom:236px; display:flex; flex-direction:column;
+          gap:var(--grout); background:var(--gypsum); }
+.fl { flex:1 1 0; background:var(--limestone); padding:14px 20px; position:relative; }
+.fl .k3 { font-weight:800; font-size:11.5px; color:var(--on-stone-2); }
+.fl .v3 { margin-top:9px; font-weight:800; font-size:16px; }
+.fl.now { background:var(--gypsum);
+          clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+.fl.now .v3 { color:var(--on-stone-3); display:flex; align-items:center; gap:9px; }
+.fl.now .v3 i { display:block; width:2px; height:18px; background:var(--lapis); }
+.fl.wait .k3, .fl.wait .v3 { color:var(--on-stone-3); }
+.dock { position:absolute; inset-inline:0; bottom:0; height:232px; background:var(--kiln); color:var(--on-kiln);
+        padding:18px 20px; }
+.dock .k4 { font-family:"Mono",monospace; font-weight:500; font-size:10px; letter-spacing:0.2em; color:var(--on-kiln-3); }
+.dock .pair { margin-top:16px; display:flex; gap:var(--grout); }
+.dock .pair > div { flex:1 1 0; padding:14px 16px; }
+.dock .pair .k5 { font-weight:800; font-size:11.5px; }
+.dock .pair .v5 { margin-top:9px; }
+.dock .go { position:absolute; inset-inline:20px; bottom:18px; text-align:start; }
+
+/* the corner tab: closed at 56px, open into five words */
+.tab { position:absolute; inset-inline-start:0; bottom:0; width:56px; height:56px; background:var(--kiln);
+       display:grid; place-items:center;
+       clip-path:polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%); }
+.tab svg { width:20px; height:20px; }
+.tabopen { position:absolute; inset-inline-start:0; bottom:0; width:150px; background:var(--kiln);
+           display:flex; flex-direction:column; padding-bottom:0;
+           clip-path:polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%); }
+.tabopen a { text-decoration:none; color:var(--on-kiln-2); font-weight:800; font-size:14px; padding:15px 20px; }
+.tabopen a:first-child { padding-top:26px; }
+.tabopen a[aria-current] { color:var(--on-kiln); background:var(--kiln-2); }
+
+.foot5 { position:absolute; inset-inline:80px; bottom:26px; display:flex; justify-content:space-between; }
+.foot5 span { font-family:"Mono",monospace; font-weight:400; font-size:11px; letter-spacing:0.18em; color:var(--on-kiln-3); direction:ltr; }
+</style>
+</head>
+<body>
+<div class="screen dark">
+  <div class="page"></div>
+
+  <div class="rail">
+    <span class="cap"><span class="t">A · ONE AXIS</span><b>الشهر، كأشرطة أفقية</b></span>
+    <span class="cap"><span class="t">B · TAB OPEN</span><b>الرحلات، والملاحة مفتوحة</b></span>
+    <span class="cap"><span class="t">C · DOCKED</span><b>تسجيل، والأثر فوق لوحة المفاتيح</b></span>
+  </div>
+
+  <div class="phones">
+
+    <!-- A -->
+    <div class="ph">
+      <div class="sb"><span>09:41</span><span>LOCAL · NO SERVER</span></div>
+      <div class="mhd">
+        <div class="t2">إيراد أغسطس، مقسوماً</div>
+        <div class="v2"><span class="q f30"><span class="n">5,164,500</span><span class="u">دينار</span></span></div>
+      </div>
+      <div class="bands">
+        <div class="bd f gyp" style="flex:0 0 34.4%">
+          <div class="n2">ما بقي لك</div>
+          <div class="a2"><span class="q f40"><span class="n">1,775,580</span></span></div>
+          <span class="p2">34.4%</span>
+        </div>
+        <div class="bd f bisq" style="flex:0 0 45.2%">
+          <div class="n2">كلفة الشراء</div>
+          <div class="a2"><span class="q f30"><span class="n">2,334,920</span></span></div>
+          <span class="p2">45.2%</span>
+        </div>
+        <div class="bd f lapis" style="flex:0 0 14.9%">
+          <div class="n2">حصص المندوبين</div>
+          <div class="a2"><span class="q f22"><span class="n">769,420</span></span></div>
+          <span class="p2">14.9%</span>
+        </div>
+        <div class="bd tight f terra" style="flex:1 1 auto">
+          <span class="n2">التوصيل والمرتجع</span>
+          <span class="a2"><span class="q f16"><span class="n">284,580</span></span></span>
+        </div>
+      </div>
+      <span class="tab">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M3 6h14M3 10h14M3 14h9" stroke="#fbf9f4" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </span>
+    </div>
+
+    <!-- B -->
+    <div class="ph">
+      <div class="sb"><span>09:41</span><span>7 TRIPS · AUG</span></div>
+      <div class="lhd"><b>رحلات أغسطس</b><span>5 OF 7 · SIZE = SQUARE</span></div>
+      <div class="lst" id="lst"></div>
+      <div class="bsum">
+        <div class="k6">مجموع رحلات الشهر</div>
+        <div class="v6"><span class="q f30"><span class="n">2,879,900</span></span></div>
+        <div class="n6">سبع رحلات، وأكبرها<br>في الكرادة.</div>
+      </div>
+      <nav class="tabopen">
+        <a href="#">اليوم</a>
+        <a href="#" aria-current="page">الرحلات</a>
+        <a href="#">القسمة</a>
+        <a href="#">الفريق</a>
+        <a href="#">الشهر</a>
+      </nav>
+    </div>
+
+    <!-- C -->
+    <div class="ph">
+      <div class="sb"><span>09:41</span><span>TRIP · 1048</span></div>
+      <div class="thd"><b>رحلة جديدة</b><span class="x">اخرج</span></div>
+      <div class="fields">
+        <div class="fl"><div class="k3">المندوب</div><div class="v3">ليث العبيدي</div></div>
+        <div class="fl"><div class="k3">الوجهة</div><div class="v3">زيونة، بغداد</div></div>
+        <div class="fl"><div class="k3">القطع</div><div class="v3">ثلاث قطع · 70 وحدة</div></div>
+        <div class="fl now"><div class="k3">سعر البيع</div><div class="v3"><i></i>اكتب المبلغ</div></div>
+        <div class="fl wait"><div class="k3">التوصيل</div><div class="v3">يُحسب بعد الإغلاق</div></div>
+      </div>
+      <div class="dock">
+        <div class="k4">LIVE · 486,000 DIVIDED</div>
+        <div class="pair">
+          <div class="f gyp"><div class="k5">يبقى لك</div><div class="v5"><span class="q f30"><span class="n">119,900</span></span></div></div>
+          <div class="f lapis"><div class="k5">حصة ليث</div><div class="v5"><span class="q f30"><span class="n">98,100</span></span></div></div>
+        </div>
+        <button class="act blue go">احفظ الرحلة</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot5">
+    <span>FLOUSI · V6 / F5 · 390 × 844 @ 3x</span>
+    <span>AREA LAW HOLDS ON ONE AXIS</span>
+  </div>
+</div>
+
+<script>
+/* Seven trips. The square is the weave's unit at list scale: side ∝ sqrt(amount),
+   so a row states size without growing a bar across it. */
+const T = [
+  { d:"زيونة، بغداد",   r:"ليث العبيدي", g:"var(--lapis)", v:486000, t:"اليوم 09:14" },
+  { d:"الكرادة",        r:"سعد الجبوري", g:"var(--turq)",  v:702500, t:"أمس 17:40" },
+  { d:"الجادرية",       r:"زينب الطائي", g:"var(--terra)", v:214000, t:"أمس 11:02" },
+  { d:"حي الجامعة",     r:"ليث العبيدي", g:"var(--lapis)", v:338900, t:"24 أغسطس" },
+  { d:"الأعظمية",       r:"سعد الجبوري", g:"var(--turq)",  v:597300, t:"23 أغسطس" },
+  { d:"المنصور",        r:"زينب الطائي", g:"var(--terra)", v:129400, t:"22 أغسطس" },
+  { d:"الشعلة",         r:"ليث العبيدي", g:"var(--lapis)", v:411800, t:"21 أغسطس" },
+];
+const MX = Math.max(...T.map(x => x.v));
+const fmt = n => new Intl.NumberFormat("en-US").format(n);
+document.getElementById("lst").innerHTML = T.map(x => {
+  const k = (Math.sqrt(x.v / MX) * 100).toFixed(1);
+  return '<div class="li2">' +
+    '<span class="tx"><b>' + x.d + '</b><em>' + x.r + ' · ' + x.t + '</em></span>' +
+    '<span class="am"><span class="q f22 trail"><span class="n">' + fmt(x.v) + '</span></span></span>' +
+    '<span class="cel"><i style="background:' + x.g + '; width:' + k + '%"></i></span>' +
+  '</div>';
+}).slice(0, 5).join("");
+</script>
+</body>
+</html>

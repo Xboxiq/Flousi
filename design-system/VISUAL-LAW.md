@@ -158,6 +158,36 @@ before it ships.
 | `/reps/schemes` | عمود السعر، الوحدة المتبقّية، سياستا الخسارة، آخر عملية، والاستثناءات — كلها مفتوحة | سلّم من خمس درجات تحت منصّة العمل |
 | `/targets` | شارة نسبة + مسطرة + حكم بالكلمات في كل سطر | المسطرة والحكم فقط؛ الشارة كانت الطبعة الثالثة |
 
+## §16 اللغات البديلة — Alternative languages, and how a conflict is settled
+
+The shipped app (`src/`) speaks **v4**, and every clause above governs it. Two
+further languages exist as complete, rendered explorations, and neither is
+allowed to leak into `src/` clause by clause:
+
+| | | |
+|---|---|---|
+| **v5** | `design-system/ui-v5/` | «آلة تحريرية» · rules and space; 2px radius + one pill; ink on paper with one reserved blue |
+| **v6** | `design-system/ui-v6/` | «مساحات» · area is the only encoding; **radius 0 everywhere**, one 16px chamfer meaning «touchable»; no drawn line at all, only 4px of gypsum grout; glaze = identity for life, ink = verdict |
+
+**The rule for conflicts.** v6 forbids outright three things v4 uses on every
+screen: any radius, any drawn hairline, and any card. That is not a violation of
+this document, because v6 is a *different* language, not a proposal to relax v4.
+The moment any part of v6 is lifted into `src/`, the clause it contradicts is
+resolved here in writing, in this table, with the reason and the date. Nothing is
+resolved silently in either direction.
+
+**Two engineering laws v6 discovered, which bind every language here:**
+
+1. `inset-inline-start/end` resolve against the **element's own** `direction`. An
+   absolutely positioned mono stamp that sets `direction:ltr` on itself has its
+   inline axis flipped, so `inset-inline-end` lands on the reading edge. A run of
+   digits and a per cent sign needs no `direction` override at all: it is ET/EN
+   under bidi and reorders correctly on its own. Drop the override, keep the
+   logical property.
+2. A light-ground surface placed on a dark screen must **declare its own ink**. A
+   limestone field inheriting a kiln page's light ink is unreadable, and this
+   failed on ten surfaces across two screens before it was seen.
+
 ## ميزانية الحركة (من nova — تحمي السينمائية من أكل المقروئية)
 - Max **two simultaneously animating elements** on a product/data surface.
 - Max **one** endless loop per page; **zero** infinite animation on a product

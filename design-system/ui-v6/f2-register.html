@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Flousi v6 — F2 تسجيل رحلة</title>
+<link rel="stylesheet" href="tile.css">
+<style>
+/* ── F2 · السجل · one task, laid out as a REGISTER ────────────────────────────
+   Recording a trip is a sequence, so the screen is a sequence: six full-height
+   columns read from the reading edge outward. Nothing scrolls, nothing stacks,
+   and there is no form card. A column's WIDTH is how much attention that step
+   is owed right now — the step under the hand is 520px wide, a finished step
+   shrinks to 168 and keeps only its answer, an untouched step stays at 140 in
+   bisque with nothing but its name. Advancing the task re-tiles the row.
+   Glaze does the state-telling: lapis is the rep's own glaze, carried in from
+   every other screen; stone is a finished step; bisque is not yet touched;
+   gypsum is the one field the caret is in; kiln is the consequence.
+   Navigation: none. One task has one exit, and it is the ghost word at the foot
+   of the first column. Focal point: the gypsum field.
+   Nothing on this screen appears on any other: no spine, no map, no matrix. */
+
+.reg { position:absolute; inset:0; display:flex; gap:var(--grout); background:var(--gypsum); }
+
+.col { position:relative; }
+.col .hd { font-weight:800; font-size:13px; opacity:0.72; }
+.col .ans { margin-top:12px; font-weight:800; font-size:16.5px; letter-spacing:-0.01em; }
+.col .aux { margin-top:8px; font-size:12.5px; line-height:1.5; opacity:0.62; }
+.col .step { position:absolute; bottom:22px; inset-inline-start:24px;
+             font-family:"Mono",monospace; font-weight:500; font-size:11px;
+             letter-spacing:0.2em; opacity:0.42; direction:ltr; }
+
+/* column 1 · what this is, and the only way out */
+.who { position:absolute; inset-inline:28px; top:36px; }
+.who h1 { font-size:30px; font-weight:800; letter-spacing:-0.03em; line-height:1.12; }
+.who .tag { display:block; margin-top:16px; color:var(--on-kiln-3); }
+.who .dt { margin-top:26px; font-size:13px; color:var(--on-kiln-2); line-height:1.6; }
+.leave { position:absolute; inset-inline-start:28px; bottom:32px; color:var(--on-kiln-2); font-size:13.5px; }
+
+/* column 4 · the work. Each line is a field; the caret is in the bright one. */
+.work { position:absolute; inset-inline:32px; top:36px; }
+.work > .hd { margin-bottom:18px; }
+.line {
+  display:flex; align-items:baseline; justify-content:space-between; gap:20px;
+  padding:17px 20px; margin-bottom:var(--grout); background:var(--limestone-2);
+}
+.line .lt b { display:block; font-weight:800; font-size:15px; }
+.line .lt em { display:block; font-style:normal; margin-top:5px; font-size:12px; color:var(--on-stone-2); }
+.line .rt { text-align:left; }
+.line .rt .cost { display:block; margin-top:6px; font-family:"Mono",monospace; font-weight:400;
+                  font-size:12px; color:var(--on-stone-3); direction:ltr; }
+.entry {
+  display:flex; align-items:center; gap:10px; padding:21px 20px; background:var(--gypsum);
+  clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+}
+.entry span { font-weight:800; font-size:15px; color:var(--on-stone-3); }
+.entry i { display:block; width:2px; height:21px; background:var(--lapis); }
+ /* The totals sit at the FOOT of the ledger column, not under the last line, so
+    the space between them and the entry field is the page's own breathing room
+    rather than an unfinished bottom third. */
+.sums { position:absolute; inset-inline:32px; bottom:74px; display:flex; gap:var(--grout); }
+.sums > div { flex:1; padding:20px; background:var(--limestone-2); }
+.sums .hd { font-size:12.5px; margin-bottom:12px; }
+.focused { color:var(--lapis); }
+
+/* column 6 · the consequence, as the same partition law at trip scale */
+.eff { position:absolute; inset-inline:26px; top:36px; bottom:32px; display:flex; flex-direction:column; }
+.eff .hd { color:var(--on-kiln-2); }
+.eff .tag { display:block; margin-top:10px; color:var(--on-kiln-3); }
+.part { margin-top:24px; flex:1 1 auto; display:flex; flex-direction:column; gap:var(--grout); }
+.part > .f { padding:18px 20px; position:relative; }
+.part .pn { font-weight:800; font-size:13px; }
+.part .pp { position:absolute; bottom:16px; inset-inline-end:20px;
+            font-family:"Mono",monospace; font-weight:500; font-size:12.5px; opacity:0.55; }
+.eff .commit { margin-top:22px; width:100%; text-align:start; }
+.eff .why { margin-top:16px; font-size:12px; line-height:1.6; color:var(--on-kiln-3); }
+</style>
+</head>
+<body>
+<div class="screen dark">
+  <div class="reg">
+
+    <!-- 1 · identity + exit -->
+    <div class="col f kiln2" style="flex:0 0 200px">
+      <div class="who">
+        <h1>رحلة<br>جديدة</h1>
+        <span class="tag">TRIP · 1048</span>
+        <p class="dt">الثلاثاء 26 أغسطس<br>بدأت 09:14</p>
+      </div>
+      <span class="leave">اخرج بلا حفظ</span>
+    </div>
+
+    <!-- 2 · finished: the rep, in the rep's own glaze -->
+    <div class="col f lapis" style="flex:0 0 168px; padding:36px 20px">
+      <div class="hd" style="color:var(--on-glaze-2)">المندوب</div>
+      <div class="ans">ليث العبيدي</div>
+      <div class="aux" style="color:var(--on-glaze-2)">مناصفة الربح الأولى<br>45% من صافي الربح</div>
+      <span class="step" style="color:var(--on-glaze-2); opacity:0.7">01 · SET</span>
+    </div>
+
+    <!-- 3 · finished: the destination -->
+    <div class="col f stone2" style="flex:0 0 168px; padding:36px 20px">
+      <div class="hd">الوجهة</div>
+      <div class="ans">زيونة، بغداد</div>
+      <div class="aux">12 كم من المخزن<br>ثالث رحلة هذا الأسبوع</div>
+      <span class="step">02 · SET</span>
+    </div>
+
+    <!-- 4 · the work, under the hand -->
+    <div class="col f stone" style="flex:0 0 520px">
+      <div class="work">
+        <div class="hd focused">القطع والأسعار</div>
+
+        <div class="line">
+          <span class="lt"><b>حافظات جلد</b><em>24 قطعة × 9,000</em></span>
+          <span class="rt">
+            <span class="q f22 trail"><span class="n">216,000</span></span>
+            <span class="cost">COST 132,000</span>
+          </span>
+        </div>
+        <div class="line">
+          <span class="lt"><b>شواحن سريعة</b><em>40 قطعة × 4,500</em></span>
+          <span class="rt">
+            <span class="q f22 trail"><span class="n">180,000</span></span>
+            <span class="cost">COST 96,000</span>
+          </span>
+        </div>
+        <div class="line">
+          <span class="lt"><b>سماعات لاسلكية</b><em>6 قطع × 15,000</em></span>
+          <span class="rt">
+            <span class="q f22 trail"><span class="n">90,000</span></span>
+            <span class="cost">COST 40,000</span>
+          </span>
+        </div>
+        <div class="entry"><i></i><span>أضف قطعة</span></div>
+
+      </div>
+
+        <div class="sums">
+          <div>
+            <div class="hd">إجمالي البيع</div>
+            <span class="q f30"><span class="n">486,000</span></span>
+          </div>
+          <div>
+            <div class="hd">كلفة الشراء المجمَّدة</div>
+            <span class="q f30"><span class="n">268,000</span></span>
+          </div>
+        </div>
+      <span class="step">03 · TYPING</span>
+    </div>
+
+    <!-- 5 · untouched -->
+    <div class="col f bisq" style="flex:0 0 140px; padding:36px 20px">
+      <div class="hd">التوصيل</div>
+      <div class="aux" style="margin-top:14px">يُحسب بعد إغلاق القطع. لا شيء يُطلب هنا الآن.</div>
+      <span class="step">04 · WAITING</span>
+    </div>
+
+    <!-- 6 · the consequence: the F1 law again, at the scale of one trip -->
+    <div class="col f kiln" style="flex:1 1 auto">
+      <div class="eff">
+        <div class="hd">أثر هذه الرحلة على القسمة</div>
+        <span class="tag">LIVE · 486,000 DIVIDED</span>
+
+        <div class="part">
+          <div class="f gyp" style="flex:0 0 24.67%; color:var(--on-stone)">
+            <div class="pn">يبقى لك</div>
+            <span class="q f30" style="margin-top:12px"><span class="n">119,900</span></span>
+            <span class="pp">24.7%</span>
+          </div>
+          <div class="f lapis" style="flex:0 0 20.19%">
+            <div class="pn">حصة ليث</div>
+            <span class="q f22" style="margin-top:10px"><span class="n">98,100</span></span>
+            <span class="pp">20.2%</span>
+          </div>
+          <div class="f bisq" style="flex:1 1 auto">
+            <div class="pn">كلفة الشراء</div>
+            <span class="q f22" style="margin-top:10px"><span class="n">268,000</span></span>
+            <span class="pp">55.1%</span>
+          </div>
+        </div>
+
+        <button class="act blue commit">احفظ الرحلة وجمّد القسمة</button>
+        <p class="why">الحفظ يثبّت سعر الشراء وقاعدة ليث كما هما الآن. تغييرهما لاحقاً لا يمسّ هذه الرحلة.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

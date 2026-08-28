@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Flousi v6 — F6 المسبك</title>
+<link rel="stylesheet" href="tile.css">
+<style>
+/* ── F6 · المسبك · the sheet the language is fired from ───────────────────────
+   Not a screen a merchant sees. It exists to prove that «مساحات» is a system and
+   not a set of preferences: one law, its arithmetic printed, the two grounds, the
+   four glazes, the single 4px grout, the single 16px chamfer, and every state a
+   field can be in, drawn. A field drawn only in its resting state has not been
+   designed.
+   The sheet obeys its own law: it is a partition, not a stack of sections. */
+
+.sh { position:absolute; inset:0; display:flex; flex-direction:column; gap:var(--grout); background:var(--gypsum); }
+.r1 { flex:0 0 232px; display:flex; gap:var(--grout); }
+.r2 { flex:0 0 304px; display:flex; gap:var(--grout); }
+.r3 { flex:1 1 auto; display:flex; flex-direction:column; gap:var(--grout); }
+.sr { flex:1 1 0; display:flex; gap:var(--grout); }
+
+.law { flex:0 0 62%; padding:34px 40px; }
+.law h1 { font-size:34px; font-weight:800; letter-spacing:-0.03em; line-height:1; }
+ /* All-Latin, and its own LTR run: a Latin string with an Arabic word dropped
+    into the middle of it reorders into nonsense in an RTL paragraph. */
+.law .tag { display:block; margin-top:14px; color:var(--on-kiln-3); direction:ltr; text-align:right; }
+.law p { margin-top:20px; max-width:74ch; font-size:14px; line-height:1.7; color:var(--on-kiln-2); }
+.law p b { color:var(--on-kiln); }
+
+.pal { flex:1 1 auto; display:flex; flex-direction:column; gap:var(--grout); }
+.pal .pr { flex:1 1 0; display:flex; gap:var(--grout); }
+.pal .sw2 { flex:1 1 0; padding:12px 12px 0; position:relative; }
+.pal .sw2 b { display:block; font-weight:800; font-size:12px; }
+.pal .sw2 span { position:absolute; bottom:11px; inset-inline-start:12px;
+                 font-family:"Mono",monospace; font-weight:400; font-size:9.5px; letter-spacing:0.06em; opacity:0.62; }
+.pal .cap2 { flex:0 0 128px; padding:12px; font-size:11.5px; line-height:1.5; }
+
+.pnl { padding:24px 26px; }
+.pnl > .h3 { font-weight:800; font-size:15px; }
+.pnl > .h3 + .sb2 { margin-top:7px; font-size:12px; line-height:1.55; color:var(--on-stone-2); }
+
+/* area law, with its arithmetic printed */
+.four2 { display:flex; gap:var(--grout); height:52px; margin-top:18px; }
+.four2 > span { display:block; }
+ /* The arithmetic is a pure LTR run and must be declared one. Set in the RTL
+    paragraph it came out as «= 284,580 · 14.9% = 769,420 …», every operand on
+    the wrong side of its own equals sign. */
+.mth { margin-top:13px; font-family:"Mono",monospace; font-weight:400; font-size:11.5px;
+       letter-spacing:0.03em; line-height:1.75; color:var(--on-stone-2);
+       direction:ltr; text-align:right; }
+.sqr { margin-top:20px; display:flex; align-items:flex-end; gap:22px; }
+.sqr .u2 { text-align:center; }
+.sqr .u2 i { display:block; background:var(--lapis); }
+.sqr .u2 b { display:block; margin-top:9px; font-family:"Mono",monospace; font-weight:500; font-size:11px; }
+.sqr .why2 { flex:1 1 auto; font-size:12px; line-height:1.55; color:var(--on-stone-2); }
+
+/* geometry */
+.geo2 { margin-top:18px; display:flex; flex-direction:column; gap:14px; }
+.gl { display:flex; align-items:center; gap:14px; }
+.gl .box { flex:0 0 auto; width:78px; height:44px; background:var(--limestone-2); }
+.gl .box.cut  { clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+.gl .box.cut2 { clip-path:polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut),
+                                  100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+                background:var(--gypsum); }
+.gl .box.no { border-radius:14px; opacity:0.32; }
+.gl .pair2 { flex:0 0 auto; display:flex; gap:var(--grout); }
+.gl .pair2 span { display:block; width:37px; height:44px; background:var(--limestone-2); }
+.gl em { font-style:normal; font-size:12px; line-height:1.5; color:var(--on-stone-2); }
+.gl em b { color:var(--on-stone); font-weight:800; }
+
+/* type ladder */
+.lad { margin-top:18px; display:flex; flex-direction:column; gap:15px; }
+.lad .st2 .x2 { line-height:1; }
+.lad .st2 .sp2 { margin-top:6px; font-family:"Mono",monospace; font-weight:400; font-size:10px;
+                 letter-spacing:0.12em; color:var(--on-stone-3); direction:ltr; text-align:right; }
+
+/* the state cells */
+.cel2 { flex:1 1 0; background:var(--limestone); padding:16px 18px; position:relative; }
+.cel2 > .n4 { font-family:"Mono",monospace; font-weight:500; font-size:10px; letter-spacing:0.18em;
+              color:var(--on-stone-3); direction:ltr; }
+.dm { margin-top:14px; padding:14px 16px; font-weight:800; font-size:13.5px; }
+.dm.cut  { clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+.dm.cut2 { clip-path:polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut),
+                             100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+.dm.row3 { display:flex; align-items:center; gap:10px; }
+.dm.row3 i { display:block; width:11px; height:11px; background:var(--kiln); }
+.dm svg { width:15px; height:15px; stroke-width:1.7; fill:none; }
+.note4 { margin-top:11px; font-size:11.5px; line-height:1.5; color:var(--on-stone-2); }
+.mini { margin-top:14px; display:flex; flex-direction:column; gap:var(--grout); }
+.mini > div { padding:11px 14px; display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+              background:var(--limestone-2); font-weight:800; font-size:13px; }
+.mini .amt2 { font-family:"Mono",monospace; font-weight:500; font-size:13.5px; }
+.zm { margin-top:14px; display:flex; gap:var(--grout); }
+.zm > div { flex:1 1 0; height:58px; display:grid; place-items:center;
+            font-family:"Mono",monospace; font-weight:500; font-size:10px; letter-spacing:0.14em; }
+
+.ft6 { flex:0 0 48px; display:flex; align-items:center; justify-content:space-between;
+       padding:0 40px; background:var(--kiln); color:var(--on-kiln-3); }
+.ft6 span { font-family:"Mono",monospace; font-weight:400; font-size:11px; letter-spacing:0.18em; direction:ltr; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="sh">
+
+    <div class="r1">
+      <div class="f kiln law">
+        <h1>المسبك</h1>
+        <span class="tag">FLOUSI · V6 · THE FIELD LANGUAGE</span>
+        <p>
+          قانون واحد: <b>المساحة هي الترميز الوحيد</b>. هذا التطبيق يقسم كلّاً، والقسمة
+          سطحٌ مقطوع، فالمبلغ حقلٌ مساحته هي مقداره، ولا يُرسم شريطاً ولا قضيباً ولا حلقة.
+          يتبع ذلك كل ما بعده: <b>لا خطوط</b>، فحدّ الحقل هو خطّه، والفاصل الوحيد أربعة
+          بكسلات من الجبس تُظهر الأرضية. <b>لا نصف قطر</b>، والشكل اللين الوحيد قطعٌ بزاوية
+          45 في الزاوية الأمامية السفلى، ومعناه واحد: يدٌ تلمس هذا الحقل. <b>الطلاء هوية</b>،
+          لكل مندوب طلاء واحد مدى العمر، والحكم على المال حِبرٌ لا طلاء، حتى لا يصبح شخصٌ
+          حالةً. <b>والحركة إعادة تبليط</b>: لا شيء ينزلق، والخريطة تتغيّر لأن الأرقام تغيّرت.
+        </p>
+      </div>
+      <div class="pal">
+        <div class="pr">
+          <div class="f gyp sw2"><b>جبس</b><span>FBF9F4 · GROUT</span></div>
+          <div class="f stone sw2"><b>حجر</b><span>ECE5D8 · BASE</span></div>
+          <div class="f stone2 sw2"><b>حجر غائر</b><span>DED3BF</span></div>
+          <div class="f bisq sw2"><b>بسكِت</b><span>D3C7B1 · NOT YOURS</span></div>
+          <div class="f kiln sw2"><b>فرن</b><span>17130F · SEALED</span></div>
+        </div>
+        <div class="pr">
+          <div class="f lapis sw2"><b>لازورد</b><span>1B4BA8 · ليث</span></div>
+          <div class="f turq sw2"><b>فيروز</b><span>14807A · سعد</span></div>
+          <div class="f terra sw2"><b>طين</b><span>AB4525 · زينب</span></div>
+          <div class="f saff sw2"><b>زعفران</b><span>D9971A · نور</span></div>
+          <div class="f stone cap2">الطلاء هوية: أربعة أشخاص، أربعة ألوان، ولا لون خامس للحالات.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="r2">
+      <div class="f stone pnl" style="flex:0 0 42%">
+        <div class="h3">قانون المساحة، بحسابه</div>
+        <p class="sb2">أربعة أجزاء من إيراد أغسطس، بعروضها الحقيقية. الأرقام تحت الحقول هي القسمة نفسها.</p>
+        <div class="four2">
+          <span class="f kiln"  style="flex:0 0 34.4%"></span>
+          <span class="f bisq"  style="flex:0 0 45.2%"></span>
+          <span class="f lapis" style="flex:0 0 14.9%"></span>
+          <span class="f terra" style="flex:1 1 auto"></span>
+        </div>
+        <div class="mth">
+          1,775,580 / 5,164,500 = 34.4%&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;2,334,920 = 45.2%<br>
+          769,420 = 14.9%&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;284,580 = 5.5%&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;SUM = 100.0%
+        </div>
+        <div class="sqr">
+          <span class="u2"><i style="width:31px; height:31px"></i><b>100,000</b></span>
+          <span class="u2"><i style="width:62px; height:62px"></i><b>400,000</b></span>
+          <span class="why2">أربعة أمثال المال تعني ضِعف الضلع، لا أربعة أمثاله. الضلع جذرٌ، وإلا كذب الحبر على المبلغ.</span>
+        </div>
+      </div>
+
+      <div class="f stone pnl" style="flex:0 0 30%">
+        <div class="h3">الهندسة</div>
+        <p class="sb2">فاصل واحد، وقطع واحد، ولا شيء ثالث.</p>
+        <div class="geo2">
+          <div class="gl">
+            <span class="pair2"><span></span><span></span></span>
+            <em><b>4 جبس</b> هي الفاصل الوحيد. الخط لا يُرسم، بل يُقتطع.</em>
+          </div>
+          <div class="gl">
+            <span class="box cut"></span>
+            <em><b>قطع 16</b> في الزاوية الأمامية السفلى: يدٌ تلمس.</em>
+          </div>
+          <div class="gl">
+            <span class="box cut2"></span>
+            <em><b>قطعان</b> وجبس: هذا هو التركيز، لا حلقة ولا إطار.</em>
+          </div>
+          <div class="gl">
+            <span class="box no"></span>
+            <em><b>مرفوض</b>: أي نصف قطر، في أي مكان.</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="f stone pnl" style="flex:1 1 auto">
+        <div class="h3">السلّم</div>
+        <p class="sb2">الرقم بحجم حقله، والكلام لا يشارك الرقم وزناً.</p>
+        <div class="lad">
+          <div class="st2"><div class="x2"><span class="q f40"><span class="n">1,775,580</span></span></div><div class="sp2">MONO 500 · 40 / IN A LARGE FIELD</div></div>
+          <div class="st2"><div class="x2" style="font-size:24px;font-weight:800;letter-spacing:-0.025em">كيف انقسم الشهر</div><div class="sp2">CAIRO 800 · 24 / DISPLAY</div></div>
+          <div class="st2"><div class="x2" style="font-size:14px;font-weight:800">ما بقي لك</div><div class="sp2">CAIRO 800 · 14 / FIELD NAME</div></div>
+          <div class="st2"><div class="x2 tag">BY SUPPLIER · FROZEN</div><div class="sp2">MONO 500 · 10.5 / 0.22em</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="r3">
+      <div class="sr">
+        <div class="cel2"><div class="n4">DEFAULT</div><div class="f stone2 dm">افتح البيعة</div><p class="note4">حقل ساكن. لا قطع، فلا يد.</p></div>
+        <div class="cel2"><div class="n4">LIVE · CUT</div><div class="f stone2 dm cut">افتح البيعة</div><p class="note4">القطع وحده يقول: هذا يُلمس.</p></div>
+        <div class="cel2"><div class="n4">HOVER</div><div class="f bisq dm cut">افتح البيعة</div><p class="note4">الأرضية تغمق درجة. لا ظل، ولا رفع.</p></div>
+        <div class="cel2"><div class="n4">PRESSED</div><div class="f kiln dm cut">افتح البيعة</div><p class="note4">ينقلب إلى ليل ما دام الإصبع عليه.</p></div>
+        <div class="cel2"><div class="n4">FOCUS · KEYBOARD</div><div class="f gyp dm cut2">افتح البيعة</div><p class="note4">قطعان وجبس. لا حلقة مرسومة.</p></div>
+        <div class="cel2"><div class="n4">DISABLED</div><div class="f bisq dm" style="color:var(--on-stone-3)">احفظ الرحلة</div><p class="note4">السبب يُكتب بجانبه: لا سعر بيع بعد.</p></div>
+      </div>
+      <div class="sr">
+        <div class="cel2"><div class="n4">LOADING</div><div class="f bisq dm cut row3"><i></i>يُحفظ</div><p class="note4">مربّع واحد يُفرَن. لا دوّارة.</p></div>
+        <div class="cel2"><div class="n4">SUCCESS · INK</div><div class="f gyp dm cut row3 ink-good"><svg viewBox="0 0 16 16" stroke="currentColor"><path d="M3.5 8.5l3 3 6-7"/></svg>حُفظت الرحلة</div><p class="note4">الحكم حِبر، لا طلاء: الفيروز هنا لون كلمة، لا لون شخص.</p></div>
+        <div class="cel2"><div class="n4">ERROR · INK</div><div class="f gyp dm cut2 row3 ink-bad"><svg viewBox="0 0 16 16" stroke="currentColor"><path d="M8 4v5"/><path d="M8 11.5v.5"/></svg>المبلغ مطلوب</div><p class="note4">الطين هنا حِبر أيضاً، ولا يصبح حقلاً.</p></div>
+        <div class="cel2"><div class="n4">SELECTED</div>
+          <div class="mini">
+            <div class="f kiln" style="color:var(--on-kiln)"><span>ط-1047</span><span class="amt2">27,851</span></div>
+            <div><span>ط-1046</span><span class="amt2">50,405</span></div>
+          </div>
+          <p class="note4">المختار ينقلب، ولا تنبت له مسطرة.</p>
+        </div>
+        <div class="cel2"><div class="n4">EMPTY</div><div class="f bisq dm" style="font-weight:500; font-size:12.5px; line-height:1.55">لا رحلة بعد. أول رحلة تُسجّل تفتح كل ما تحتها.</div><p class="note4">حقل بلا رقم، لا صندوق منقّط.</p></div>
+        <div class="cel2"><div class="n4">ZERO vs MISSING</div>
+          <div class="zm">
+            <div class="f stone2" style="color:var(--on-stone-2)">ZERO</div>
+            <div class="f gyp" style="color:var(--on-stone-3)">MISSING</div>
+          </div>
+          <p class="note4">الصفر أغمق من اللوحة. الغائب هو اللوحة نفسها.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ft6">
+      <span>GROUT 4 · CHAMFER 16 · RADIUS 0 · RETILE 220ms</span>
+      <span>AREA IS THE ONLY ENCODING</span>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
