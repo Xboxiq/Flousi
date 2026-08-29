@@ -108,6 +108,36 @@ for (const [name, a, b, min] of forbidden) {
   console.log(`${ok ? "  ✓" : "  ✗"} ${name.padEnd(26)} ${a} on ${b}  ${r.toFixed(2)} (must stay under ${min})`);
 }
 
+/* ── 1b · every class a screen names must exist ────────────────────────────
+   `.toolbar` was used on five screens and defined nowhere. It did not clip, it
+   did not overflow, it did not fail contrast — it just quietly laid out as
+   plain blocks, and the search box in a filter bar spanned a whole card. A
+   missing class is silent by construction, so it needs its own check. */
+{
+  const sheets = ["system.css", "docs.css", "tokens.css"].map(f => readFileSync(join(DIR, f), "utf8")).join("\n");
+  const declared = new Set([...sheets.matchAll(/\.([a-zA-Z][\w-]*)/g)].map(m => m[1]));
+  const files = readdirSync(DIR).filter(f => /^[dp]\d.*\.html$/.test(f)).sort();
+  const missing = new Map();
+  for (const f of files) {
+    const src = readFileSync(join(DIR, f), "utf8");
+    /* a page may define its own classes in its own <style> block */
+    const own = new Set([...src.matchAll(/<style>([\s\S]*?)<\/style>/g)]
+      .flatMap(m => [...m[1].matchAll(/\.([a-zA-Z][\w-]*)/g)].map(x => x[1])));
+    for (const m of src.matchAll(/class="([^"$]+)"/g))
+      for (const c of m[1].split(/\s+/))
+        if (c && !c.startsWith("${") && !declared.has(c) && !own.has(c))
+          missing.set(c, (missing.get(c) || new Set()).add(f));
+  }
+  console.log("\n── classes ─────────────────────────────────────────────");
+  if (missing.size) {
+    bad++;
+    for (const [c, fs] of missing)
+      console.log(`  ✗ .${c.padEnd(14)} used on ${fs.size}, defined nowhere`);
+  } else {
+    console.log(`  ✓ every class named by a screen is defined`);
+  }
+}
+
 /* ── 2 · every rendered screen ─────────────────────────────────────────── */
 const only = process.argv[2];
 const pages = readdirSync(DIR).filter(f => /^[dp]\d.*\.html$/.test(f) && (!only || f.includes(only))).sort();

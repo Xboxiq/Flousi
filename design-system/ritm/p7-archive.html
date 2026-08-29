@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head><meta charset="utf-8"><title>RITM · الأرشيف والفترات</title>
+<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="system.css"><link rel="stylesheet" href="docs.css"></head>
+<body>
+<div class="plane app">
+  <div class="app" style="height:900px">
+    <div id="side"></div>
+    <div style="display:flex;flex-direction:column;min-width:0">
+      <div id="top"></div>
+
+      <!-- A closed period is read-only, and the app says so before the reader
+           touches anything, not after the save fails. -->
+      <div class="banner">
+        <svg class="i i-sm" viewBox="0 0 24 24" style="color:var(--accent)">
+          <rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <span>تقرأ يوليو 2026 وهو مغلق. أرقامه لقطة محفوظة، ولا يغيّرها شيء يحدث اليوم.</span>
+        <span class="spacer"></span>
+        <button class="btn btn-secondary btn-sm">إعادة فتحه</button>
+      </div>
+
+      <div style="flex:1;min-height:0;padding:var(--s-6);display:flex;gap:var(--s-4)">
+
+        <aside class="card" style="width:260px;flex:none;display:flex;flex-direction:column">
+          <header><h3>الفترات</h3></header>
+          <div style="flex:1;min-height:0;overflow:hidden" id="periods"></div>
+        </aside>
+
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--s-4)">
+          <section class="grid">
+            <div class="span-6 card" style="padding:var(--s-5) var(--s-6);display:flex;
+                 flex-direction:column;justify-content:space-between;gap:var(--s-4)">
+              <div class="metric is-lead">
+                <span class="headline"><span class="amount">1,214,600</span><span class="unit">د.ع.</span></span>
+                <span class="name">ما بقي لك من يوليو</span>
+                <span class="compare">لقطة محفوظة في <span class="num">2026-08-01</span></span>
+              </div>
+              <div>
+                <div class="splitbar">
+                  <span style="width:28.8%;background:var(--series-1);color:var(--on-series-1)">29%</span>
+                  <span style="width:45.1%;background:var(--series-2);color:var(--on-series-2)">45%</span>
+                  <span style="width:15.0%;background:var(--series-3);color:var(--on-series-3)">15%</span>
+                  <span style="width:11.1%;background:var(--series-4);color:var(--on-series-4)">11%</span>
+                </div>
+                <p class="caption" style="margin-top:var(--s-2)">
+                  من <span class="num">4,218,400</span> إيراداً، بقي لك
+                  <span class="num">1,214,600</span>. هامش يوليو
+                  <span class="num">28.8%</span> مقابل <span class="num">34.4%</span> في أغسطس.</p>
+              </div>
+            </div>
+            <div class="span-6 card">
+              <header><h3>ما الذي جُمِّد</h3>
+                <span class="badge badge-accent spacer">مجمَّد</span></header>
+              <div class="body" id="frozen"></div>
+            </div>
+          </section>
+
+          <section class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+            <div class="toolbar">
+              <h3 style="font-size:var(--fs-body);font-weight:var(--fw-bold)">الفرق بين اللقطة والحيّ</h3>
+              <span class="spacer"></span>
+              <span class="caption">لو حُسب يوليو بأسعار اليوم لخرج رقم آخر. هذا هو الفرق.</span>
+            </div>
+            <div class="table-wrap" style="flex:1;min-height:0">
+              <table class="tbl" id="drift"></table>
+            </div>
+            <footer style="padding:var(--s-3) var(--s-4);border-top:1px solid var(--line);
+                    display:flex;align-items:center;gap:var(--s-2)">
+              <span class="caption">اللقطة هي المعتمدة. الحيّ معروض للمقارنة وحدها.</span>
+              <span class="spacer"></span>
+              <button class="btn btn-secondary btn-sm">تصدير تقرير يوليو</button>
+            </footer>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { sidebar, topbar, icon, fmt } from "./shell.js";
+document.getElementById("side").outerHTML = sidebar("periods");
+document.getElementById("top").outerHTML = topbar(["التقارير", "الأرشيف", "يوليو 2026"],
+  `<button class="btn btn-secondary btn-sm">${icon("export","i i-sm")}تصدير</button>`);
+
+const periods = [
+  ["أغسطس 2026", "مفتوحة", 1775800, true, false],
+  ["يوليو 2026", "مغلقة", 1214600, false, true],
+  ["يونيو 2026", "مغلقة", 1102400, false, false],
+  ["مايو 2026", "مغلقة", 968300, false, false],
+  ["أبريل 2026", "مغلقة", 1043900, false, false],
+  ["مارس 2026", "مغلقة", 876200, false, false],
+];
+document.getElementById("periods").innerHTML = periods.map(([label, st, v, open, current]) => `
+  <button class="datarow"${current ? ' aria-current="true"' : ""}>
+    <span class="tx"><b>${label}</b>
+      <span>${open ? "تتغيّر مع كل طلب" : "لقطة محفوظة"}</span></span>
+    <span class="end">
+      <span class="num" style="display:block;font-size:var(--fs-table);font-weight:var(--fw-bold)">${fmt(v)}</span>
+      <span class="badge badge-${open ? "info" : "accent"}" style="height:18px;font-size:var(--fs-label);margin-top:2px">${st}</span>
+    </span></button>`).join("");
+
+const frozen = [
+  ["أسعار المنتجات وكلفتها", "17 منتجاً"],
+  ["قواعد العمولة المطبَّقة", "3 قواعد"],
+  ["حصص المندوبين", "632,100"],
+  ["ملخّص الفترة", "الإيراد والكلفة والصافي"],
+];
+document.getElementById("frozen").innerHTML = frozen.map(([t, v]) => `
+  <div style="display:flex;align-items:center;gap:var(--s-2);padding-block:var(--s-15);
+       border-bottom:1px solid var(--line)">
+    <svg class="i i-sm" viewBox="0 0 24 24" style="color:var(--accent);flex:none">
+      <rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    <span style="flex:1;font-size:var(--fs-table)">${t}</span>
+    <span class="num" style="font-size:var(--fs-table);color:var(--fg-2)">${v}</span></div>`).join("");
+
+/* The one thing an archive must prove: that it did NOT drift. */
+const drift = [
+  ["الإيراد", 4218400, 4218400],
+  ["كلفة الشراء", 1904300, 1961700],
+  ["حصص المندوبين", 632100, 651200],
+  ["التوصيل والمرتجع", 467400, 467400],
+  ["صافي الربح", 1214600, 1138100],
+];
+document.getElementById("drift").innerHTML =
+  `<thead><tr><th>السطر</th><th class="n">اللقطة</th><th class="n">لو حُسب اليوم</th>
+   <th class="n">الفرق</th></tr></thead><tbody>${drift.map(([t, snap, live], i) => {
+    const d = live - snap, last = i === drift.length - 1;
+    return `<tr><td style="font-weight:${last ? 700 : 400}">${t}</td>
+      <td class="n" style="font-weight:${last ? 700 : 400}">${fmt(snap)}</td>
+      <td class="n" style="color:var(--fg-3)">${fmt(live)}</td>
+      <td class="n ${d === 0 ? "" : "money neg"}">${d === 0 ? "لا فرق" : "−" + fmt(Math.abs(d))}</td></tr>`;
+  }).join("")}</tbody>`;
+</script>
+</body></html>

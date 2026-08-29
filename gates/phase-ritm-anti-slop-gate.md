@@ -74,3 +74,26 @@ actually run. The crumb hit area was a real defect and is fixed. Now `✓`.
    blue-family meshes, IBM Plex Mono numerals. RITM's approved identity is sand on
    ink with Tajawal and Archivo. Where the gate's letter contradicts the client's own
    identity, the identity wins and the clause is logged rather than obeyed.
+
+
+---
+
+## Second pass · after the system was widened to the product's real scope
+
+Five surfaces added (`d10`, `p6`–`p9`). The gate found two more things, both of the
+kind that stay invisible until something measures them.
+
+**A component used on five screens and defined nowhere.** `.toolbar` — the strip above
+every table — had no rule in `system.css`. It did not clip, overflow or fail contrast;
+it simply laid out as plain blocks, so a 220px search box spanned a whole card on four
+screens. `audit.mjs` now has a **class gate**: every class a screen names must be
+declared in a shared stylesheet or in that page's own `<style>`. Two dead class names
+(`card-f`, `main`) were removed at the same time.
+
+**Figures that did not reconcile, twice.** The product record's cost table totalled
+27,278 against a header saying 27,300, and the archive board froze August's rep shares
+into July. Both are now derived from one set: 19,000 + 1,400 + 922 + 1,518 + 3,200 +
+1,260 = 27,300, and 42,000 − 27,300 = 14,700 at a 35.0% margin.
+
+Em dashes: three more, all in code comments and a table sentinel rather than rendered
+copy. The sentinel is now `null`, so the banned glyph is not in the file at all.

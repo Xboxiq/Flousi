@@ -373,3 +373,32 @@ was pointed at a fixed 1440 artboard (a frame at 390 measures the frame), and on
 a real defect — crumb links 20px tall, under the 24 minimum. `p5-mobile` now exists so
 that the media queries actually run and the audit can measure them. **Every rule this
 document states about a size, a mode or a direction needs a surface where it executes.**
+
+
+---
+
+## §21 · ما لا يُرى إلا بالقياس / THE SILENT FAILURES
+
+Two more, from widening the system to the product's real scope.
+
+### 21.1 · A missing class is silent by construction
+
+`.toolbar` was used on five screens and defined in no stylesheet. Nothing failed: no
+clipping, no overflow, no contrast breach. The elements simply laid out as blocks, and a
+filter bar's search box spanned an entire card. CSS has no undefined-symbol error, so
+the check has to be written by hand — and now is: every class a screen names must be
+declared, in a shared sheet or in that page's own `<style>`.
+
+The general form: **a language that fails silently needs a gate that does not.**
+
+### 21.2 · The product is wider than the number it is famous for
+
+RITM was built and documented as a profit-and-commission system for weeks. It is also
+order monitoring, an archive of frozen periods, and a record of details — and those are
+not features hanging off the first thing, they are what the merchant opens it for.
+A design system that covers one job of four is not a design system for the product.
+
+The rule: **before building surfaces, read the domain and list its objects.** The object
+model board (`d10`) exists because that question was answered late. Every object it
+names is read off `src/domain`, not off the screens, because the screens are downstream
+of the model and can only repeat its mistakes.

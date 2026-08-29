@@ -281,6 +281,15 @@ body{
 .tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
 .tabs button:focus-visible{outline:2px solid var(--ring);outline-offset:-2px}
 
+/* the strip above a table or a list: title, filters, search, one action.
+   It was used on five screens before it was ever defined — the layout still
+   "worked" as plain blocks, which is exactly why nothing caught it. */
+.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s-2) var(--s-3);
+  padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--line)}
+.toolbar > h3{font-size:var(--fs-body);font-weight:var(--fw-bold);flex:none}
+.toolbar .search{flex:0 0 220px}
+.toolbar .spacer{flex:1}
+
 .seg{display:inline-flex;background:var(--surface-2);border-radius:var(--r-control);padding:2px}
 .seg button{all:unset;box-sizing:border-box;height:var(--h-control-sm);padding-inline:var(--s-3);
   border-radius:var(--r-control);font-size:var(--fs-small);font-weight:var(--fw-bold);

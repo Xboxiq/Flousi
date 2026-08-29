@@ -24,15 +24,37 @@ people who sell for him.
 | `audit.mjs` | the check that makes each claim here verifiable |
 | `render.mjs` | serve and photograph |
 
+## What RITM is
+
+Not a profit calculator. Four jobs, and the design system has to carry all four:
+
+1. **مراقبة الطلبات** — every order holds TWO independent facts: where it stands
+   (في الطريق / مُسلَّمة / راجعة / ملغاة) and where the money is (عند المندوب / بيدك).
+   The domain refuses to merge them because in a cash-on-delivery market the cash sits
+   with the courier for weeks. A returned order is not revenue however it was recorded.
+2. **الأرشيف** — accounting periods that close and freeze. A closed period is read-only
+   and its summary is a snapshot, so a report written in July does not drift in October.
+3. **السجل والتفاصيل** — products with a full cost breakdown, commission schemes and
+   targets on one precedence ladder, and a movement log where a correction is a new
+   entry and never an edit.
+4. **الأرباح والحصص** — what the first version of this system covered.
+
+Plus one rule that shapes the interface: **balances are per currency and are never
+summed**, because the domain holds no exchange rates and will not invent one.
+
 ## The screens
 
 **Foundations** — `d1` colour (both modes, measured) · `d2` type · `d3` the rhythm grid
 · `d4` actions and forms with every state · `d5` feedback, empty, error, loading ·
-`d6` the financial language · `d7` the chart language · `d8` motion · `d9` responsive.
+`d6` the financial language · `d7` the chart language · `d8` motion · `d9` responsive ·
+`d10` **the object model**: what the system recognises, in what states, under what names.
 
 **The product** — `p1` the merchant's dashboard · `p2` the same screen in light ·
-`p3` the representative on a phone · `p4` the settlement, with its drawer and its
-confirmation.
+`p3` the representative on a phone · `p4` the settlement · `p5` **the dashboard at 390**,
+where the responsive rules actually run · `p6` **order monitoring**, the two axes drawn
+as two axes · `p7` **the archive**, a closed period beside what it would be if it drifted
+· `p8` **the ledger**, per-currency and without a summing row · `p9` **the product
+record**, every cost line with the rule that produced it.
 
 ## Five decisions worth defending
 

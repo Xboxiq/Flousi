@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head><meta charset="utf-8"><title>RITM · الأشياء ودُوَلها</title>
+<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="system.css"><link rel="stylesheet" href="docs.css">
+<style>
+  .obj{display:grid;grid-template-columns:auto 1fr;gap:var(--s-2) var(--s-3);align-items:baseline}
+  .obj dt{font-size:var(--fs-table);font-weight:var(--fw-bold);white-space:nowrap}
+  .obj dd{font-size:var(--fs-caption);color:var(--fg-3);line-height:var(--lh-body)}
+  .ladder{display:flex;flex-direction:column;gap:2px}
+  .ladder span{display:grid;grid-template-columns:2ch max-content 1fr;align-items:center;
+    gap:var(--s-3);padding:var(--s-2) var(--s-3);background:var(--surface-2);
+    border-radius:var(--r-control);font-size:var(--fs-caption);white-space:nowrap}
+  .ladder .n{font-family:var(--font-lat);font-size:var(--fs-label);color:var(--fg-3);
+    direction:ltr;unicode-bidi:isolate}
+  .ladder .scope{font-size:var(--fs-table);font-weight:var(--fw-bold);color:var(--fg)}
+  .ladder .gloss{color:var(--fg-3);text-align:end;overflow:hidden;text-overflow:ellipsis}
+</style></head>
+<body>
+<div class="plane">
+  <div class="head">
+    <div>
+      <h1>ما الذي يعرفه النظام، وبأي أسماء</h1>
+    </div>
+    <span class="eyebrow">OBJECTS · STATES · ONE NAME PER THING</span>
+  </div>
+
+  <div class="work" style="flex-direction:row;gap:var(--s-6)">
+
+    <div class="panel" style="flex:1">
+      <span class="eyebrow">THE OBJECTS · الأشياء التي يعترف بها المنتج</span>
+      <dl class="obj" id="objects"></dl>
+      <p class="note">هذه ليست شاشات ولا جداول: هي الأشياء التي يملكها التاجر ويعود إليها.
+        كل شاشة في النظام منظرٌ على واحد منها أو على العلاقة بينها.</p>
+      <div class="divider"></div>
+      <span class="eyebrow">ONE NAME PER THING · اسم واحد لكل معنى</span>
+      <div class="stack" style="gap:0" id="words"></div>
+    </div>
+
+    <div style="flex:1.1;display:flex;flex-direction:column;gap:var(--s-4);min-width:0">
+      <div class="panel">
+        <span class="eyebrow">THE ORDER HAS TWO FACTS · للطلب حقيقتان لا واحدة</span>
+        <p class="note" style="color:var(--fg-2)">أين وصل الطلب، وأين وصل المال. في سوق الدفع
+          عند التسليم يبقى النقد عند المندوب أسابيع، فـ«سُلّم» و«استلمت المال» حقيقتان،
+          ودمجهما في حالة واحدة كذبة على التاجر.</p>
+        <div class="table-wrap" style="margin-top:var(--s-3)">
+          <table class="tbl" id="matrix"></table>
+        </div>
+        <p class="note">الراجعة والملغاة لا تُنتج إيراداً ولا تستحقّ عمولة، مهما سُجّلتا.
+          وهذا هو الفرق بين لوحة تعرض مبيعات ولوحة تعرض مالاً.</p>
+      </div>
+
+      <div class="panel">
+        <span class="eyebrow">WHAT FREEZING MEANS · ما الذي يقفله إغلاق الفترة</span>
+        <div class="stack" id="freeze"></div>
+      </div>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;gap:var(--s-4);min-width:0">
+      <div class="panel">
+        <span class="eyebrow">ONE PRECEDENCE, USED TWICE · سُلَّم واحد يُمشى مرّتين</span>
+        <p class="note">أي قاعدة تُسند إلى المنتج أو المندوب أو كليهما. النظام يمشي
+          السُّلَّم من الأخصّ إلى الأعمّ ويقف عند أول تطابق.</p>
+        <div class="ladder" style="margin-top:var(--s-2)" id="ladder"></div>
+        <p class="note">العمولات والأهداف تستعملان هذا السُّلَّم نفسه، عمداً: سُلَّمان مختلفان
+          داخل منتج واحد خطأٌ ينتظر أن يُفكَّر فيه بالمقلوب.</p>
+      </div>
+
+      <div class="panel">
+        <span class="eyebrow">CURRENCIES NEVER SUM · العملات لا تُجمع</span>
+        <div class="card" style="padding:var(--s-3) var(--s-4)">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding-block:var(--s-15)">
+            <span class="small">دينار عراقي</span><span class="num">769,200</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding-block:var(--s-15);border-top:1px solid var(--line)">
+            <span class="small">دولار أمريكي</span><span class="num">1,240</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding-block:var(--s-15);border-top:1px solid var(--line-strong)">
+            <span class="small" style="color:var(--fg-3)">المجموع</span>
+            <span class="caption">سطر لكل عملة، ولا سطر جامع</span></div>
+        </div>
+        <p class="note">لا يحمل النظام أسعار صرف ولن يحمل. رصيد كل عملة سطر مستقلّ،
+          والواجهة لا تعرض مجموعاً لا تستطيع الحسبة إنتاجه.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="eyebrow">READ OFF src/domain · THE MODEL, NOT THE SCREENS</span>
+    <span class="eyebrow">الأشياء · 10</span>
+  </div>
+</div>
+
+<script>
+const objects = [
+  ["الطلب", "رحلة واحدة إلى زبون واحد، تحمل بيعة أو أكثر. له حالتان مستقلّتان وأجرة توصيل."],
+  ["البيعة", "سطر داخل طلب: منتج بكمّية وسعر. ربحها يحتاج حصّة من أجرة التوصيل."],
+  ["المنتج", "شيء يُباع، بسعره وكلفته المفصّلة. العملة تسافر معه."],
+  ["المندوب", "من يبيع نيابة عن المالك. بلا راتب وبلا رصيد مخزّن."],
+  ["قاعدة العمولة", "كيف تتحوّل الربحية إلى حقّ: نسبة من الربح، أو مبلغ للقطعة، أو نسبة من السعر."],
+  ["التسوية", "دفعة إلى مندوب مقابل ما استحقّه. لها عملتها."],
+  ["الفترة", "شهر يُقاس. مفتوحة تتغيّر، مغلقة تُقرأ ولا تُكتب."],
+  ["الهدف", "مستوى يُقاس عليه شهر: صافي ربح أو إيراد أو قطع."],
+];
+document.getElementById("objects").innerHTML = objects.map(([t, d]) =>
+  `<dt>${t}</dt><dd>${d}</dd>`).join("");
+
+const rows = [
+  ["في الطريق", "عند المندوب", "لا إيراد بعد. البضاعة خرجت والمال لم يخرج ولم يدخل.", "neutral"],
+  ["مُسلَّمة", "عند المندوب", "إيراد حقيقي، ونقد ليس بيدك. هنا يتراكم المتأخّر.", "warning"],
+  ["مُسلَّمة", "بيدك", "الحالة الوحيدة التي يكون فيها المبلغ قابلاً للصرف.", "success"],
+  ["راجعة", null, "لا إيراد ولا عمولة. أجرة التوصيل دُفعت ذهاباً وإياباً.", "danger"],
+  ["ملغاة", null, "لم يحدث شيء. لا تدخل أي حساب.", "neutral"],
+];
+document.getElementById("matrix").innerHTML =
+  `<thead><tr><th>حالة الطلب</th><th>حالة المال</th><th>ماذا يعني</th></tr></thead>
+   <tbody>${rows.map(([a, b, c, k]) => `<tr>
+     <td><span class="badge badge-${k}">${a}</span></td>
+     <td style="color:${b ? "var(--fg-2)" : "var(--fg-3)"}">${b || "لا ينطبق"}</td>
+     <td style="white-space:normal;color:var(--fg-2)">${c}</td></tr>`).join("")}</tbody>`;
+
+const freeze = [
+  ["أسعار الشهر وكلفته", "تُنسخ كما كانت، فلا يغيّرها تعديل لاحق على قائمة الأسعار."],
+  ["حصص المندوبين", "تُجمَّد لقطةً، فالمندوب لا يخسر ولا يربح بتغيير قاعدة بعد الشهر."],
+  ["ملخّص الفترة", "يُحفظ، فلا ينحرف تقرير قديم كلما تحرّكت البيانات الحيّة."],
+  ["الكتابة", "تُغلق. الفترة المغلقة تُقرأ فقط، وفتحها فعل معلن لا زرّ عابر."],
+];
+document.getElementById("freeze").innerHTML = freeze.map(([t, d]) => `
+  <div style="display:flex;gap:var(--s-2);padding-block:var(--s-15);border-bottom:1px solid var(--line)">
+    <svg class="i i-sm" viewBox="0 0 24 24" style="color:var(--accent);flex:none;margin-top:1px">
+      <rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    <span><b style="font-size:var(--fs-table)">${t}</b>
+      <span class="note"> ${d}</span></span></div>`).join("");
+
+const ladder = [["1", "منتج ومندوب معاً", "أخصّ ما يمكن"], ["2", "منتج", "كل من يبيع هذا المنتج"],
+                ["3", "مندوب", "كل ما يبيعه هذا المندوب"], ["4", "افتراضي الحساب", "ما لم يُقيَّد"]];
+document.getElementById("ladder").innerHTML = ladder.map(([n, t, d]) =>
+  `<span><i class="n">${n}</i><b class="scope">${t}</b><span class="gloss">${d}</span></span>`).join("");
+
+const words = [
+  ["الطلب", "لا «الرحلة» ولا «البيعة»: البيعة سطر داخله"],
+  ["مُسلَّمة", "لا «مكتملة»: الاكتمال يوحي بأن المال وصل"],
+  ["بيدك", "لا «محصّلة»: الكلمة تقول أين المال لا من حرّكه"],
+  ["مجمَّد", "لا «مقفل» ولا «منتهٍ»: التجميد يصف ما لا يتغيّر"],
+  ["الحصّة", "لا «العمولة» في الجداول: العمولة قاعدة، والحصّة مبلغ"],
+  ["ما بقي لك", "لا «صافي الربح» في اللوحة: الأولى يفهمها التاجر فوراً"],
+];
+document.getElementById("words").innerHTML = words.map(([a, b]) => `
+  <div style="display:flex;align-items:baseline;gap:var(--s-3);padding-block:var(--s-15);
+       border-bottom:1px solid var(--line)">
+    <b style="font-size:var(--fs-table);width:9ch;flex:none">${a}</b>
+    <span class="note">${b}</span></div>`).join("");
+</script>
+</body></html>

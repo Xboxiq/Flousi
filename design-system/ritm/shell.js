@@ -18,6 +18,7 @@ const P = {
   period:   '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   export:   '<path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v3h16v-3"/>',
   freeze:   '<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  stock:    '<path d="M3 8.5 12 4l9 4.5v7L12 20l-9-4.5z"/><path d="m3 8.5 9 4.5 9-4.5M12 13v7"/>',
   plus:     '<path d="M12 5v14M5 12h14"/>',
   check:    '<path d="m5 13 4 4L19 7"/>',
   x:        '<path d="M6 6l12 12M18 6 6 18"/>',
@@ -46,15 +47,21 @@ export const NAV = [
   { group: "اليوم", items: [
     { id: "ops",        label: "العمليات",   icon: "ops" },
     { id: "collect",    label: "التحصيلات",  icon: "collect", count: "3" },
+    { id: "monitor",    label: "مراقبة الطلبات", icon: "period" },
   ]},
   { group: "المال", items: [
     { id: "commission", label: "العمولات",   icon: "commission" },
     { id: "expense",    label: "المصروفات",  icon: "expense" },
     { id: "settle",     label: "التسويات",   icon: "settle" },
+    { id: "ledger",     label: "السجل",      icon: "report" },
   ]},
-  { group: "المتابعة", items: [
+  { group: "السجل", items: [
+    { id: "products",   label: "المنتجات",   icon: "stock" },
     { id: "reps",       label: "المندوبون",  icon: "reps" },
     { id: "target",     label: "الأهداف",    icon: "target" },
+  ]},
+  { group: "الأرشيف", items: [
+    { id: "periods",    label: "الفترات",    icon: "freeze" },
     { id: "report",     label: "التقارير",   icon: "report" },
   ]},
 ];
