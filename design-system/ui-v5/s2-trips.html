@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM v5 — S2 الرحلات</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+/* ── S2 · الرحلات · asymmetric information composition ───────────────────────
+   The densest screen in the product, and the only one with two columns of
+   unequal weight: a 9-column ledger of trips on the reading side and a 3-column
+   anchored reader beside it. Selecting a row does not open a modal or a drawer —
+   the reader is always there and always shows the selected trip, so the spatial
+   relationship is stable and nothing covers the list.
+   Navigation: a breadcrumb plus one segmented filter. No masthead nav duplication.
+   Hierarchy: the row's STATE first (a word, in colour), then what it carried,
+   then the money. Focal point: the selected row and its reader, tied by one blue
+   rule that runs from the row's edge into the reader's heading. */
+
+.crumb {
+  position:absolute; inset-inline:var(--marg); top:44px;
+  display:flex; align-items:baseline; gap:14px; font-size:14px; color:var(--mute);
+  padding-bottom:16px; border-bottom:1px solid var(--line);
+}
+.crumb .mark { margin-inline-end:auto; }
+.crumb b { color:var(--ink); font-weight:700; }
+.crumb .sep { color:var(--line-strong); }
+
+.head2 {
+  position:absolute; inset-inline:var(--marg); top:132px;
+  display:flex; align-items:flex-end; justify-content:space-between; gap:40px;
+}
+.head2 h1 { font-size:52px; font-weight:800; letter-spacing:-0.03em; line-height:1; }
+.head2 .meta { margin-top:10px; font-size:14.5px; color:var(--slate); }
+.head2 .meta em { font-style:normal; font-family:"Mono",monospace; font-weight:500; color:var(--ink); }
+
+/* the ledger */
+.ledger { position:absolute; inset-inline-start:var(--marg); top:262px; width:948px; }
+.colhead {
+  display:grid; grid-template-columns:78px 1fr 128px 132px 116px;
+  gap:24px; padding:0 10px 10px; border-bottom:1px solid var(--line-strong);
+}
+.colhead span { font-family:"Mono",monospace; font-weight:500; font-size:11px; letter-spacing:0.18em; color:var(--mute); }
+.colhead span.r { text-align:left; }
+.ledger .row { grid-template-columns:78px 1fr 128px 132px 116px; }
+.ledger .row .area { font-size:13px; color:var(--slate); }
+.ledger .row .amt.q { font-size:16px; color:var(--slate); }
+.ledger .foot2 {
+  display:flex; align-items:baseline; justify-content:space-between;
+  padding:16px 10px 0;
+}
+.ledger .foot2 .t { font-size:13.5px; color:var(--slate); }
+.ledger .foot2 .t b { font-family:"Mono",monospace; font-weight:500; color:var(--ink); }
+
+/* the reader: an instrument, recessed, never a card and never floating */
+.reader {
+  position:absolute; inset-inline-end:var(--marg); top:262px; width:392px; padding:26px 26px 30px;
+}
+.reader .tie { position:absolute; inset-inline-end:100%; top:34px; width:26px; height:2px; background:var(--blue); }
+.reader .k { display:flex; align-items:baseline; justify-content:space-between; }
+.reader h2 { margin-top:14px; font-size:26px; font-weight:800; letter-spacing:-0.02em; }
+.reader .where { margin-top:6px; font-size:14px; color:var(--slate); }
+.reader .lines { margin-top:24px; }
+.reader .li {
+  display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+  padding:11px 0; border-bottom:1px solid rgba(11,15,22,0.09);
+  font-size:14.5px;
+}
+.reader .li:first-child { border-top:1px solid rgba(11,15,22,0.09); }
+.reader .li .v { font-family:"Mono",monospace; font-weight:500; font-size:16px; }
+.reader .li .v.neg { color:var(--red); }
+.reader .li.total { border-bottom:0; padding-top:16px; }
+.reader .li.total .k2 { font-weight:800; font-size:16px; }
+.reader .li.total .v { font-size:24px; }
+.reader .split { margin-top:22px; }
+.reader .split .cap { display:flex; justify-content:space-between; font-size:13px; color:var(--slate); margin-bottom:9px; }
+.reader .acts { margin-top:26px; display:flex; gap:10px; }
+.reader .acts .btn { flex:1; padding-inline:0; text-align:center; font-size:14px; }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <nav class="crumb">
+    <span class="mark">
+      <span class="tile"><svg viewBox="0 0 16 16" fill="none"><path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#f8f6f2" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 5.5H13V8.5" stroke="#f8f6f2" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="name">RITM</span>
+    </span>
+    <span>اليوم</span><span class="sep">/</span><b>الرحلات</b><span class="sep">/</span><span>أغسطس 2026</span>
+  </nav>
+
+  <div class="head2">
+    <div>
+      <h1>سبع رحلات</h1>
+      <p class="meta">قُبض على التوصيل <em>52,500</em> ودُفع <em>60,000</em>، فالتوصيل خسر <em>7,500</em> هذا الشهر.</p>
+    </div>
+    <div class="seg">
+      <button aria-pressed="true">الكل</button>
+      <button aria-pressed="false">بيدك</button>
+      <button aria-pressed="false">عند التوصيل</button>
+      <button aria-pressed="false">راجعة</button>
+    </div>
+  </div>
+
+  <section class="ledger">
+    <div class="colhead">
+      <span>TRIP</span><span>WHAT IT CARRIED</span><span>STATE</span><span class="r">COLLECTED</span><span class="r">YOUR KEEP</span>
+    </div>
+    <div class="rows">
+      <div class="row is-selected">
+        <span class="id">ط-1047</span>
+        <span><span class="ttl">قطعتان · وشاح صوف مرينو</span><span class="sub area">زيونة · 27 آب · توصيل مجاني</span></span>
+        <span class="state hand">بيدك</span>
+        <span class="amt q">111,000</span>
+        <span class="amt pos">27,851</span>
+      </div>
+      <div class="row">
+        <span class="id">ط-1046</span>
+        <span><span class="ttl">ثلاث قطع · طقم ماتشا</span><span class="sub area">المنصور · 26 آب · عرض 10%</span></span>
+        <span class="state hand">بيدك</span>
+        <span class="amt q">144,500</span>
+        <span class="amt pos">50,405</span>
+      </div>
+      <div class="row">
+        <span class="id">ط-1045</span>
+        <span><span class="ttl">قطعة · شمعة أرز ومريمية</span><span class="sub area">الشعلة · 23 آب</span></span>
+        <span class="state back">راجعة</span>
+        <span class="amt q">0</span>
+        <span class="amt neg">−8,000</span>
+      </div>
+      <div class="row">
+        <span class="id">ط-1044</span>
+        <span><span class="ttl">أربع قطع · دفتر جلدي</span><span class="sub area">الأعظمية · 20 آب</span></span>
+        <span class="state out">عند التوصيل</span>
+        <span class="amt q">195,000</span>
+        <span class="amt pos">78,490</span>
+      </div>
+      <div class="row">
+        <span class="id">ط-1043</span>
+        <span><span class="ttl">قطعتان · حقيبة كتان كروس</span><span class="sub area">الجادرية · 16 آب</span></span>
+        <span class="state hand">بيدك</span>
+        <span class="amt q">184,000</span>
+        <span class="amt pos">49,434</span>
+      </div>
+      <div class="row">
+        <span class="id">ط-1042</span>
+        <span><span class="ttl">قطعة · كوب حجري</span><span class="sub area">أبو غريب · 10 آب · توصيل بالخسارة</span></span>
+        <span class="state hand">بيدك</span>
+        <span class="amt q">37,000</span>
+        <span class="amt neg">−1,288</span>
+      </div>
+      <div class="row">
+        <span class="id">ط-1041</span>
+        <span><span class="ttl">ثلاث قطع · وشاح ودفتر</span><span class="sub area">الكرادة · 5 آب</span></span>
+        <span class="state hand">بيدك</span>
+        <span class="amt q">174,000</span>
+        <span class="amt pos">59,979</span>
+      </div>
+    </div>
+    <div class="foot2">
+      <span class="t">سبع رحلات من أصل سبع · <b>216</b> بيعة مسجّلة بلا رحلة، من قبل هذه الميزة</span>
+      <button class="btn quiet">تصدير الشهر</button>
+    </div>
+  </section>
+
+  <aside class="reader inst">
+    <span class="tie"></span>
+    <div class="k"><span class="lab">TRIP · SELECTED</span><span class="state hand">بيدك</span></div>
+    <h2>ط-1047</h2>
+    <p class="where">زيونة · 27 آب · المندوب ليث العبيدي</p>
+
+    <div class="lines">
+      <div class="li"><span>سعر البيع</span><span class="v">111,000</span></div>
+      <div class="li"><span>كلفة الشراء</span><span class="v neg">−62,000</span></div>
+      <div class="li"><span>أجرة التوصيل المدفوعة</span><span class="v neg">−7,000</span></div>
+      <div class="li"><span>ما قُبض على التوصيل</span><span class="v">0</span></div>
+      <div class="li"><span>حصّة المندوب · 45%</span><span class="v neg">−14,149</span></div>
+      <div class="li total"><span class="k2">ما بقي لك</span><span class="v">27,851</span></div>
+    </div>
+
+    <div class="split">
+      <div class="cap"><span>أنت 66%</span><span>المندوب 34%</span></div>
+      <div class="rail"><i class="blue" style="width:66%"></i></div>
+    </div>
+
+    <div class="acts">
+      <button class="btn">افتح البيعة</button>
+      <button class="btn quiet">سجّل مرتجع</button>
+    </div>
+  </aside>
+</div>
+</body>
+</html>

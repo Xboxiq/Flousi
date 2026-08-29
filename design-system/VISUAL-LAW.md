@@ -1,16 +1,16 @@
-# Flousi — القانون البصري VISUAL LAW (v1)
+# RITM — القانون البصري VISUAL LAW (v1)
 
 > Ported and adapted 2026-08-17 from the client's own `Xboxiq/nova`
 > (`design-system/VISUAL-LAW.md`) — first-party, fully licensed. This law is what
 > turns "رسوم بمستوى الصور" from a wish into a build requirement. It binds every
-> visual object in Flousi. Enforced by design-law gates (see DESIGN-PLAN §process)
+> visual object in RITM. Enforced by design-law gates (see DESIGN-PLAN §process)
 > and the anti-slop matrix.
 
 ## §1 الجسم قبل الشكل — Body before shape
 Every visual element is an OBJECT: it has thickness, a light-catching edge, or an
 overlap proving something is in front of something. A colored rectangle that
 cannot say where its surface ends and its edge begins is filler, not design.
-**The screenshot test:** a Flousi visual object, cropped alone, should be
+**The screenshot test:** a RITM visual object, cropped alone, should be
 mistakable for a rendered image — not for "simple CSS".
 
 ## §2 الضوء من فوق — Light comes from directly overhead
@@ -91,7 +91,7 @@ its rules we already keep, and several of them we keep more strictly than it ask
 Eight of them we **deliberately break**, and the reason is the same in all eight
 cases: the skill is written for a flat, bordered, technical-document aesthetic, and
 it bans the *symptom* (a shadow, a radius, a gradient) rather than the fault (depth
-that reports nothing). Flousi's brief was the opposite and was stated twice:
+that reports nothing). RITM's brief was the opposite and was stated twice:
 «يهتم بالتفاصيل والأشكال ثلاثية الأبعاد» and
 «تكون كأنها صور أو تكوينات احترافية … مو خطوط وكلشي مو متوازن». A 1px
 border on a flat panel is exactly the drawing he rejected.
@@ -158,6 +158,82 @@ before it ships.
 | `/reps/schemes` | عمود السعر، الوحدة المتبقّية، سياستا الخسارة، آخر عملية، والاستثناءات — كلها مفتوحة | سلّم من خمس درجات تحت منصّة العمل |
 | `/targets` | شارة نسبة + مسطرة + حكم بالكلمات في كل سطر | المسطرة والحكم فقط؛ الشارة كانت الطبعة الثالثة |
 
+## §16 اللغات البديلة — Alternative languages, and how a conflict is settled
+
+The shipped app (`src/`) speaks **v4**, and every clause above governs it. Two
+further languages exist as complete, rendered explorations, and neither is
+allowed to leak into `src/` clause by clause:
+
+| | | |
+|---|---|---|
+| **v5** | `design-system/ui-v5/` | «آلة تحريرية» · rules and space; 2px radius + one pill; ink on paper with one reserved blue |
+| **v6** | `design-system/ui-v6/` | «مساحات» · area is the only encoding; **radius 0 everywhere**, one 16px chamfer meaning «touchable»; no drawn line at all, only 4px of gypsum grout; glaze = identity for life, ink = verdict |
+
+**The rule for conflicts.** v6 forbids outright three things v4 uses on every
+screen: any radius, any drawn hairline, and any card. That is not a violation of
+this document, because v6 is a *different* language, not a proposal to relax v4.
+The moment any part of v6 is lifted into `src/`, the clause it contradicts is
+resolved here in writing, in this table, with the reason and the date. Nothing is
+resolved silently in either direction.
+
+**v6.1 adds a third, and a script that enforces all of them.** `design-system/
+ui-v6/audit.mjs` runs seven checks — four on the files, three on the rendered DOM
+in Chromium — and fails the build on any of: a literal `font-size`, an off-lattice
+geometric value, a rule setting both `direction` and `inset-inline-*`, a text node
+under WCAG AA against its painted ground, a field over 240px tall with no foot, a
+clipped text or painted box, or two text boxes overlapping by more than 3px. It
+was written because six inks at 2.49–4.28:1 and an entire footer pushed off the
+plane survived four passes of looking at the screens.
+
+**Three engineering laws v6 discovered, which bind every language here:**
+
+1. `inset-inline-start/end` resolve against the **element's own** `direction`. An
+   absolutely positioned mono stamp that sets `direction:ltr` on itself has its
+   inline axis flipped, so `inset-inline-end` lands on the reading edge. A run of
+   digits and a per cent sign needs no `direction` override at all: it is ET/EN
+   under bidi and reorders correctly on its own. Drop the override, keep the
+   logical property.
+2. A light-ground surface placed on a dark screen must **declare its own ink**. A
+   limestone field inheriting a kiln page's light ink is unreadable, and this
+   failed on ten surfaces across two screens before it was seen.
+3. A secondary ink is **never an alpha of the primary**. `rgba(ink, 0.40)` is a
+   dimmer, not a colour: on limestone it measures 2.49:1. Every secondary and
+   tertiary ink is a solid value chosen against its ground, and its ratio is
+   written next to it in the token block. An overlay that carries text must own
+   its background too, or its contrast becomes a property of what it sits over.
+
+## §17 v7 «من المرجع» — the reference-built language, and its two conflicts
+
+The client's note on v6 was **«اعتمد على رفرنس والتفكير ك مصمم مو ك رسام»**. It was
+correct: v6 invented a private visual vocabulary and called it product design.
+`design-system/ui-v7/` has no invented vocabulary. Its style, metrics, palette,
+typeface, component set, table rules, form rules and chart choices each cite the
+row of `ui-ux-pro-max` data they came from; the README lists them one by one.
+
+**Only three things in v7 are original, and each is named there:** the split bar,
+one stable hue per rep, and the «مجمَّد» marker on frozen prices and rules. Each
+exists because the product genuinely differs from a generic dashboard, and each is
+assembled from standard parts.
+
+**Two conflicts with the shipped app, recorded rather than settled silently:**
+
+| | v4 (shipped) | v7 (exploration) | why |
+|---|---|---|---|
+| icons | Phosphor, one weight per surface | **Lucide** | shadcn's own icon set is Lucide, and v7's whole point is to follow its reference stack rather than mix vocabularies. If any v7 component is lifted into `src/`, its icons are redrawn in Phosphor at that moment. |
+| card ground | never pure `#fff` | **`#FFFFFF` on an off-white `#F8FAFC` page** | `colors.csv #42` prescribes exactly this pair, and the gate's ban is on pure-white **page** backgrounds. The page here is not white. |
+
+**What the anti-slop gate changed in v7**, before it shipped: the ghost card (a
+hairline border and a shadow on the same element) became border-only elevation;
+the default semantic rainbow became a neutral chip with a coloured dot, with a
+tint reserved for the two states that want a decision; four KPI cards nested
+inside a card became a figure row on hairlines; and one em dash left the copy.
+
+**A fourth engineering law, from v7:** a report that disagrees with its own chart
+is the worst defect a money product can ship. v7's rep table summed to 1,437,670
+while the split bar above it said 769,420. Every figure now derives from one set
+(736,000×45% + 996,000×30% + 116×1,200 = 769,200, the exact rep slice of
+5,164,500), and `audit.mjs` is the standing check on everything else.
+
 ## ميزانية الحركة (من nova — تحمي السينمائية من أكل المقروئية)
 - Max **two simultaneously animating elements** on a product/data surface.
 - Max **one** endless loop per page; **zero** infinite animation on a product
@@ -177,9 +253,152 @@ appearing twice is not an argument for accepting it.
 | Flat corporate illustration | بلا جسم ولا ضوء — يسقط §1 |
 | Pastel per-icon tiles | لون بلا معنى — يسقط §13 |
 | Side-lit objects | تنقلب فيزياؤها بالمرآة RTL — يسقط §2 |
-| **«الصرف حبر عادي والإيراد فقط ملوّن» (من محفظة استهلاكية، تغذية 5)** | صحيح في محفظة شخصية حيث الصرف طبيعي؛ فلوسي موجود ليقول إن هذه البيعة **خسرت**، فالربح السالب يبقى بالأحمر. الدرس المأخوذ: ليس كل سالب يستحق اللون — الكميات والتكاليف حبر محايد، والقطبية للربح وحده |
+| **«الصرف حبر عادي والإيراد فقط ملوّن» (من محفظة استهلاكية، تغذية 5)** | صحيح في محفظة شخصية حيث الصرف طبيعي؛ رِتم موجود ليقول إن هذه البيعة **خسرت**، فالربح السالب يبقى بالأحمر. الدرس المأخوذ: ليس كل سالب يستحق اللون — الكميات والتكاليف حبر محايد، والقطبية للربح وحده |
 | صبغ الألواح بألوان باستيل حسب الدور (نعناعي/بنفشي/مرجاني) | نأخذ فكرة أن اللوح قد يُصبغ بدوره، لا الأصباغ نفسها؛ ألوانها ليست ألواننا |
-| **استيراد لوحة «lime على أسود» من تغذية 2026-08-17** | المراجع الأربعة داكنة بلون واحد حاد. الدرس الحقيقي هو **التوزيع**: أرضية هادئة ولون واحد فقط مسموح له أن يشير — وهذا قانوننا أصلاً (§6 §13). أُخذ الدرس وطُبّق على أكسنت Flousi؛ استيراد الـ hue نفسه مرفوض. |
+| **استيراد لوحة «lime على أسود» من تغذية 2026-08-17** | المراجع الأربعة داكنة بلون واحد حاد. الدرس الحقيقي هو **التوزيع**: أرضية هادئة ولون واحد فقط مسموح له أن يشير — وهذا قانوننا أصلاً (§6 §13). أُخذ الدرس وطُبّق على أكسنت RITM؛ استيراد الـ hue نفسه مرفوض. |
 | مخطط النقاط (dot-matrix) لمقارنة مبالغ | شبكة نقاط أسوأ قراءةً من قضيب لسؤال «أي منتج ربح أكثر»؛ مؤجّل لشاشة المندوبين حيث الوحدة شخص لا مبلغ |
 | شريط أجزاء يزيد مجموعه على كلّه (التجاوز كقطعة مضافة) | ضُبط في هذه الدفعة: كان الشريط يتجاوز 100% فيُقصّ من طرفه؛ صار التجاوز منطقةً محزّزة فوق الأجزاء التي أكلها (§11b) |
-| Purple/violet hues from nova's legacy HTML | يخالف بوابة السلوب؛ نأخذ التقنية ونعيد ربط الألوان بتوكنات Flousi |
+| Purple/violet hues from nova's legacy HTML | يخالف بوابة السلوب؛ نأخذ التقنية ونعيد ربط الألوان بتوكنات RITM |
+
+
+---
+
+## §18 · نظام رِتم / THE RITM DESIGN SYSTEM
+
+`design-system/ritm/` is the product layer of the identity in `design-system/brand/`.
+The brand is the source and is not re-opened here; what was added is the answer a
+brand manual cannot give — what each colour, size and duration MEANS in a product.
+
+Published: https://claude.ai/code/artifact/c205bf8a-7a37-4a45-a2ba-ab09b7918dd0
+
+### The two clauses this phase adds
+
+**18.1 · A palette that works on one ground is half a palette.** The identity was
+settled on ink. Moving it to paper needed a token the dark mode does not have:
+sand is `1.98:1` on paper, so `--accent` (a fill) and `--accent-ink` `#7C6036`
+(a word) are two different tokens and are never interchangeable. The general rule:
+when a mode needs a value the other does not, that is a NEW TOKEN, never the same
+token quietly reassigned.
+
+**18.2 · A rule that cannot be run is a wish.** Every rule in this document that
+governs `ritm/` is executable in `ritm/audit.mjs`: contrast for 37 pairs in both
+modes, the plane, the ten-step scale, the 4px lattice, the ghost card, Arabic in a
+Latin face, and unisolated LTR runs. Two of its checks are FAILING controls — sand
+and teal as text on paper must stay below AA. A check that can only pass cannot
+catch a regression that loosens a threshold.
+
+### Recorded conflicts
+
+* **The brand's six display steps vs a product's density.** The manual sets 116 /
+  56 / 38 / 22 / 16 / 13. A table row and an axis tick live below that floor. The
+  product ramp keeps five of the six as members (13, 16, 22, 38, 56) and adds the
+  five the manual has no reason to name (10, 11, 12, 14, 28). Resolved in favour of
+  the product, and `brand/Type.dc.html` now says «ستّ درجات للهوية» rather than
+  «لا سابعة».
+* **Teal is «the live signal, dark only» and is also this manual's annotation
+  colour.** Both are true; the Colour board now says so, and teal is not a general
+  fill anywhere in the product.
+* **A white card on an off-white page** (recorded in §17) stands: light mode is
+  `#FFFFFF` on `#F2F1EE`, because the brand's light ground is warm and a card that
+  is not lighter than it has no elevation at all.
+
+
+---
+
+## §19 · المصدر الأصلي / THE SOURCE ARRIVED LATE
+
+The client supplied the original artwork after the identity boards and the whole design
+system had been built. The symbol in it is **four vertical bars**, not the stepped
+horizontal capsules everything had been built on. `brand/README.md` had recorded that
+choice as a stated assumption; the assumption was wrong.
+
+### 19.1 · A stated assumption is a debt, and it comes due
+
+Writing «الرمز مُوحَّد على الكبسولات المتدرّجة… ونسخة الأشرطة الرأسية غير مبنيّة» was the
+right thing to do — it is what made this reversible. But an assumption about the SOURCE
+is not the same as an assumption about a detail: it sits under everything above it. The
+rule that follows: when an assumption concerns the identity itself, stop and ask for the
+artwork before building on it. Thirty-six marks, six colour tokens, eleven boards and a
+grid law were rebuilt because that question was not asked.
+
+### 19.2 · A derivation is only as good as the thing it derives from
+
+The rhythm grid's four legal spans (2, 4, 6, 8) were read off the old mark's four capsule
+WIDTHS. The real mark's bars are all one width, so that derivation did not survive: the
+spans are now 3, 6, 9, 12 — four equal columns — and the distinctive law moved to the
+vertical, where the real mark actually varies. The lesson is not "do not derive"; it is
+that a derivation must name what it derives from, so that when the source changes you
+can see immediately what falls with it.
+
+### 19.3 · What the source does not say, say yourself, out loud
+
+The identity board prints six colours and no light ground, and no profit or red. A
+product that judges money needs both. Those are extensions, and every one of them is
+commented as such in `ritm/tokens.css` rather than blended in as though the client had
+chosen it. The same clause as §18.1, arrived at from the other direction: where a role
+needs a value the source does not provide, that is a NEW token — and it says whose it is.
+
+
+---
+
+## §20 · بوابة مكافحة الرداءة / WHAT THE GATE FOUND
+
+`ritm-anti-slop-gate` run over every rebuilt surface. Evidence in
+`gates/phase-ritm-anti-slop-gate.md`. Three clauses come out of it.
+
+### 20.1 · A label over a heading is decoration; a label over a list is a heading
+
+The scanner flags every small letterspaced label as a kicker. It is right about half
+of them and wrong about the other half, and the difference is what sits underneath:
+
+* over a HEADING, restating it — decoration. `01 · COLOUR SYSTEM` above «اللون له دور»
+  and `NEEDS YOU` above «ثلاثة تحصيلات تأخّرت» were both deleted.
+* over a LIST or a panel, being its only label — a heading. Those stay.
+
+The rule that follows: never let an eyebrow and a heading say the same thing. If the
+eyebrow is doing work, it is the heading and the heading is redundant.
+
+### 20.2 · A label the merchant reads is Arabic
+
+The dashboard's own navigation was labelling its groups `TODAY / MONEY / REVIEW`.
+Nobody noticed for a whole build, because the reviewer reads English. Any string that
+reaches a user is Arabic; Latin is for token names, figures and this manual's own
+stamps. A bilingual label that says the same thing twice is one label too many.
+
+### 20.3 · A responsive rule that is only drawn is a wish
+
+`d9-responsive` describes what happens at 360. It described it correctly and proved
+nothing. The first honest attempt to measure it failed twice: once because the check
+was pointed at a fixed 1440 artboard (a frame at 390 measures the frame), and once on
+a real defect — crumb links 20px tall, under the 24 minimum. `p5-mobile` now exists so
+that the media queries actually run and the audit can measure them. **Every rule this
+document states about a size, a mode or a direction needs a surface where it executes.**
+
+
+---
+
+## §21 · ما لا يُرى إلا بالقياس / THE SILENT FAILURES
+
+Two more, from widening the system to the product's real scope.
+
+### 21.1 · A missing class is silent by construction
+
+`.toolbar` was used on five screens and defined in no stylesheet. Nothing failed: no
+clipping, no overflow, no contrast breach. The elements simply laid out as blocks, and a
+filter bar's search box spanned an entire card. CSS has no undefined-symbol error, so
+the check has to be written by hand — and now is: every class a screen names must be
+declared, in a shared sheet or in that page's own `<style>`.
+
+The general form: **a language that fails silently needs a gate that does not.**
+
+### 21.2 · The product is wider than the number it is famous for
+
+RITM was built and documented as a profit-and-commission system for weeks. It is also
+order monitoring, an archive of frozen periods, and a record of details — and those are
+not features hanging off the first thing, they are what the merchant opens it for.
+A design system that covers one job of four is not a design system for the product.
+
+The rule: **before building surfaces, read the domain and list its objects.** The object
+model board (`d10`) exists because that question was answered late. Every object it
+names is read off `src/domain`, not off the screens, because the screens are downstream
+of the model and can only repeat its mistakes.

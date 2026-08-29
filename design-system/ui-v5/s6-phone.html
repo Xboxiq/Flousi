@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM v5 — S6 الهاتف</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+/* ── S6 · الهاتف · three phone compositions, not one shrunk ──────────────────
+   Responsive here means RE-COMPOSED, and the three differences are structural:
+
+   · NAVIGATION   the desktop masthead cannot survive at 390px, so on the phone
+     the sections move to a bottom dock of four words. The dock is words, not
+     icons: «اليوم» is unambiguous, a house glyph is not.
+   · HIERARCHY    the desktop opener leads with one 132px figure beside a column
+     of three facts. The phone leads with the same figure at 56px and turns the
+     three facts into three rules, because a phone reads down, not across.
+   · DENSITY      the trip ledger drops four of its five columns. What survives
+     is the state word, the destination and one amount, because those are what a
+     thumb scrolls for; the rest lives one tap deeper.
+   · TASK         the record screen keeps ALL its fields but docks the split as a
+     two-figure summary bar above the keyboard, so the consequence stays visible
+     while the thumb types. On desktop that same consequence is a full column.
+   · SPACING      margins drop 72 → 20, and the vertical step stays 8, so the
+     rhythm is recognisable even though the measure changed. */
+
+body, html { background:#e7e3db; }
+.sheet { position:relative; width:1600px; height:1000px; background:#e7e3db; }
+.sheet .hdr { position:absolute; inset-inline:64px; top:44px; display:flex; align-items:baseline; justify-content:space-between; padding-bottom:14px; border-bottom:1px solid rgba(11,15,22,0.14); }
+.sheet .hdr b { font-size:20px; font-weight:800; letter-spacing:-0.02em; }
+.sheet .hdr .m { font-family:"Mono",monospace; font-weight:500; font-size:12px; letter-spacing:0.2em; color:var(--slate); }
+
+.phones { position:absolute; inset-inline:64px; top:128px; display:flex; gap:56px; justify-content:center; }
+.ph { width:390px; }
+.ph .cap { margin-bottom:14px; display:flex; align-items:baseline; justify-content:space-between; }
+.ph .cap b { font-size:15px; font-weight:700; }
+.ph .cap span { font-family:"Mono",monospace; font-weight:500; font-size:11px; letter-spacing:0.16em; color:var(--slate); }
+.dev {
+  position:relative; width:390px; height:768px; background:var(--paper);
+  border-radius:14px; overflow:hidden;
+  box-shadow:0 1px 0 rgba(255,255,255,0.8), 0 18px 40px -18px rgba(11,15,22,0.35),
+             0 0 0 1px rgba(11,15,22,0.13);
+}
+.dev .status {
+  height:44px; padding:0 20px; display:flex; align-items:center; justify-content:space-between;
+  font-family:"Mono",monospace; font-weight:500; font-size:11px; letter-spacing:0.1em; color:var(--slate);
+}
+.dev .body { padding:8px 20px 0; }
+.dev .top {
+  display:flex; align-items:baseline; justify-content:space-between;
+  padding-bottom:12px; border-bottom:1px solid var(--line);
+}
+.dev .top b { font-size:19px; font-weight:800; letter-spacing:-0.02em; }
+.dev .top .m { font-size:12.5px; color:var(--slate); }
+
+/* the dock: four words, and the current one carries the rule */
+.dock {
+  position:absolute; inset-inline:0; bottom:0; height:66px;
+  display:flex; align-items:center; justify-content:space-around;
+  background:rgba(248,246,242,0.94); border-top:1px solid var(--line);
+  backdrop-filter:blur(10px);
+}
+.dock a { font-size:13.5px; font-weight:700; color:var(--mute); text-decoration:none; padding:4px 2px; }
+.dock a[aria-current] { color:var(--ink); box-shadow:0 2px 0 var(--ink); }
+
+/* P1 · today */
+.p1 .fig { margin-top:22px; display:flex; align-items:baseline; gap:10px; direction:ltr;
+  font-family:"Mono",monospace; font-weight:500; font-size:56px; letter-spacing:-0.02em; }
+.p1 .fig .u { font-size:19px; color:var(--slate); }
+.p1 .said { margin-top:10px; font-size:15.5px; font-weight:700; }
+.p1 .facts { margin-top:26px; }
+.p1 .f {
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  padding:15px 0; border-top:1px solid var(--line); font-size:14px;
+}
+.p1 .f:last-of-type { border-bottom:1px solid var(--line); }
+.p1 .f .v { font-family:"Mono",monospace; font-weight:500; font-size:16px; direction:ltr; }
+.p1 .f .v.neg { color:var(--red); }
+.p1 .f .v.mute { color:var(--mute); }
+.p1 .cta { position:absolute; inset-inline:20px; bottom:82px; }
+.p1 .cta .btn { width:100%; text-align:center; padding-block:16px; }
+
+/* P2 · trips, three columns only */
+.p2 .filter { margin-top:16px; }
+.p2 .seg { width:100%; }
+.p2 .seg button { flex:1; padding:9px 0; font-size:13px; }
+.p2 .list { margin-top:8px; }
+.p2 .r {
+  display:grid; grid-template-columns:1fr auto; gap:6px 14px; align-items:baseline;
+  padding:14px 0; border-bottom:1px solid var(--line);
+}
+/* stacked: as inline spans in one grid cell the destination and the trip id ran
+   together into «...بيدكط-1047» */
+.p2 .r .t { display:block; font-size:15px; font-weight:700; }
+.p2 .r .s { display:block; font-size:12.5px; color:var(--slate); margin-top:3px; }
+.p2 .r .a { font-family:"Mono",monospace; font-weight:500; font-size:16px; direction:ltr; text-align:left; }
+.p2 .r .a.pos { color:var(--green); }
+.p2 .r .a.neg { color:var(--red); }
+
+/* P3 · the task, with the split docked over the keyboard */
+.p3 .f2 { margin-top:20px; }
+.p3 .f2 .fld { margin-bottom:20px; }
+.p3 .f2 .k2 { font-family:"Cairo"; font-weight:700; font-size:12.5px; color:var(--slate); }
+.p3 .f2 .c2 {
+  margin-top:7px; padding:8px 0; border-bottom:1.5px solid var(--line-strong);
+  display:flex; align-items:baseline; justify-content:space-between;
+}
+.p3 .f2 .c2 .v2 { font-weight:700; font-size:19px; }
+.p3 .f2 .c2 .v2.num { font-family:"Mono",monospace; font-weight:500; direction:ltr; }
+.p3 .f2 .fld.foc .c2 { border-color:var(--blue); box-shadow:0 1.5px 0 var(--blue); }
+.p3 .f2 .c2 .sfx { font-size:12.5px; color:var(--slate); font-weight:600; }
+.p3 .docked {
+  position:absolute; inset-inline:0; bottom:66px; padding:14px 20px 16px;
+  background:var(--bone); border-top:1px solid rgba(11,15,22,0.14);
+}
+.p3 .docked .two { display:flex; gap:24px; }
+.p3 .docked .two div { flex:1; }
+.p3 .docked .c3 { font-size:11.5px; color:var(--slate); }
+.p3 .docked .v3 { margin-top:4px; font-family:"Mono",monospace; font-weight:500; font-size:22px; direction:ltr; }
+.p3 .docked .v3.pos { color:var(--green); }
+.p3 .docked .btn { width:100%; margin-top:12px; text-align:center; padding-block:14px; }
+
+.note {
+  position:absolute; inset-inline:64px; bottom:44px; padding-top:14px;
+  border-top:1px solid rgba(11,15,22,0.14);
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:13px; color:var(--slate);
+}
+.note b { color:var(--ink); }
+.note .m { font-family:"Mono",monospace; font-weight:500; font-size:11.5px; letter-spacing:0.16em; color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="hdr">
+    <b>الهاتف · ثلاث تراكيب، لا تصغير واحد</b>
+    <span class="m" dir="ltr">390 × 844 · MARGIN 20 · STEP 8</span>
+  </div>
+
+  <div class="phones">
+
+    <!-- P1 · today -->
+    <div class="ph">
+      <div class="cap"><b>اليوم</b><span>ONE FIGURE, THREE RULES</span></div>
+      <div class="dev p1">
+        <div class="status"><span>9:41</span><span>IQD</span></div>
+        <div class="body">
+          <div class="top"><b>اليوم</b><span class="m">27 آب</span></div>
+          <div class="fig"><span>4,949,500</span><span class="u">د.ع.</span></div>
+          <p class="said">بيدك الآن. هذا ما تقدر تصرفه.</p>
+          <div class="facts">
+            <div class="f"><span>عند المندوبين</span><span class="v">195,000</span></div>
+            <div class="f"><span>على الطريق</span><span class="v mute">0</span></div>
+            <div class="f"><span>خسارة مرتجع</span><span class="v neg">8,000</span></div>
+          </div>
+        </div>
+        <div class="cta"><button class="btn primary">سجّل رحلة</button></div>
+        <nav class="dock">
+          <a href="#" aria-current="page">اليوم</a><a href="#">الرحلات</a><a href="#">القسمة</a><a href="#">الشهر</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- P2 · trips -->
+    <div class="ph">
+      <div class="cap"><b>الرحلات</b><span>FIVE COLUMNS → THREE</span></div>
+      <div class="dev p2">
+        <div class="status"><span>9:41</span><span>IQD</span></div>
+        <div class="body">
+          <div class="top"><b>سبع رحلات</b><span class="m">آب</span></div>
+          <div class="filter">
+            <div class="seg">
+              <button aria-pressed="true">الكل</button>
+              <button aria-pressed="false">بيدك</button>
+              <button aria-pressed="false">عند التوصيل</button>
+            </div>
+          </div>
+          <div class="list">
+            <div class="r"><span><span class="t">زيونة · بيدك</span><span class="s">ط-1047 · قطعتان</span></span><span class="a pos">27,851</span></div>
+            <div class="r"><span><span class="t">المنصور · بيدك</span><span class="s">ط-1046 · ثلاث قطع · عرض</span></span><span class="a pos">50,405</span></div>
+            <div class="r"><span><span class="t">الشعلة · راجعة</span><span class="s">ط-1045 · قطعة</span></span><span class="a neg">−8,000</span></div>
+            <div class="r"><span><span class="t">الأعظمية · عند التوصيل</span><span class="s">ط-1044 · أربع قطع</span></span><span class="a pos">78,490</span></div>
+            <div class="r"><span><span class="t">الجادرية · بيدك</span><span class="s">ط-1043 · قطعتان</span></span><span class="a pos">49,434</span></div>
+            <div class="r"><span><span class="t">أبو غريب · بيدك</span><span class="s">ط-1042 · توصيل بالخسارة</span></span><span class="a neg">−1,288</span></div>
+            <div class="r"><span><span class="t">الكرادة · بيدك</span><span class="s">ط-1041 · ثلاث قطع</span></span><span class="a pos">59,979</span></div>
+          </div>
+        </div>
+        <nav class="dock">
+          <a href="#">اليوم</a><a href="#" aria-current="page">الرحلات</a><a href="#">القسمة</a><a href="#">الشهر</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- P3 · the task -->
+    <div class="ph">
+      <div class="cap"><b>رحلة جديدة</b><span>SPLIT DOCKED, NOT HIDDEN</span></div>
+      <div class="dev p3">
+        <div class="status"><span>9:41</span><span>IQD</span></div>
+        <div class="body">
+          <div class="top"><b>رحلة جديدة</b><span class="m">01 / 02</span></div>
+          <div class="f2">
+            <div class="fld foc">
+              <div class="k2">المنطقة</div>
+              <div class="c2"><span class="v2">زيونة</span></div>
+            </div>
+            <div class="fld">
+              <div class="k2">المندوب</div>
+              <div class="c2"><span class="v2">ليث العبيدي</span><span class="sfx">45%</span></div>
+            </div>
+            <div class="fld">
+              <div class="k2">التوصيل على الزبون</div>
+              <div class="c2"><span class="v2 num">5,000</span><span class="sfx">د.ع.</span></div>
+            </div>
+            <div class="fld">
+              <div class="k2">التوصيل الذي دفعته</div>
+              <div class="c2"><span class="v2 num">7,000</span><span class="sfx">د.ع.</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="docked">
+          <div class="two">
+            <div><div class="c3">هذا لك</div><div class="v3 pos">42,000</div></div>
+            <div><div class="c3">هذا له</div><div class="v3">34,364</div></div>
+          </div>
+          <button class="btn primary">احفظ الرحلة</button>
+        </div>
+        <nav class="dock">
+          <a href="#">اليوم</a><a href="#" aria-current="page">الرحلات</a><a href="#">القسمة</a><a href="#">الشهر</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span>على الهاتف يهاجر التنقّل إلى قاعدة الشاشة <b>بالكلمات لا بالأيقونات</b>، وتنزل نتيجة القسمة إلى شريط مرصود فوق لوحة المفاتيح كي تبقى مرئية أثناء الكتابة.</span>
+    <span class="m">RITM · V5 / S6 · THE PHONE</span>
+  </div>
+</div>
+</body>
+</html>

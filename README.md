@@ -1,6 +1,6 @@
-# Flousi
+# RITM
 
-**Flousi** calculates the *real net profit* of products sold by online stores and small
+**RITM** calculates the *real net profit* of products sold by online stores and small
 businesses. It is built as a premium, production-grade SaaS application — not a throwaway
 calculator — and is architected to grow into inventory, orders, analytics, multi-user, and
 cloud sync without rewrites.
@@ -113,22 +113,22 @@ ports or as new domain modules.
 
 ## Deployment (GitHub Pages)
 
-Flousi is a fully static, local-first app, so it deploys to GitHub Pages via static export.
+RITM is a fully static, local-first app, so it deploys to GitHub Pages via static export.
 
 **One-time setup:** in the repo, go to **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
-After that, every push to `main` (or `build-flousi-foundation`) runs
+After that, every push to `main` (or `build-ritm-foundation`) runs
 `.github/workflows/deploy.yml`, which builds the static export with
-`NEXT_PUBLIC_BASE_PATH=/Flousi` and publishes it. The site will be available at:
+`NEXT_PUBLIC_BASE_PATH=/RITM` and publishes it. The site will be available at:
 
 ```
-https://xboxiq.github.io/Flousi/
+https://xboxiq.github.io/RITM/
 ```
 
 To build the export locally:
 
 ```bash
-NEXT_PUBLIC_BASE_PATH=/Flousi npm run build   # outputs to ./out
+NEXT_PUBLIC_BASE_PATH=/RITM npm run build   # outputs to ./out
 ```
 
 Notes:

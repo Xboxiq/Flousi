@@ -15,7 +15,8 @@ import { storage, STORAGE_KEYS } from "./storage";
 import { DEFAULT_SETTINGS } from "./repositories";
 
 export interface BackupFile {
-  app: "flousi";
+  /* Files exported before the rename carry "flousi". Both are accepted on import. */
+  app: "ritm" | "flousi";
   version: 1;
   exportedAt: string;
   products: Product[];
@@ -39,7 +40,7 @@ export interface BackupFile {
 
 export function exportAll(): BackupFile {
   return {
-    app: "flousi",
+    app: "ritm",
     version: 1,
     exportedAt: new Date().toISOString(),
     products: storage.get<Product[]>(STORAGE_KEYS.products, []),
@@ -64,7 +65,7 @@ export function downloadBackup(): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `flousi-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `ritm-backup-${new Date().toISOString().slice(0, 10)}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -74,8 +75,8 @@ export function downloadBackup(): void {
 /** Validate and restore a backup. Throws on an invalid file. */
 export function importAll(raw: unknown): void {
   const data = raw as Partial<BackupFile>;
-  if (!data || data.app !== "flousi" || !Array.isArray(data.products)) {
-    throw new Error("This file is not a valid Flousi backup.");
+  if (!data || (data.app !== "ritm" && data.app !== "flousi") || !Array.isArray(data.products)) {
+    throw new Error("This file is not a valid RITM backup.");
   }
   storage.set(STORAGE_KEYS.products, data.products ?? []);
   storage.set(STORAGE_KEYS.sales, data.sales ?? []);
@@ -93,7 +94,7 @@ export function importAll(raw: unknown): void {
   if (data.settings) storage.set(STORAGE_KEYS.settings, data.settings);
 }
 
-/** Wipe all Flousi data (used by "reset" — reseeds on next load). */
+/** Wipe all RITM data (used by "reset" — reseeds on next load). */
 export function clearAll(): void {
   storage.remove(STORAGE_KEYS.products);
   storage.remove(STORAGE_KEYS.sales);

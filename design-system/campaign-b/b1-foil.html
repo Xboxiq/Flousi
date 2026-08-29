@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM B — 01 foil</title>
+<link rel="stylesheet" href="brand-b.css">
+<style>
+/* ── B1 · foil poster ────────────────────────────────────────────────────────
+   The type frame of this direction, and deliberately NOT Style A's: there the
+   headline bled off the right edge in flat ink at 248px; here it is struck in
+   brass foil, set on a heavy rule, and it starts at the reading edge and stops
+   short of the middle so the paper carries the frame.
+   Camera: flat-on. Ground: paper stock with fibre.
+   The object is a single plate of the price column in AMBER GLASS, resting low
+   right, and the light goes through it: the warm ellipse on the stock under the
+   plate is a caustic, not a shadow. Style A had no translucent bodies at all. */
+.frame { background: var(--paper); color: #1d1a15; }
+
+.stock {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(52% 40% at 26% -8%, #fffdf7, rgba(255,253,247,0) 66%),
+    linear-gradient(184deg, #f3ece1 0%, #eae2d5 54%, #d9cebb 100%);
+}
+/* the fibre of a real stock: two crossed hairline weaves, very low contrast */
+.fibre {
+  position: absolute; inset: 0; opacity: 0.5;
+  background-image:
+    repeating-linear-gradient(9deg, rgba(120,100,70,0.05) 0 1px, rgba(0,0,0,0) 1px 5px),
+    repeating-linear-gradient(-81deg, rgba(120,100,70,0.045) 0 1px, rgba(0,0,0,0) 1px 6px);
+}
+
+.wm { position: absolute; right: 104px; top: 84px; --wm: 1.1; }
+.wm .name { color: #1d1a15; }
+.serial {
+  position: absolute; left: 104px; top: 92px;
+  font-family: "Plex", monospace; font-weight: 400; font-size: 15px;
+  letter-spacing: 0.32em; color: rgba(29,26,21,0.42);
+}
+
+/* the rule the headline stands on: a deep deboss, not a drawn line */
+.rule {
+  position: absolute; right: 104px; left: 700px; top: 660px; height: 3px;
+  background: linear-gradient(90deg, rgba(120,100,70,0.06), rgba(94,76,44,0.42));
+  box-shadow: 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.head {
+  /* two explicit lines. At 224px on one line the phrase needed 1,900px and the
+     browser wrapped it into a shape nobody chose — a display line has to be set,
+     not left to reflow. */
+  position: absolute; right: 104px; top: 172px; width: 1180px;
+  text-align: right;
+  font-weight: 900; font-size: 206px; line-height: 1.1; letter-spacing: -0.035em;
+  /* the deboss: a dark edge below the glyph and a lit edge above it */
+  filter: drop-shadow(0 2px 0 rgba(255,255,255,0.75)) drop-shadow(0 -1px 0 rgba(88,66,30,0.35));
+}
+
+.dek {
+  position: absolute; right: 104px; top: 700px; width: 640px;
+  font-weight: 500; font-size: 26px; line-height: 1.62; color: rgba(29,26,21,0.62);
+}
+
+/* the reading, low on the reading side, with the frame's single cold spark */
+.read { position: absolute; right: 104px; bottom: 118px; text-align: right; }
+.read .n { font-size: 52px; color: #17140f; }
+.read .l {
+  margin-top: 10px; display: flex; align-items: center; gap: 10px; justify-content: flex-start;
+  font-weight: 600; font-size: 18px; color: rgba(29,26,21,0.5);
+}
+
+/* ── the object: one plate, amber glass, and the light through it ───────────
+   Glass is only glass if something is BEHIND it. The first cut floated an amber
+   panel on an empty ground and read as beige plastic, so the stock now carries a
+   printed rule and a printed figure that pass under the plate: inside it they
+   shift, warm and soften, which is refraction and is the whole point of putting a
+   translucent body in this direction. */
+/* the printed figure sits ENTIRELY under the plate: with part of it sticking out
+   the frame showed the same number twice, once cut off. Only the rule continues
+   past the glass, which is all the refraction needs to be legible. */
+.under {
+  position: absolute; left: 226px; top: 728px; width: 330px;
+  display: flex; align-items: baseline; gap: 18px;
+  font-family: "Plex", monospace; font-weight: 500; font-size: 27px;
+  letter-spacing: 0.1em; color: rgba(60,48,26,0.5);
+}
+.underline {
+  position: absolute; left: 96px; top: 700px; width: 620px; height: 1px;
+  background: rgba(94,76,44,0.42);
+}
+.plate {
+  position: absolute; left: 176px; top: 640px; width: 430px; height: 196px;
+  border-radius: 18px; transform: rotate(-3.5deg);
+}
+/* the lit arris along the top edge of the glass */
+.plate .arris {
+  position: absolute; left: 10px; right: 10px; top: -1px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, rgba(255,246,220,0), #fff6dc 46%, rgba(255,246,220,0));
+}
+/* what the print looks like THROUGH the body: displaced, warmer, softer */
+.plate .refract {
+  position: absolute; inset: 0; border-radius: 18px; overflow: hidden;
+}
+.plate .refract .r-line {
+  position: absolute; left: -80px; right: -80px; top: 64px; height: 2px;
+  background: rgba(140,92,26,0.55); filter: blur(0.6px);
+}
+.plate .refract .r-fig {
+  position: absolute; left: -56px; top: 82px;
+  font-family: "Plex", monospace; font-weight: 500; font-size: 29px;
+  letter-spacing: 0.1em; color: rgba(120,74,16,0.6);
+  filter: blur(0.7px);
+}
+/* the milled slot, seen through the glass */
+.plate::after {
+  content: ""; position: absolute; left: 16%; right: 16%; top: 50%; height: 7px; margin-top: -3px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(120,64,8,0.34), rgba(255,238,200,0.6));
+}
+.caust { left: 120px; top: 800px; width: 560px; height: 176px; }
+
+.tag {
+  position: absolute; left: 104px; bottom: 122px;
+  font-weight: 600; font-size: 15px; letter-spacing: 0.28em; color: rgba(29,26,21,0.4);
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="stock"></div>
+  <div class="fibre"></div>
+
+  <div class="serial">FLS · B / 01</div>
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#2a1c05" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#2a1c05" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">RITM</span>
+  </div>
+
+  <h1 class="head foil"><span style="display:block">ربحك</span><span style="display:block">بالدينار</span></h1>
+  <div class="rule"></div>
+  <p class="dek">لا تقدير، ولا نسبة على الورق. الشراء والتوصيل والمرتجع وحصّة مندوبك، مخصومة قبل أن يُقال لك «ربحت».</p>
+
+  <div class="underline"></div>
+  <div class="under"><span>195,000</span><span>د.ع.</span></div>
+
+  <div class="caustic onpaper caust"></div>
+  <div class="plate amberglass">
+    <span class="arris"></span>
+    <span class="refract">
+      <span class="r-line"></span>
+      <span class="r-fig">195,000 د.ع.</span>
+    </span>
+  </div>
+
+  <div class="read">
+    <div class="n fig">1,775,580</div>
+    <div class="l"><span class="spark"></span> صافي الربح · آب</div>
+  </div>
+
+  <div class="tag">STYLE B · BRASS &amp; SMOKE</div>
+
+  <div class="grain dark"></div>
+</div>
+</body>
+</html>

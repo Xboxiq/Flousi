@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM v6 — F1 خريطة الشهر</title>
+<link rel="stylesheet" href="tile.css">
+<style>
+/* ── F1 · الخريطة · the month, at true area ──────────────────────────────────
+   The screen IS the chart. There is no page, no margin, no headline band and no
+   card: every pixel except the navigation spine belongs to one of four parts of
+   August's revenue, and each part's AREA is its amount. The four flex bases are
+   the four real percentages, so the picture cannot lie about the arithmetic:
+
+     ما بقي لك        1,775,580   34.4%   a full-height column, 34.4% of the width
+     كلفة الشراء       2,334,920   45.2%   68.90% of the remaining column's height
+     حصص المندوبين      769,420   14.9%   73.04% of the bottom row's width
+     التوصيل والمرتجع    284,580    5.5%   the rest
+                    ─────────
+                    5,164,500  100.0%
+
+   Figure size is a function of area AND glaze: a full glaze speaks, bisque
+   whispers. So the purchase cost is the largest field and still not the loudest
+   voice, because it was never the merchant's money.
+   Density: four figures, four notes, no prose block. Focal: the kiln column.
+   Navigation: a spine of tiles on the TRAILING edge, so content keeps the
+   reading edge. Nothing here is shared with any other screen but the spine. */
+
+.map { position:absolute; inset-block:0; inset-inline-start:0; inset-inline-end:calc(var(--s7) + var(--grout));
+       display:flex; gap:var(--grout); background:var(--gypsum); }
+.rest { flex:1 1 auto; display:flex; flex-direction:column; gap:var(--grout); }
+.rowB { flex:1 1 auto; display:flex; gap:var(--grout); }
+
+/* The stamp sits at each field's TRAILING-bottom corner, so the four stamps read
+   as one diagonal and the four labels as another. Solid ink, not an opacity:
+   0.5 of the field's own colour is a dimmer, not a colour decision.
+   No `direction` override — it would flip this element's own inline axis (see
+   the note at the foot of tile.css). */
+.pcx { position:absolute; bottom:var(--s3); inset-inline-end:var(--s3);
+       font-family:"Mono",monospace; font-weight:500; font-size:var(--m-lg);
+       letter-spacing:0.01em; color:var(--ink3); }
+.ncap .pcx { position:static; }
+/* A subdivided field's stamp joins the nest's caption line, so the two share a
+   baseline instead of being pinned to two different bottoms and missing. */
+
+.hung { max-width:min(100%, 46ch); }
+.hung .nm { margin-bottom:var(--s3); }
+.hung .q  { margin-bottom:var(--s3); }
+
+/* Clause 8 on the tallest field on the plane. The kept profit is itself a whole,
+   so it is partitioned — by category, along the field's LONGER axis, which for a
+   523×1000 column is vertical. Children carry the parent's glaze; only grout
+   separates them. This is what used to be 450px of residue. */
+.vnest { position:absolute; inset-inline:0; bottom:92px; height:356px;
+         display:flex; flex-direction:column; gap:var(--grout);
+         padding-top:var(--grout); background:var(--gypsum); }
+.vnest > .f { display:flex; align-items:center; justify-content:space-between;
+              gap:var(--s2); padding:0 var(--s5); }
+.vcap { position:absolute; inset-inline:var(--s5); bottom:460px;
+        display:flex; align-items:baseline; justify-content:space-between; }
+
+/* the second level of the same law: the biggest field is itself partitioned, by
+   supplier, at true width. A share too small to hold a figure keeps only its
+   name and its percent, which is the correct outcome and not a defect. */
+.nest { position:absolute; inset-inline:0; bottom:0; }
+.ncap { display:flex; align-items:baseline; justify-content:space-between;
+        margin:0 var(--s5) var(--s2); }
+/* The children carry the SAME glaze as their parent, because they are the same
+   money. Nothing separates them but grout: the gypsum ground showing through a
+   4px cut. This is the whole point of clause 1 — the line is never drawn. */
+.nrow { display:flex; gap:var(--grout); height:164px;
+        padding-top:var(--grout); background:var(--gypsum); }
+.nrow > .f { padding:var(--s3) var(--s3) 0; }
+.nrow .np { position:absolute; bottom:var(--s3); inset-inline-end:var(--s3);
+            font-family:"Mono",monospace; font-weight:500; font-size:var(--m-sm);
+            color:var(--on-stone-2); }
+
+/* the whole, named inside the part that answers it, and that part's own stamp */
+.whole { position:absolute; inset-inline:0; bottom:0; background:var(--gypsum);
+         color:var(--on-stone); padding:var(--s2) var(--s5);
+         display:flex; align-items:center; justify-content:space-between; gap:var(--s3); }
+.whole b { display:block; font-weight:800; font-size:var(--t-name); }
+.whole .mm2 { display:block; margin-top:4px; font-family:"Mono",monospace; font-weight:500;
+              font-size:var(--t-tag); letter-spacing:0.14em; color:var(--on-stone-2); direction:ltr; }
+.whole .pcx { position:static; color:var(--on-stone-2); }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <div class="map">
+
+    <!-- 34.4% of the width, full height -->
+    <div class="f kiln p4" style="flex:0 0 34.4%">
+      <div class="hung">
+        <div class="nm big">ما بقي لك</div>
+        <span class="q f76"><span class="n">1,775,580</span><span class="u">دينار عراقي</span></span>
+        <p class="note" style="font-size:var(--t-body); color:var(--on-kiln-2); max-width:30ch">
+          صافي ما تحتفظ به من أغسطس، بعد كلفة الشراء وحصص الفريق والتوصيل والمرتجع.
+          لا يُقاس قبلها.
+        </p>
+      </div>
+      <div class="vcap">
+        <span class="tag">NET PROFIT BY CATEGORY</span>
+        <span class="tag">SUMS TO 1,775,580</span>
+      </div>
+      <div class="vnest">
+        <div class="f kiln" style="flex:0 0 34.49%">
+          <span class="nm">حافظات جلد</span>
+          <span class="q f22 trail"><span class="n">612,400</span></span>
+        </div>
+        <div class="f kiln" style="flex:0 0 28.10%">
+          <span class="nm">شواحن سريعة</span>
+          <span class="q f22 trail"><span class="n">498,900</span></span>
+        </div>
+        <div class="f kiln" style="flex:0 0 20.93%">
+          <span class="nm">سماعات لاسلكية</span>
+          <span class="q f22 trail"><span class="n">371,600</span></span>
+        </div>
+        <div class="f kiln" style="flex:1 1 auto">
+          <span class="nm">أخرى</span>
+          <span class="q f22 trail"><span class="n">292,680</span></span>
+        </div>
+      </div>
+      <div class="whole">
+        <span>
+          <b>من إيراد الشهر 5,164,500 دينار</b>
+          <span class="mm2">216 SALES · 88 UNITS · JUL +46.2%</span>
+        </span>
+        <span class="pcx">34.4%</span>
+      </div>
+    </div>
+
+    <div class="rest">
+
+      <!-- 68.90% of this column's height = 45.2% of the plane -->
+      <div class="f bisq p4" style="flex:0 0 68.90%">
+        <div class="hung">
+          <div class="nm big">كلفة الشراء</div>
+          <span class="q f56"><span class="n">2,334,920</span><span class="u">دينار</span></span>
+          <p class="note" style="max-width:44ch">
+            الجزء الأكبر من كل بيعة، ولم يكن مالك في أي لحظة. مجمَّد بسعر الشراء
+            الساري وقت البيعة نفسها، لا بسعر اليوم، ولهذا لا يعيد تغيير سعر المورّد
+            كتابة شهر مضى.
+          </p>
+        </div>
+        <div class="nest">
+          <div class="ncap">
+            <span class="tag">BY SUPPLIER · FROZEN PRICES</span>
+            <span class="pcx raised">45.2%</span>
+          </div>
+          <div class="nrow">
+            <div class="f bisq" style="flex:0 0 41.04%">
+              <div class="nm" style="font-size:var(--t-body)">مورّد الرصافة</div>
+              <span class="q f22" style="margin-top:12px"><span class="n">958,300</span></span>
+              <span class="np">41.0%</span>
+            </div>
+            <div class="f bisq" style="flex:0 0 27.50%">
+              <div class="nm" style="font-size:var(--t-body)">مخزن الكرادة</div>
+              <span class="q f22" style="margin-top:12px"><span class="n">642,100</span></span>
+              <span class="np">27.5%</span>
+            </div>
+            <div class="f bisq" style="flex:0 0 21.95%">
+              <div class="nm" style="font-size:var(--t-body)">استيراد مباشر</div>
+              <span class="np">21.9%</span>
+            </div>
+            <div class="f bisq" style="flex:1 1 auto">
+              <div class="nm" style="font-size:var(--t-body)">متفرّقات</div>
+              <span class="np">9.5%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rowB">
+        <!-- 73.04% of this row's width = 14.9% of the plane -->
+        <div class="f lapis p3" style="flex:0 0 73.04%">
+          <div class="hung">
+            <div class="nm">حصص المندوبين</div>
+            <span class="q f40" style="margin-top:16px"><span class="n">769,420</span><span class="u">دينار</span></span>
+            <p class="note" style="max-width:40ch">
+              أربع قسمات مختلفة، كل واحدة بقاعدتها ولا واحدة منها تُقدَّر بالنية.
+            </p>
+          </div>
+          <span class="pcx">14.9%</span>
+        </div>
+
+        <div class="f terra p3" style="flex:1 1 auto">
+          <div class="hung">
+            <div class="nm">التوصيل والمرتجع</div>
+            <span class="q f30" style="margin-top:16px"><span class="n">284,580</span><span class="u">دينار</span></span>
+            <p class="note">
+              مرتجعات: 11 من 216 بيعة.
+            </p>
+          </div>
+          <span class="pcx">5.5%</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <nav class="spine">
+    <span class="mk">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#fbf9f4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 5.5H13V8.5" stroke="#fbf9f4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <a href="#">اليوم</a>
+    <a href="#">الرحلات</a>
+    <a href="#" aria-current="page">القسمة</a>
+    <a href="#">الفريق</a>
+    <a href="#">الشهر</a>
+    <span class="when">08 · 26</span>
+  </nav>
+
+</div>
+</body>
+</html>

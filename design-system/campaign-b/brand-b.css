@@ -1,0 +1,198 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   RITM — campaign STYLE B: «نحاس ودُخان» / Brass & Smoke
+
+   A second art direction for the same brand, not a variation of the first. What
+   stays is the identity; what changes is the whole material world.
+
+   KEPT (this is why it is still RITM)
+   · the wordmark, unaltered
+   · Cairo for display, IBM Plex Mono 500 for every figure, latn numerals
+   · the object vocabulary: the till, the price column's plates, the pace rail
+     with its remainder, the ladder pin, the segmented pill
+   · light from ABOVE, one source
+   · one measured thing per frame carries the colour code
+
+   CHANGED (this is why it is a new campaign)
+   · MATERIAL   brass and smoked glass replace ceramic and chrome. Bodies are now
+     partly TRANSLUCENT, so light passes through them and lands on the ground as a
+     warm caustic — a thing Style A's opaque ceramics could never do.
+   · LIGHT      warm amber key, and it rakes from above and BEHIND, so edges glow
+     and undersides go dark. Style A lit faces; Style B lights edges.
+   · PALETTE    obsidian, coal, brass, amber, paper, sand. The brand blue survives
+     as a single COLD SPARK per frame — one small mark of the measured figure
+     against all that warmth, which is the whole colour idea of this direction.
+   · TYPE       display type is FOIL: brass, debossed, with a lit top arris. Style
+     A's display was flat ink.
+   · PERSONALITY  Style A was a workshop bench at noon. Style B is a vault at
+     night: fewer objects, deeper ground, warmer light, more silence.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: "Cairo";
+  src: url("../campaign/fonts/cairo-arabic.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-display: block;
+  unicode-range: U+600-6FF, U+750-77F, U+870-88E, U+FB50-FDFF, U+FE70-FEFF, U+200C-200E;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("../campaign/fonts/cairo-latin.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-display: block;
+  unicode-range: U+0-FF, U+131, U+152-153, U+2000-206F, U+2C60-2C7F;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("../campaign/fonts/cairo-latin-ext.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-display: block;
+  unicode-range: U+100-2BA, U+1E00-1E9F, U+2020-2027;
+}
+@font-face {
+  font-family: "Plex";
+  src: url("../campaign/fonts/plex-mono-500.woff2") format("woff2");
+  font-weight: 500;
+  font-display: block;
+}
+@font-face {
+  font-family: "Plex";
+  src: url("../campaign/fonts/plex-mono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: block;
+}
+
+:root {
+  --obsidian: #0a0a0d;
+  --coal: #15151b;
+  --paper: #efe9df;
+  --sand: #d9cdb8;
+
+  --brass-hi: #f4dda6;
+  --brass: #c9a25c;
+  --brass-mid: #a9843f;
+  --brass-lo: #6f5326;
+
+  --amber: #e3a24c;
+  --amber-deep: #b06f22;
+
+  /* the one cold thing in a warm system: the app's own accent, rationed */
+  --spark: #2f86ff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; }
+
+.frame {
+  position: relative; width: 1920px; height: 1080px; overflow: hidden;
+  font-family: "Cairo", system-ui, sans-serif;
+  font-kerning: normal; text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+
+.fig {
+  font-family: "Plex", ui-monospace, monospace;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+}
+
+/* ── wordmark ───────────────────────────────────────────────────────────────
+   The same mark. On this direction its tile is struck in brass rather than
+   accent blue on the dark frames, because the accent is rationed to one mark per
+   frame and the wordmark is not the measured thing. */
+.wordmark { display: inline-flex; align-items: center; gap: calc(var(--wm,1) * 10px); --tile: calc(var(--wm,1) * 34px); }
+.wordmark .tile {
+  display: grid; place-items: center;
+  width: var(--tile); height: var(--tile); border-radius: calc(var(--tile) * 0.29);
+  background: linear-gradient(178deg, var(--brass-hi), var(--brass) 52%, var(--brass-lo));
+  box-shadow:
+    inset 0 calc(var(--tile) * 0.035) 0 rgba(255,240,205,0.75),
+    inset 0 calc(var(--tile) * -0.06) calc(var(--tile) * 0.12) rgba(50,32,6,0.6),
+    0 calc(var(--tile) * 0.08) calc(var(--tile) * 0.2) rgba(20,12,2,0.5);
+}
+.wordmark .tile svg { width: 56%; height: 56%; display: block; }
+.wordmark .name { font-weight: 700; font-size: calc(var(--wm,1) * 30px); letter-spacing: -0.02em; line-height: 1; }
+
+/* ── grain ──────────────────────────────────────────────────────────────────*/
+.grain {
+  position: absolute; inset: -10%; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'>\
+<filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' seed='11'/>\
+<feColorMatrix type='saturate' values='0'/></filter>\
+<rect width='300' height='300' filter='url(%23g)'/></svg>");
+  mix-blend-mode: screen; opacity: 0.09;
+}
+.grain.dark { mix-blend-mode: multiply; opacity: 0.15; }
+
+/* ── MATERIALS ──────────────────────────────────────────────────────────────*/
+
+/* brass: banded like all metal, but warm, and with a tighter specular than
+   chrome because brass is a softer, less mirror-like alloy */
+.brass {
+  background: linear-gradient(
+    177deg,
+    #fdf1cf 0%, #d9b878 14%, #a8823c 31%, #f6e3b4 45%,
+    #7b5c28 51%, #b48f4a 62%, #eeddb0 80%, #8e6d32 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255,246,220,0.9),
+    inset 0 -2px 4px rgba(46,30,6,0.55),
+    0 3px 3px rgba(24,15,3,0.45),
+    0 28px 46px -18px rgba(20,12,2,0.6);
+}
+
+/* smoked glass: dark, translucent, lit only along its top arris */
+.smoke {
+  background: linear-gradient(178deg, rgba(52,48,44,0.5), rgba(18,17,16,0.42) 46%, rgba(40,36,32,0.52));
+  backdrop-filter: blur(14px) saturate(0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255,236,200,0.5),
+    inset 0 -1px 0 rgba(200,162,92,0.16),
+    0 40px 70px -30px rgba(0,0,0,0.8);
+}
+
+/* amber glass: the same body, but the light gets through it */
+.amberglass {
+  background: linear-gradient(178deg, rgba(240,186,110,0.5), rgba(190,120,44,0.28) 48%, rgba(226,162,76,0.42));
+  backdrop-filter: blur(10px) saturate(1.15);
+  box-shadow:
+    inset 0 2px 0 rgba(255,240,206,0.8),
+    inset 0 -14px 30px -14px rgba(120,66,10,0.5),
+    0 30px 54px -22px rgba(90,50,6,0.5);
+}
+
+/* what a translucent body does that an opaque one cannot: throw warm light
+   THROUGH itself onto the ground */
+.caustic {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(232,168,80,0.55), rgba(232,168,80,0) 76%);
+  filter: blur(18px);
+  mix-blend-mode: screen;
+}
+.caustic.onpaper { mix-blend-mode: multiply; background: radial-gradient(closest-side, rgba(196,132,44,0.42), rgba(196,132,44,0) 74%); }
+
+/* foil type: brass, debossed into the stock, with a lit top arris */
+.foil {
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  background-image:
+    linear-gradient(101deg, rgba(255,255,255,0.5) 4%, rgba(255,255,255,0) 24%,
+      rgba(60,38,6,0.16) 54%, rgba(255,255,255,0.34) 78%, rgba(60,38,6,0.1) 100%),
+    linear-gradient(176deg, #f7e6bb 0%, #c9a25c 42%, #8f6d31 68%, #dcc287 100%);
+}
+
+/* the hatched remainder, kept from the app and re-inked for this direction */
+.hatch-b {
+  background-image: repeating-linear-gradient(
+    -52deg,
+    rgba(226,196,140,0.22) 0 2px,
+    rgba(226,196,140,0) 2px 9px
+  );
+}
+
+/* the cold spark: one per frame, and it always marks a measured figure */
+.spark {
+  display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--spark);
+  box-shadow: 0 0 0 4px rgba(47,134,255,0.18), 0 0 14px rgba(47,134,255,0.5);
+}

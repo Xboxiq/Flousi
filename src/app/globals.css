@@ -2,7 +2,7 @@
 @import "./materials.css";
 
 /* ============================================================================
-   Flousi Design System — grounded in the reference screens.
+   RITM Design System — grounded in the reference screens.
    Apple HIG / Linear / Stripe DNA: a cool light-gray canvas, crisp white
    cards with hairline borders + soft diffuse shadows, a clean geometric
    grotesk (Cairo), big bold tabular numbers (IBM Plex Mono), vivid Apple
@@ -22,7 +22,7 @@
   --blue-300: #9cc4ff;
   /* Deep-indigo mesh endpoint — the coolest hue allowed anywhere (≤265°).
      Violet/magenta/rose flats and gradients are banned (finance anti-pattern;
-     see design-system/MASTER.md §1 and the flousi-anti-slop-gate skill). */
+     see design-system/MASTER.md §1 and the ritm-anti-slop-gate skill). */
   --indigo: #4f5dff;
 
   /* Static contrast pair for elements sitting on fixed-dark mesh surfaces

@@ -1,8 +1,8 @@
-# Flousi — Architecture
+# RITM — Architecture
 
 ## 1. Product definition
 
-**Flousi** calculates the *real net profit* of products sold by online stores and small
+**RITM** calculates the *real net profit* of products sold by online stores and small
 businesses. It must feel like a premium SaaS product, not a calculator, and must be
 extensible toward: inventory, orders, sales analytics, financial dashboards, multi-user,
 cloud sync, reports, customers, expenses, tax, multi-currency, and AI insights.
@@ -53,7 +53,7 @@ Dependencies point inward. Inner layers know nothing about outer layers.
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Why this matters for Flousi
+### Why this matters for RITM
 - The **profit math is the product**. Keeping it in a pure `domain/` layer means it is
   trivially testable, reusable (web, future mobile, future API), and immune to UI churn.
 - **Persistence is a detail.** Today: local-first. Tomorrow: cloud DB + multi-user. We

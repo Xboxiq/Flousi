@@ -1,6 +1,6 @@
 import { cn } from "@/presentation/lib/cn";
 
-/** Flousi brand mark: a rounded accent tile with an upward growth glyph. */
+/** RITM brand mark: a rounded accent tile with an upward growth glyph. */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <span
@@ -34,7 +34,7 @@ export function Logo({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <div className="flex items-center gap-2.5">
       <LogoMark />
-      {!collapsed && <span className="text-lg font-semibold tracking-tight text-fg">Flousi</span>}
+      {!collapsed && <span className="text-lg font-semibold tracking-tight text-fg">RITM</span>}
     </div>
   );
 }

@@ -29,7 +29,7 @@ export default function StyleguidePage() {
   return (
     <main className="mx-auto max-w-[1100px] px-4 py-12 md:px-8">
       <header className="mb-10">
-        <h1 className="text-3xl font-semibold tracking-tight text-fg">Flousi Styleguide</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-fg">RITM Styleguide</h1>
         <p className="mt-2 text-muted">Primitive components rendered from the design tokens.</p>
       </header>
 

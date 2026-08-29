@@ -4,11 +4,11 @@ const BASE = process.env.BASE || "http://localhost:8123";
    the trips, and the team's derived balances. */
 const ROUTES = ["/dashboard/", "/products/", "/orders/", "/reps/"];
 const CASES = [
-  ["a key holds invalid JSON", (k) => `localStorage.setItem("flousi:${k}", "{not json")`],
-  ["a key holds an object, not a list", (k) => `localStorage.setItem("flousi:${k}", '{"a":1}')`],
-  ["a key holds null", (k) => `localStorage.setItem("flousi:${k}", "null")`],
-  ["a row is missing its fields", (k) => `localStorage.setItem("flousi:${k}", '[{"id":"x"}]')`],
-  ["the key is gone entirely", (k) => `localStorage.removeItem("flousi:${k}")`],
+  ["a key holds invalid JSON", (k) => `localStorage.setItem("ritm:${k}", "{not json")`],
+  ["a key holds an object, not a list", (k) => `localStorage.setItem("ritm:${k}", '{"a":1}')`],
+  ["a key holds null", (k) => `localStorage.setItem("ritm:${k}", "null")`],
+  ["a row is missing its fields", (k) => `localStorage.setItem("ritm:${k}", '[{"id":"x"}]')`],
+  ["the key is gone entirely", (k) => `localStorage.removeItem("ritm:${k}")`],
 ];
 /* The four load-bearing collections: everything else is read through these. */
 const KEYS = ["products", "sales", "orders", "reps"];

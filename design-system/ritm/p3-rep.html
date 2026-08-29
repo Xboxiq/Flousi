@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head><meta charset="utf-8"><title>RITM · تجربة المندوب</title>
+<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="system.css"><link rel="stylesheet" href="docs.css">
+<style>
+  .phones{display:flex;gap:var(--s-8);align-items:flex-start}
+  .wrap{width:293px;height:633px;flex:none}
+  .phone{width:390px;height:844px;transform:scale(.75);transform-origin:top right;border:1px solid var(--line);border-radius:var(--r-tile);
+    overflow:hidden;background:var(--bg);display:flex;flex-direction:column;flex:none}
+  .phone .sheet{flex:1;overflow:hidden;padding:var(--s-4);display:flex;flex-direction:column;gap:var(--s-3)}
+  .phone .bar{height:52px;flex:none;display:flex;align-items:center;gap:var(--s-2);
+    padding-inline:var(--s-4);border-bottom:1px solid var(--line)}
+</style></head>
+<body>
+<div class="plane">
+  <div class="head">
+    <div><h1 style="margin-top:8px">المندوب يقف في الشارع، لا يجلس أمام مكتب</h1></div>
+    <span class="eyebrow">390 × 844 · ONE HAND · ONE NUMBER</span>
+  </div>
+
+  <div class="work" style="flex-direction:row;gap:var(--s-8);align-items:flex-start">
+
+    <div class="phones">
+      <!-- 1 · his own number, and the one thing he came to do -->
+      <div class="wrap"><div class="phone">
+        <div class="bar">
+          <span class="avatar avatar-sm" style="background:var(--rep-1);color:var(--bg)">ل</span>
+          <span style="flex:1"><b style="display:block;font-size:var(--fs-small)">ليث العبيدي</b>
+            <span class="caption">مندوب · أغسطس</span></span>
+          <svg class="i" viewBox="0 0 24 24" style="color:var(--fg-3)">
+            <path d="M18 16H6l1.5-2.5V10a4.5 4.5 0 0 1 9 0v3.5z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+        </div>
+        <div class="sheet">
+          <div class="metric" style="padding-block:var(--s-2)">
+            <span class="headline"><span class="amount" style="font-size:44px">331,200</span><span class="unit">د.ع.</span></span>
+            <span class="name">حصّتك حتى الآن</span>
+            <span class="compare"><span class="trend up">18.4%</span> مقابل يوليو</span>
+          </div>
+
+          <div class="card" style="padding:var(--s-3) var(--s-4)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <span class="small">هدفك</span>
+              <span class="num" style="font-size:var(--fs-small)">331,200 / 400,000</span></div>
+            <div class="progress" style="margin-top:var(--s-2)"><i style="width:82.8%"></i></div>
+            <div class="caption" style="margin-top:var(--s-2)">
+              يتبقّى <span class="num">68,800</span> · خمسة أيام.</div>
+          </div>
+
+          <div class="rule-label"><span class="eyebrow">اليوم</span></div>
+          <div class="card" style="padding:0">
+            <button class="datarow">
+              <span class="badge badge-info no-dot" style="background:var(--info-quiet);color:var(--info)">1</span>
+              <span class="tx"><b>ط-1048 · زيونة</b><span>سُلّم · بانتظار التحصيل</span></span>
+              <span class="end"><span class="num" style="font-size:var(--fs-body);font-weight:var(--fw-bold)">606,000</span>
+                <span class="caption" style="display:block">حصّتك <span class="num">125,100</span></span></span>
+            </button>
+            <button class="datarow" style="border-bottom:0">
+              <span class="badge badge-neutral no-dot">2</span>
+              <span class="tx"><b>ط-1050 · الكرادة</b><span>في الطريق</span></span>
+              <span class="end"><span class="num" style="font-size:var(--fs-body);font-weight:var(--fw-bold)">338,900</span>
+                <span class="caption" style="display:block">حصّتك <span class="num">54,700</span></span></span>
+            </button>
+          </div>
+
+          <div class="alert alert-warning" style="padding:var(--s-2) var(--s-3)">
+            <svg class="i i-sm" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></svg>
+            <div><p style="font-size:var(--fs-caption)">بذمّتك <span class="num">412,000</span> نقداً
+              من ثلاثة تسليمات. سلّمها اليوم لتُحسب في تسوية الشهر.</p></div>
+          </div>
+
+          <button class="btn btn-primary btn-lg" style="margin-top:auto;width:100%">سجّل تسليماً</button>
+        </div>
+        <div class="tabbar">
+          <a href="#" aria-current="page">
+            <svg class="i i-sm" viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>اليوم</a>
+          <a href="#"><svg class="i i-sm" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>التحصيل</a>
+          <a href="#"><svg class="i i-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>هدفي</a>
+          <a href="#"><svg class="i i-sm" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>حسابي</a>
+        </div>
+      </div>
+
+      </div>
+      <!-- 2 · the delivery he is recording, one decision per screen -->
+      <div class="wrap"><div class="phone">
+        <div class="bar">
+          <button class="btn btn-tertiary btn-sm btn-icon">
+            <svg class="i i-sm" viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></button>
+          <b style="flex:1;font-size:var(--fs-lead);font-weight:var(--fw-bold)">تسليم ط-1048</b>
+          <span class="badge badge-info">في الطريق</span>
+        </div>
+        <div class="sheet">
+          <div class="card" style="padding:var(--s-4)">
+            <span class="eyebrow">المستلم</span>
+            <b style="display:block;font-size:var(--fs-lead);margin-top:var(--s-1)">أبو محمد · زيونة</b>
+            <span class="caption">شارع 14، قرب الجامع · <span class="num">0770 123 4567</span></span>
+          </div>
+
+          <div class="field">
+            <label>المبلغ المستلم</label>
+            <span class="affix">
+              <input class="input is-amount" style="height:var(--h-control-lg)" value="606,000">
+              <span class="unit">د.ع.</span></span>
+            <span class="help">المطلوب <span class="num">606,000</span>. اكتب ما استلمته فعلاً.</span>
+          </div>
+
+          <div class="field">
+            <label>الحالة</label>
+            <div class="row" style="gap:var(--s-2);flex-wrap:wrap">
+              <button class="btn btn-secondary btn-sm">سُلّم بالكامل</button>
+              <button class="btn btn-secondary btn-sm">سُلّم جزئياً</button>
+              <button class="btn btn-secondary btn-sm">مرتجع</button>
+            </div>
+          </div>
+
+          <div class="card" style="padding:var(--s-3) var(--s-4);background:var(--surface-2);border:0">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <span class="small">ربح الطلب</span><span class="num">278,000</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:var(--s-2)">
+              <span class="small">حصّتك <span class="num">45%</span></span>
+              <span class="num" style="font-size:var(--fs-lead);color:var(--accent)">125,100</span></div>
+            <p class="caption" style="margin-top:var(--s-2)">تُضاف إلى حصّتك فور الحفظ،
+              وتُقفل عند تجميد الشهر.</p>
+          </div>
+
+          <button class="btn btn-primary btn-lg" style="margin-top:auto;width:100%">احفظ التسليم</button>
+          <button class="btn btn-tertiary" style="width:100%">إلغاء</button>
+        </div>
+      </div></div>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;gap:var(--s-4);min-width:0">
+      <div class="panel">
+        <span class="eyebrow">WHAT HE SEES · وما لا يراه</span>
+        <div class="stack" id="scope"></div>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">THE RULES · قواعد هذه الشاشة</span>
+        <ul class="note" style="padding-inline-start:16px;line-height:2;color:var(--fg-2)">
+          <li>رقم واحد كبير في الأعلى: حصّته هو، لا إيراد المحل.</li>
+          <li>قرار واحد لكل شاشة، وفعل أول بعرض كامل بارتفاع <span class="num">44</span>.</li>
+          <li>الحقل الذي يحمل مالاً بارتفاع <span class="num">44</span> ومحاذاته إلى الطرف.</li>
+          <li>ما بذمّته يظهر قبل أن يسأل، لا في شاشة أخرى.</li>
+          <li>لا جدول، ولا تمرير أفقي، ولا قائمة جانبية مطويّة.</li>
+          <li>كل رقم يظهر مع القاعدة التي أنتجته: <span class="num">45%</span> من الربح.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="eyebrow">HIS SHARE, HIS TARGET, HIS DEBT · NEVER THE SHOP'S MARGIN</span>
+    <span class="eyebrow">المندوب · 10</span>
+  </div>
+</div>
+<script>
+const scope = [
+  ["حصّته من كل طلب", true], ["القاعدة التي حُسبت بها", true],
+  ["هدفه وما تبقّى منه", true], ["ما بذمّته من نقد", true],
+  ["سعر شراء البضاعة", false], ["هامش ربح المحل", false],
+  ["حصص بقيّة المندوبين", false], ["مصروفات المحل", false],
+];
+document.getElementById("scope").innerHTML = scope.map(([t, ok]) => `
+  <div style="display:flex;align-items:center;gap:var(--s-2);padding-block:var(--s-15);
+       border-bottom:1px solid var(--line)">
+    <svg class="i i-sm" viewBox="0 0 24 24" style="color:${ok ? "var(--success)" : "var(--fg-3)"}">
+      ${ok ? '<path d="m5 13 4 4L19 7"/>' : '<path d="M6 6l12 12M18 6 6 18"/>'}</svg>
+    <span style="font-size:var(--fs-table);color:${ok ? "var(--fg)" : "var(--fg-3)"}">${t}</span></div>`).join("");
+</script>
+</body></html>

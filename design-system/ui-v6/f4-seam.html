@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM v6 — F4 الحدّ</title>
+<link rel="stylesheet" href="tile.css">
+<style>
+/* ── F4 · الحدّ · settlements, drawn as a seam ────────────────────────────────
+   The only screen that puts both grounds on one plane, and the only one whose
+   subject is a LINE — except that the line is not drawn. Each rep is a vertical
+   strip whose WIDTH is what he earned across the year. Each strip is cut at its
+   own height by what has actually been paid: kiln below the cut, his own glaze
+   above it. So the 4px of gypsum between the two fields is the seam, and because
+   every strip is cut at a different height the seam ZIGZAGS across the screen.
+   One glance answers the only question this screen has: who is behind.
+
+     rep      earned      paid        seam            still owed
+     ليث     1,798,900   1,165,000   64.76% ↑paid      633,900
+     سعد     2,184,600   1,350,000   61.80%            834,600
+     زينب      730,320     306,000   41.90%            424,320
+     نور       185,000     185,000  100.00%                  0
+             ─────────   ─────────                    ─────────
+             4,898,820   3,006,000    61.36%          1,892,820
+
+   Widths are those earnings as percentages of 4,898,820, so نور is a 60px sliver
+   and it is entirely kiln: fully settled, and visibly so from across a room.
+   Navigation: a band of words along the bottom EDGE, which no other screen has.
+   Interaction: the one control sits ON the seam it would move, over the strip
+   with the largest gap. A control that changes a boundary belongs at that
+   boundary and nowhere else. Focal point: the seam. */
+
+.band { position:absolute; inset-inline:0; top:0; height:232px; background:var(--limestone);
+        display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s6); padding:var(--s5) var(--s6) 0; }
+.band h1 { font-size:var(--t-display); font-weight:800; letter-spacing:-0.035em; line-height:1; }
+.band .lede { margin-top:16px; max-width:62ch; font-size:var(--t-body); line-height:1.68; color:var(--on-stone-2); }
+.band .three { display:flex; gap:var(--grout); flex:0 0 auto; }
+.band .three > div { background:var(--limestone-2); padding:var(--s3); min-width:184px; position:relative; }
+.band .three .k { font-weight:800; font-size:var(--t-name); color:var(--on-stone-2); }
+.band .three .v { margin-top:12px; }
+.band .three .owe { background:var(--kiln); color:var(--on-kiln); }
+.band .three .owe .k { color:var(--on-kiln-2); }
+
+.strips { position:absolute; inset-inline:0; top:236px; bottom:52px; display:flex; gap:var(--grout); background:var(--gypsum); }
+.st { display:flex; flex-direction:column; gap:var(--grout); }
+.st > .f { position:relative; overflow:hidden; }
+
+/* Above the seam: what is still his to collect, in his own glaze. Both feet on
+   this screen are FLEX blocks, not two absolutely positioned corners: the first
+   cut pinned a caption to one corner and a figure to the other, and in a 237px
+   strip they printed straight through each other. Nothing that can collide is
+   positioned by corner. */
+.owed { padding:var(--s4) var(--s4); }
+.owed .nm2 { font-weight:800; font-size:var(--t-name-lg); letter-spacing:-0.015em; }
+.owed .sc  { margin-top:var(--s1); font-size:var(--t-meta); opacity:0.72; }
+.owed .bot { position:absolute; inset-inline:var(--s4); bottom:var(--s4); }
+.owed .cap { display:block; margin-bottom:var(--s2); font-weight:800; font-size:var(--t-name); opacity:0.72; }
+
+/* below the seam: what has been paid, sealed */
+ /* Clause 8 on the four darkest fields on the plane. What has been paid is itself
+    a whole, so it is partitioned by settlement — along the field's LONGER axis:
+    horizontally in a 583px strip, vertically in a 237px one. Children carry the
+    parent's glaze; only grout separates them. This is what used to be 580px of
+    black residue. The field is a flex COLUMN so nothing here is corner-pinned. */
+.paid { padding:var(--s4) var(--s4) 0; display:flex; flex-direction:column; }
+.paid .k2 { font-weight:800; font-size:var(--t-name); color:var(--on-kiln-2); }
+.paid .amt { margin-top:var(--s2); }
+.paid .gap { flex:1 1 auto; min-height:var(--s3); }
+.paid .foot2 { display:flex; align-items:baseline; justify-content:space-between;
+               gap:var(--s3); margin-bottom:var(--s3); }
+.paid .last { font-size:var(--t-meta); color:var(--on-kiln-2); }
+.paid .pc2 { flex:0 0 auto; font-family:"Mono",monospace; font-weight:500;
+             font-size:var(--m-sm); color:var(--on-kiln-2);
+             direction:ltr; }   /* «61.8% SETTLED» reorders to «SETTLED 61.8%» without this */
+.snest { flex:0 0 auto; margin-inline:calc(-1 * var(--s4)); display:flex; flex-direction:row;
+         gap:var(--grout); padding-top:var(--grout); background:var(--gypsum); height:124px; }
+.snest > .f { padding:0 var(--s3); display:flex; flex-direction:column;
+              justify-content:center; gap:var(--s1); }
+.snest.vert { flex-direction:column; }
+.snest.vert > .f { flex-direction:row; align-items:center; justify-content:space-between; gap:var(--s2); }
+.snest .dt2 { font-weight:700; font-size:var(--t-meta); color:var(--on-kiln-2); }
+/* the sliver: a strip too narrow for a figure keeps its name and its verdict */
+.thin { padding:var(--s3) 8px; }
+.thin b { display:block; font-weight:800; font-size:var(--t-name); line-height:1.35; color:var(--on-kiln); }
+.thin .z { position:absolute; inset-inline-start:8px; bottom:56px; }
+.thin .v2 { position:absolute; inset-inline-start:8px; bottom:20px; font-size:var(--t-tag); color:var(--on-kiln-3); line-height:1.4; }
+
+/* The control straddles the seam it would move. It is gypsum, not kiln: a kiln
+   button on a kiln field is not a button, it is a sentence, which is exactly how
+   the first cut of this screen printed it. */
+.settle { position:absolute; z-index:6; display:flex; flex-direction:column; align-items:flex-start; gap:var(--s1); padding:var(--s3); background:var(--gypsum); color:var(--on-stone); clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+.settle .act { background:transparent; color:var(--on-stone); font-size:var(--t-name); padding:0; clip-path:none; }
+.settle .hint { font-family:"Mono",monospace; font-weight:400; font-size:var(--t-tag); letter-spacing:0.16em; color:var(--on-stone-3); direction:ltr; }
+
+.navband { position:absolute; inset-inline:0; bottom:0; height:48px; display:flex; gap:var(--grout); background:var(--gypsum); }
+.navband .mk { flex:0 0 76px; background:var(--kiln); display:grid; place-items:center; }
+.navband .mk svg { width:20px; height:20px; }
+.navband a { flex:1 1 0; background:var(--kiln); color:var(--on-kiln-2); text-decoration:none;
+             display:grid; place-items:center; font-weight:800; font-size:var(--t-name); }
+.navband a[aria-current] { background:var(--gypsum); color:var(--on-stone); }
+.navband .tag { flex:0 0 auto; background:var(--kiln); color:var(--on-kiln-3); display:grid;
+                place-items:center; padding-inline:24px; }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <div class="band">
+    <div>
+      <h1>ما لم يُدفع بعد</h1>
+      <p class="lede">
+        كل شريط مندوب، وعرضه ما استحقّه هذه السنة. الشريط مقطوع عند ما دُفع له فعلاً:
+        تحت القطع ليلٌ لما سُوّي، وفوقه لونه لما بقي. الحدّ يتذبذب لأن كل واحد وصل مكاناً
+        مختلفاً، ونور الحسن سُوّي بالكامل فشريطه كله ليل.
+      </p>
+    </div>
+    <div class="three">
+      <div>
+        <div class="k">استحقّوا في السنة</div>
+        <div class="v"><span class="q f30"><span class="n">4,898,820</span></span></div>
+      </div>
+      <div>
+        <div class="k">دُفع منها</div>
+        <div class="v"><span class="q f30"><span class="n">3,006,000</span></span></div>
+      </div>
+      <div class="owe">
+        <div class="k">ما زال مستحقاً</div>
+        <div class="v"><span class="q f30"><span class="n">1,892,820</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strips">
+
+    <!-- ليث · 1,798,900 / 4,898,820 = 36.72% wide, cut at 1,165,000 / 1,798,900 = 64.76% -->
+    <div class="st" style="flex:0 0 36.72%">
+      <div class="f lapis owed" style="flex:0 0 35.24%">
+        <div class="nm2">ليث العبيدي</div>
+        <div class="sc">مناصفة الربح الأولى · 45% من صافي الربح</div>
+        <div class="bot">
+          <span class="cap">ما زال له</span>
+          <span class="q f56"><span class="n">633,900</span></span>
+        </div>
+      </div>
+      <div class="f kiln paid" style="flex:0 0 64.76%">
+        <div class="k2">دُفع له</div>
+        <div class="amt"><span class="q f40"><span class="n">1,165,000</span></span></div>
+        <div class="gap"></div>
+        <div class="foot2"><span class="last">ثلاث تسويات هذا الصيف</span><span class="pc2">64.8% SETTLED</span></div>
+        <div class="snest">
+          <div class="f kiln" style="flex:0 0 38.63%"><span class="dt2">12 أغسطس · نقداً</span><span class="q f22"><span class="n">450,000</span></span></div>
+          <div class="f kiln" style="flex:0 0 34.33%"><span class="dt2">28 يوليو · نقداً</span><span class="q f22"><span class="n">400,000</span></span></div>
+          <div class="f kiln" style="flex:1 1 auto"><span class="dt2">5 يوليو · تحويل</span><span class="q f22"><span class="n">315,000</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- سعد · 2,184,600 / 4,898,820 = 44.59% wide, cut at 1,350,000 / 2,184,600 = 61.80% -->
+    <div class="st" style="flex:0 0 44.59%">
+      <div class="f turq owed" style="flex:0 0 38.20%">
+        <div class="nm2">سعد الجبوري</div>
+        <div class="sc">نسبة الهامش الرفيع · 30% بعد كلفة الشراء</div>
+        <div class="bot">
+          <span class="cap">أكبر فجوة في الفريق</span>
+          <span class="q f76"><span class="n">834,600</span></span>
+        </div>
+      </div>
+      <div class="f kiln paid" style="flex:0 0 61.80%">
+        <div class="k2">دُفع له</div>
+        <div class="amt"><span class="q f40"><span class="n">1,350,000</span></span></div>
+        <div class="gap"></div>
+        <div class="foot2"><span class="last">ثلاث تسويات هذا الصيف</span><span class="pc2">61.8% SETTLED</span></div>
+        <div class="snest">
+          <div class="f kiln" style="flex:0 0 44.44%"><span class="dt2">2 أغسطس · تحويل</span><span class="q f22"><span class="n">600,000</span></span></div>
+          <div class="f kiln" style="flex:0 0 31.48%"><span class="dt2">19 يوليو · نقداً</span><span class="q f22"><span class="n">425,000</span></span></div>
+          <div class="f kiln" style="flex:1 1 auto"><span class="dt2">1 يوليو · نقداً</span><span class="q f22"><span class="n">325,000</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- زينب · 730,320 / 4,898,820 = 14.91% wide, cut at 306,000 / 730,320 = 41.90% -->
+    <div class="st" style="flex:0 0 14.91%">
+      <div class="f terra owed" style="flex:0 0 58.10%">
+        <div class="nm2">زينب الطائي</div>
+        <div class="sc">قسمة القطعة · 1,200 للقطعة</div>
+        <div class="bot">
+          <span class="cap">أبعد الفريق عن الحدّ</span>
+          <span class="q f40"><span class="n">424,320</span></span>
+        </div>
+      </div>
+      <div class="f kiln paid" style="flex:0 0 41.90%">
+        <div class="k2">دُفع لها</div>
+        <div class="amt"><span class="q f30"><span class="n">306,000</span></span></div>
+        <div class="gap"></div>
+        <div class="foot2"><span class="last">تسويتان</span><span class="pc2">41.9%</span></div>
+        <div class="snest vert">
+          <div class="f kiln" style="flex:0 0 60.78%"><span class="dt2">27 يوليو · نقداً</span><span class="q f22 trail"><span class="n">186,000</span></span></div>
+          <div class="f kiln" style="flex:1 1 auto"><span class="dt2">12 يونيو · نقداً</span><span class="q f22 trail"><span class="n">120,000</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- نور · 185,000 / 4,898,820 = 3.78% wide, cut at 100%: the strip is all kiln -->
+    <div class="st" style="flex:1 1 auto">
+      <div class="f kiln thin" style="flex:1 1 auto">
+        <b>نور<br>الحسن</b>
+        <span class="z"><span class="q f22"><span class="n">0</span></span></span>
+        <span class="v2">سُوّي<br>بالكامل</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="settle" id="settle">
+    <button class="act">سجّل تسوية</button>
+    <span class="hint">MOVES THIS SEAM UP</span>
+  </div>
+
+  <nav class="navband">
+    <span class="mk">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#fbf9f4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 5.5H13V8.5" stroke="#fbf9f4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <a href="#">اليوم</a>
+    <a href="#">الرحلات</a>
+    <a href="#">القسمة</a>
+    <a href="#" aria-current="page">الفريق</a>
+    <a href="#">الشهر</a>
+    <span class="tag">SETTLEMENTS · AUG 2026</span>
+  </nav>
+
+</div>
+
+<script>
+/* The control is parked on the seam of the strip it would move (سعد), sitting
+   just inside the kiln side so the word reads against the dark. */
+const strip = document.querySelectorAll(".strips .st")[1];
+const seam  = strip.children[1].getBoundingClientRect();
+const s = document.getElementById("settle");
+s.style.top  = (seam.top - 46) + "px";
+s.style.left = (seam.left + 24) + "px";
+</script>
+</body>
+</html>

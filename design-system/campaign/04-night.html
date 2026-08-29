@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM — 04 night</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+/* ── FRAME 04 · dark cinematic ───────────────────────────────────────────────
+   Camera: eye level, slightly low, standing back. One object: a glass slab
+   holding the one figure the merchant opens the app for. Light: a single hard
+   pool from directly above (still §2 — a raking side light would flip the whole
+   system's physics), so the slab is edge-lit at the top and the polished floor
+   carries a real reflection under it.
+   Type: the headline sits LOW LEFT and is cropped by the bottom edge, the
+   opposite of frame 01's upper-right bleed. Dominant colour: black; the accent
+   appears only as the glass's own edge glow and the figure. */
+.frame { background: var(--night); color: #f2f5f9; }
+
+/* room: wall above, polished floor below, one horizon */
+.wall {
+  position: absolute; inset: 0 0 42% 0;
+  background:
+    radial-gradient(46% 78% at 62% -14%, #1b2331 0%, rgba(12,16,23,0) 66%),
+    linear-gradient(180deg, #0c1017 0%, #090b10 100%);
+}
+.floor {
+  position: absolute; inset: 58% 0 0 0;
+  background:
+    radial-gradient(52% 120% at 62% -30%, rgba(70,92,124,0.34), rgba(9,11,16,0) 62%),
+    linear-gradient(180deg, #0f131a 0%, #07090d 78%);
+}
+.horizon {
+  position: absolute; left: 0; right: 0; top: 58%; height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(180,205,235,0.24) 58%, rgba(255,255,255,0) 100%);
+}
+/* the pool of light on the floor, thrown from above */
+.pool {
+  position: absolute; left: 42%; top: 50%; width: 1180px; height: 620px;
+  transform: translateX(-30%);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(160,190,225,0.2), rgba(160,190,225,0) 78%);
+  filter: blur(14px);
+}
+
+/* ── the slab ───────────────────────────────────────────────────────────────
+   Glass, standing. Its top edge takes the light, its body is the wall behind it
+   softened, and the accent lives in the edge and in the figure. */
+.slab {
+  position: absolute; right: 240px; top: 168px; width: 780px; height: 470px;
+  border-radius: 26px;
+  display: grid; align-content: center; justify-items: end;
+  padding: 0 64px;
+  background: linear-gradient(178deg, rgba(150,185,230,0.16), rgba(60,90,130,0.06) 46%, rgba(120,160,210,0.12));
+  backdrop-filter: blur(16px) saturate(1.15);
+  box-shadow:
+    inset 0 1px 0 rgba(210,230,255,0.75),
+    inset 0 -1px 0 rgba(140,180,230,0.2),
+    inset 0 40px 90px -60px rgba(190,220,255,0.5),
+    0 60px 120px -40px rgba(6,30,70,0.7);
+}
+/* the lit top edge and the two vertical arrises: what tells you it is glass */
+.slab::before {
+  content: ""; position: absolute; left: 26px; right: 26px; top: -1px; height: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), #eaf3ff 46%, rgba(255,255,255,0));
+  filter: blur(0.4px);
+}
+.slab::after {
+  content: ""; position: absolute; inset: 0; border-radius: 26px; pointer-events: none;
+  box-shadow: inset 1px 0 0 rgba(150,190,240,0.35), inset -1px 0 0 rgba(150,190,240,0.28);
+}
+
+/* the bottom bevel: a slab has thickness, and the thickness is what keeps this
+   object from reading as a rounded rectangle drawn on the dark. */
+.slab .bevel {
+  position: absolute; left: 28px; right: 28px; bottom: -13px; height: 15px;
+  border-radius: 0 0 20px 20px;
+  background: linear-gradient(180deg, rgba(198,222,252,0.5), rgba(120,160,210,0.14) 62%, rgba(120,160,210,0));
+  box-shadow: 0 1px 0 rgba(220,238,255,0.35);
+  filter: blur(0.3px);
+}
+.slab .cap {
+  font-weight: 600; font-size: 22px; letter-spacing: 0.02em;
+  color: rgba(214,228,246,0.62);
+}
+/* One LTR row, sized to the glass. The first cut set the figure at 132px with the
+   unit as a following inline span: inside an RTL grid the unit landed to the LEFT of
+   the digits and both overflowed the slab onto the dark floor. A figure that breaks
+   out of the object holding it is not a composition. */
+.slab .n {
+  display: flex; align-items: baseline; gap: 16px; direction: ltr;
+  margin-top: 12px; font-size: 102px; line-height: 1.04; color: #f4f8fd;
+  text-shadow: 0 0 44px rgba(90,150,255,0.45), 0 2px 0 rgba(0,0,0,0.3);
+}
+/* isolated: inside the LTR figure row the abbreviation «د.ع.» reordered into
+   «.ع.د», which is the kind of detail that tells an Arabic reader nobody looked. */
+.slab .unit {
+  font-size: 34px; color: rgba(214,228,246,0.66);
+  direction: rtl; unicode-bidi: isolate;
+}
+.slab .sub {
+  margin-top: 20px; font-weight: 500; font-size: 20px; color: rgba(196,214,238,0.5);
+}
+
+/* the reflection: the slab again, mirrored, blurred, and fading into the floor */
+.mirror {
+  position: absolute; right: 240px; top: 640px; width: 780px; height: 340px;
+  border-radius: 26px;
+  background: linear-gradient(0deg, rgba(150,185,230,0.02), rgba(150,185,230,0.14));
+  filter: blur(10px);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0) 82%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0) 82%);
+}
+.mirror .n {
+  position: absolute; left: 64px; top: 26px;
+  font-family: "Plex", monospace; font-weight: 500; font-size: 108px; line-height: 1;
+  letter-spacing: 0.06em;
+  color: rgba(190,215,245,0.16);
+  transform: scaleY(-1);
+}
+
+/* ── type, low and cropped ──────────────────────────────────────────────────*/
+.head {
+  /* cropped by the bottom edge on purpose, but only by its descender line: at
+     bottom:-46px and 214px the whole word lost its lower half and stopped being
+     readable, which is vandalism rather than art direction. */
+  position: absolute; left: 96px; bottom: 26px;
+  font-weight: 900; font-size: 176px; line-height: 1; letter-spacing: -0.04em;
+  color: #ffffff;
+  text-shadow: 0 -2px 0 rgba(255,255,255,0.25);
+}
+.dek {
+  position: absolute; left: 104px; bottom: 306px; width: 600px;
+  font-weight: 500; font-size: 25px; line-height: 1.62; color: rgba(206,220,240,0.6);
+}
+.wm { position: absolute; right: 96px; bottom: 88px; --wm: 0.95; }
+.wm .name { color: #eef3f9; }
+.tag {
+  position: absolute; left: 100px; top: 84px;
+  font-weight: 600; font-size: 16px; letter-spacing: 0.26em; color: rgba(206,220,240,0.34);
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="wall"></div>
+  <div class="floor"></div>
+  <div class="horizon"></div>
+  <div class="pool"></div>
+
+  <div class="mirror"><div class="n fig">4,949,500</div></div>
+
+  <div class="slab">
+    <span class="bevel"></span>
+    <span class="cap">بيدك الآن</span>
+    <span class="n fig">4,949,500<span class="unit">د.ع.</span></span>
+    <span class="sub">ما تقدر تصرفه اليوم، لا ما ربحته على الورق.</span>
+  </div>
+
+  <div class="tag">CAMPAIGN 04 · CASH ON HAND</div>
+
+  <p class="dek">المندوب يحمل مالك أسبوعين. رِتم يفصل ما بيدك عمّا هو عند غيرك، بالدينار.</p>
+  <h1 class="head">كم بيدك</h1>
+
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">RITM</span>
+  </div>
+
+  <div class="grain light"></div>
+</div>
+</body>
+</html>

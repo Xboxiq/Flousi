@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Archivo:wght@300;400;500;600&display=swap">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{margin:0;font-family:'Tajawal',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    a{color:#B8A880;text-decoration:none} a:hover{color:#D0C4A4}
+    .bd{width:1440px;height:900px;background:#0B0E11;color:#F2F1EE;position:relative;
+        overflow:hidden;padding:56px 64px;display:flex;flex-direction:column;direction:rtl}
+    .bd.lite{background:#F2F1EE;color:#0B0E11}
+    .lat{font-family:'Archivo',system-ui,sans-serif;direction:ltr;unicode-bidi:isolate}
+    .eye{font-family:'Archivo',system-ui,sans-serif;font-size:10px;letter-spacing:.3em;
+         color:#949BA3;text-transform:uppercase;direction:ltr;unicode-bidi:isolate}
+    .bd.lite .eye{color:#5A6068}
+    .ttl{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+    .sub{font-size:14px;line-height:1.7;color:#C3C9D0;font-weight:300}
+    .bd.lite .sub{color:#3A4047}
+    .mut{color:#949BA3;font-weight:300} .bd.lite .mut{color:#5A6068}
+    .rule{height:1px;background:#2A2F36;flex:none} .bd.lite .rule{background:#D8D2C6}
+    .row{display:flex;gap:28px} .col{display:flex;flex-direction:column}
+    .head{display:flex;align-items:flex-end;justify-content:space-between;
+          padding-bottom:18px;border-bottom:1px solid #2A2F36;flex:none}
+    .bd.lite .head{border-color:#D8D2C6}
+    .foot{margin-top:auto;padding-top:18px;border-top:1px solid #2A2F36;
+          display:flex;justify-content:space-between;align-items:baseline;flex:none}
+    .bd.lite .foot{border-color:#D8D2C6}
+    /* isolate, not just direction: an inline `direction` alone does not re-order a
+       run against its RTL surroundings, which printed «#B8A880» as «C6A97D#». */
+    .num{font-family:'Archivo',system-ui,sans-serif;font-variant-numeric:tabular-nums;
+         direction:ltr;unicode-bidi:isolate}
+    .card{background:#1A1F24;border:1px solid #2A2F36;padding:20px}
+    .bd.lite .card{background:#FFFFFF;border-color:#D8D2C6}
+  </style>
+</helmet>
+<div class="bd"><div class="head"><div><div class="eye">WORDMARK & LOCKUPS · 02</div><div class="ttl" style="margin-top:8px">الوسم واستعمالاته</div></div><div class="eye">RITM BRAND SYSTEM</div></div><div style="margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:2px;flex:1"><div class="card" style="padding:32px;display:flex;flex-direction:column;justify-content:space-between"><div class="eye">PRIMARY · أفقي</div><div style="display:grid;place-items:center;flex:1;padding:18px 0"><span style="display:flex;align-items:center;gap:20px"><svg width="64" height="104" viewBox="0 0 24 39" fill="#B8A880" aria-hidden="true"><rect x="0" y="7" width="4.2" height="32" rx="2.1"/><rect x="6.6" y="3.5" width="4.2" height="29" rx="2.1"/><rect x="13.2" y="0" width="4.2" height="26" rx="2.1"/><rect x="19.8" y="5.5" width="4.2" height="14" rx="2.1"/></svg><span style="display:flex;flex-direction:column;align-items:flex-start"><span style="font-size:84px;font-weight:800;letter-spacing:-.03em;line-height:1;color:#F2F1EE">رِتم</span><span class="lat" style="font-size:17px;font-weight:400;letter-spacing:.44em;color:#F2F1EE;opacity:.72;margin-top:10px">RITM</span></span></span></div><p class="sub" style="font-size:13px">الاستعمال الافتراضي في كل مكان يتّسع له: الرأس، اللافتة، الغلاف.</p></div><div class="card" style="padding:32px;display:flex;flex-direction:column;justify-content:space-between"><div class="eye">STACKED · عمودي</div><div style="display:grid;place-items:center;flex:1;padding:18px 0"><span style="display:flex;flex-direction:column;align-items:center;gap:16px"><svg width="60" height="97.5" viewBox="0 0 24 39" fill="#B8A880" aria-hidden="true"><rect x="0" y="7" width="4.2" height="32" rx="2.1"/><rect x="6.6" y="3.5" width="4.2" height="29" rx="2.1"/><rect x="13.2" y="0" width="4.2" height="26" rx="2.1"/><rect x="19.8" y="5.5" width="4.2" height="14" rx="2.1"/></svg><span style="display:flex;flex-direction:column;align-items:center"><span style="font-size:56px;font-weight:800;letter-spacing:-.03em;line-height:1">رِتم</span><span class="lat" style="font-size:13px;letter-spacing:.46em;opacity:.72;margin-top:6px">RITM</span></span></span></div><p class="sub" style="font-size:13px">للمساحات الضيّقة والمربّعة: الأفاتار، الختم، ظهر البطاقة.</p></div><div class="card" style="padding:32px;display:flex;flex-direction:column;justify-content:space-between"><div class="eye">CLEAR SPACE · المساحة المحمية</div><div style="display:grid;place-items:center;flex:1;padding:18px 0"><span style="position:relative;padding:29.4px"><span style="position:absolute;inset:0;border:1px dashed #3D8680;opacity:.6"></span><span style="position:absolute;inset:29.4px;border:1px solid #B8A880;opacity:.3"></span><span class="lat" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:10px;letter-spacing:.2em;color:#3D8680">3X</span><span style="display:flex;align-items:center;gap:20px"><svg width="56" height="91" viewBox="0 0 24 39" fill="#B8A880" aria-hidden="true"><rect x="0" y="7" width="4.2" height="32" rx="2.1"/><rect x="6.6" y="3.5" width="4.2" height="29" rx="2.1"/><rect x="13.2" y="0" width="4.2" height="26" rx="2.1"/><rect x="19.8" y="5.5" width="4.2" height="14" rx="2.1"/></svg><span style="display:flex;flex-direction:column;align-items:flex-start"><span style="font-size:72px;font-weight:800;letter-spacing:-.03em;line-height:1;color:#F2F1EE">رِتم</span><span class="lat" style="font-size:15px;font-weight:400;letter-spacing:.44em;color:#F2F1EE;opacity:.72;margin-top:8px">RITM</span></span></span></span></div><p class="sub" style="font-size:13px">X = عرض ضربة واحدة من الرمز، أي <span class="num">4.2</span> من <span class="num">24</span>. لا يقترب أي عنصر من الوسم أقرب من <span class="num">3X</span> من أي جهة.</p></div><div class="card" style="padding:32px;display:flex;flex-direction:column;justify-content:space-between"><div class="eye">MINIMUM SIZE · أصغر مقاس</div><div style="display:grid;place-items:center;flex:1;padding:18px 0"><span style="display:flex;align-items:flex-end;gap:38px"><span style="display:flex;flex-direction:column;align-items:center;gap:12px"><span style="display:flex;align-items:center;gap:13px"><svg width="44" height="71.5" viewBox="0 0 24 39" fill="#B8A880" aria-hidden="true"><rect x="0" y="7" width="4.2" height="32" rx="2.1"/><rect x="6.6" y="3.5" width="4.2" height="29" rx="2.1"/><rect x="13.2" y="0" width="4.2" height="26" rx="2.1"/><rect x="19.8" y="5.5" width="4.2" height="14" rx="2.1"/></svg><span style="display:flex;flex-direction:column;align-items:flex-start"><span style="font-size:58px;font-weight:800;letter-spacing:-.03em;line-height:1;color:#F2F1EE">رِتم</span><span class="lat" style="font-size:11px;font-weight:400;letter-spacing:.44em;color:#F2F1EE;opacity:.72;margin-top:6px">RITM</span></span></span><span class="eye num" style="font-size:10px">PRINT 24MM</span></span><span style="display:flex;flex-direction:column;align-items:center;gap:12px"><span style="display:flex;align-items:center;gap:8px"><svg width="28" height="45.5" viewBox="0 0 24 39" fill="#B8A880" aria-hidden="true"><rect x="0" y="7" width="4.2" height="32" rx="2.1"/><rect x="6.6" y="3.5" width="4.2" height="29" rx="2.1"/><rect x="13.2" y="0" width="4.2" height="26" rx="2.1"/><rect x="19.8" y="5.5" width="4.2" height="14" rx="2.1"/></svg><span style="display:flex;flex-direction:column;align-items:flex-start"><span style="font-size:36px;font-weight:800;letter-spacing:-.03em;line-height:1;color:#F2F1EE">رِتم</span><span class="lat" data-spec style="font-size:7px;font-weight:400;letter-spacing:.44em;color:#F2F1EE;opacity:.72;margin-top:4px">RITM</span></span></span><span class="eye num" style="font-size:10px">SCREEN 120PX</span></span><span style="display:flex;flex-direction:column;align-items:center;gap:12px"><svg width="20" height="32.5" viewBox="0 0 24 39" fill="#B8A880" aria-hidden="true"><rect x="0" y="7" width="4.2" height="32" rx="2.1"/><rect x="6.6" y="3.5" width="4.2" height="29" rx="2.1"/><rect x="13.2" y="0" width="4.2" height="26" rx="2.1"/><rect x="19.8" y="5.5" width="4.2" height="14" rx="2.1"/></svg><span class="eye num" style="font-size:10px">SYMBOL · UNDER 40PX</span></span></span></div><p class="sub" style="font-size:13px">تحت 120 بكسل يسقط سطر RITM ويبقى الوسم العربي. تحت 40 بكسل يبقى الرمز وحده.</p></div></div><div class="foot"><span class="eye">LOCKUPS · CLEAR SPACE X · MINIMUMS</span><span class="eye">الوسم · 02</span></div></div>
+</x-dc>
+</body>
+</html>

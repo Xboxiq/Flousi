@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM v5 — S7 النظام والحالات</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+/* ── S7 · النظام · the system, and every state it can be in ──────────────────
+   Not a screen a merchant sees: the sheet the product is built from. It exists
+   because the states ARE the design — a control that has been drawn only in its
+   resting state has not been designed — and because one page has to prove that
+   the type scale, the colour reservations, the 8px step and the two radii are a
+   system rather than a set of preferences.
+   Composition: four bands separated by rules, read top to bottom. */
+
+.pg { position:absolute; inset-inline:var(--marg); top:44px; bottom:44px; }
+.hdr { display:flex; align-items:baseline; justify-content:space-between; padding-bottom:16px; border-bottom:2px solid var(--ink); }
+.hdr b { font-size:24px; font-weight:800; letter-spacing:-0.02em; }
+.hdr .m { font-family:"Mono",monospace; font-weight:500; font-size:12px; letter-spacing:0.2em; color:var(--slate); }
+
+.band { padding:26px 0 24px; border-bottom:1px solid var(--line); }
+/* `.band > .t` missed the two headings nested inside the split band, so «الإيقاع»
+   and «الهندسة» rendered glued to their own descriptions. */
+.band .t { display:flex; align-items:baseline; gap:16px; margin-bottom:20px; }
+.band .t b { font-size:15px; font-weight:800; }
+.band .t span { font-size:13px; color:var(--slate); }
+
+/* type specimen */
+.spec { display:flex; align-items:flex-end; gap:44px; }
+.spec .s { }
+.spec .s .x { line-height:1; }
+.spec .s .m2 { margin-top:8px; font-family:"Mono",monospace; font-weight:400; font-size:11px; letter-spacing:0.14em; color:var(--mute); }
+
+/* colour reservations */
+.sw { display:flex; gap:2px; }
+.sw div { width:112px; }
+.sw i { display:block; height:56px; border-radius:var(--r); }
+.sw b { display:block; margin-top:9px; font-size:12.5px; font-weight:700; }
+.sw em { display:block; font-style:normal; margin-top:2px; font-size:11.5px; color:var(--slate); line-height:1.45; }
+
+/* rhythm + geometry, drawn rather than described */
+.two { display:grid; grid-template-columns:1fr 1fr; gap:56px; }
+.steps { display:flex; align-items:flex-end; gap:8px; }
+.steps i { display:block; width:26px; background:var(--ink); opacity:0.82; border-radius:1px; }
+.steps span { font-family:"Mono",monospace; font-size:10.5px; color:var(--mute); }
+.geo { display:flex; align-items:flex-end; gap:30px; }
+.geo div { text-align:center; }
+.geo i { display:block; width:78px; height:52px; background:var(--bone); box-shadow:inset 0 0 0 1px rgba(11,15,22,0.14); }
+.geo b { display:block; margin-top:9px; font-family:"Mono",monospace; font-size:11px; color:var(--slate); }
+
+/* the state matrix */
+.mx { display:grid; grid-template-columns:repeat(6, 1fr); gap:26px 22px; }
+.cell > .n3 { font-family:"Mono",monospace; font-weight:500; font-size:10.5px; letter-spacing:0.14em; color:var(--mute); margin-bottom:10px; }
+.cell .btn { width:100%; text-align:center; padding-inline:0; font-size:14px; }
+.cell .spin {
+  display:inline-flex; align-items:center; justify-content:center; gap:9px; width:100%;
+  padding:14px 0; border:1px solid var(--blue); border-radius:var(--r);
+  background:var(--blue); color:#fff; font-weight:700; font-size:14px;
+}
+.cell .spin i {
+  width:13px; height:13px; border-radius:50%;
+  border:1.6px solid rgba(255,255,255,0.42); border-top-color:#fff;
+}
+.cell .ok, .cell .err {
+  padding:13px 14px; border-radius:var(--r); font-size:13.5px; font-weight:700;
+  display:flex; align-items:center; gap:9px;
+}
+.cell .ok { background:rgba(18,114,74,0.1); color:var(--green); }
+.cell .err { background:rgba(184,52,43,0.09); color:var(--red); }
+.cell .empty {
+  padding:16px 14px; border:1px dashed var(--line-strong); border-radius:var(--r);
+  font-size:13px; color:var(--slate); line-height:1.5;
+}
+.cell .row2 {
+  padding:13px 10px; border-bottom:1px solid var(--line); font-size:14px;
+  display:flex; align-items:baseline; justify-content:space-between;
+}
+.cell .row2.sel { background:rgba(10,92,232,0.06); box-shadow:inset 2px 0 0 var(--blue); }
+.cell .row2 .a2 { font-family:"Mono",monospace; font-weight:500; font-size:15px; direction:ltr; }
+.cell .note2 { margin-top:9px; font-size:12px; line-height:1.5; color:var(--slate); }
+
+.foot3 { display:flex; justify-content:space-between; align-items:baseline; padding-top:16px; }
+.foot3 span { font-family:"Mono",monospace; font-weight:400; font-size:11.5px; letter-spacing:0.16em; color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="pg">
+
+    <div class="hdr">
+      <b>رِتم · نظام الواجهة v5</b>
+      <span class="m">TYPE · COLOUR · RHYTHM · GEOMETRY · STATES</span>
+    </div>
+
+    <div class="band">
+      <div class="t"><b>الخط</b><span>القاهرة للكلام، وPlex Mono لكل رقم. لا يشتركان في وزن واحد أبداً.</span></div>
+      <div class="spec">
+        <div class="s"><div class="x n" style="font-size:64px">1,775,580</div><div class="m2">MONO 500 · 64 / FIGURE</div></div>
+        <div class="s"><div class="x" style="font-size:46px;font-weight:800;letter-spacing:-0.03em">كيف انقسم الشهر</div><div class="m2">CAIRO 800 · 46 / DISPLAY</div></div>
+        <div class="s"><div class="x" style="font-size:19px;font-weight:700">ما بقي لك</div><div class="m2">CAIRO 700 · 19</div></div>
+        <div class="s"><div class="x" style="font-size:15px;font-weight:500;color:var(--slate)">نص مساند</div><div class="m2">CAIRO 500 · 15</div></div>
+        <div class="s"><div class="x lab" style="font-size:11.5px">LABEL · MONO</div><div class="m2">MONO 500 · 11.5 / 0.2em</div></div>
+      </div>
+    </div>
+
+    <div class="band">
+      <div class="t"><b>اللون</b><span>محجوز، لا مزيَّن: الأزرق للفعل الأول أو للكمية المقيسة، والأخضر والأحمر حكمان على المال فقط.</span></div>
+      <div class="sw">
+        <div><i style="background:var(--ink)"></i><b>الحبر</b><em>النص، والجزء الذي تحتفظ به</em></div>
+        <div><i style="background:var(--paper);box-shadow:inset 0 0 0 1px var(--line-strong)"></i><b>الورق</b><em>الأرضية، دائماً</em></div>
+        <div><i style="background:var(--bone)"></i><b>العظم</b><em>السطح الغائر الواحد</em></div>
+        <div><i style="background:var(--blue)"></i><b>الأزرق</b><em>فعل واحد، أو كمية مقيسة واحدة</em></div>
+        <div><i style="background:var(--green)"></i><b>الأخضر</b><em>ربح، لا شيء غيره</em></div>
+        <div><i style="background:var(--red)"></i><b>الأحمر</b><em>خسارة أو خطأ إدخال</em></div>
+        <div><i style="background:var(--night)"></i><b>الليل</b><em>شاشة واحدة: إغلاق الشهر</em></div>
+      </div>
+    </div>
+
+    <div class="band">
+      <div class="two">
+        <div>
+          <div class="t"><b>الإيقاع</b><span>أساس 4، وخطوة رأسية 8. كل مسافة في المنتج من هذه السلّم.</span></div>
+          <div class="steps">
+            <i style="height:8px"></i><i style="height:16px"></i><i style="height:24px"></i>
+            <i style="height:40px"></i><i style="height:56px"></i><i style="height:72px"></i><i style="height:96px"></i>
+            <!-- reversed to match the bars, which grow toward the reading edge -->
+            <span dir="ltr">96 · 72 · 56 · 40 · 24 · 16 · 8</span>
+          </div>
+        </div>
+        <div>
+          <div class="t"><b>الهندسة</b><span>نصف قطر واحد للأسطح، وكبسولة واحدة للمفتاح. لا شيء بينهما.</span></div>
+          <div class="geo">
+            <div><i style="border-radius:2px"></i><b>2 / SURFACE</b></div>
+            <div><i style="border-radius:999px;width:110px"></i><b>999 / THE ONE PILL</b></div>
+            <div><i style="border-radius:14px;opacity:0.4"></i><b>14 / REJECTED</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="band" style="border-bottom:0">
+      <div class="t"><b>الحالات</b><span>كل حالة رُسمت. الضاغطة تنزل بكسل واحد، والمختارة تنبت لها مسطرة بعرض 2، ولا شيء يلمع.</span></div>
+      <div class="mx">
+        <div class="cell"><div class="n3">DEFAULT</div><button class="btn">افتح البيعة</button></div>
+        <div class="cell"><div class="n3">HOVER</div><button class="btn" style="background:var(--bone)">افتح البيعة</button></div>
+        <div class="cell"><div class="n3">FOCUS · KEYBOARD</div><button class="btn is-focus">افتح البيعة</button></div>
+        <div class="cell"><div class="n3">PRESSED</div><button class="btn is-pressed" style="background:var(--bone)">افتح البيعة</button></div>
+        <div class="cell"><div class="n3">PRIMARY</div><button class="btn primary">احفظ الرحلة</button></div>
+        <div class="cell"><div class="n3">DISABLED</div><button class="btn primary is-disabled">احفظ الرحلة</button><div class="note2">السبب يُكتب بجانبه، لا في إشعار عابر.</div></div>
+
+        <div class="cell"><div class="n3">LOADING</div><span class="spin"><i></i>يُحفظ</span></div>
+        <div class="cell"><div class="n3">SUCCESS</div><span class="ok"><svg class="ico" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7"/></svg>حُفظت الرحلة</span><div class="note2">تظهر مكان الفعل، ثم تختفي في 200ms.</div></div>
+        <div class="cell"><div class="n3">ERROR</div><span class="err"><svg class="ico" viewBox="0 0 16 16"><path d="M8 4v5"/><path d="M8 11.5v.5"/></svg>المبلغ مطلوب</span></div>
+        <div class="cell"><div class="n3">SELECTED ROW</div><div class="row2 sel"><span>ط-1047</span><span class="a2">27,851</span></div><div class="row2"><span>ط-1046</span><span class="a2">50,405</span></div></div>
+        <div class="cell"><div class="n3">EMPTY</div><div class="empty">لا رحلة بعد. أول رحلة تُسجّل تفتح كل ما تحته.</div></div>
+        <div class="cell"><div class="n3">VALIDATION</div>
+          <label class="field is-error" style="margin-top:-4px">
+            <span class="ctl"><span class="val ph">اكتب المبلغ</span><span class="suffix">د.ع.</span></span>
+            <span class="msg">مطلوب</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot3">
+      <span>RITM · V5 / S7 · THE SYSTEM</span>
+      <span>MOTION 140 IN / 200 OUT · EASE-OUT</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

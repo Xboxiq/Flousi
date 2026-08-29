@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM — 07 wide</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+/* ── FRAME 07 · extreme wide ─────────────────────────────────────────────────
+   The exact inverse of frame 03: the same object, the till, at the opposite end
+   of the lens. There it filled four edges; here it is 11% of the frame width and
+   the other 89% is floor. Camera: standing well back, high enough to see the
+   floor recede, so the object sits ON something rather than in a void.
+   Light: one overhead source ahead of the object, so the cast shadow runs back
+   and to the left and is longer than the object itself. That shadow is the
+   composition's second element and its only diagonal.
+   Ground: warm olive grey, the warmest in the set.
+   Type: one line, small, running the full width along the TOP edge — no frame in
+   the set puts its copy there. Nothing is centred. */
+.frame { background: #cfcabc; color: #23231d; }
+
+.floor {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(44% 34% at 62% 8%, rgba(255,255,255,0.66), rgba(255,255,255,0) 62%),
+    linear-gradient(186deg, #dcd8cb 0%, #cec9bb 46%, #b0aa9c 100%);
+}
+/* the far wall, so the frame has a floor and not just a colour */
+.seam {
+  position: absolute; left: 0; right: 0; top: 0; height: 214px;
+  background: linear-gradient(180deg, #c4c0b3, #d5d1c4);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6), 0 2px 22px rgba(60,54,40,0.16);
+}
+
+/* ── the object, small and precise ─────────────────────────────────────────── */
+.stage { position: absolute; inset: 0; perspective: 2600px; perspective-origin: 64% 44%; }
+.till {
+  position: absolute; left: 1128px; top: 632px; width: 372px; height: 168px;
+  transform-style: preserve-3d; transform: rotateX(58deg) rotateZ(-24deg);
+}
+.till .tray {
+  position: absolute; inset: 0; border-radius: 16px;
+  background: linear-gradient(162deg, #fffefa, #f4f0e8 52%, #e0d9cb);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.95), inset 0 -6px 14px rgba(110,94,68,0.2);
+}
+.till .bay {
+  position: absolute; border-radius: 9px; overflow: hidden;
+  background: #cfc7b7;
+  box-shadow: inset 0 5px 9px rgba(60,48,30,0.5), inset 0 -1px 0 rgba(255,255,255,0.7);
+}
+.till .w1 {
+  position: absolute; left: 0; top: 100%; width: 100%; height: 34px;
+  transform-origin: top center; transform: rotateX(90deg);
+  background: linear-gradient(180deg, #ded7c8, #bdb4a2);
+  border-radius: 0 0 10px 10px;
+}
+.till .w2 {
+  position: absolute; left: 100%; top: 0; width: 34px; height: 100%;
+  transform-origin: left center; transform: rotateY(-90deg);
+  background: linear-gradient(180deg, #cdc5b4, #a8a08e);
+}
+/* the money in the near bay: at this distance it is six pixels of warm white, and
+   it is the difference between a till and an empty tray. */
+.till .wad {
+  position: absolute; left: 26px; bottom: 24px; width: 118px; height: 42px;
+  border-radius: 4px; transform: rotate(-1.6deg);
+  background: linear-gradient(170deg, #fffefb, #f0ebe0 60%, #ddd5c5);
+  box-shadow: 0 2px 0 #e8e1d3, 0 4px 0 #ded6c6, 0 7px 9px rgba(50,40,24,0.4);
+}
+/* one chrome part: the catch, tiny at this distance but still specular */
+.till .catch {
+  position: absolute; left: 66px; top: 100%; width: 240px; height: 19px;
+  transform-origin: top center; transform: rotateX(90deg) translateZ(17px);
+  border-radius: 10px;
+}
+
+/* the cast shadow: longer than the object, and the only diagonal in the frame */
+.cast {
+  position: absolute; left: 826px; top: 706px; width: 700px; height: 200px;
+  border-radius: 50%;
+  background: rgba(58,50,34,0.42);
+  filter: blur(30px);
+  transform: rotate(-24deg) scaleY(0.6);
+}
+
+/* ── type ───────────────────────────────────────────────────────────────────*/
+.topline {
+  position: absolute; left: 150px; right: 150px; top: 92px;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 40px;
+  font-weight: 700; font-size: 27px; letter-spacing: 0.02em; color: #22221c;
+}
+.topline .k {
+  font-family: "Plex", monospace; font-weight: 500; font-size: 15px;
+  letter-spacing: 0.3em; color: rgba(35,35,29,0.44);
+}
+.read {
+  position: absolute; right: 442px; top: 452px; text-align: right;
+}
+.read .n { font-size: 40px; color: #1e1e18; }
+.read .l { margin-top: 8px; font-weight: 600; font-size: 17px; color: rgba(35,35,29,0.55); }
+/* the callout, drawn in SVG with explicit coordinates.
+   As a rotated div it was guesswork: the line ran through its own label and the
+   accent dot landed at the wrong end of it. A leader line has two exact ends. */
+.callout { position: absolute; inset: 0; overflow: visible; }
+.wm { position: absolute; left: 150px; bottom: 132px; --wm: 1; }
+.foot {
+  position: absolute; left: 150px; bottom: 214px; width: 470px;
+  font-weight: 500; font-size: 20px; line-height: 1.62; color: rgba(35,35,29,0.6);
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="floor"></div>
+  <div class="seam"></div>
+
+  <div class="topline">
+    <span>صندوق واحد، وكل دينار فيه يعرف مكانه</span>
+    <span class="k">CAMPAIGN 07 · ONE OBJECT</span>
+  </div>
+
+  <div class="cast"></div>
+
+  <div class="stage">
+    <div class="till">
+      <div class="tray"></div>
+      <div class="bay" style="left:22px; top:22px; width:148px; height:124px;">
+        <div class="wad"></div>
+      </div>
+      <div class="bay" style="left:190px; top:22px; width:160px; height:124px;"></div>
+      <div class="w1"></div>
+      <div class="w2"></div>
+      <div class="catch chrome"></div>
+    </div>
+  </div>
+
+  <div class="read">
+    <div class="n fig">4,949,500</div>
+    <div class="l">بيدك · د.ع.</div>
+  </div>
+  <svg class="callout" width="1920" height="1080" viewBox="0 0 1920 1080" fill="none">
+    <line x1="1462" y1="562" x2="1346" y2="652"
+          stroke="rgba(35,35,29,0.45)" stroke-width="1.2"/>
+    <circle cx="1346" cy="652" r="4.5" fill="#0a6cff"/>
+    <circle cx="1346" cy="652" r="10" fill="rgba(10,108,255,0.14)"/>
+  </svg>
+
+  <p class="foot">حجم الصندوق لا يهم. ما يهم أن ما فيه مفصول: ما بيدك، وما عند مندوبك، وما هو على الطريق.</p>
+
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">RITM</span>
+  </div>
+
+  <div class="grain"></div>
+</div>
+</body>
+</html>

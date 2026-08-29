@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head><meta charset="utf-8"><title>RITM · التسوية</title>
+<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="system.css"><link rel="stylesheet" href="docs.css"></head>
+<body>
+<div class="plane app">
+  <div class="app" style="height:900px">
+    <div id="side"></div>
+    <div style="display:flex;flex-direction:column;min-width:0;position:relative">
+      <div id="top"></div>
+
+      <!-- a banner states a condition of the whole screen, above everything it governs -->
+      <div class="banner">
+        <svg class="i i-sm" viewBox="0 0 24 24" style="color:var(--accent)">
+          <rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <span>أسعار أغسطس مجمَّدة. أي تعديل على قائمة الأسعار بعد اليوم لا يمسّ أرقام هذا الشهر.</span>
+        <span class="spacer"></span>
+        <button class="btn btn-tertiary btn-sm">ما معنى التجميد</button>
+      </div>
+
+      <div style="flex:1;min-height:0;padding:var(--s-6);display:flex;gap:var(--s-4)">
+        <div class="card" style="flex:1;display:flex;flex-direction:column;min-width:0">
+          <div class="toolbar" style="display:flex;align-items:center;gap:var(--s-2);
+               padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--line)">
+            <h2 style="font-size:var(--fs-lead);font-weight:var(--fw-bold)">تسوية أغسطس</h2>
+            <span class="badge badge-warning">بانتظار اعتمادك</span>
+            <span class="spacer"></span>
+            <span class="search" style="width:220px">
+              <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input class="input" placeholder="ابحث بالاسم"></span>
+            <span class="seg"><button aria-pressed="true">الكل</button><button>غير مسوّى</button></span>
+          </div>
+
+          <!-- a bulk bar appears instead of repeating one action on every row -->
+          <div style="display:flex;align-items:center;gap:var(--s-3);padding:var(--s-2) var(--s-4);
+               background:var(--accent-quiet);border-bottom:1px solid var(--accent-line)">
+            <span class="check is-on"><svg class="i i-sm" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span>
+            <span style="font-size:var(--fs-small)">اختير <span class="num">3</span> من <span class="num">3</span></span>
+            <span class="spacer"></span>
+            <button class="btn btn-secondary btn-sm">تصدير المحدَّد</button>
+            <button class="btn btn-primary btn-sm">سوِّ الثلاثة</button>
+          </div>
+
+          <div class="table-wrap" style="flex:1;min-height:0">
+            <table class="tbl">
+              <thead><tr>
+                <th style="width:34px"></th>
+                <th>المندوب</th><th>القاعدة</th>
+                <th class="n">الأساس</th><th class="n">الحصة</th>
+                <th class="n">المدفوع</th><th class="n">المتبقّي</th>
+                <th>الحالة</th>
+              </tr></thead>
+              <tbody id="rows"></tbody>
+              <tfoot><tr>
+                <td></td><td>المجموع</td><td></td>
+                <td class="n">1,848,000</td><td class="n">769,200</td>
+                <td class="n">357,200</td><td class="n">412,000</td><td></td>
+              </tr></tfoot>
+            </table>
+          </div>
+
+          <footer style="padding:var(--s-3) var(--s-4);border-top:1px solid var(--line);
+                  display:flex;align-items:center;gap:var(--s-2)">
+            <span class="caption">آخر تعديل قبل <span class="num">4</span> دقائق · حسين العلي</span>
+            <span class="spacer"></span>
+            <button class="btn btn-tertiary">تصدير CSV</button>
+            <button class="btn btn-primary">اعتمد التسوية</button>
+          </footer>
+        </div>
+
+        <!-- the drawer: the detail of one row, without leaving the list -->
+        <aside class="card" style="width:360px;flex:none;display:flex;flex-direction:column">
+          <header><h3>ليث العبيدي</h3><span class="badge badge-warning spacer">متبقّي</span></header>
+          <div class="body" style="flex:1;display:flex;flex-direction:column;gap:var(--s-4)">
+            <div class="metric">
+              <span class="headline"><span class="amount" style="font-size:var(--fs-h2)">331,200</span></span>
+              <span class="name">حصّته من أغسطس</span>
+              <span class="period"><span class="num">45%</span> من ربح <span class="num">736,000</span></span>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:var(--s-15)">
+                <span class="small">مدفوع</span>
+                <span class="num" style="font-size:var(--fs-small)">125,100 / 331,200</span></div>
+              <div class="progress"><i style="width:37.8%;background:var(--rep-1)"></i></div>
+            </div>
+            <div class="stack" style="gap:0" id="moves"></div>
+            <div class="alert alert-warning" style="margin-top:auto;padding:var(--s-2) var(--s-3)">
+              <svg class="i i-sm" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></svg>
+              <div><p style="font-size:var(--fs-caption)">بذمّته <span class="num">412,000</span> نقداً.
+                التسوية تخصمها من المتبقّي قبل الدفع.</p></div>
+            </div>
+          </div>
+          <footer><button class="btn btn-primary" style="flex:1">ادفع المتبقّي</button>
+            <button class="btn btn-secondary btn-icon">
+              <svg class="i i-sm" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>
+            </button></footer>
+        </aside>
+      </div>
+
+      <!-- the confirmation: it states the consequence, not the question -->
+      <div class="scrim" style="display:grid;place-items:center">
+        <div class="modal">
+          <header><h3 style="font-size:var(--fs-lead);font-weight:var(--fw-bold)">اعتماد تسوية أغسطس</h3></header>
+          <div class="body">
+            <p class="body" style="color:var(--fg-2)">بعد الاعتماد تُقفل حصص الشهر ولا تتغيّر،
+              ويُسجَّل دفع <span class="num" style="color:var(--fg)">412,000</span> دينار
+              لثلاثة مندوبين. يبقى للمحل <span class="num" style="color:var(--accent)">1,775,800</span>.</p>
+            <div class="card" style="margin-top:var(--s-4);padding:var(--s-3) var(--s-4)" id="confirm"></div>
+          </div>
+          <footer>
+            <button class="btn btn-primary">اعتمد وأقفل</button>
+            <button class="btn btn-tertiary">رجوع</button>
+            <span class="spacer"></span>
+            <span class="caption">لا يمكن التراجع بعد الإقفال.</span>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { sidebar, topbar, icon, MONTH, fmt } from "./shell.js";
+document.getElementById("side").outerHTML = sidebar("settle");
+document.getElementById("top").outerHTML = topbar(["التسويات", "أغسطس 2026"],
+  `<button class="btn btn-secondary btn-sm">${icon("period", "i i-sm")}أغسطس 2026</button>`);
+
+const paid = [125100, 232100, 0];
+document.getElementById("rows").innerHTML = MONTH.reps.map((r, i) => {
+  const rest = r.share - paid[i];
+  return `<tr aria-selected="true">
+    <td><span class="check is-on" style="width:16px;height:16px">
+      <svg class="i" style="width:11px;height:11px;stroke-width:3" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td>
+    <td><span class="who"><span class="avatar avatar-sm" style="background:var(--${r.key});color:var(--bg)">${r.name[0]}</span>${r.name}</span></td>
+    <td style="color:var(--fg-3)">${r.rule}</td>
+    <td class="n">${fmt(r.base)}</td>
+    <td class="n" style="font-weight:var(--fw-bold)">${fmt(r.share)}</td>
+    <td class="n" style="color:var(--fg-3)">${fmt(paid[i])}</td>
+    <td class="n ${rest ? "money neg" : ""}">${fmt(rest)}</td>
+    <td><span class="badge badge-${rest ? "warning" : "success"}">${rest ? "متبقّي" : "مسوّى"}</span></td>
+  </tr>`;
+}).join("");
+
+/* newest first; a share earned is +, a payment made to him is − */
+const moves = [
+  ["طلب ط-1048", "2026-08-27", 125100, "+"],
+  ["طلب ط-1045", "2026-08-26", 54700, "+"],
+  ["طلب ط-1039", "2026-08-19", 26300, "+"],
+  ["دفعة نقدية", "2026-08-12", 125100, "−"],
+];
+document.getElementById("moves").innerHTML = moves.map(([t, d, v, sign]) => `
+  <div style="display:flex;align-items:center;gap:var(--s-3);padding-block:var(--s-2);
+       border-bottom:1px solid var(--line)">
+    <span style="flex:1;min-width:0">
+      <b style="display:block;font-size:var(--fs-table);font-weight:var(--fw-medium)">${t}</b>
+      <span class="caption num">${d}</span></span>
+    <span class="num ${sign === "−" ? "muted" : ""}" style="font-size:var(--fs-table)">${sign}${fmt(v)}</span></div>`).join("");
+
+document.getElementById("confirm").innerHTML = MONTH.reps.map((r, i) => {
+  const rest = r.share - paid[i];
+  return `<div style="display:flex;justify-content:space-between;align-items:baseline;padding-block:var(--s-1)">
+    <span style="font-size:var(--fs-table)">${r.name}</span>
+    <span class="num" style="font-size:var(--fs-table)">${fmt(rest)}</span></div>`;
+}).join("");
+</script>
+</body></html>

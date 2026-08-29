@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM — 08 split</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+/* ── FRAME 08 · the split ────────────────────────────────────────────────────
+   One hard vertical seam at 44%, no blend, no gradient across it: bone on the
+   reading side, near-black on the other. The seam is the MEANING — this product
+   exists to split one pile of money into two — so the object straddles it and the
+   headline changes ink where it crosses.
+   Camera: straight-on elevation. Not flat-on-with-no-object (01), not top-down
+   (06), not three-quarter (02): the rail is seen from its own side, the way a
+   part is drawn in an assembly view.
+   Light: from above, and it lands on both halves the same way — the material does
+   not change at the seam, only the ground behind it. That is the whole trick.
+   Dominant: 50/50 bone and black, with the accent only in the rail's own fill. */
+.frame { background: var(--bone); color: var(--ink); }
+
+.dark { position: absolute; inset: 0 0 0 56%; background: #0b0f16; }
+.light-side {
+  position: absolute; inset: 0 44% 0 0;
+  background:
+    radial-gradient(58% 44% at 66% -6%, #ffffff, rgba(255,255,255,0) 64%),
+    linear-gradient(184deg, #f5f2eb, #e9e4da);
+}
+/* the seam itself, a milled edge rather than a drawn line */
+.seam {
+  position: absolute; top: 0; bottom: 0; left: 56%; width: 3px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0.1));
+  box-shadow: -1px 0 0 rgba(120,106,86,0.28), 1px 0 14px rgba(0,0,0,0.55);
+}
+
+/* ── the object: the pace rail in side elevation, crossing the seam ─────────*/
+.bar {
+  position: absolute; left: 118px; right: 118px; top: 470px; height: 116px;
+  border-radius: 58px; padding: 12px;
+  background: linear-gradient(174deg, #ffffff 0%, #f5f1ea 44%, #ded7c9 100%);
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,0.95),
+    inset 0 -4px 10px rgba(110,94,70,0.2),
+    0 4px 4px rgba(20,24,32,0.3),
+    0 42px 70px -26px rgba(10,14,20,0.6);
+}
+.bar .chan {
+  position: relative; height: 100%; border-radius: 46px; overflow: hidden;
+  background: #e2dbcd;
+  box-shadow: inset 0 5px 10px rgba(84,70,50,0.42), inset 0 -1px 0 rgba(255,255,255,0.8);
+}
+/* the fill runs from the reading edge and STOPS at the seam: what is in hand */
+.bar .fill {
+  position: absolute; inset: 0 auto 0 0; width: 46.5%;
+  border-radius: 46px 6px 6px 46px;
+  background: linear-gradient(174deg, #3f8cff, var(--accent) 50%, var(--accent-deep));
+  box-shadow: inset 0 3px 0 rgba(255,255,255,0.4), 3px 0 8px rgba(4,34,86,0.4);
+}
+.bar .rest { position: absolute; inset: 0 0 0 46.5%; }
+
+/* ── the headline crosses the seam and changes ink where it does ────────────
+   Two copies of the same line, clipped to the two halves. Not two texts: one
+   text, printed twice and cut by the seam, so the letters cannot drift apart. */
+.headwrap { position: absolute; left: 0; right: 0; top: 168px; height: 250px; }
+.headwrap .h {
+  position: absolute; inset: 0;
+  text-align: center;
+  font-weight: 900; font-size: 196px; line-height: 1.16; letter-spacing: -0.04em;
+}
+.headwrap .h.on-light { color: #0b111c; clip-path: inset(0 44% 0 0); }
+.headwrap .h.on-dark { color: #ffffff; clip-path: inset(0 0 0 56%); }
+
+/* One caption per half, each in the ink its own ground can carry.
+   The first cut had these inverted: the dark-ink caption was positioned from the
+   RIGHT edge, which in this composition is the black half, so both captions and
+   both marks rendered as ghosts. On this frame the rule is mechanical — anything
+   placed with `left` sits on bone and takes ink; anything placed with `right`
+   sits on black and takes white. */
+.onBone {
+  position: absolute; left: 118px; text-align: left;
+  font-weight: 700; font-size: 34px; color: #0d131f;
+}
+.onBone em {
+  display: block; margin-top: 12px; font-style: normal; font-weight: 500; font-size: 20px;
+  line-height: 1.6; color: rgba(13,19,31,0.58);
+}
+.onDark {
+  position: absolute; right: 118px; text-align: right;
+  font-weight: 700; font-size: 34px; color: #f3f6fa;
+}
+.onDark em {
+  display: block; margin-top: 12px; font-style: normal; font-weight: 500; font-size: 20px;
+  line-height: 1.6; color: rgba(214,226,242,0.56);
+}
+.figBone { position: absolute; left: 118px; top: 372px; font-size: 34px; color: #0b111c; }
+.figDark { position: absolute; right: 118px; top: 372px; font-size: 34px; color: #f2f6fb; }
+
+.wm { position: absolute; left: 118px; bottom: 96px; --wm: 0.95; }
+.wm .name { color: #0b111c; }
+.tag {
+  position: absolute; right: 118px; bottom: 102px;
+  font-weight: 600; font-size: 15px; letter-spacing: 0.28em; color: rgba(206,220,240,0.5);
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="light-side"></div>
+  <div class="dark"></div>
+  <div class="seam"></div>
+
+  <div class="headwrap">
+    <div class="h on-light">مالك مقسوم</div>
+    <div class="h on-dark">مالك مقسوم</div>
+  </div>
+
+  <!-- bone side: what is IN HAND, which is also where the rail's fill runs.
+       black side: what is with someone else, which is where the hatch continues. -->
+  <div class="figBone fig">4,949,500</div>
+  <div class="figDark fig">1,422,856</div>
+
+  <div class="bar">
+    <div class="chan">
+      <div class="fill"></div>
+      <div class="rest hatch"></div>
+    </div>
+  </div>
+
+  <div class="onBone" style="top: 664px; width: 470px;">
+    بيدك
+    <em>ما تقدر تصرفه اليوم، بالدينار، بلا تقدير.</em>
+  </div>
+  <div class="onDark" style="top: 664px; width: 430px;">
+    عند غيرك
+    <em>عند المندوب، أو على الطريق، أو مستحقّ له.</em>
+  </div>
+
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">RITM</span>
+  </div>
+  <div class="tag">CAMPAIGN 08 · THE SEAM</div>
+
+  <div class="grain"></div>
+</div>
+</body>
+</html>

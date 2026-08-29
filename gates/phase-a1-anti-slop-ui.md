@@ -47,7 +47,7 @@ EVIDENCE: `grep -c "radial-gradient" src/presentation/features/landing/landing-p
 ### G4 — no other company's brand as social proof (skill #26 / matrix 12)
 CHECK: the marquee.
 EXPECT: gone. It scrolled `Shopify · Etsy · Amazon · Instagram · TikTok Shop` under
-the hero. Flousi has no relationship with any of them, so the row was an implied
+the hero. RITM has no relationship with any of them, so the row was an implied
 affiliation — the skill's "made-up logos" clause, and a real trust problem, not a
 styling one.
 EVIDENCE: `grep -c "Shopify" src/` → `0`

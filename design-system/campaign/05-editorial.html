@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM — 05 editorial</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+/* ── FRAME 05 · experimental editorial ───────────────────────────────────────
+   The set's outlier. Camera: flat-on but the COMPOSITION is rotated, and the
+   scale is deliberately wrong: a single letter of the wordmark is blown up to
+   1100px and cropped by two edges, so it stops being type and becomes a milled
+   steel part. The ladder rail — the app's own disclosure object — crosses the
+   frame as a diagonal groove with three milled pins, and each pin carries a
+   figure, so the "decoration" is a data axis.
+   Type: no display headline at all. The copy is a narrow six-word measure in the
+   bottom-left, and the wordmark runs along the bottom edge, rotated.
+   Dominant: steel grey. One red pin is the only warm mark in the whole set. */
+.frame { background: var(--steel); color: #171a1d; }
+
+.plateground {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(70% 52% at 22% -6%, rgba(255,255,255,0.72), rgba(255,255,255,0) 62%),
+    linear-gradient(186deg, #c9ccd0 0%, #b4b8bd 54%, #9ba0a6 100%);
+}
+
+/* ── the letter, as a part ─────────────────────────────────────────────────
+   Not a "gradient headline": the fill is the same brushed-steel material used
+   for a body elsewhere in the system, and the glyph carries a machined edge
+   (dark bottom arris, lit top arris) so it reads as a face turning under the
+   overhead light rather than as coloured text (VISUAL-LAW §14 reasoning). */
+.glyph {
+  /* its own tooling, tighter and higher in contrast than the body-scale material:
+     at 1560px the shared `.brushed` pattern averaged out into flat grey and the
+     letter stopped reading as metal. */
+  background-image:
+    linear-gradient(104deg, rgba(255,255,255,0.62) 3%, rgba(255,255,255,0) 22%,
+      rgba(0,0,0,0.1) 52%, rgba(255,255,255,0.4) 78%, rgba(0,0,0,0.08) 100%),
+    repeating-linear-gradient(97deg,
+      rgba(255,255,255,0.5) 0 1.5px, rgba(0,0,0,0.09) 1.5px 3px,
+      rgba(255,255,255,0.22) 3px 4.5px, rgba(0,0,0,0.05) 4.5px 6.5px),
+    linear-gradient(176deg, #e2e5e8 0%, #b0b5bb 46%, #d2d6da 74%, #9ea3a9 100%);
+  position: absolute; right: -260px; top: -430px;
+  font-weight: 900; font-size: 1560px; line-height: 0.8;
+  letter-spacing: -0.06em;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 26px 30px rgba(40,46,54,0.42));
+}
+.glyph::after {
+  /* the machined edge: a second, offset copy in shadow, behind the face */
+  content: attr(data-g);
+  position: absolute; inset: 0;
+  -webkit-background-clip: initial; background-clip: initial;
+  color: rgba(52,58,66,0.42);
+  transform: translate(9px, 14px);
+  z-index: -1;
+}
+
+/* ── the ladder rail, crossing the frame ───────────────────────────────────*/
+.ladderline {
+  position: absolute; left: -80px; top: 616px; width: 2120px; height: 22px;
+  transform: rotate(-9.5deg); transform-origin: left center;
+  border-radius: 11px;
+  background: linear-gradient(180deg, #7f858c 0%, #62686f 42%, #8d9399 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(16,20,26,0.6),
+    inset 0 -1px 0 rgba(255,255,255,0.42),
+    0 2px 0 rgba(255,255,255,0.3);
+}
+/* the pins: the app's own milled rung pins, at data positions along the rail */
+.pin {
+  position: absolute; top: -13px; width: 108px; height: 48px; border-radius: 8px;
+  background: linear-gradient(180deg, #eef1f4 0%, #c6cbd1 46%, #9aa0a7 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 -2px 3px rgba(20,26,34,0.4),
+    0 6px 12px -4px rgba(20,26,34,0.45);
+}
+.pin.hot {
+  background: linear-gradient(180deg, #ff8b8f 0%, var(--danger) 48%, #b52a30 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -2px 3px rgba(90,10,14,0.5),
+    0 6px 14px -4px rgba(120,20,24,0.5);
+}
+/* each pin's own reading, hung off the rail in screen space */
+/* Centred over its pin and lifted clear of it: the first cut printed the label
+   inside the pin's own body, white on white. */
+.pinfig {
+  position: absolute; width: 108px; text-align: center;
+  font-family: "Plex", monospace; font-weight: 500; letter-spacing: 0.05em;
+  font-size: 25px; color: #1b1f24;
+}
+.pinfig i {
+  display: block; margin-top: 5px;
+  font-family: "Cairo", sans-serif; font-style: normal; font-weight: 600;
+  font-size: 15px; letter-spacing: 0; color: rgba(23,26,29,0.52);
+}
+.pinfig.loss { color: #8c1f24; }
+
+/* ── copy: one narrow measure, low left ────────────────────────────────────*/
+.measure {
+  position: absolute; left: 104px; bottom: 168px; width: 384px;
+  font-weight: 700; font-size: 34px; line-height: 1.42; letter-spacing: -0.01em;
+  color: #14171b;
+}
+.measure em {
+  display: block; margin-top: 16px;
+  font-style: normal; font-weight: 500; font-size: 19px; line-height: 1.6;
+  color: rgba(23,26,29,0.56);
+}
+.hair {
+  position: absolute; left: 104px; bottom: 132px; width: 384px; height: 1px;
+  background: rgba(23,26,29,0.34);
+}
+
+/* the wordmark, running along the bottom edge */
+.wm {
+  position: absolute; left: 96px; bottom: 46px; --wm: 0.8;
+}
+.tag {
+  position: absolute; right: 96px; bottom: 52px;
+  font-weight: 600; font-size: 15px; letter-spacing: 0.28em; color: rgba(23,26,29,0.42);
+}
+.serial {
+  position: absolute; left: 104px; top: 82px;
+  font-family: "Plex", monospace; font-weight: 400; font-size: 15px;
+  letter-spacing: 0.3em; color: rgba(23,26,29,0.4);
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="plateground"></div>
+
+  <div class="glyph brushed" data-g="ف">ف</div>
+
+  <div class="ladderline">
+    <span class="pin" style="left: 520px;"></span>
+    <span class="pin hot" style="left: 968px;"></span>
+    <span class="pin" style="left: 1416px;"></span>
+  </div>
+
+  <div class="pinfig" style="left: 433px; top: 398px;">78,490<i>ربح الرحلة</i></div>
+  <div class="pinfig loss" style="left: 875px; top: 324px;">8,000<i>خسارة مرتجع</i></div>
+  <div class="pinfig" style="left: 1316px; top: 250px;">27,851<i>ربح الرحلة</i></div>
+
+  <div class="serial">FLS · 05 / 05</div>
+
+  <p class="measure">
+    كل درجة تُفتح وحدها
+    <em>الرقم أولاً، وتفصيله تحته حين تطلبه. لا شاشة تصرخ بكل شيء مرة واحدة.</em>
+  </p>
+  <div class="hair"></div>
+
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">RITM</span>
+  </div>
+  <div class="tag">CAMPAIGN 05 · THE LADDER</div>
+
+  <div class="grain"></div>
+</div>
+</body>
+</html>

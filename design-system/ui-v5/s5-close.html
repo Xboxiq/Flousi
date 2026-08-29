@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM v5 — S5 إغلاق الشهر</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+/* ── S5 · إغلاق الشهر · dark, cinematic, irreversible ────────────────────────
+   The only night screen in the product, and it earns the dark: this action seals
+   a month and cannot be undone, so the interface stops being a workspace and
+   becomes a moment. Every other screen is paper; this one is ink, and the switch
+   itself tells the user they have left the everyday.
+   Composition: one column of huge figures on the reading side, the list of what
+   gets sealed on the other, and the commitment at the bottom as a GESTURE rather
+   than a button — a drag, because a click is too cheap for this.
+   Density: four figures, five lines, one control. Focal point: the gesture.
+   Motion: only the gesture's handle moves, and it moves because a finger moves. */
+
+.wrap { position:absolute; inset-inline:var(--marg); top:150px; }
+.lead { display:flex; align-items:baseline; gap:16px; }
+.lead h1 { font-size:44px; font-weight:800; letter-spacing:-0.03em; }
+.lead .m { font-family:"Mono",monospace; font-weight:500; font-size:13px; letter-spacing:0.18em; color:rgba(238,241,246,0.4); }
+.sub { margin-top:14px; max-width:640px; font-size:18px; line-height:1.62; color:rgba(232,236,244,0.62); }
+
+/* the four figures: a colonnade, not a card row. Rules between, nothing around. */
+.four { position:absolute; inset-inline-start:var(--marg); top:352px; width:880px; display:grid; grid-template-columns:1fr 1fr; }
+.q { padding:30px 0 30px 0; border-top:1px solid var(--night-line); }
+.q:nth-child(1), .q:nth-child(2) { border-top:1px solid rgba(238,241,246,0.28); }
+.q:nth-child(odd) { padding-inline-end:44px; }
+.q:nth-child(even) { padding-inline-start:44px; border-inline-start:1px solid var(--night-line); }
+.q .c { font-size:14px; color:rgba(232,236,244,0.55); }
+.q .v { margin-top:10px; font-family:"Mono",monospace; font-weight:500; font-size:52px; letter-spacing:-0.01em; direction:ltr; }
+.q .v.pos { color:#4ec98d; }
+.q .n2 { margin-top:8px; font-size:13px; color:rgba(232,236,244,0.4); }
+
+/* what gets sealed */
+.seal { position:absolute; inset-inline-end:var(--marg); top:352px; width:452px; padding:26px 26px 28px; }
+.seal .k { display:flex; align-items:baseline; justify-content:space-between; }
+.seal .li {
+  display:flex; align-items:baseline; gap:14px; padding:14px 0;
+  border-bottom:1px solid rgba(238,241,246,0.09); font-size:14.5px; color:rgba(238,241,246,0.85);
+}
+.seal .li:first-of-type { border-top:1px solid rgba(238,241,246,0.09); margin-top:18px; }
+.seal .li i {
+  width:5px; height:5px; border-radius:50%; background:rgba(238,241,246,0.45);
+  display:block; transform:translateY(-3px);
+}
+.seal .li.no { color:rgba(238,241,246,0.45); }
+.seal .li.no i { background:transparent; box-shadow:inset 0 0 0 1px rgba(238,241,246,0.35); }
+.seal .after { margin-top:20px; font-size:13px; line-height:1.6; color:rgba(232,236,244,0.5); }
+
+/* the gesture: a slide, and it says what it is at both ends */
+.gest { position:absolute; inset-inline-start:var(--marg); bottom:104px; width:880px; }
+.gest .cap { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; }
+.gest .cap .t { font-size:15px; font-weight:700; }
+.gest .cap .r { font-size:13px; color:rgba(232,236,244,0.5); }
+.track {
+  position:relative; height:70px; border-radius:var(--r);
+  background:var(--night-2); box-shadow:inset 0 0 0 1px var(--night-line);
+  display:flex; align-items:center; justify-content:center;
+}
+.track .word { font-size:15.5px; font-weight:700; color:rgba(238,241,246,0.6); letter-spacing:0.01em; }
+/* Both the fill and the handle grow from the READING edge, and the handle sits at
+   the fill's leading edge — mid-drag, which is the state worth showing. The first
+   cut put the fill on the physical left and the handle on the logical right, so the
+   control read as two unrelated blocks at opposite ends of the track. */
+.track .fill {
+  position:absolute; inset-block:0; inset-inline-start:0; width:36%;
+  background:linear-gradient(to left, rgba(10,92,232,0.34), rgba(10,92,232,0.1));
+  border-radius:var(--r);
+}
+.track .handle {
+  position:absolute; inset-block:5px; inset-inline-start:calc(36% - 116px); width:112px;
+  border-radius:var(--r); background:var(--blue);
+  display:grid; place-items:center;
+  box-shadow:0 1px 0 rgba(255,255,255,0.18), 0 10px 22px -10px rgba(10,92,232,0.7);
+}
+.track .handle svg { width:22px; height:22px; stroke:#fff; stroke-width:1.5; fill:none; }
+.gest .out { margin-top:16px; display:flex; align-items:center; gap:18px; }
+.gest .out .why { font-size:13px; color:rgba(232,236,244,0.5); }
+.gest .out .quit { font:inherit; font-weight:700; font-size:14px; color:rgba(238,241,246,0.75); background:transparent; border:0; cursor:pointer; }
+
+.foot { position:absolute; inset-inline:var(--marg); bottom:48px; display:flex; justify-content:space-between; }
+.foot span { font-family:"Mono",monospace; font-weight:400; font-size:12px; letter-spacing:0.16em; color:rgba(238,241,246,0.3); }
+</style>
+</head>
+<body>
+<div class="screen night">
+
+  <header class="masthead">
+    <span class="mark">
+      <span class="tile"><svg viewBox="0 0 16 16" fill="none"><path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#0b0e13" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 5.5H13V8.5" stroke="#0b0e13" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="name">RITM</span>
+    </span>
+    <nav class="nav">
+      <a href="#">اليوم</a>
+      <a href="#">الرحلات</a>
+      <a href="#">القسمة</a>
+      <a href="#">الفريق</a>
+      <a href="#" aria-current="page">الشهر</a>
+    </nav>
+    <span class="who">CLOSING · AUG 2026</span>
+  </header>
+
+  <section class="wrap">
+    <div class="lead">
+      <h1>إغلاق أغسطس</h1>
+      <span class="m">IRREVERSIBLE</span>
+    </div>
+    <p class="sub">بعد الإغلاق يصبح تقرير الشهر للقراءة فقط، وتُفتح فترة جديدة تلقائياً. الأرقام أدناه هي ما سيُختَم.</p>
+  </section>
+
+  <section class="four">
+    <div class="q">
+      <div class="c">الإيراد</div>
+      <div class="v">5,164,500</div>
+      <div class="n2">88 قطعة في 216 بيعة</div>
+    </div>
+    <div class="q">
+      <div class="c">صافي الربح</div>
+      <div class="v pos">1,775,580</div>
+      <div class="n2">هامش 34.4%</div>
+    </div>
+    <div class="q">
+      <div class="c">حصص المندوبين المجمّدة</div>
+      <div class="v">1,298,150</div>
+      <div class="n2">دُفع منها 2,700,000 على أشهر سابقة</div>
+    </div>
+    <div class="q">
+      <div class="c">ما زال مستحقاً للفريق</div>
+      <div class="v">1,422,856</div>
+      <div class="n2">لا يُغلق الشهر هذا الرصيد ولا يمسحه</div>
+    </div>
+  </section>
+
+  <aside class="seal inst">
+    <div class="k"><span class="lab">WILL BE SEALED</span><span class="lab-ar" style="color:rgba(232,236,244,0.6)">ما يُختَم</span></div>
+    <div class="li"><i></i>تقرير الشهر بكل صفوفه، للقراءة فقط</div>
+    <div class="li"><i></i>سبع رحلات و216 بيعة، بحصصها كما جُمّدت</div>
+    <div class="li"><i></i>أسعار الشراء التي كانت سارية في كل بيعة</div>
+    <div class="li no"><i></i>الأهداف: تُنقل إلى الشهر الجديد ولا تُختَم</div>
+    <div class="li no"><i></i>أرصدة الفريق: تبقى مفتوحة حتى تُسوّى</div>
+    <p class="after">يبدأ سبتمبر فارغاً، ومعدّل هذا الشهر يصبح الخط القائم الذي يُقاس عليه.</p>
+  </aside>
+
+  <section class="gest">
+    <div class="cap"><span class="t">اسحب لإغلاق الشهر وختمه</span><span class="r">الإفلات قبل النهاية يلغي</span></div>
+    <div class="track">
+      <span class="fill"></span>
+      <span class="word">اسحب حتى النهاية</span>
+      <span class="handle">
+        <svg viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6"/><path d="M20 6l-6 6 6 6" opacity=".45"/></svg>
+      </span>
+    </div>
+    <div class="out">
+      <button class="quit">ليس الآن</button>
+      <span class="why">آخر بيعة سُجّلت قبل 4 ساعات. راجعها إن كنت تنتظر شيئاً.</span>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>RITM · V5 / S5 · THE CLOSE</span>
+    <span>LOCAL ONLY · NO SERVER</span>
+  </footer>
+</div>
+</body>
+</html>

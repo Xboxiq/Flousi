@@ -75,12 +75,12 @@
    "source": "swamimalode07/rare-ui",
    "sourceType": "github",
    "commit": "fa71f440cf286d97c496c604ea7cdbfdc2e3c140",
-   "note": "a shadcn component registry, not a skill. Adapted pieces carry attribution comments in Flousi source."
+   "note": "a shadcn component registry, not a skill. Adapted pieces carry attribution comments in RITM source."
   },
   "beautifului.dev": {
    "source": "https://www.beautifului.dev/",
    "sourceType": "web",
-   "note": "AI-interface primitives (thinking states, streaming, approval cards). Flousi has no AI surface; recorded so the next reader does not re-derive that conclusion."
+   "note": "AI-interface primitives (thinking states, streaming, approval cards). RITM has no AI surface; recorded so the next reader does not re-derive that conclusion."
   }
  }
 }

@@ -28,7 +28,7 @@ const LABEL_MIN = 24;
 const SLAB_MIN = 15;
 
 /**
- * عمود السعر — Flousi's focal object (replaces the rejected coin).
+ * عمود السعر — RITM's focal object (replaces the rejected coin).
  *
  * Not an illustration bolted onto data: the object IS the calculation. The
  * selling price is a fixed line; every cost is a milled slab stacked toward it;

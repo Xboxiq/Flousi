@@ -84,7 +84,7 @@ export function LandingPage() {
         <div className="mx-auto flex h-16 max-w-[1240px] items-center justify-between px-5 md:px-8">
           <Link href="/" className="flex items-center gap-2.5">
             <LogoMark />
-            <span className="text-lg font-semibold tracking-tight">Flousi</span>
+            <span className="text-lg font-semibold tracking-tight">RITM</span>
           </Link>
           <nav className="hidden items-center gap-9 text-sm text-muted md:flex">
             <a href="#instrument" className="transition-colors hover:text-fg">الأداة</a>
@@ -130,7 +130,7 @@ export function LandingPage() {
               {...rise(0.12)}
               className="mt-6 max-w-[38ch] text-lg leading-relaxed text-muted md:text-xl"
             >
-              فلوسي يحوّل السعر والرسوم والتكاليف الخفية إلى الرقم الوحيد المهم، فورًا.
+              رِتم يحوّل السعر والرسوم والتكاليف الخفية إلى الرقم الوحيد المهم، فورًا.
             </motion.p>
             <motion.div {...rise(0.18)} className="mt-8 flex flex-wrap items-center gap-3">
               <Magnetic strength={0.4}>
@@ -138,7 +138,7 @@ export function LandingPage() {
                   href="/dashboard"
                   className="inline-flex h-12 items-center gap-2 rounded-full bg-accent px-7 text-base font-semibold text-white transition-colors hover:bg-accent-strong"
                 >
-                  افتح فلوسي <ArrowRight size={18} weight="bold" className="rtl:rotate-180" />
+                  افتح رِتم <ArrowRight size={18} weight="bold" className="rtl:rotate-180" />
                 </Link>
               </Magnetic>
               <a
@@ -190,7 +190,7 @@ export function LandingPage() {
             كل ما يلتهم هامشك، جسمٌ يمكنك قراءته.
           </h2>
           <p className="mt-4 text-lg text-muted">
-            لا مزيد من التخمين. فلوسي يحتسب كل رسم، فالربح الذي تراه هو الربح الذي تحتفظ به.
+            لا مزيد من التخمين. رِتم يحتسب كل رسم، فالربح الذي تراه هو الربح الذي تحتفظ به.
           </p>
         </motion.div>
 
@@ -334,7 +334,7 @@ export function LandingPage() {
               href="/dashboard"
               className="mt-9 inline-flex h-12 items-center gap-2 rounded-full bg-white px-8 text-base font-semibold text-ink transition-colors hover:bg-white/90"
             >
-              افتح فلوسي <ArrowRight size={18} weight="bold" className="rtl:rotate-180" />
+              افتح رِتم <ArrowRight size={18} weight="bold" className="rtl:rotate-180" />
             </Link>
           </div>
         </motion.div>
@@ -344,7 +344,7 @@ export function LandingPage() {
         <div className="mx-auto flex max-w-[1240px] flex-col gap-6 px-5 py-10 text-sm text-muted md:flex-row md:items-center md:px-8">
           <div className="flex items-center gap-2.5">
             <LogoMark />
-            <span className="font-semibold text-fg">Flousi</span>
+            <span className="font-semibold text-fg">RITM</span>
           </div>
           <p className="md:max-w-[34ch]">صافي الربح الحقيقي للمتاجر الإلكترونية والأعمال الصغيرة.</p>
           <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 md:ms-auto">
@@ -375,7 +375,7 @@ function DashboardReading() {
   return (
     <div className="device p-4 sm:p-5">
       <p className="px-1 text-xs font-semibold text-muted">
-        لوحة فلوسي · شهر نموذجي
+        لوحة رِتم · شهر نموذجي
       </p>
       <div className="halftone mt-3 flex flex-col gap-6 rounded-[var(--radius-2xl)] p-5">
         <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-4">

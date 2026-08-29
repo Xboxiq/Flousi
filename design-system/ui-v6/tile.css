@@ -1,0 +1,251 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   RITM UI v6 — «مساحات» / FIELDS   ·   v6.1, the measured cut
+
+   THE LAW (unchanged)
+   AREA IS THE ONLY ENCODING. This product divides a whole, and a division is a
+   plane cut into parts, so a quantity is a FIELD whose area is its amount and
+   never a bar, rail, ring, gauge or sparkline.
+
+   WHAT v6.1 FIXES, AND WHY IT HAD TO BE FIXED
+   The first cut had the idea and lost the craft. Three faults, all measured:
+
+   1 CONTRAST. Six of the nine ink-on-ground pairs failed WCAG AA. Every
+     secondary ink was an alpha of the primary, which is a shortcut, not a
+     colour decision: rgba(23,19,15,0.40) on limestone is 2.49:1. Every ink is
+     now a SOLID value chosen against its ground and its ratio is written beside
+     it below. Turquoise itself was darkened from #14807A (white 4.54:1, a hair
+     over the line at any size) to #0E5F5A (7.12:1), because a person's glaze
+     has to carry white text on five screens.
+   2 THE SCALE WASN'T ONE. Body text drifted across 11.5 / 12 / 12.5 / 13 / 13.5
+     / 14 / 14.5 / 15 / 16 / 16.5 / 17 / 19px — eleven sizes doing the work of
+     four. There are now six text steps and six figure steps, as tokens, and a
+     literal font-size in a screen file is a bug.
+   3 VOIDS WERE LEFTOVERS, NOT NEGATIVE SPACE. Because area is the encoding, a
+     field's size is set by its amount, not by its content, so a 45%-of-the-plane
+     field held one label in a corner and 690px of nothing. Negative space is
+     shaped; that was residue. Hence the FOOT rule, clause 8.
+
+   THE CLAUSES
+   1 NO LINES.     A field's own edge is its outline. The only separator is 4px
+                   of GROUT: the gypsum ground showing between two fields. 16px
+                   of it is the one wider interval, and it means «not the same
+                   kind of thing». There is no third value.
+   2 NO RADIUS.    Nothing is rounded. The one soft form is a 16px CHAMFER on the
+                   leading-bottom corner and it means: a hand may touch this.
+   3 GLAZE = WHO.  One glaze per person, for life, at every scale. Full glaze is
+                   a frozen fact; BISQUE is a projection or a part never yours.
+   4 INK = VERDICT. A verdict never fills a field; it colours the words in one.
+                   Otherwise «success» borrows سعد's turquoise and a person
+                   becomes a status.
+   5 TWO INKS PER GLAZE, both measured. Whichever of the two grounds passes is
+                   the ink: gypsum on lapis / turquoise / terracotta, kiln on
+                   saffron. Never both on one glaze.
+   6 TYPE INSIDE.  A label lives inside the field it names, hung from that
+                   field's leading-top corner. In a field wider than it is tall
+                   (a row) the figure ranges to the trailing edge so a column of
+                   figures aligns. That is the only exception.
+   7 8px LATTICE.  Every measure is 8·n, with 4px as the half-step for offsets
+                   inside a block of text. Audited: every geometric literal in
+                   the six screens is a multiple of 4, or below 6px where it is a
+                   1px caret, a 2px rule or the 4px grout. The single exception is
+                   a figure's unit offset, which is calc(font-size · 0.18) so the
+                   unit tracks the figure through all six steps of the ladder.
+   8 EVERY TALL FIELD HAS A FOOT. A field over 240px tall carries a `.ft` block
+                   pinned to its own foot: its stamp, its next-level partition,
+                   or one measured fact. So a field is anchored at both ends and
+                   the space between them is composed instead of abandoned.
+   9 RE-TILE.      Motion is never a slide or a fade. Fields grow and shrink
+                   along the lattice in 220ms.
+
+   CARRIED FROM v5: Cairo for language, IBM Plex Mono for every figure, latn,
+   tabular, RTL by logical properties only, no em dash in Arabic copy.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@font-face { font-family:"Cairo"; src:url("../campaign/fonts/cairo-arabic.woff2") format("woff2");
+  font-weight:200 1000; font-display:block;
+  unicode-range:U+600-6FF,U+750-77F,U+870-88E,U+FB50-FDFF,U+FE70-FEFF,U+200C-200E; }
+@font-face { font-family:"Cairo"; src:url("../campaign/fonts/cairo-latin.woff2") format("woff2");
+  font-weight:200 1000; font-display:block;
+  unicode-range:U+0-FF,U+131,U+152-153,U+2000-206F,U+2C60-2C7F; }
+@font-face { font-family:"Mono"; src:url("../campaign/fonts/plex-mono-500.woff2") format("woff2");
+  font-weight:500; font-display:block; }
+@font-face { font-family:"Mono"; src:url("../campaign/fonts/plex-mono-400.woff2") format("woff2");
+  font-weight:400; font-display:block; }
+
+:root {
+  /* ── grounds ─────────────────────────────────────────────────────────────── */
+  --gypsum: #fbf9f4;        /* the grout, and the brightest surface */
+  --limestone: #ece5d8;     /* the day */
+  --limestone-2: #ded3bf;   /* recessed, and «zero» in the weave */
+  --bisque: #d3c7b1;        /* never yours */
+  --kiln: #17130f;          /* sealed */
+  --kiln-2: #241d17;
+
+  /* ── glazes · identity, one per person, for life ──────────────────────────── */
+  --lapis: #1b4ba8;         /* ليث   · gypsum ink 7.62:1 */
+  --turq:  #0e5f5a;         /* سعد   · gypsum ink 7.12:1 (was #14807A at 4.54) */
+  --terra: #ab4525;         /* زينب  · gypsum ink 5.53:1 */
+  --saffron: #d9971a;       /* نور   · KILN ink 7.38:1, never gypsum at 2.38 */
+
+  /* ── inks · every one solid, every one measured against its ground ────────── */
+  --on-stone:   #17130f;    /* on limestone 14.75:1 · bisque 11.06:1 */
+  --on-stone-2: #4a423a;    /* on limestone  7.87:1 · bisque  5.90:1 */
+  --on-stone-3: #5c5349;    /* on limestone  6.01:1 · l-2 5.08:1 · bisque 4.51:1 */
+  --on-kiln:    #f4efe4;    /* on kiln 17.06:1 */
+  --on-kiln-2:  #b8b0a2;    /* on kiln  8.60:1 */
+  --on-kiln-3:  #8f887c;    /* on kiln  5.26:1 */
+  --on-glaze:   #fbf9f4;
+  --on-lapis-2: #cbd9f1;    /* on lapis 5.63:1 */
+  --on-turq-2:  #c4e3df;    /* on turq  5.49:1 */
+  --on-terra-2: #f7e2db;    /* on terra 4.67:1 */
+  --on-saff-2:  #3a2a08;    /* on saffron 5.54:1 */
+
+  /* ── the 8px lattice ─────────────────────────────────────────────────────── */
+  --s1: 8px;  --s2: 16px; --s3: 24px; --s4: 32px;
+  --s5: 40px; --s6: 56px; --s7: 72px;
+  --s0: 4px;                /* the half-step, for text-internal offsets only */
+  --grout: 4px;             /* ground, not space */
+  --grout-wide: 16px;       /* «not the same kind of thing» */
+  --cut: 16px;
+
+  /* ── six text steps and six figure steps. A literal font-size is a bug. ──── */
+  --t-display: 38px;
+  --t-title:   22px;
+  --t-name-lg: 19px;
+  --t-name:    15px;
+  --t-body:    13.5px;
+  --t-meta:    12px;
+  --t-tag:     10.5px;
+  /* mono has its own four steps: a stamp is not a caption, and forcing every
+     monospaced run onto the tag step shrank four screens' figures to 10.5px. */
+  --m-lg:  22px;   /* a field's own share, stamped in its foot */
+  --m:     13.5px; /* an inline figure or date */
+  --m-sm:  12px;   /* a dense date, a spec line */
+
+  --retile: 220ms cubic-bezier(0.2,0.8,0.2,1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { -webkit-font-smoothing:antialiased; text-rendering:geometricPrecision; }
+body { font-family:"Cairo",sans-serif; background:#7d766a; }
+
+.screen {
+  position:relative; width:1600px; height:1000px; overflow:hidden;
+  background:var(--gypsum); color:var(--on-stone);
+  font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1;
+}
+.screen.dark { background:var(--kiln); color:var(--on-kiln); }
+
+/* ── the field ──────────────────────────────────────────────────────────────
+   No border, no radius, no shadow. `live` cuts the leading-bottom corner: in RTL
+   that is the physical bottom RIGHT, hence the polygon in physical coordinates.
+   Every glazed and grounded variant declares BOTH its inks, so a light field on
+   a dark screen can never inherit the page's ink (which broke ten surfaces
+   across two screens in the first cut). */
+.f { position:relative; overflow:hidden; }
+.f.live { clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+
+.f.gyp    { background:var(--gypsum);      color:var(--on-stone); --ink2:var(--on-stone-2); --ink3:var(--on-stone-3); }
+.f.stone  { background:var(--limestone);   color:var(--on-stone); --ink2:var(--on-stone-2); --ink3:var(--on-stone-3); }
+.f.stone2 { background:var(--limestone-2); color:var(--on-stone); --ink2:var(--on-stone-2); --ink3:var(--on-stone-3); }
+.f.bisq   { background:var(--bisque);      color:var(--on-stone); --ink2:var(--on-stone-2); --ink3:var(--on-stone-3); }
+.f.kiln   { background:var(--kiln);        color:var(--on-kiln);  --ink2:var(--on-kiln-2);  --ink3:var(--on-kiln-3); }
+.f.kiln2  { background:var(--kiln-2);      color:var(--on-kiln);  --ink2:var(--on-kiln-2);  --ink3:var(--on-kiln-3); }
+.f.lapis  { background:var(--lapis);       color:var(--on-glaze); --ink2:var(--on-lapis-2); --ink3:var(--on-lapis-2); }
+.f.turq   { background:var(--turq);        color:var(--on-glaze); --ink2:var(--on-turq-2);  --ink3:var(--on-turq-2); }
+.f.terra  { background:var(--terra);       color:var(--on-glaze); --ink2:var(--on-terra-2); --ink3:var(--on-terra-2); }
+.f.saff   { background:var(--saffron);     color:var(--on-stone); --ink2:var(--on-saff-2);  --ink3:var(--on-saff-2); }
+
+/* padding is lattice only, and it grows with the field */
+.p1 { padding:var(--s2); } .p2 { padding:var(--s3); }
+.p3 { padding:var(--s4); } .p4 { padding:var(--s5); }
+
+/* ── the four text roles. Nothing else sets a size. ───────────────────────── */
+.nm   { font-weight:800; font-size:var(--t-name); letter-spacing:-0.005em; line-height:1.3; }
+.nm.big { font-size:var(--t-name-lg); letter-spacing:-0.015em; }
+.ttl  { font-weight:800; font-size:var(--t-title); letter-spacing:-0.02em; line-height:1.15; }
+.dsp  { font-weight:800; font-size:var(--t-display); letter-spacing:-0.035em; line-height:1; }
+.note { font-size:var(--t-body); line-height:1.62; color:var(--ink2, var(--on-stone-2)); }
+.meta { font-weight:700; font-size:var(--t-meta); line-height:1.5; color:var(--ink2, var(--on-stone-2)); }
+.tag  { font-family:"Mono",monospace; font-weight:500; font-size:var(--t-tag);
+        letter-spacing:0.2em; color:var(--ink3, var(--on-stone-3)); }
+
+/* ── a figure: stacked over its unit, ranged to the field's leading edge ──── */
+.q { display:block; direction:ltr; text-align:right; }
+.q .n { display:block; font-family:"Mono",monospace; font-weight:500; line-height:0.92;
+        letter-spacing:-0.04em; font-size:var(--fs,30px); }
+.q .u { display:block; font-family:"Cairo",sans-serif; font-weight:700; direction:rtl;
+        margin-top:calc(var(--fs,30px) * 0.18); font-size:calc(var(--fs,30px) * 0.24);
+        letter-spacing:0; color:var(--ink2, var(--on-stone-2)); }
+.q.f76 { --fs:76px; } .q.f56 { --fs:56px; } .q.f40 { --fs:40px; }
+.q.f30 { --fs:30px; } .q.f22 { --fs:22px; } .q.f16 { --fs:16px; }
+/* In a row-shaped field the figure ranges to the trailing edge (clause 6). */
+.q.trail { text-align:left; }
+
+/* ── clause 8 · the foot ─────────────────────────────────────────────────────
+   A field over 240px tall pins a `.ft` to its own foot, so it is anchored at
+   both ends. `.ft` is always a flex row: nothing on this screen is positioned
+   by corner, because two corner-pinned labels collide the moment a field gets
+   narrow (F4 printed a caption straight through a figure at 237px). */
+.ft { position:absolute; inset-inline:var(--fpad, var(--s5)); bottom:var(--fpad, var(--s5));
+      display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s3); }
+.ft.stack { display:block; }
+.p1 > .ft { --fpad:var(--s2); } .p2 > .ft { --fpad:var(--s3); }
+.p3 > .ft { --fpad:var(--s4); } .p4 > .ft { --fpad:var(--s5); }
+/* the stamp: a field's own share, in mono, at the trailing end of its foot.
+   No `direction` override — see the RTL note at the bottom of this file. */
+.pc { flex:0 0 auto; font-family:"Mono",monospace; font-weight:500; font-size:var(--m-lg);
+      letter-spacing:0.01em; color:var(--ink3, var(--on-stone-3)); }
+.pc.sm { font-size:var(--m); }
+
+/* a nest: the next level of the same law, separated from its parent by grout */
+.nest { position:absolute; inset-inline:0; bottom:0; }
+.nest > .tag { display:block; margin:0 var(--s5) var(--s2); }
+.nrow { display:flex; gap:var(--grout); padding-top:var(--grout); background:var(--gypsum); }
+.nrow > .f { padding:var(--s2) var(--s3) var(--s2); }
+
+/* ── the spine: navigation as a column of tiles, never a bar across the top ── */
+.spine { position:absolute; inset-block:0; inset-inline-end:0; width:var(--s7);
+         display:flex; flex-direction:column; gap:var(--grout); background:var(--gypsum); }
+.spine .mk { flex:0 0 var(--s7); background:var(--kiln); display:grid; place-items:center; }
+.spine .mk svg { width:var(--s3); height:var(--s3); }
+.spine a { flex:1; background:var(--limestone); color:var(--on-stone);
+           display:grid; place-items:center; text-decoration:none;
+           font-weight:800; font-size:var(--t-meta); letter-spacing:-0.01em;
+           transition:background var(--retile); }
+.spine a[aria-current] { background:var(--kiln); color:var(--on-kiln); }
+.spine .when { flex:0 0 var(--s6); background:var(--limestone-2); display:grid; place-items:center;
+               font-family:"Mono",monospace; font-weight:500; font-size:var(--t-tag);
+               letter-spacing:0.14em; color:var(--on-stone-2);
+               direction:ltr; }   /* «08 · 26» reorders to «26 · 08» without this */
+
+/* ── the one control: a live field with a word in it ────────────────────────── */
+.act { font:inherit; font-weight:800; font-size:var(--t-name); cursor:pointer; border:0;
+       padding:var(--s3) var(--s3); background:var(--kiln); color:var(--on-kiln);
+       clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+       transition:transform var(--retile), background var(--retile); }
+.act.blue  { background:var(--lapis); color:var(--on-glaze); }
+.act.light { background:var(--gypsum); color:var(--on-stone); }
+.act.ghost { background:transparent; color:inherit; padding-inline:0; clip-path:none;
+             text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:1.5px; }
+
+/* ── states ──────────────────────────────────────────────────────────────────
+   Focus is geometric: the leading corner cut DOUBLES and the field goes gypsum.
+   No ring is drawn, because nothing in this system is drawn. */
+.f.cut2 { clip-path:polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut),
+                            100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+.ink-bad  { color:var(--terra); }   /* on gypsum 5.75:1 */
+.ink-good { color:var(--turq); }    /* on gypsum 7.40:1 */
+
+/* ── one RTL trap, recorded because it cost four screens ─────────────────────
+   `inset-inline-start/end` resolve against the ELEMENT'S OWN direction, not its
+   parent's. An absolutely positioned mono stamp that sets `direction:ltr` on
+   itself has its inline axis flipped, so `inset-inline-end:20px` lands on the
+   physical RIGHT — the reading edge — in an RTL page. Every percent stamp in the
+   first cut was on the wrong side of its field, and one printed straight through
+   the figure it belonged to.
+   The fix is not a physical property: a run of digits and a per cent sign is all
+   ET/EN under bidi and reorders correctly with no `direction` override at all.
+   Drop the override; keep the logical property. Where a run really is mixed
+   Latin and Arabic, declare `direction:ltr; text-align:right` on the BLOCK and
+   never on an element that also carries an inset. */

@@ -1,10 +1,10 @@
-# Flousi — Design Direction MASTER v4 (source of truth)
+# RITM — Design Direction MASTER v4 (source of truth)
 
 > **v4 — "المال الملموس / Tangible Capital".** Direction pivot ordered by the client
 > 2026-08-17: v3's restraint read as plain. The new direction is **rich, dimensional
 > and cinematic** — 3D objects, physical motion, layered materials, crafted imagery —
 > bounded by exactly ONE law: the anti-slop gate
-> (`.claude/skills/flousi-anti-slop-gate/`). Every restraint-era cap that isn't
+> (`.claude/skills/ritm-anti-slop-gate/`). Every restraint-era cap that isn't
 > slop-prevention or an accessibility/RTL floor is REPEALED (see §9).
 >
 > v3 (Precision Capital) is preserved in git history; its token infrastructure
@@ -13,7 +13,7 @@
 
 ## 0. الأطروحة — The thesis
 
-**Money in Flousi is a physical thing.** Coins have weight and shine, receipts
+**Money in RITM is a physical thing.** Coins have weight and shine, receipts
 fold, a closed month locks inside a vault, profit glows. The interface is not a
 page of cards — it is a **scene**: objects sit on materials, one consistent light
 source falls across them, and motion behaves like physics (mass, springs,
@@ -43,7 +43,7 @@ no default-rainbow semantics** — that's slop law, not taste law.
 
 ## 2. The object system (3D)
 
-Flousi owns a cast of physical objects, built in this order of preference:
+RITM owns a cast of physical objects, built in this order of preference:
 1. **CSS/SVG-rendered 3D** (layered radial gradients + speculars + cast shadows —
    the current orb technique, generalized). Crisp at any scale, themable, tiny.
 2. **Layered SVG illustrations** (the 210425 spot-illustration style: extruded
@@ -90,7 +90,7 @@ practice means ≥ 3 cooperating light layers (form gradient + specular/edge lip
 weights), and detail at edges/joints. Flat single-gradient rectangles,
 unbalanced line-art and bare-stroke decorations FAIL the gate. The full law:
 `design-system/VISUAL-LAW.md`. The proven techniques: `design-system/RECIPES.md`
-(mined from the client's own `Xboxiq/nova` — first-party, rebound to Flousi
+(mined from the client's own `Xboxiq/nova` — first-party, rebound to RITM
 tokens; nova's legacy violet hues are explicitly NOT ported).
 
 ## 4. Motion choreography (promoted from garnish to structure)

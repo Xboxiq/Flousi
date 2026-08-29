@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM — 01 typography poster</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+/* ── FRAME 01 · type-led ─────────────────────────────────────────────────────
+   Camera: flat-on, no perspective. Ground: bone, flat, grain only.
+   Hierarchy: TYPE first, one object second, one figure third.
+   The headline bleeds off the right (reading-side) edge, the object sits low on
+   the opposite corner, and the whole middle-left of the frame is left empty:
+   the negative space is the composition, not a gap in it. */
+.frame { background: var(--bone); color: var(--ink); }
+
+/* a single soft pool of light from above, off-centre — no atmospheric wash */
+.pool {
+  position: absolute; inset: -20% -10% auto -10%; height: 120%;
+  background: radial-gradient(78% 62% at 68% -8%, rgba(255,255,255,0.9), rgba(255,255,255,0) 62%);
+}
+
+.wm { position: absolute; top: 74px; right: 96px; --wm: 1.15; }
+
+.head {
+  position: absolute; top: 196px; right: 96px;
+  text-align: right;
+  font-weight: 900;
+  font-size: 248px;
+  /* Arabic needs leading Latin does not: at 0.83 the ج of «الربح» sat inside the ق
+     below it and the ي dots broke off as loose blue squares. Even at 1.02 the ج tail
+     touched the blue word below. 1.16 is the tightest setting where the descender
+     clears the next word's teeth. */
+  line-height: 1.16;
+  letter-spacing: -0.03em;
+  color: #0b111c;
+  text-shadow: 0 -1px 0 rgba(255,255,255,0.6), 0 2px 0 rgba(120,106,86,0.06);
+}
+.head .b { display: block; }
+/* the second word carries the accent as a CODE: it is the measured thing */
+.head .b + .b { color: var(--accent); }
+
+.rule {
+  position: absolute; top: 852px; right: 96px; width: 1104px; height: 1px;
+  background: linear-gradient(to left, rgba(13,19,32,0.42), rgba(13,19,32,0.06));
+}
+
+.dek {
+  position: absolute; top: 888px; right: 96px; width: 712px;
+  font-weight: 500; font-size: 26px; line-height: 1.64;
+  color: rgba(13,19,32,0.6);
+}
+
+/* ── the object: one pace rail, ceramic, with its hatched remainder ─────────
+   62% filled. The fill is what the merchant KEPT; the hatch is what left. */
+.rail {
+  position: absolute; left: 122px; top: 726px;
+  width: 452px; height: 58px; border-radius: 29px;
+  padding: 7px;
+}
+.rail .chan {
+  position: relative; width: 100%; height: 100%; border-radius: 22px;
+  background: #e4ded3;
+  box-shadow: inset 0 3px 6px rgba(94,82,64,0.34), inset 0 -1px 0 rgba(255,255,255,0.8);
+  overflow: hidden;
+}
+.rail .fill {
+  position: absolute; inset: 0 auto 0 0; width: 62%; border-radius: 22px 4px 4px 22px;
+  background: linear-gradient(176deg, #3d8bff, var(--accent) 52%, var(--accent-deep));
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.42), 2px 0 5px rgba(6,42,104,0.3);
+}
+.rail .rest { position: absolute; inset: 0 0 0 62%; }
+.rail .mark { position: absolute; top: 8px; bottom: 8px; left: 78%; width: 2px; background: rgba(30,40,56,0.4); }
+
+.railcap {
+  position: absolute; left: 126px; top: 806px;
+  font-weight: 600; font-size: 19px; letter-spacing: 0.01em; color: rgba(13,19,32,0.5);
+}
+
+.stat { position: absolute; left: 126px; top: 596px; text-align: left; }
+.stat .n { font-size: 46px; color: #0b111c; }
+.stat .l { margin-top: 8px; font-weight: 600; font-size: 17px; color: rgba(13,19,32,0.45); }
+
+.edge {
+  position: absolute; left: 96px; top: 74px;
+  font-weight: 600; font-size: 16px; letter-spacing: 0.26em; color: rgba(13,19,32,0.36);
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="pool"></div>
+
+  <div class="edge">01 · IRAQ</div>
+
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">RITM</span>
+  </div>
+
+  <h1 class="head"><span class="b">الربح</span><span class="b">الحقيقي</span></h1>
+
+  <div class="rule"></div>
+  <p class="dek">الإيراد يقول كم دخل الصندوق. رِتم يقول كم بقي لك منه بعد الشراء والتوصيل والمرتجع وحصّة مندوبك.</p>
+
+  <div class="stat">
+    <div class="n fig">1,775,580</div>
+    <div class="l">صافي الربح · آب</div>
+  </div>
+
+  <div class="rail ceramic">
+    <div class="chan">
+      <div class="fill"></div>
+      <div class="rest hatch"></div>
+      <div class="mark"></div>
+    </div>
+  </div>
+  <div class="railcap">ما بقي لك من كل دينار</div>
+
+  <div class="grain"></div>
+</div>
+</body>
+</html>

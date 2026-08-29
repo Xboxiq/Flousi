@@ -1,9 +1,9 @@
-# Flousi — Recipe Book (image-grade CSS, mined from Xboxiq/nova)
+# RITM — Recipe Book (image-grade CSS, mined from Xboxiq/nova)
 
 > First-party source: the client's `Xboxiq/nova` (`nova-ui-library.html` +
 > `design-system/tokens.css` + `src/madar/`). License: client-owned.
-> RULE: port the TECHNIQUE, rebind every hex to Flousi tokens (nova's legacy
-> violet violates our slop gate). Each recipe names its Flousi target.
+> RULE: port the TECHNIQUE, rebind every hex to RITM tokens (nova's legacy
+> violet violates our slop gate). Each recipe names its RITM target.
 > These feed D0 (direction proof) and D1 (asset foundry).
 
 ## R1 — Mesh money field (2 radials + linear + dot-grain overlay)

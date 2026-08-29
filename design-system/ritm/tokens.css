@@ -1,0 +1,413 @@
+/* ═════════════════════════════════════════════════════════════════════════════
+   RITM · نظام التصميم — طبقة الرموز / TOKEN ARCHITECTURE
+   ─────────────────────────────────────────────────────────────────────────────
+   ORGANIZED MOTION · حركة منظّمة
+       تدفّق ← إيقاع ← بنية ← وضوح ← سيطرة
+       Flow → Rhythm → Structure → Clarity → Control
+
+   This file is the single arithmetic of the product. Nothing downstream is
+   allowed to invent a colour, a size, a gap, a radius or a duration: every one
+   of them is named here, and every colour pair that carries meaning was
+   MEASURED, not asserted. The ratios in the comments are computed values
+   (audit.mjs recomputes them on every run and fails the build if one drifts).
+
+   The identity is the source. `design-system/assets/original/` holds the client's
+   own artwork; the six colours below marked "the board prints" are read straight
+   off it, and the mark is `assets/original/mark.svg`, redrawn from it at pixel
+   precision. Nothing here redraws any of that. What is added is the part an
+   identity board cannot carry: what each colour MEANS in a product, on both
+   grounds, in every state — and, where the board is silent, a value that says so.
+
+   THREE LAWS INHERITED FROM THE BRAND, ENFORCED HERE AS TOKENS
+   1  Sand is a fill on light ground, never a text colour: #B8A880 on paper is
+      1.82:1. So light mode gets `--accent` (the fill, ink on top) and
+      `--accent-ink` (a darkened sand that clears AA) as two different tokens.
+      They are not interchangeable and the audit knows it.
+   2  Teal is a FILL, not a word. The board's #3D8680 is 4.53:1 on ink but
+      3.89:1 on coal and 3.16:1 on graphite: it clears the 3:1 a shape needs
+      and misses the 4.5 a word needs. So `--signal` fills and `--info`
+      (#4AA49C, the same hue lifted) carries the word.
+   3  Green and red judge money. They are not decoration and not general status.
+      Warning is orange, information is teal, neither borrows the money colours.
+   4  THE BOARD CARRIES NO LIGHT GROUND. Paper #F2F1EE and everything derived
+      for it are an extension, marked as one wherever they are declared.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── typefaces · the brand's two, one system ─────────────────────────────────
+   Tajawal carries Arabic and the Latin that sits inside Arabic sentences.
+   Archivo carries standalone Latin and every figure. Both are loaded local:
+   nothing in this system depends on a network at render time.
+   NEVER set Arabic in a Latin-only face. Doing it once cost this project three
+   separate bugs: the text does not fail loudly, it falls back glyph by glyph
+   and quietly loses its joins. */
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-arabic-300.woff2") format("woff2");font-weight:300;font-display:block;unicode-range:U+600-6FF,U+750-77F,U+870-88E,U+890-891,U+897-8E1,U+8E3-8FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-arabic-400.woff2") format("woff2");font-weight:400;font-display:block;unicode-range:U+600-6FF,U+750-77F,U+870-88E,U+890-891,U+897-8E1,U+8E3-8FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-arabic-500.woff2") format("woff2");font-weight:500;font-display:block;unicode-range:U+600-6FF,U+750-77F,U+870-88E,U+890-891,U+897-8E1,U+8E3-8FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-arabic-700.woff2") format("woff2");font-weight:700;font-display:block;unicode-range:U+600-6FF,U+750-77F,U+870-88E,U+890-891,U+897-8E1,U+8E3-8FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-arabic-800.woff2") format("woff2");font-weight:800;font-display:block;unicode-range:U+600-6FF,U+750-77F,U+870-88E,U+890-891,U+897-8E1,U+8E3-8FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-arabic-900.woff2") format("woff2");font-weight:900;font-display:block;unicode-range:U+600-6FF,U+750-77F,U+870-88E,U+890-891,U+897-8E1,U+8E3-8FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-latin-300.woff2") format("woff2");font-weight:300;font-display:block;unicode-range:U+0-FF,U+131,U+152-153,U+2000-206F,U+2122,U+2212}
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-latin-400.woff2") format("woff2");font-weight:400;font-display:block;unicode-range:U+0-FF,U+131,U+152-153,U+2000-206F,U+2122,U+2212}
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-latin-500.woff2") format("woff2");font-weight:500;font-display:block;unicode-range:U+0-FF,U+131,U+152-153,U+2000-206F,U+2122,U+2212}
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-latin-700.woff2") format("woff2");font-weight:700;font-display:block;unicode-range:U+0-FF,U+131,U+152-153,U+2000-206F,U+2122,U+2212}
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-latin-800.woff2") format("woff2");font-weight:800;font-display:block;unicode-range:U+0-FF,U+131,U+152-153,U+2000-206F,U+2122,U+2212}
+@font-face{font-family:"Tajawal";src:url("fonts/tajawal-latin-900.woff2") format("woff2");font-weight:900;font-display:block;unicode-range:U+0-FF,U+131,U+152-153,U+2000-206F,U+2122,U+2212}
+@font-face{font-family:"Archivo";src:url("fonts/archivo-latin.woff2") format("woff2");font-weight:100 900;font-display:block;unicode-range:U+0-FF,U+131,U+152-153,U+2000-206F,U+20AC,U+2122,U+2212}
+
+:root{
+
+/* ═══ 1 · PRIMITIVES · الأصباغ ══════════════════════════════════════════════
+   Raw brand pigment. NOTHING in a component may reference these directly —
+   they exist only to be assigned a role in §2. A primitive has no meaning. */
+  /* the six the identity board prints, unchanged */
+  --ink:#0B0E11;        /* the ground */
+  --coal:#1A1F24;       /* second ground */
+  --graphite:#2A2F36;   /* third ground, and the rule that runs between them */
+  --sand:#B8A880;       /* the one accent */
+  --bone:#E8E2DA;       /* the warm light */
+  --teal:#3D8680;       /* the live signal */
+
+  /* derived, because a product needs inks and states a board does not print */
+  --steel:#3A4047;      /* an emphasised rule, and the second chart band */
+  --grey:#5A6068;       /* disabled */
+  --mist:#949BA3;       /* muted ink — lifted from the board's greys until it
+                           clears 4.5 on #2A2F36, the lightest ground it sits on */
+  --fog:#C3C9D0;        /* secondary ink */
+  --line-l:#D8D2C6;     /* the light-ground rule */
+  --paper:#F2F1EE;      /* THE LIGHT GROUND IS AN EXTENSION: the board carries
+                           none. Declared here so the debt is visible. */
+  --white:#FFFFFF;
+
+  --teal-lift:#4AA49C;  /* the signal, lifted until it can carry a word:
+                           #3D8680 is 3.89:1 on coal and fails as body text */
+  --profit:#5FBF95;     /* not on the board — a money product must judge money */
+  --loss:#EF8A82;
+  --amber:#E8863B;      /* warning, deliberately not sand, so a caution can
+                           never be mistaken for the action colour */
+
+  /* Light-ground counterparts, each darkened until it clears 4.5:1 on BONE —
+     the darkest light surface in the system — so it holds on paper and white. */
+  --sand-ink:#736440;   /* 4.50 on bone · 5.13 on paper · 5.79 on white */
+  --teal-ink:#336F6A;   /* 4.51 on bone */
+  --profit-ink:#2D7154; /* 4.53 on bone */
+  --loss-ink:#C32519;   /* 4.54 on bone */
+  --amber-ink:#9F4F13;  /* 4.53 on bone */
+
+/* ═══ 2 · SEMANTIC COLOUR · دلالة اللون ═════════════════════════════════════
+   Dark is the default: the brand lives on ink, and a merchant reads this app at
+   night after the shop closes. Light is a full equal, not an afterthought —
+   every token below is redefined in §2b, none is left to inherit.
+
+   HOW TO READ A RATIO: the number is the measured contrast against the surface
+   the token is meant to sit on. AA needs 4.5 for text under 24px, 3.0 for large
+   text and for the boundary of a control. Everything here clears its bar. */
+
+  /* grounds and surfaces — four levels, no more.
+     Depth on dark is LIGHT, not shadow: a shadow on a near-black ground is
+     invisible and only costs paint. */
+  --bg:var(--ink);              /* the page */
+  --surface:var(--coal);        /* a card, a panel, a row group */
+  --surface-2:var(--graphite);  /* a nested surface, a table head, an input */
+  --surface-3:var(--graphite);  /* a menu or popover: it takes a shadow, not
+                                   a fourth grey the board never printed */
+  --surface-inset:#090C0E;      /* a well: chart plots, code, empty tracks */
+
+  /* lines. One rule weight for structure, one stronger for controls, because a
+     control's boundary must clear 3:1 on its own (WCAG 1.4.11) and a divider
+     between two surfaces need not. */
+  --line:var(--graphite);       /* dividers and card edges are the third
+                                   ground at 1px: no invented grey */
+  --line-control:#57606A;       /* 3.03 on ink — input, checkbox, radio edges */
+  --line-strong:var(--steel);   /* a deliberate emphasis line */
+
+  /* ink on those grounds */
+  --fg:var(--paper);            /* 17.13 on bg · 14.69 on surface · 11.93 on surface-2 */
+  --fg-2:var(--fog);            /* 11.60 on bg · 9.95 on surface · 8.08 on surface-2 */
+  --fg-3:var(--mist);           /* 6.89 on bg · 5.91 on surface · 4.80 on surface-2 */
+  --fg-disabled:var(--grey);    /* 3.05 on bg — disabled is meant to recede */
+  --fg-on-accent:var(--ink);    /* 8.25 on sand */
+
+  /* action */
+  --accent:var(--sand);         /* 8.25 on bg · 7.07 on surface · 5.74 on surface-2 */
+  --accent-ink:var(--sand);     /* on dark the fill and the ink are the same */
+  --accent-quiet:rgba(184,168,128,.15);   /* a wash under a selected row */
+  --accent-line:rgba(184,168,128,.44);
+
+  /* money — the only place green and red are allowed */
+  --profit-fg:var(--profit);    /* 8.64 on bg · 7.41 on surface */
+  --loss-fg:var(--loss);        /* 7.95 on bg · 6.82 on surface */
+  --profit-quiet:rgba(95,191,149,.13);
+  --loss-quiet:rgba(239,138,130,.13);
+
+  /* status — four, each with an ink and a quiet wash, none borrowing another */
+  --success:var(--profit);      /* 8.64 · a settled state IS a money outcome */
+  --warning:var(--amber);       /* 7.28 on bg · 6.25 on surface */
+  --danger:var(--loss);         /* 7.95 on bg · 6.82 on surface */
+  --info:var(--teal-lift);      /* 6.53 on bg · 5.60 on surface · 4.54 on surface-2 */
+  --signal:var(--teal);         /* THE BOARD'S TEAL, and it is a FILL: 3.16 against
+                                   surface-2 clears the 3:1 a shape needs and misses
+                                   the 4.5 a word needs. Dots, bars, borders only. */
+  --success-quiet:rgba(95,191,149,.13);
+  --warning-quiet:rgba(232,134,59,.14);
+  --danger-quiet:rgba(239,138,130,.13);
+  --info-quiet:rgba(61,134,128,.20);
+
+  /* focus. One ring, on every focusable thing, never removed. */
+  --ring:var(--sand);
+  --ring-offset:var(--bg);
+
+  /* the rep key: one stable colour per person, on every screen, for a lifetime.
+     A commission app names the same four people on every page; if their colour
+     moves, the merchant re-learns the chart each time. Ordered by contrast on
+     ink so the first rep is always the most legible. */
+  /* chart series. A split bar is filled, so each band needs BOTH a fill and the
+     ink that survives on it. Primitives cannot be used directly here: #2E3238 is
+     a legible band on ink and an unreadable one on paper. */
+  --series-1:var(--sand);      --on-series-1:var(--ink);    /* 8.25 */
+  --series-2:var(--steel);     --on-series-2:var(--paper);  /* 9.28 */
+  --series-3:var(--mist);      --on-series-3:var(--ink);    /* 6.89 */
+  --series-4:var(--graphite);  --on-series-4:var(--paper);  /* 11.93 */
+
+  --rep-1:var(--sand);          /* 8.25 */
+  --rep-2:var(--fog);           /* 11.60 */
+  --rep-3:var(--mist);          /* 6.89 */
+  --rep-4:var(--steel);         /* fill only — never carries text */
+
+/* ═══ 3 · TYPE · المقياس ════════════════════════════════════════════════════
+   Ten steps. Five of them (13, 16, 22, 38, 56) are the brand's own display
+   ladder, carried through unchanged; the other five are the density the brand
+   ladder does not reach, because a manual sets a cover and a product sets a
+   table row.
+
+   The floor is 10px and there is nothing below it. Hierarchy is made with SIZE
+   and WEIGHT first — a card, a border, a tint or a shadow may only reinforce a
+   hierarchy that already reads with all colour removed. */
+  --fs-label:10px;    /* eyebrow, axis tick, unit, table head */
+  --fs-caption:11px;  /* caption, helper, timestamp */
+  --fs-small:12px;    /* badge, breadcrumb, secondary meta */
+  --fs-table:13px;    /* table cell, dense list          · brand step */
+  --fs-body:14px;     /* body, control, nav item */
+  --fs-lead:16px;     /* lead paragraph, card title      · brand step */
+  --fs-h3:22px;       /* section heading                 · brand step */
+  --fs-h2:28px;       /* screen heading */
+  --fs-h1:38px;       /* the one number a screen is about · brand step */
+  --fs-display:56px;  /* cover, empty state, splash      · brand step */
+
+  /* leading. Arabic sets a taller x-height and joins across the baseline: it
+     needs more air than Latin at the same size, and figures need less than
+     either because they are all one height. */
+  --lh-tight:1.15;    /* display and h1 */
+  --lh-head:1.3;      /* h2, h3 */
+  --lh-body:1.7;      /* Arabic body — 1.5 is too tight for Tajawal */
+  --lh-ui:1.4;        /* single-line controls and labels */
+  --lh-num:1.05;      /* figures */
+
+  --fw-light:300; --fw-regular:400; --fw-medium:500;
+  --fw-bold:700;  --fw-black:800;   --fw-cover:900;
+
+  --ls-eyebrow:.16em;  /* letterspaced Latin caps, the brand's eyebrow voice */
+  --ls-display:-.03em; /* the wordmark's own tightening, carried to h1/display */
+  --ls-head:-.02em;
+  --ls-num:.01em;
+
+  --font-ar:"Tajawal",system-ui,sans-serif;
+  --font-lat:"Archivo","Tajawal",system-ui,sans-serif;
+
+/* ═══ 4 · RHYTHM · الشبكة والمسافات ═════════════════════════════════════════
+   THE RHYTHM GRID — the one piece of layout this system does not borrow.
+
+   The mark is four bars of ONE width at ONE pitch. Their feet step down by
+   exactly one pitch, and the fourth is deliberately short. So horizontally the
+   mark divides its own width into four equal columns of three, and the legal
+   spans are 3, 6, 9 and 12 — nothing else.
+
+   The distinctive law is the vertical one, because that is where the mark
+   varies: blocks stack in descending reach and exactly one is deliberately
+   short. Four equal boxes in a row is the one shape this mark cannot make,
+   which is precisely the shape every finance dashboard opens with.
+
+   Spacing is a 4px lattice with two half-steps for optical work inside
+   controls. Every gap in the system is one of these. */
+  --s-0:0;   --s-05:2px; --s-1:4px;  --s-15:6px; --s-2:8px;
+  --s-3:12px; --s-4:16px; --s-5:20px; --s-6:24px; --s-8:32px;
+  --s-10:40px; --s-12:48px; --s-14:56px; --s-18:72px;
+
+  --grid-cols:12;
+  --grid-gutter:var(--s-3);      /* 12 — the pitch between capsules, scaled */
+  --grid-margin:var(--s-6);      /* 24 — the mark's own grid unit */
+  --measure:68ch;                /* no line of Arabic body runs longer */
+
+/* ═══ 5 · RADIUS · نصف القطر ════════════════════════════════════════════════
+   Read off the mark: a capsule is 4 units tall with a radius of 2 — exactly
+   half its height, i.e. fully rounded. So anything the height of a capsule is
+   a capsule; anything larger is a panel and takes the panel radius. There is
+   no in-between value, which is what keeps the interface from drifting into
+   the soft, over-rounded look the brief bans. */
+  --r-capsule:999px;  /* badge, chip, avatar, progress track, pill toggle */
+  --r-control:6px;    /* button, input, select — things a finger presses */
+  --r-surface:8px;    /* card, panel, menu */
+  --r-tile:12px;      /* a full-bleed region, a modal, a sheet */
+  --r-icon:22.5%;     /* the app icon, straight from the brand manual */
+
+/* ═══ 6 · ELEVATION · الارتفاع ══════════════════════════════════════════════
+   Four levels. A surface declares its height ONCE: with a lighter ground on
+   dark, with a shadow on light. A hairline border AND a shadow on the same
+   element is the ghost card, and it is banned.
+
+   On dark, shadow is used for exactly one thing: to prove that an overlay is
+   detached from the page beneath it. */
+  --e-0:none;
+  --e-1:none;                                   /* dark: --surface does the work */
+  --e-2:0 2px 8px rgba(0,0,0,.34);              /* menu, popover */
+  --e-3:0 12px 32px rgba(0,0,0,.46);            /* modal, drawer, toast */
+  --scrim:rgba(9,12,14,.72);
+
+/* ═══ 7 · MOTION · الحركة ═══════════════════════════════════════════════════
+   From the brand's motion board, unchanged: the beat is 120ms, exit is faster
+   than enter, stagger is 40ms, and only opacity and translate ever move.
+
+   The system's rule: MOTION EXPLAINS WHAT CHANGED. A number that changed
+   counts up to its new value. A row that arrived slides one step from the
+   direction it came from. Nothing loops, nothing bounces, nothing decorates.
+   Money does not get animated — a figure may recount, it may never fly. */
+  --beat:120ms;
+  --t-instant:80ms;   /* a control acknowledging a press */
+  --t-enter:200ms;    /* a surface arriving */
+  --t-exit:130ms;     /* the same surface leaving — 0.66 of its entry */
+  --t-overlay:320ms;  /* a drawer or sheet crossing the screen */
+  --t-count:640ms;    /* a figure recounting to a new value */
+  --stagger:40ms;     /* between siblings, five items maximum */
+
+  --ease-enter:cubic-bezier(.2,.8,.2,1);   /* decelerate: it settles */
+  --ease-exit:cubic-bezier(.4,0,1,1);      /* accelerate: it is gone */
+  --ease-move:cubic-bezier(.4,0,.2,1);     /* both ends: it travels */
+
+  --lift:2px;         /* the one translate distance for an entering element */
+
+/* ═══ 8 · COMPONENT DIMENSIONS · القياسات ═══════════════════════════════════
+   Named so that a screen never types a pixel. Control heights are three, and
+   they are the only three. */
+  --h-control:36px;   /* the default: button, input, select */
+  --h-control-sm:28px;
+  --h-control-lg:44px;/* the one primary action of a screen, and mobile */
+  --h-row:38px;       /* a table row — 36 was one pixel too tight for Tajawal */
+  --h-row-sm:32px;
+  --h-header:60px;
+  --h-tabbar:56px;    /* mobile bottom bar, above the safe area */
+  --w-rail:76px;      /* the collapsed sidebar */
+  --w-sidebar:248px;
+  --w-drawer:420px;
+  --icon:20px; --icon-sm:16px; --icon-lg:24px;
+  --stroke:1.75;      /* icon stroke, in a 24 box — the brand's own */
+  --hit:44px;         /* the minimum touch target, never smaller */
+
+/* ═══ 9 · DEPTH ORDER · الترتيب ═════════════════════════════════════════════ */
+  --z-base:0; --z-raised:1; --z-sticky:10; --z-nav:20;
+  --z-dropdown:30; --z-overlay:40; --z-modal:50; --z-toast:60;
+
+/* ═══ 10 · BREAKPOINTS · العتبات ════════════════════════════════════════════
+   Declared as custom properties so they can be read and printed by the docs;
+   the media queries below hold the same numbers.
+     360  a phone in one hand, the rep's whole product
+     768  a tablet, the shop counter
+    1024  a laptop
+    1440  the desk the accounts are actually done on */
+  --bp-sm:360px; --bp-md:768px; --bp-lg:1024px; --bp-xl:1440px;
+}
+
+/* ═══ 2b · LIGHT · الوضع الفاتح ═════════════════════════════════════════════
+   Not an inversion. Paper is warm and the ink is the brand's near-black, so the
+   page reads as printed rather than as a dark UI turned inside out. Every token
+   from §2 is restated: none is inherited, because a half-defined mode is how a
+   light screen ends up with a dark-mode ink on it. */
+[data-theme="light"]{
+  --bg:var(--paper);
+  --surface:var(--white);
+  --surface-2:var(--bone);
+  --surface-3:var(--white);
+  --surface-inset:var(--bone);
+
+  --line:var(--line-l);
+  --line-control:#9C947F;       /* 3.02 on white — the control boundary bar */
+  --line-strong:#B4AE9E;
+
+  --fg:var(--ink);              /* 17.13 on bg · 14.98 on surface-2 */
+  --fg-2:var(--steel);          /* 9.28 on bg */
+  --fg-3:var(--grey);           /* 5.62 on bg · 6.35 on surface · 4.93 on surface-2 */
+  --fg-disabled:#8A8578;        /* 3.04 on bg */
+  --fg-on-accent:var(--ink);    /* 8.25 on sand — unchanged, sand is sand */
+
+  /* THE RULE THAT ONLY LIGHT MODE NEEDS: the fill and the ink are two tokens */
+  --accent:var(--sand);         /* fill only: 1.82 against paper as text */
+  --accent-ink:var(--sand-ink); /* 5.13 on bg — every sand-coloured WORD */
+  --accent-quiet:rgba(184,168,128,.24);
+  --accent-line:rgba(115,100,64,.34);
+
+  --profit-fg:var(--profit-ink);
+  --loss-fg:var(--loss-ink);
+  --profit-quiet:rgba(45,113,84,.10);
+  --loss-quiet:rgba(195,37,25,.09);
+
+  --success:var(--profit-ink);
+  --warning:var(--amber-ink);
+  --danger:var(--loss-ink);
+  --info:var(--teal-ink);
+  --signal:var(--teal-ink);
+  --success-quiet:rgba(45,113,84,.10);
+  --warning-quiet:rgba(159,79,19,.10);
+  --danger-quiet:rgba(195,37,25,.09);
+  --info-quiet:rgba(51,111,106,.10);
+
+  --ring:var(--sand-ink);
+  --ring-offset:var(--bg);
+
+  --series-1:var(--sand);      --on-series-1:var(--ink);
+  --series-2:var(--steel);     --on-series-2:var(--paper);
+  --series-3:var(--mist);      --on-series-3:var(--ink);
+  --series-4:#C3BFB4;          --on-series-4:var(--ink);
+
+  --rep-1:var(--sand-ink);      /* 5.17 */
+  --rep-2:var(--steel);         /* 9.28 */
+  --rep-3:var(--grey);          /* 5.62 */
+  --rep-4:#8A8578;              /* fill only */
+
+  /* on paper, height is shadow again */
+  --e-1:0 1px 2px rgba(11,14,17,.06);
+  --e-2:0 4px 12px rgba(11,14,17,.10);
+  --e-3:0 16px 40px rgba(11,14,17,.16);
+  --scrim:rgba(11,14,17,.42);
+}
+
+/* Respect the reader's own setting when the app has not been told otherwise. */
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:var(--paper); --surface:var(--white); --surface-2:var(--bone);
+    --surface-3:var(--white); --surface-inset:var(--bone);
+    --line:var(--line-l); --line-control:#9C947F; --line-strong:#B4AE9E;
+    --fg:var(--ink); --fg-2:var(--steel); --fg-3:var(--grey);
+    --fg-disabled:#8A8578; --fg-on-accent:var(--ink);
+    --accent:var(--sand); --accent-ink:var(--sand-ink);
+    --accent-quiet:rgba(184,168,128,.24); --accent-line:rgba(115,100,64,.34);
+    --profit-fg:var(--profit-ink); --loss-fg:var(--loss-ink);
+    --profit-quiet:rgba(45,113,84,.10); --loss-quiet:rgba(195,37,25,.09);
+    --success:var(--profit-ink); --warning:var(--amber-ink);
+    --danger:var(--loss-ink); --info:var(--teal-ink); --signal:var(--teal-ink);
+    --success-quiet:rgba(45,113,84,.10); --warning-quiet:rgba(159,79,19,.10);
+    --danger-quiet:rgba(195,37,25,.09); --info-quiet:rgba(51,111,106,.10);
+    --ring:var(--sand-ink); --ring-offset:var(--bg);
+    --series-1:var(--sand); --on-series-1:var(--ink);
+    --series-2:var(--steel); --on-series-2:var(--paper);
+    --series-3:var(--mist); --on-series-3:var(--ink);
+    --series-4:#C3BFB4; --on-series-4:var(--ink);
+    --rep-1:var(--sand-ink); --rep-2:var(--steel); --rep-3:var(--grey); --rep-4:#8A8578;
+    --e-1:0 1px 2px rgba(11,14,17,.06); --e-2:0 4px 12px rgba(11,14,17,.10);
+    --e-3:0 16px 40px rgba(11,14,17,.16); --scrim:rgba(11,14,17,.42);
+  }
+}
+
+/* A reader who asked for less motion gets none of it. Not slower: none. The
+   only thing that still moves is the thing whose movement IS the information. */
+@media (prefers-reduced-motion:reduce){
+  :root{ --t-instant:1ms; --t-enter:1ms; --t-exit:1ms; --t-overlay:1ms;
+         --t-count:1ms; --stagger:0ms; --lift:0px; }
+}

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM — 02 floating objects</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+/* ── FRAME 02 · object-led, levitating ──────────────────────────────────────
+   Camera: elevated three-quarter, real CSS perspective (not an isometric fake),
+   so every face turns under ONE overhead light: top faces lightest, the wall
+   facing the camera mid, the side wall darkest (VISUAL-LAW §2 + §3).
+   Ground: cool grey with a horizon falloff, i.e. a floor, not a gradient.
+   Objects: the price column's plate stack (ceramic), the ring gauge as a chrome
+   disc lying in the world, and the segmented pill in soft plastic. Each hangs at
+   a different height and drops its own shadow, scaled and softened by how high
+   it hangs. Nothing is centred; the dial is cropped by the corner.
+   Type is small and lives at the edges: this frame is carried by the objects. */
+.frame { background: var(--cool); color: #16202e; }
+
+.floor {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(62% 44% at 60% 6%, rgba(255,255,255,0.92), rgba(255,255,255,0) 60%),
+    linear-gradient(182deg, #e6eaf0 0%, #d9e0e8 46%, #c3ccd7 100%);
+}
+
+.stage { position: absolute; inset: 0; perspective: 2100px; perspective-origin: 56% 26%; }
+.world {
+  position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+  transform-style: preserve-3d;
+  transform: rotateX(63deg) rotateZ(-27deg) translate(-40px, 120px);
+}
+
+/* ── a body: top face plus two walls, extruded by --h ───────────────────── */
+.body { position: absolute; transform-style: preserve-3d; }
+.body > .top,
+.body > .w1,
+.body > .w2 { position: absolute; }
+.body > .top { inset: 0; transform: translateZ(var(--h)); }
+.body > .w1 {
+  left: 0; top: 100%; width: 100%; height: var(--h);
+  /* the wall RISES to the camera side: rotateX(-90deg) hinged it away instead,
+     so every slab rendered with its own side detached below it. */
+  transform-origin: top center; transform: rotateX(90deg);
+}
+.body > .w2 {
+  left: 100%; top: 0; width: var(--h); height: 100%;
+  transform-origin: left center; transform: rotateY(-90deg);
+}
+
+/* the plate stack: four plates, each one a real measured slice of a price */
+.plate { --h: 26px; }
+.plate > .top {
+  border-radius: 10px;
+  background: linear-gradient(148deg, #ffffff, #f4f1eb 58%, #e7e2d9);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.7);
+}
+.plate > .w1 { background: linear-gradient(180deg, #ded8cd, #c9c2b5); border-radius: 0 0 4px 4px; }
+.plate > .w2 { background: linear-gradient(180deg, #cdc6b9, #b3ab9d); }
+/* the one plate that is the merchant's own keep is the accent — once (§13) */
+.plate.keep > .top { background: linear-gradient(148deg, #4d95ff, var(--accent) 56%, var(--accent-deep)); }
+.plate.keep > .w1 { background: linear-gradient(180deg, #0a5ad8, #084bb0); }
+.plate.keep > .w2 { background: linear-gradient(180deg, #0850c2, #063d94); }
+
+/* the ring gauge, lying in the world as a chrome disc */
+.dial {
+  position: absolute; border-radius: 50%; transform-style: preserve-3d;
+}
+.dial .ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(from 210deg,
+    #f7fafc 0deg, #aab4bf 38deg, #6f7b88 70deg, #eef2f6 104deg,
+    #97a2ae 150deg, #5e6a77 186deg, #dfe6ed 226deg, #8f9aa6 268deg,
+    #cfd7df 300deg, #737f8c 332deg, #f7fafc 360deg);
+  box-shadow: 0 0 0 1px rgba(30,42,58,0.22), inset 0 0 26px rgba(20,30,44,0.28);
+}
+.dial .face {
+  position: absolute; inset: 74px; border-radius: 50%;
+  background: radial-gradient(72% 66% at 38% 22%, #ffffff, #eceef2 52%, #d5dae1);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.9), inset 0 -10px 22px rgba(40,54,72,0.16);
+}
+/* the arc is data: 39.5% of the ring, and nothing else on this frame is accent */
+.dial .arc {
+  position: absolute; inset: 22px; border-radius: 50%;
+  background: conic-gradient(from -90deg, var(--accent) 0 142deg, rgba(255,255,255,0) 142deg 360deg);
+  mask: radial-gradient(circle, transparent 0 62%, #000 62.6% 100%);
+  -webkit-mask: radial-gradient(circle, transparent 0 62%, #000 62.6% 100%);
+  filter: saturate(1.05);
+}
+
+/* the segmented pill in soft plastic, three seats, one raised */
+.pill { --h: 22px; }
+.pill > .top {
+  border-radius: 34px; padding: 8px;
+  background: linear-gradient(160deg, #eef2f7, #dde4ec 60%, #ccd5df);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.9), inset 0 -3px 8px rgba(50,66,86,0.2);
+  display: flex; gap: 6px;
+}
+.pill > .w1 { background: linear-gradient(180deg, #c8d1db, #aeb9c6); border-radius: 0 0 20px 20px; }
+.pill > .w2 { background: linear-gradient(180deg, #b6c0cc, #9aa5b3); }
+.pill .seat { flex: 1; border-radius: 26px; background: rgba(120,136,156,0.14); }
+.pill .seat.on {
+  background: linear-gradient(170deg, #ffffff, #eef1f5);
+  box-shadow: 0 2px 5px rgba(40,54,72,0.26), inset 0 1px 0 #fff;
+}
+
+/* ── shadows: one per body, on the floor, sized by how high it hangs ─────── */
+.shadow { position: absolute; border-radius: 50%; background: rgba(26,38,56,0.5); }
+
+/* ── type, at the edges only ─────────────────────────────────────────────── */
+.rail-type {
+  position: absolute; left: 78px; top: 50%;
+  transform: translateY(-50%) rotate(-90deg); transform-origin: center;
+  white-space: nowrap;
+  font-weight: 700; font-size: 22px; letter-spacing: 0.34em;
+  color: rgba(22,32,46,0.42);
+}
+.line {
+  position: absolute; right: 104px; bottom: 118px; text-align: right;
+  font-weight: 800; font-size: 74px; line-height: 1.22; letter-spacing: -0.02em;
+  color: #101a27;
+}
+.line span { display: block; font-weight: 500; font-size: 24px; letter-spacing: 0; margin-top: 18px; color: rgba(22,32,46,0.55); }
+.wm { position: absolute; left: 104px; bottom: 96px; --wm: 0.95; }
+.tag {
+  /* moved off the top-right: it was printing over the dial's chrome */
+  position: absolute; left: 104px; top: 84px;
+  font-weight: 600; font-size: 16px; letter-spacing: 0.26em; color: rgba(22,32,46,0.4);
+}
+/* the dial's reading, in screen space beside the object it belongs to */
+.dialfig {
+  position: absolute; right: 372px; top: 300px; text-align: right;
+}
+.dialfig .n { font-size: 40px; color: #101a27; }
+.dialfig .l { margin-top: 6px; font-weight: 600; font-size: 16px; color: rgba(22,32,46,0.48); }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="floor"></div>
+
+  <div class="stage">
+    <div class="world">
+      <!-- shadows first: they belong to the floor, the bodies hang above them.
+           Each is sized and softened by how high its body hangs: the pill nearly
+           touches down and keeps a tight contact shadow, the dial hangs highest and
+           throws the widest, faintest one. -->
+      <div class="shadow" style="left:512px; top:392px; width:560px; height:360px; filter:blur(46px); opacity:0.5;"></div>
+      <div class="shadow" style="left:1186px; top:214px; width:600px; height:600px; filter:blur(76px); opacity:0.5;"></div>
+      <div class="shadow" style="left:1068px; top:722px; width:392px; height:150px; filter:blur(32px); opacity:0.44;"></div>
+
+      <!-- the plate stack: three plates of a price, stepped and thick enough to be
+           bodies. The top plate is what the merchant keeps, so it is the accent. -->
+      <div class="body plate" style="--h:72px; left:520px; top:380px; width:470px; height:300px; transform:translateZ(46px);">
+        <div class="top"></div><div class="w1"></div><div class="w2"></div>
+      </div>
+      <div class="body plate" style="--h:64px; left:566px; top:412px; width:396px; height:246px; transform:translateZ(158px);">
+        <div class="top"></div><div class="w1"></div><div class="w2"></div>
+      </div>
+      <div class="body plate keep" style="--h:58px; left:612px; top:446px; width:316px; height:194px; transform:translateZ(272px);">
+        <div class="top"></div><div class="w1"></div><div class="w2"></div>
+      </div>
+
+      <!-- the dial, hanging highest, cropped by the corner -->
+      <div class="dial" style="left:1120px; top:60px; width:600px; height:600px; transform:translateZ(330px);">
+        <div class="ring"></div>
+        <div class="arc"></div>
+        <div class="face"></div>
+      </div>
+
+      <!-- the pill, all but resting -->
+      <div class="body pill" style="--h:30px; left:1060px; top:700px; width:380px; height:126px; transform:translateZ(30px);">
+        <div class="top"><span class="seat"></span><span class="seat on"></span><span class="seat"></span></div>
+        <div class="w1"></div><div class="w2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tag">CAMPAIGN 02 · INSTRUMENTS</div>
+  <div class="rail-type">RITM · PROFIT INSTRUMENTS</div>
+
+  <div class="dialfig">
+    <div class="n fig">39.5%</div>
+    <div class="l">من الهدف</div>
+  </div>
+
+  <div class="line">
+    لا جسم بلا قياس
+    <span>كل شكل على الشاشة يقيس مالاً حقيقياً، أو لا يوجد.</span>
+  </div>
+
+  <div class="wordmark wm">
+    <span class="tile"><svg viewBox="0 0 16 16" fill="none">
+      <path d="M3 11.5L6.2 8.3L8.4 10.5L13 5.9" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.5H13V8.5" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></span>
+    <span class="name">RITM</span>
+  </div>
+
+  <div class="grain"></div>
+</div>
+</body>
+</html>

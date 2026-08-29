@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>رِتم — لوحة اليوم</title><link rel="stylesheet" href="app.css"></head>
+<body><div class="viewport"><div class="app" id="app"></div></div>
+<script src="shell.js"></script>
+<script>
+/* S1 · Dashboard. styles.csv #28: KPI card row, then charts, then a recent
+   table. One primary action in the top bar. Nothing decorative. */
+const money = n => new Intl.NumberFormat("en-US").format(n);
+
+const SPLIT = [
+  { k:"ما بقي لك",        v:1775800, c:"var(--primary)" },
+  { k:"كلفة الشراء",       v:2334920, c:"#64748b" },   /* white clears 4.8:1 here; #94a3b8 was 2.4 */
+  { k:"حصص المندوبين",     v:769200,  c:"var(--secondary)" },
+  { k:"التوصيل والمرتجع",  v:284580,  c:"var(--accent)" },
+];
+const TOTAL = SPLIT.reduce((a,b)=>a+b.v,0);
+
+const REPS = [
+  { n:"سعد الجبوري",  v:298800, c:"var(--rep-2)" },
+  { n:"ليث العبيدي",  v:331200, c:"var(--rep-1)" },
+  { n:"زينب الطائي",  v:139200, c:"var(--rep-3)" },
+];
+REPS.sort((a,b)=>b.v-a.v);                      /* charts.csv: always sort descending */
+const RMAX = REPS[0].v;
+
+const TRIPS = [
+  ["ط-1048","زيونة، بغداد","ليث العبيدي","var(--rep-1)",606000,278000,"مفتوحة","warning"],
+  ["ط-1047","الكرادة","سعد الجبوري","var(--rep-2)",702500,241300,"مسلَّمة","success"],
+  ["ط-1046","الجادرية","زينب الطائي","var(--rep-3)",214000,68400,"مسلَّمة","success"],
+  ["ط-1045","حي الجامعة","ليث العبيدي","var(--rep-1)",338900,121500,"مرتجع جزئي","danger"],
+  ["ط-1044","الأعظمية","سعد الجبوري","var(--rep-2)",597300,203100,"مسلَّمة","success"],
+];
+
+/* charts.csv · trend over time → line chart, two series told apart by LINE
+   STYLE and direct labels, never by hue alone. */
+const REV = [3.1,3.4,3.0,3.8,4.1,3.9,4.4,4.2,4.7,4.5,5.0,4.8,5.2,5.16];
+const NET = [0.9,1.0,0.85,1.15,1.25,1.2,1.35,1.3,1.5,1.42,1.6,1.55,1.72,1.78];
+const W=560, H=116, PAD=6, PADL=30, PADB=16;
+const sx = i => PADL + i*(W-PADL-PAD)/(REV.length-1);
+const sy = v => H-PADB - (v/6)*(H-PAD-PADB);
+const path = a => a.map((v,i)=>`${i?"L":"M"}${sx(i).toFixed(1)} ${sy(v).toFixed(1)}`).join(" ");
+const area = a => path(a) + ` L${sx(a.length-1).toFixed(1)} ${H-PADB} L${PADL} ${H-PADB} Z`;
+
+document.getElementById("app").innerHTML = shell("لوحة اليوم","لوحة اليوم",
+  "أغسطس 2026 · آخر تحديث 09:41",
+  `<button class="btn btn-outline btn-sm">${icon("cal","i-sm")}أغسطس 2026${icon("chevD","i-sm")}</button>
+   <button class="btn btn-outline btn-sm">${icon("download","i-sm")}تصدير</button>
+   <button class="btn btn-primary btn-sm">${icon("plus","i-sm")}رحلة جديدة</button>`) + `
+  <div class="content" style="padding:12px 20px">
+
+    <div class="stats">
+      <div class="stat is-primary">
+        <div class="lab">${icon("wallet","i-sm")}صافي ما بقي لك</div>
+        <div class="val">1,775,800 <small>د.ع.</small></div>
+        <div class="row"><span class="badge badge-success">${icon("up","i-sm")}46.2%</span>
+          <span>مقابل 1,214,300 في يوليو</span></div>
+      </div>
+      <div class="stat">
+        <div class="lab">${icon("pkg","i-sm")}إيراد الشهر</div>
+        <div class="val">5,164,500</div>
+        <div class="row"><span class="badge badge-success">${icon("up","i-sm")}12.4%</span><span>216 بيعة · 88 قطعة</span></div>
+      </div>
+      <div class="stat">
+        <div class="lab">${icon("users","i-sm")}حصص المندوبين</div>
+        <div class="val">769,200</div>
+        <div class="row"><span class="badge badge-neutral">14.9% من الإيراد</span><span>ثلاثة نشطون</span></div>
+      </div>
+      <div class="stat">
+        <div class="lab">${icon("alert","i-sm")}مستحق ولم يُدفع</div>
+        <div class="val">1,892,820</div>
+        <div class="row"><span class="badge badge-warning">${icon("warn","i-sm")}متأخر 12 يوماً</span></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 400px;gap:var(--gap);margin-top:var(--gap)">
+
+      <section class="card">
+        <div class="card-h">
+          <h2>الإيراد وصافي الربح</h2>
+          <span class="sub">آخر 14 يوماً، بالمليون د.ع.</span>
+          <span class="spacer"></span>
+          <div class="seg"><button aria-pressed="true">14 يوم</button><button>الشهر</button><button>السنة</button></div>
+        </div>
+        <div class="card-b">
+          <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" style="overflow:visible"
+               aria-label="خط الإيراد وصافي الربح على أربعة عشر يوماً">
+            ${[0,2,4,6].map(v=>`<g><line x1="${PADL}" y1="${sy(v).toFixed(1)}" x2="${W-PAD}" y2="${sy(v).toFixed(1)}" stroke="var(--border)"/>
+               <text class="axis" x="${PADL-6}" y="${(sy(v)+3).toFixed(1)}" text-anchor="end">${v}</text></g>`).join("")}
+            ${[0,4,8,13].map(i=>`<text class="axis" x="${sx(i).toFixed(1)}" y="${H-3}" text-anchor="middle">${13+i>31?13+i-31:13+i}/8</text>`).join("")}
+            <path d="${area(REV)}" fill="var(--secondary)" opacity=".12"/>
+            <path d="${path(REV)}" fill="none" stroke="var(--secondary)" stroke-width="2"/>
+            <path d="${path(NET)}" fill="none" stroke="var(--primary)" stroke-width="2" stroke-dasharray="5 4"/>
+            <circle cx="${sx(REV.length-1)}" cy="${sy(REV.at(-1))}" r="3.5" fill="var(--secondary)"/>
+            <circle cx="${sx(NET.length-1)}" cy="${sy(NET.at(-1))}" r="3.5" fill="var(--primary)"/>
+          </svg>
+          <div class="legend">
+            <span class="li"><svg width="20" height="8"><line x1="0" y1="4" x2="20" y2="4" stroke="var(--secondary)" stroke-width="2"/></svg>
+              <b>الإيراد</b> <span class="num">5,164,500</span></span>
+            <span class="li"><svg width="20" height="8"><line x1="0" y1="4" x2="20" y2="4" stroke="var(--primary)" stroke-width="2" stroke-dasharray="5 4"/></svg>
+              <b>صافي الربح</b> <span class="num">1,775,800</span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2>أين ذهب إيراد أغسطس</h2>
+          <span class="spacer"></span><span class="badge badge-outline">100%</span></div>
+        <div class="card-b">
+          <div class="splitbar" role="img" aria-label="قسمة الإيراد على أربعة أجزاء">
+            ${SPLIT.map(s=>{const p=s.v/TOTAL*100;
+              return `<span style="width:${p.toFixed(2)}%;background:${s.c}">${p>=9?p.toFixed(1)+"%":""}</span>`;}).join("")}
+          </div>
+          <div class="legend" style="flex-direction:column;gap:8px;margin-top:12px">
+            ${SPLIT.map(s=>`<span class="li" style="width:100%">
+               <span class="dot" style="background:${s.c}"></span><b style="flex:1">${s.k}</b>
+               <span class="num">${money(s.v)}</span></span>`).join("")}
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 400px;gap:var(--gap);margin-top:var(--gap)">
+      <section class="card">
+        <div class="card-h"><h2>آخر الرحلات</h2><span class="spacer"></span>
+          <button class="btn btn-ghost btn-sm">عرض الكل ${icon("chevL","i-sm")}</button></div>
+        <div class="tablewrap">
+          <table class="tbl">
+            <thead><tr>
+              <th>الرحلة</th><th>المندوب</th><th class="n">البيع</th>
+              <th class="n">صافي الربح</th><th>الحالة</th><th style="width:36px"></th>
+            </tr></thead>
+            <tbody>
+              ${TRIPS.map(([id,dest,rep,c,sell,net,st,tone])=>`<tr>
+                <td class="strong">${id}<span style="color:var(--muted-fg);font-weight:400"> · ${dest}</span></td>
+                <td><span class="who"><span class="av" style="background:${c}">${rep.slice(0,1)}</span>${rep}</span></td>
+                <td class="n">${money(sell)}</td>
+                <td class="n pos">${money(net)}</td>
+                <td><span class="badge badge-${tone}">${st}</span></td>
+                <td><button class="btn btn-ghost btn-sm btn-icon" aria-label="إجراءات">${icon("more","i-sm")}</button></td>
+              </tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card" style="display:flex;flex-direction:column">
+        <div class="card-h"><h2>حصص المندوبين في أغسطس</h2></div>
+        <div class="card-b">
+          ${REPS.map(r=>`<div class="hbar">
+            <span>${r.n}</span>
+            <span class="track"><span class="fill" style="width:${(r.v/RMAX*100).toFixed(1)}%;background:${r.c}"></span></span>
+            <span class="v">${money(r.v)}</span></div>`).join("")}
+          <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);
+                      display:flex;align-items:center;gap:8px;font-size:var(--fs-xs);color:var(--muted-fg)">
+            ${icon("freeze","i-sm")}<span>كل حصة مجمَّدة بالقاعدة الساريَة لحظة البيع.</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-top:var(--gap)">
+      <section class="card">
+        <div class="card-h"><h2>هدف أغسطس</h2><span class="spacer"></span>
+          <span class="badge badge-success">متحقق 89%</span></div>
+        <div class="card-b">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
+            <span style="font-size:var(--fs-xs);color:var(--muted-fg)">صافي ربح مستهدف</span>
+            <span dir="ltr"><span class="num" style="font-size:var(--fs-lg)">1,775,800</span>
+              <span style="font-size:var(--fs-xs);color:var(--muted-fg)"> / </span>
+              <span class="num" style="color:var(--muted-fg)">2,000,000</span></span>
+          </div>
+          <div class="prog"><i style="width:88.8%"></i></div>
+          <p style="margin-top:8px;font-size:var(--fs-xs);color:var(--muted-fg)">
+            يتبقّى 224,200 د.ع. وخمسة أيام. المعدّل الحالي يكفي.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2>تسويات مستحقة</h2><span class="spacer"></span>
+          <span class="badge badge-warning">3</span></div>
+        <div class="tablewrap"><table class="tbl"><tbody>
+          ${[["سعد الجبوري","var(--rep-2)","834,600"],["ليث العبيدي","var(--rep-1)","633,900"],
+             ["زينب الطائي","var(--rep-3)","424,320"]].map(([n,c,v])=>`
+            <tr><td><span class="who"><span class="av" style="background:${c}">${n.slice(0,1)}</span>${n}</span></td>
+                <td class="n">${v}</td>
+                <td style="width:72px"><button class="btn btn-outline btn-sm">سجّل</button></td></tr>`).join("")}
+        </tbody></table></div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2>يحتاج قراراً</h2></div>
+        <div class="card-b" style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:10px">
+            <span style="color:var(--warning);margin-top:1px">${icon("warn","i-sm")}</span>
+            <span><b style="display:block;font-size:var(--fs-sm);font-weight:600">مرتجع بانتظار قرار</b>
+              <span style="font-size:var(--fs-xs);color:var(--muted-fg)">ط-1045 · حي الجامعة · 3 قطع منذ يومين</span></span>
+          </div>
+          <div style="display:flex;gap:10px">
+            <span style="color:var(--secondary);margin-top:1px">${icon("info","i-sm")}</span>
+            <span><b style="display:block;font-size:var(--fs-sm);font-weight:600">سعر شراء تغيّر</b>
+              <span style="font-size:var(--fs-xs);color:var(--muted-fg)">شواحن سريعة · 4,500 ثم 4,800 من 19 أغسطس</span></span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </div></div>`;
+</script></body></html>

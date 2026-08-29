@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head><meta charset="utf-8"><title>RITM · المنتج وكلفته</title>
+<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="system.css"><link rel="stylesheet" href="docs.css"></head>
+<body>
+<div class="plane app">
+  <div class="app" style="height:900px">
+    <div id="side"></div>
+    <div style="display:flex;flex-direction:column;min-width:0">
+      <div id="top"></div>
+
+      <div style="flex:1;min-height:0;padding:var(--s-6);display:flex;gap:var(--s-4)">
+
+        <aside class="card" style="width:280px;flex:none;display:flex;flex-direction:column">
+          <div class="toolbar" style="padding:var(--s-3)">
+            <span class="search" style="flex:1">
+              <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input class="input" placeholder="ابحث في 17 منتجاً"></span>
+          </div>
+          <div style="flex:1;min-height:0;overflow:hidden" id="list"></div>
+        </aside>
+
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--s-4)">
+
+          <section class="grid" style="align-items:stretch">
+            <div class="span-6 card" style="padding:var(--s-5) var(--s-6);display:flex;
+                 flex-direction:column;justify-content:space-between;gap:var(--s-4)">
+              <div>
+                <div class="row" style="gap:var(--s-3)">
+                  <h2 style="font-size:var(--fs-h3);font-weight:var(--fw-bold)">عطر «رِتم» 50 مل</h2>
+                  <span class="badge badge-success">فعّال</span>
+                </div>
+                <p class="caption" style="margin-top:var(--s-1)">
+                  <span class="lat">SKU-0142</span> · دينار عراقي · أُضيف في
+                  <span class="num">2026-02-11</span></p>
+              </div>
+              <div class="row-4" style="gap:var(--s-8)">
+                <span class="metric is-small">
+                  <span class="headline"><span class="amount">42,000</span></span>
+                  <span class="name">سعر البيع</span></span>
+                <span class="metric is-small">
+                  <span class="headline"><span class="amount" style="color:var(--fg-2)">27,300</span></span>
+                  <span class="name">كلفته كاملة</span></span>
+                <span class="metric is-small">
+                  <span class="headline"><span class="amount" style="color:var(--accent)">14,700</span></span>
+                  <span class="name">ربح القطعة</span></span>
+                <span class="metric is-small">
+                  <span class="headline"><span class="amount">35.0</span><span class="unit">%</span></span>
+                  <span class="name">الهامش</span></span>
+              </div>
+            </div>
+
+            <div class="span-6 card" style="display:flex;flex-direction:column">
+              <header><h3>أين تذهب الأربعون ألفاً</h3></header>
+              <div class="body" style="flex:1;display:flex;flex-direction:column;gap:var(--s-3)">
+                <div class="splitbar">
+                  <span style="width:35.0%;background:var(--series-1);color:var(--on-series-1)">35%</span>
+                  <span style="width:45.2%;background:var(--series-2);color:var(--on-series-2)">45%</span>
+                  <span style="width:12.1%;background:var(--series-3);color:var(--on-series-3)">12%</span>
+                  <span style="width:7.7%;background:var(--series-4);color:var(--on-series-4)">8%</span>
+                </div>
+                <div class="splitkey">
+                  <span class="k"><i style="background:var(--series-1)"></i>ربحك <b class="num">14,700</b></span>
+                  <span class="k"><i style="background:var(--series-2)"></i>سعر الشراء <b class="num">19,000</b></span>
+                  <span class="k"><i style="background:var(--series-3)"></i>كلف أخرى <b class="num">5,100</b></span>
+                  <span class="k"><i style="background:var(--series-4)"></i>التوصيل <b class="num">3,200</b></span>
+                </div>
+                <p class="caption">الشريط نفسه الذي تراه على الشهر، بمقاس قطعة واحدة،
+                  ومجموعه هو سعر البيع: <span class="num">42,000</span>.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Every cost line can be a fixed amount, a percentage of the price, or
+               both. The screen shows the rule AND what it produced, side by side,
+               so a merchant can check the arithmetic without leaving the page. -->
+          <section class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+            <div class="toolbar">
+              <h3 style="font-size:var(--fs-body);font-weight:var(--fw-bold)">تفصيل الكلفة</h3>
+              <span class="spacer"></span>
+              <span class="caption">كل سطر مبلغ ثابت أو نسبة من السعر أو الاثنان معاً</span>
+              <button class="btn btn-secondary btn-sm">عدّل</button>
+            </div>
+            <div class="table-wrap" style="flex:1;min-height:0">
+              <table class="tbl" id="costs"></table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { sidebar, topbar, icon, fmt } from "./shell.js";
+document.getElementById("side").outerHTML = sidebar("products");
+document.getElementById("top").outerHTML = topbar(["المنتجات", "عطر «رِتم» 50 مل"],
+  `<button class="btn btn-secondary btn-sm">${icon("freeze","i i-sm")}أرشفة</button>
+   <button class="btn btn-primary btn-sm">${icon("plus","i i-sm")}منتج جديد</button>`);
+
+const list = [
+  ["عطر «رِتم» 50 مل", "SKU-0142", 14700, 35.0, true],
+  ["عطر «رِتم» 100 مل", "SKU-0143", 26400, 37.7, false],
+  ["كريم يد", "SKU-0088", 3900, 26.0, false],
+  ["علبة هدايا", "SKU-0201", 11200, 28.0, false],
+  ["شمعة معطّرة", "SKU-0117", 5100, 25.5, false],
+  ["زيت شعر", "SKU-0065", 2400, 20.0, false],
+  ["بخّاخ جيب", "SKU-0190", 1800, 18.0, false],
+];
+document.getElementById("list").innerHTML = list.map(([n, sku, profit, margin, current]) => `
+  <button class="datarow"${current ? ' aria-current="true"' : ""}>
+    <span class="tx"><b>${n}</b><span class="lat">${sku}</span></span>
+    <span class="end">
+      <span class="num" style="display:block;font-size:var(--fs-table);font-weight:var(--fw-bold)">${fmt(profit)}</span>
+      <span class="caption num">${margin.toFixed(1)}%</span></span></button>`).join("");
+
+const costs = [
+  ["سعر الشراء", "مبلغ ثابت", "19,000", 19000, false],
+  ["الشحن إلى المخزن", "مبلغ ثابت", "1,400", 1400, false],
+  ["التغليف", "مبلغ ثابت", "922", 922, false],
+  ["رسوم الدفع", "2.9% + 300", "2.9% من 42,000 + 300", 1518, false],
+  ["التوصيل", "حصّة من أجرة الطلب", "بالقيمة", 3200, true],
+  ["نسبة التالف", "3.0%", "3.0% من 42,000", 1260, false],
+];
+const total = costs.reduce((a, c) => a + c[3], 0);
+document.getElementById("costs").innerHTML =
+  `<thead><tr><th>السطر</th><th>القاعدة</th><th>كيف حُسب</th><th class="n">المبلغ</th>
+   <th class="n">من السعر</th></tr></thead><tbody>${costs.map(([t, rule, how, v, allocated]) => `
+   <tr><td style="font-weight:var(--fw-bold)">${t}
+     ${allocated ? '<span class="badge badge-info" style="height:18px;font-size:var(--fs-label);margin-inline-start:var(--s-2)">حصّة مخصَّصة</span>' : ""}</td>
+     <td style="color:var(--fg-2)">${rule}</td>
+     <td class="lat" style="color:var(--fg-3);font-size:var(--fs-caption)">${how}</td>
+     <td class="n">${fmt(v)}</td>
+     <td class="n" style="color:var(--fg-3)">${(v / 42000 * 100).toFixed(1)}%</td></tr>`).join("")}
+   </tbody><tfoot><tr><td>مجموع الكلفة</td><td></td><td></td>
+     <td class="n">${fmt(total)}</td><td class="n">${(total / 42000 * 100).toFixed(1)}%</td></tr></tfoot>`;
+</script>
+</body></html>

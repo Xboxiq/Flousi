@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Archivo:wght@300;400;500;600&display=swap">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{margin:0;font-family:'Tajawal',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    a{color:#B8A880;text-decoration:none} a:hover{color:#D0C4A4}
+    .bd{width:1440px;height:900px;background:#0B0E11;color:#F2F1EE;position:relative;
+        overflow:hidden;padding:56px 64px;display:flex;flex-direction:column;direction:rtl}
+    .bd.lite{background:#F2F1EE;color:#0B0E11}
+    .lat{font-family:'Archivo',system-ui,sans-serif;direction:ltr;unicode-bidi:isolate}
+    .eye{font-family:'Archivo',system-ui,sans-serif;font-size:10px;letter-spacing:.3em;
+         color:#949BA3;text-transform:uppercase;direction:ltr;unicode-bidi:isolate}
+    .bd.lite .eye{color:#5A6068}
+    .ttl{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+    .sub{font-size:14px;line-height:1.7;color:#C3C9D0;font-weight:300}
+    .bd.lite .sub{color:#3A4047}
+    .mut{color:#949BA3;font-weight:300} .bd.lite .mut{color:#5A6068}
+    .rule{height:1px;background:#2A2F36;flex:none} .bd.lite .rule{background:#D8D2C6}
+    .row{display:flex;gap:28px} .col{display:flex;flex-direction:column}
+    .head{display:flex;align-items:flex-end;justify-content:space-between;
+          padding-bottom:18px;border-bottom:1px solid #2A2F36;flex:none}
+    .bd.lite .head{border-color:#D8D2C6}
+    .foot{margin-top:auto;padding-top:18px;border-top:1px solid #2A2F36;
+          display:flex;justify-content:space-between;align-items:baseline;flex:none}
+    .bd.lite .foot{border-color:#D8D2C6}
+    /* isolate, not just direction: an inline `direction` alone does not re-order a
+       run against its RTL surroundings, which printed «#B8A880» as «C6A97D#». */
+    .num{font-family:'Archivo',system-ui,sans-serif;font-variant-numeric:tabular-nums;
+         direction:ltr;unicode-bidi:isolate}
+    .card{background:#1A1F24;border:1px solid #2A2F36;padding:20px}
+    .bd.lite .card{background:#FFFFFF;border-color:#D8D2C6}
+  </style>
+</helmet>
+<div class="bd"><div class="head"><div><div class="eye">MOTION · 08</div><div class="ttl" style="margin-top:8px">الحركة إيقاع، لا استعراض</div></div><div class="eye">RITM BRAND SYSTEM</div></div><div class="row" style="margin-top:26px;gap:44px;flex:1;align-items:flex-start"><div class="col" style="flex:1.1;gap:18px"><div><div class="eye">THE BEAT</div><div style="display:flex;align-items:baseline;gap:14px;margin-top:10px"><span class="num" style="font-size:64px;font-weight:600;color:#B8A880;line-height:1">120</span><span class="sub" style="font-size:15px">ميلي ثانية · الوحدة التي تُقاس بها كل حركة في المنتج</span></div></div><div style="display:flex;align-items:center;gap:16px;padding:13px 0;border-top:1px solid #2A2F36"><span class="sub" style="font-size:13px;width:150px;flex:none">تحويم وضغط</span><span style="display:flex;gap:4px;flex:1;max-width:280px"><div style="height:10px;flex:1;background:#B8A880;opacity:1.00;border-radius:5px"></div></span><span class="num" style="font-size:12px;color:#B8A880;width:64px;text-align:end">120ms</span></div><div style="display:flex;align-items:center;gap:16px;padding:13px 0;border-top:1px solid #2A2F36"><span class="sub" style="font-size:13px;width:150px;flex:none">دخول لوحة أو قائمة</span><span style="display:flex;gap:4px;flex:1;max-width:280px"><div style="height:10px;flex:1;background:#B8A880;opacity:1.00;border-radius:5px"></div><div style="height:10px;flex:1;background:#B8A880;opacity:0.84;border-radius:5px"></div></span><span class="num" style="font-size:12px;color:#B8A880;width:64px;text-align:end">240ms</span></div><div style="display:flex;align-items:center;gap:16px;padding:13px 0;border-top:1px solid #2A2F36"><span class="sub" style="font-size:13px;width:150px;flex:none">خروج</span><span style="display:flex;gap:4px;flex:1;max-width:280px"><div style="height:10px;flex:1;background:#B8A880;opacity:1.00;border-radius:5px"></div></span><span class="num" style="font-size:12px;color:#B8A880;width:64px;text-align:end">120ms</span></div><div style="display:flex;align-items:center;gap:16px;padding:13px 0;border-top:1px solid #2A2F36"><span class="sub" style="font-size:13px;width:150px;flex:none">انتقال بين شاشتين</span><span style="display:flex;gap:4px;flex:1;max-width:280px"><div style="height:10px;flex:1;background:#B8A880;opacity:1.00;border-radius:5px"></div><div style="height:10px;flex:1;background:#B8A880;opacity:0.84;border-radius:5px"></div><div style="height:10px;flex:1;background:#B8A880;opacity:0.68;border-radius:5px"></div></span><span class="num" style="font-size:12px;color:#B8A880;width:64px;text-align:end">360ms</span></div><div style="border-top:1px solid #2A2F36;padding-top:14px"><p class="sub" style="font-size:13px">الخروج أسرع من الدخول دائماً: الدخول يشرح، والخروج يُخلي الطريق. ولا حركة تتجاوز أربع نبضات.</p></div><div class="card" style="padding:18px 20px"><div class="eye">EASING</div><div class="num" style="font-size:13px;color:#B8A880;margin-top:8px">cubic-bezier(.2, .8, .2, 1)</div><p class="sub" style="font-size:12.5px;margin-top:8px">منحنى واحد للدخول والحركة، و<span class="num">ease-in</span> للخروج. لا ارتداد، ولا نابض، ولا حركة تلفت النظر إلى نفسها.</p></div></div><div class="col" style="flex:.9;gap:18px"><div class="card" style="padding:22px"><div class="eye">STAGGER · التتابع</div><div style="display:flex;flex-direction:column;gap:11px;margin-top:16px;align-items:flex-end"><div style="display:flex;align-items:center;gap:14px"><div style="height:11px;width:170px;border-radius:6px;background:#B8A880;opacity:1.00"></div><span class="num" style="font-size:10px;color:#949BA3">+0ms</span></div><div style="display:flex;align-items:center;gap:14px"><div style="height:11px;width:144px;border-radius:6px;background:#B8A880;opacity:0.86"></div><span class="num" style="font-size:10px;color:#949BA3">+40ms</span></div><div style="display:flex;align-items:center;gap:14px"><div style="height:11px;width:118px;border-radius:6px;background:#B8A880;opacity:0.72"></div><span class="num" style="font-size:10px;color:#949BA3">+80ms</span></div><div style="display:flex;align-items:center;gap:14px"><div style="height:11px;width:92px;border-radius:6px;background:#B8A880;opacity:0.58"></div><span class="num" style="font-size:10px;color:#949BA3">+120ms</span></div><div style="display:flex;align-items:center;gap:14px"><div style="height:11px;width:66px;border-radius:6px;background:#B8A880;opacity:0.44"></div><span class="num" style="font-size:10px;color:#949BA3">+160ms</span></div></div><p class="sub" style="font-size:12.5px;margin-top:16px">ثلث نبضة بين كل عنصر وتاليه (<span class="num">40ms</span>)، وخمسة عناصر بحدّ أقصى. بعدها تظهر المجموعة دفعة واحدة.</p></div><div class="card" style="padding:22px"><div class="eye">WHAT MOVES</div><p class="sub" style="font-size:12.5px;margin-top:10px;line-height:1.9">يتحرّك: <span style="color:#F2F1EE">الشفافية والإزاحة</span> فقط.<br>لا يتحرّك: العرض، الارتفاع، الظل، اللون.<br>الرقم لا يتحرّك حين يتغيّر: يُستبدل. المال لا يُحرَّك.</p></div><div class="card" style="padding:22px;border-color:#3D8680"><div class="eye" style="color:#3D8680">REDUCED MOTION</div><p class="sub" style="font-size:12.5px;margin-top:10px">مع <span class="num">prefers-reduced-motion</span> تسقط كل إزاحة وتبقى الشفافية عند <span class="num">80ms</span>. لا شيء يُلغى، كل شيء يهدأ.</p></div></div></div><div class="foot"><span class="eye">BEAT 120 · EXIT FASTER · OPACITY + TRANSLATE ONLY</span><span class="eye">الحركة · 08</span></div></div>
+</x-dc>
+</body>
+</html>

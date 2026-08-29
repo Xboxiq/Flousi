@@ -11,7 +11,7 @@ export interface Step {
   state: StepState;
 }
 
-/** Connected vertical stepper with glossy orb nodes (the signature Flousi flow). */
+/** Connected vertical stepper with glossy orb nodes (the signature RITM flow). */
 export function Stepper({ steps, className }: { steps: Step[]; className?: string }) {
   return (
     <ol className={cn("relative flex flex-col", className)}>

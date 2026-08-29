@@ -2,9 +2,9 @@
 inclusion: manual
 ---
 
-# Flousi — Visual Reference Library
+# RITM — Visual Reference Library
 
-A curated catalog of UI/UX design references collected for the **Flousi** project
+A curated catalog of UI/UX design references collected for the **RITM** project
 (a money / crypto / finance product). These screenshots were uploaded to the repo
 on 2026-06-25 and are treated as **visual feedback / design fuel** — use them as
 inspiration for layout, components, color, motion, and overall taste during any
@@ -16,13 +16,13 @@ design or frontend work.
 
 ---
 
-## Direct relevance to Flousi (finance / crypto core flows)
+## Direct relevance to RITM (finance / crypto core flows)
 
-These map most closely to Flousi's own product surface — prioritize them.
+These map most closely to RITM's own product surface — prioritize them.
 
 | Image | Screen / Component | Notes |
 |---|---|---|
-| `20260625_234741.jpg` | **Send/Transfer vertical stepper** | 3-step flow: `Choose Wallet → Choose Amount → Choose coin`. Neumorphic soft-UI, blue active step (↑ icon), connected dotted line, inactive steps grayed (`$`, `?`). The signature Flousi transfer flow. |
+| `20260625_234741.jpg` | **Send/Transfer vertical stepper** | 3-step flow: `Choose Wallet → Choose Amount → Choose coin`. Neumorphic soft-UI, blue active step (↑ icon), connected dotted line, inactive steps grayed (`$`, `?`). The signature RITM transfer flow. |
 | `20260625_234742.jpg` | **Plan selector ("Choose your plan")** | Segmented radio cards `Basic / Personal` vs `Pro / Most popular`. Glossy 3D radio orbs (gray vs blue), orange "Best…" badge. Onboarding/billing step. |
 | `20260625_204344.jpg` | **Crypto analytics dashboard (error state)** | "EigenExplorer" — large TVL counter, area/line chart, floating pill nav. Dark/black, monospace, **red** accent (error/X variant). Web3 analytics aesthetic. |
 | `20260625_204346.jpg` | **Crypto analytics dashboard (success state)** | Same as above, **green** check variant + selected nav state. Pairs with the red one as a correct/incorrect demo. |

@@ -1,0 +1,30 @@
+/* Chrome for the documentation artboards only. Nothing here is part of the
+   product; it exists so a spec page can hold specimens without inventing
+   values of its own. Every measurement below still comes from tokens.css. */
+.plane{position:relative;width:1440px;height:900px;overflow:hidden;background:var(--bg);
+  color:var(--fg);display:flex;flex-direction:column;padding:var(--s-10) var(--s-12)}
+.plane.phone{width:390px;height:844px;padding:0}
+.plane.tablet{width:834px;height:1112px;padding:0}
+.plane.app{padding:0}
+.plane > .head{display:flex;align-items:flex-end;justify-content:space-between;
+  padding-bottom:var(--s-4);border-bottom:1px solid var(--line);flex:none}
+.plane > .head h1{font-size:var(--fs-h2);font-weight:var(--fw-black);letter-spacing:var(--ls-head)}
+.plane > .foot{margin-top:auto;padding-top:var(--s-4);border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:baseline;flex:none}
+.plane > .work{flex:1;min-height:0;display:flex;flex-direction:column;gap:var(--s-6);
+  padding-block:var(--s-6)}
+.panel{border:1px solid var(--line);border-radius:var(--r-surface);padding:var(--s-4);
+  display:flex;flex-direction:column;gap:var(--s-3);min-width:0}
+.panel > .eyebrow{flex:none}
+.spec{display:flex;flex-direction:column;gap:var(--s-2)}
+.spec-row{display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap}
+.swatch{height:52px;border-radius:var(--r-control);flex:none;min-width:0}
+.note{font-size:var(--fs-caption);color:var(--fg-3);line-height:var(--lh-body)}
+.ratio{font-family:var(--font-lat);font-size:var(--fs-small);direction:ltr;unicode-bidi:isolate}
+.pass{font-family:var(--font-lat);font-size:var(--fs-label);letter-spacing:.1em;
+  color:var(--fg-3);white-space:nowrap}
+.state-label{font-size:var(--fs-label);color:var(--fg-3);letter-spacing:.06em;
+  text-transform:uppercase;font-family:var(--font-lat);direction:ltr;unicode-bidi:isolate}
+.grid-demo > *{background:var(--accent-quiet);border:1px dashed var(--accent-line);
+  border-radius:var(--r-control);height:44px;display:grid;place-items:center;
+  font-family:var(--font-lat);font-size:var(--fs-small);color:var(--accent-ink);direction:ltr;unicode-bidi:isolate}

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>رِتم — الرحلات</title><link rel="stylesheet" href="app.css"></head>
+<body><div class="viewport"><div class="app" id="app"></div></div>
+<script src="shell.js"></script>
+<script>
+/* S2 · the data table. shadcn.csv #24 (Table, never a div grid), ux-guidelines
+   #71 (scroll inside its own wrapper), #91 (multi-select + one bulk action bar
+   rather than repeating actions on every row). */
+const money = n => new Intl.NumberFormat("en-US").format(n);
+const REP = { "ليث العبيدي":"var(--rep-1)", "سعد الجبوري":"var(--rep-2)",
+              "زينب الطائي":"var(--rep-3)", "نور الحسن":"var(--rep-4)" };
+const ROWS = [
+  ["ط-1048","26 أغسطس","زيونة، بغداد","ليث العبيدي",606000,328000,125100,"مفتوحة","warning",1,1],
+  ["ط-1047","25 أغسطس","الكرادة","سعد الجبوري",702500,401200,180390,"مسلَّمة","success",1,1],
+  ["ط-1046","25 أغسطس","الجادرية","زينب الطائي",214000,132000,49200,"مسلَّمة","success",0,1],
+  ["ط-1045","24 أغسطس","حي الجامعة","ليث العبيدي",338900,186400,68625,"مرتجع جزئي","danger",0,1],
+  ["ط-1044","23 أغسطس","الأعظمية","سعد الجبوري",597300,340100,77160,"مسلَّمة","success",0,1],
+  ["ط-1043","22 أغسطس","المنصور","زينب الطائي",129400,79800,20880,"مسلَّمة","success",0,1],
+  ["ط-1042","21 أغسطس","الشعلة","ليث العبيدي",411800,238600,77940,"مسلَّمة","success",0,1],
+  ["ط-1041","20 أغسطس","الدورة","سعد الجبوري",268900,161300,32280,"مسلَّمة","success",0,1],
+  ["ط-1040","19 أغسطس","الكاظمية","زينب الطائي",96400,58200,13200,"ملغاة","neutral",0,0],
+  ["ط-1039","18 أغسطس","بغداد الجديدة","ليث العبيدي",524700,301900,100260,"مسلَّمة","success",0,1],
+  ["ط-1038","17 أغسطس","زيونة، بغداد","سعد الجبوري",349100,205600,43050,"مسلَّمة","success",0,1],
+  ["ط-1037","16 أغسطس","الرصافة","نور الحسن",118600,74300,17160,"مسلَّمة","success",0,1],
+  ["ط-1036","15 أغسطس","الغزالية","ليث العبيدي",287300,168900,53280,"مسلَّمة","success",0,1],
+  ["ط-1035","14 أغسطس","السيدية","سعد الجبوري",463200,271400,57540,"مسلَّمة","success",0,1],
+  ["ط-1034","13 أغسطس","الحرية","زينب الطائي",174500,108300,26400,"مرتجع جزئي","danger",0,1],
+  ["ط-1033","12 أغسطس","الشورجة","ليث العبيدي",638400,362700,124065,"مسلَّمة","success",0,1],
+];
+const sum = i => ROWS.filter(r=>r[10]).reduce((a,r)=>a+r[i],0);
+
+document.getElementById("app").innerHTML = shell("الرحلات","الرحلات",
+  "216 رحلة في أغسطس 2026",
+  `<button class="btn btn-outline btn-sm">${icon("download","i-sm")}تصدير CSV</button>
+   <button class="btn btn-primary btn-sm">${icon("plus","i-sm")}رحلة جديدة</button>`) + `
+  <div class="content">
+    <section class="card">
+
+      <div class="toolbar">
+        <span class="search">${icon("search","i-sm")}
+          <input class="input" aria-label="ابحث في الرحلات" placeholder="ابحث برقم الرحلة أو الوجهة">
+        </span>
+        <div class="seg">
+          <button aria-pressed="true">الكل <span class="num">216</span></button>
+          <button>مفتوحة <span class="num">7</span></button>
+          <button>مرتجع <span class="num">11</span></button>
+        </div>
+        <button class="btn btn-outline btn-sm">${icon("cal","i-sm")}1 إلى 26 أغسطس${icon("chevD","i-sm")}</button>
+        <button class="btn btn-outline btn-sm">${icon("filter","i-sm")}المندوب: الكل${icon("chevD","i-sm")}</button>
+        <span class="spacer"></span>
+        <span style="font-size:var(--fs-xs);color:var(--muted-fg)">مفلتَر: 16 من 216</span>
+        <button class="btn btn-ghost btn-sm btn-icon" aria-label="أعمدة الجدول">${icon("settings","i-sm")}</button>
+      </div>
+
+      <div class="bulkbar">
+        <span class="check on">${icon("check","i-sm")}</span>
+        <b>اختيرت رحلتان</b>
+        <span class="spacer" style="margin-inline-start:auto"></span>
+        <button class="btn btn-outline btn-sm">${icon("check","i-sm")}علّمها مسلَّمة</button>
+        <button class="btn btn-outline btn-sm">${icon("download","i-sm")}تصدير المحدَّد</button>
+        <button class="btn btn-ghost btn-sm">${icon("x","i-sm")}إلغاء التحديد</button>
+      </div>
+
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr>
+            <th style="width:36px"><span class="check on">${icon("check","i-sm")}</span></th>
+            <th class="sortable" aria-sort="descending"><span class="th">الرحلة ${icon("arrowD","i-sm")}</span></th>
+            <th>التاريخ</th><th>الوجهة</th><th>المندوب</th>
+            <th class="n sortable"><span class="th">البيع ${icon("sort","i-sm")}</span></th>
+            <th class="n">كلفة الشراء</th>
+            <th class="n sortable"><span class="th">حصة المندوب ${icon("sort","i-sm")}</span></th>
+            <th>الحالة</th><th style="width:36px"></th>
+          </tr></thead>
+          <tbody>
+            ${ROWS.map(([id,date,dest,rep,sell,cost,share,st,tone,sel,live])=>`
+              <tr class="${sel?"is-sel":""}">
+                <td><span class="check ${sel?"on":""}">${sel?icon("check","i-sm"):""}</span></td>
+                <td class="strong">${id}</td>
+                <td style="color:var(--muted-fg)">${date}</td>
+                <td>${dest}</td>
+                <td><span class="who"><span class="av" style="background:${REP[rep]}">${rep.slice(0,1)}</span>${rep}</span></td>
+                <td class="n">${money(sell)}</td>
+                <td class="n" style="color:var(--muted-fg)">${money(cost)}</td>
+                <td class="n">${money(share)}</td>
+                <td><span class="badge badge-${tone}">${st}</span></td>
+                <td><button class="btn btn-ghost btn-sm btn-icon" aria-label="إجراءات الرحلة">${icon("more","i-sm")}</button></td>
+              </tr>`).join("")}
+          </tbody>
+          <tfoot><tr>
+            <td colspan="5">مجموع الصفحة · 15 رحلة محتسَبة، والملغاة غير محتسَبة</td>
+            <td class="n">${money(sum(4))}</td>
+            <td class="n">${money(sum(5))}</td>
+            <td class="n">${money(sum(6))}</td>
+            <td colspan="2"></td>
+          </tr></tfoot>
+        </table>
+      </div>
+
+      <div class="pager">
+        <span>يُعرض <span class="num">1</span>-<span class="num">16</span> من <span class="num">216</span></span>
+        <span class="spacer" style="margin-inline-start:auto"></span>
+        <span>صفوف في الصفحة</span>
+        <button class="btn btn-outline btn-sm">16 ${icon("chevD","i-sm")}</button>
+        <button class="btn btn-outline btn-sm btn-icon is-disabled" aria-label="السابق">${icon("chevR","i-sm")}</button>
+        <button class="btn btn-outline btn-sm btn-icon" aria-label="التالي">${icon("chevL","i-sm")}</button>
+      </div>
+
+    </section>
+  </div>`;
+</script></body></html>

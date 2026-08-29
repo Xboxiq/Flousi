@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>RITM v6 — F3 نسيج السنة</title>
+<link rel="stylesheet" href="tile.css">
+<style>
+/* ── F3 · النسيج · a year of the team, woven ──────────────────────────────────
+   The densest plane in the product: 60 cells and not one bar among them. Each
+   cell is one rep in one month, and the FIELD inside it is that month's share,
+   scaled on both axes by sqrt(v / max) so the field's AREA is the amount.
+
+   The first cut of this screen anchored every field to its cell's baseline, and
+   the result was four rows of bar charts — the exact shape this language exists
+   to avoid. Cells are SQUARE now and every field is CENTRED in its cell, so the
+   eye reads size, not height, and the plane reads as a weave rather than a
+   chart. That correction is the whole reason this screen exists.
+
+   Below the weave, separated by a wider grout, is the marginal total: the team's
+   whole month, on its own scale, in kiln. It is the only row that is not a
+   person, and August's cell here is the same 769,420 that F1 divides.
+   Navigation: the rep names ARE the navigation. No spine, no masthead, no
+   filter row. Interaction: pressing a cell opens it in place, leftward.
+   Focal point: the pattern. This is the one screen where no single number is
+   the answer. Glaze carries identity: ليث is lapis here exactly as on F1/F2/F4. */
+
+.head { position:absolute; inset-inline:var(--s6); top:var(--s6); display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s7); }
+.head h1 { font-size:var(--t-display); font-weight:800; letter-spacing:-0.03em; line-height:1; }
+.head .lede { margin-top:var(--s3); max-width:56ch; font-size:var(--t-body); line-height:1.68; color:var(--on-stone-2); }
+.head .facts { display:flex; gap:var(--grout); flex:0 0 auto; }
+.head .facts > div { background:var(--limestone); padding:var(--s3); min-width:184px; }
+.head .facts .k { font-weight:800; font-size:var(--t-name); color:var(--on-stone-2); }
+.head .facts .v { margin-top:var(--s2); }
+
+.plane { position:absolute; inset-inline:var(--s6); top:252px; display:flex; gap:var(--grout); }
+.names { flex:0 0 356px; display:flex; flex-direction:column; gap:var(--grout); }
+.grid  { flex:1 1 auto; display:flex; flex-direction:column; gap:var(--grout); }
+
+.rw { flex:0 0 90px; background:var(--limestone); display:flex; align-items:center; gap:var(--s2); padding:0 var(--s3); }
+.rw .g  { flex:0 0 12px; height:12px; }
+.rw .tx { flex:1 1 auto; min-width:0; }
+.rw b  { display:block; font-weight:800; font-size:var(--t-name-lg); letter-spacing:-0.01em; }
+.rw em { display:block; margin-top:var(--s1); font-style:normal; font-size:var(--t-meta); color:var(--on-stone-2); }
+.rw .yr { flex:0 0 auto; }
+.rw .yr .pct { display:block; margin-top:5px; font-family:"Mono",monospace; font-weight:400;
+               font-size:var(--m-sm); color:var(--on-stone-3); direction:ltr; text-align:left; }
+.rw.off b, .rw.off em { color:var(--on-stone-3); }
+
+.mrow { flex:0 0 90px; display:flex; gap:var(--grout); }
+/* square cells, and the field CENTRED in the cell — never sitting on a baseline */
+.cell { flex:1 1 0; background:var(--limestone); display:grid; place-items:center; }
+.cell.q0 { background:var(--limestone-2); }
+.cell i { display:block; }
+
+/* The marginal total, held off the weave by a wider grout. It obeys the same law
+   in the same form — a centred square per month — and is told apart only by its
+   kiln glaze. Drawing it as heights instead turned the foot of the plane back
+   into a bar chart, which is the one thing this screen may not be. */
+.marg { position:absolute; inset-inline:var(--s6); top:648px; display:flex; gap:var(--grout); }
+.marg .lbl { flex:0 0 356px; background:var(--kiln); color:var(--on-kiln);
+             display:flex; align-items:center; gap:var(--s2); padding:0 var(--s3); }
+.marg .lbl .tx { flex:1 1 auto; }
+.marg .lbl b { display:block; font-weight:800; font-size:var(--t-name-lg); }
+.marg .lbl em { display:block; margin-top:var(--s1); font-style:normal; font-size:var(--t-meta); color:var(--on-kiln-3); }
+.marg .cells { flex:1 1 auto; display:flex; gap:var(--grout); height:88px; }
+.marg .cells > div { flex:1 1 0; background:var(--limestone); display:grid; place-items:center; }
+.marg .cells i { display:block; background:var(--kiln); aspect-ratio:1; }
+
+.months { position:absolute; inset-inline:var(--s6); top:752px; display:flex; gap:var(--grout); }
+.months .sp { flex:0 0 360px; }
+.months .mm { flex:1 1 auto; display:flex; gap:var(--grout); }
+.months .mm span { flex:1 1 0; text-align:center; font-family:"Mono",monospace; font-weight:500;
+                   font-size:var(--m-sm); letter-spacing:0.08em; color:var(--on-stone-3); direction:ltr; }
+.months .mm span.y { color:var(--on-stone); font-weight:500; }
+
+.legend { position:absolute; inset-inline-start:56px; top:800px; max-width:66ch;
+          font-size:var(--t-body); line-height:1.65; color:var(--on-stone-2); }
+.foot { position:absolute; inset-inline:var(--s6); bottom:var(--s5); display:flex; align-items:baseline; justify-content:space-between; }
+.foot .back { font-size:var(--t-name); font-weight:800; }
+.foot .tag { color:var(--on-stone-3); }
+
+/* The one interaction: a cell opens IN PLACE and grows away from the reading
+   edge, and it stays inside its own row. The first cut was 200px tall and buried
+   three of the row beneath it, which is not a read-out, it is a lid. */
+.read { position:absolute; z-index:5; background:var(--kiln); color:var(--on-kiln);
+        display:flex; align-items:center; gap:20px; padding:0 20px;
+        clip-path:polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+.read .tx { flex:1 1 auto; white-space:nowrap; }
+.read b { display:block; font-weight:800; font-size:var(--t-name); }
+.read .of { margin-top:8px; font-family:"Mono",monospace; font-weight:400; font-size:var(--t-tag);
+            letter-spacing:0.12em; color:var(--on-kiln-3); direction:ltr; }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <div class="head">
+    <div>
+      <h1>نسيج السنة</h1>
+      <p class="lede">
+        كل خانة شهرٌ واحد لمندوب واحد، ومساحتها حصّته فيه. المساحة تكبر بجذر المبلغ لا
+        بالمبلغ، فمضاعفة المال تضاعف المساحة ولا تُربّعها. الخانة الأغمق تعني صفراً،
+        لا نقصاً في البيانات.
+      </p>
+    </div>
+    <div class="facts">
+      <div><div class="k">حصص السنة</div><div class="v"><span class="q f30"><span class="n">4,898,820</span></span></div></div>
+      <div><div class="k">أعلى خانة · ليث في أغسطس</div><div class="v"><span class="q f30"><span class="n">331,200</span></span></div></div>
+    </div>
+  </div>
+
+  <div class="plane">
+    <div class="names" id="names"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="marg">
+    <div class="lbl">
+      <span class="tx"><b>الفريق كله</b><em>مقياس خاص · أعلى شهر أغسطس</em></span>
+      <span class="q f22"><span class="n">4,898,820</span></span>
+    </div>
+    <div class="cells" id="cells"></div>
+  </div>
+
+  <div class="months">
+    <span class="sp"></span>
+    <div class="mm" id="mm"></div>
+  </div>
+
+  <p class="legend">
+    آخر خانة في الصف الأسفل هي 769,420 نفسها التي تقسمها خريطة الشهر. لوحة واحدة،
+    ورقم واحد، ولا حساب ثانٍ في مكان آخر.
+  </p>
+
+  <div class="foot">
+    <span class="back">رجوع إلى القسمة</span>
+    <span class="tag">SEP 2025 → AUG 2026 · AREA = SHARE · sqrt SCALED · IQD</span>
+  </div>
+
+  <div class="read" id="read">
+    <span class="q f30"><span class="n">268,400</span></span>
+    <span class="tx"><b>سعد الجبوري · مايو</b><span class="of">BEST MONTH · 81%</span></span>
+  </div>
+
+</div>
+
+<script>
+/* The data is the drawing. Twelve months per rep; every total on the screen is
+   SUMMED from them, so no label can disagree with the plane. */
+const REPS = [
+  { n:"ليث العبيدي", s:"مناصفة الربح الأولى · 45%", g:"var(--lapis)",
+    m:[92000,104500,118300,121900,133400,141200,128600,149800,158300,152900,166800,331200] },
+  { n:"سعد الجبوري", s:"نسبة الهامش الرفيع · 30%", g:"var(--turq)",
+    m:[148000,86000,201500,94500,232000,118000,245600,102000,268400,131000,258900,298700] },
+  { n:"زينب الطائي", s:"قسمة القطعة · 1,200 للقطعة", g:"var(--terra)",
+    m:[0,0,0,0,34000,58500,71200,86400,99800,112600,128300,139520] },
+  { n:"نور الحسن",   s:"مؤرشف · آخر بيعة في يناير", g:"var(--saffron)", off:true,
+    m:[64000,51000,38500,21000,10500,0,0,0,0,0,0,0] },
+];
+const MAX  = Math.max(...REPS.flatMap(r => r.m));
+const YEAR = REPS.reduce((a,r) => a + r.m.reduce((x,y)=>x+y,0), 0);
+const fmt  = n => new Intl.NumberFormat("en-US").format(n);
+
+const names = document.getElementById("names"), grid = document.getElementById("grid");
+for (const r of REPS) {
+  const tot = r.m.reduce((a,b)=>a+b,0);
+  const row = document.createElement("div");
+  row.className = "rw" + (r.off ? " off" : "");
+  row.innerHTML =
+    '<span class="g" style="background:' + r.g + '"></span>' +
+    '<span class="tx"><b>' + r.n + '</b><em>' + r.s + '</em></span>' +
+    '<span class="yr"><span class="q f22"><span class="n">' + fmt(tot) + '</span></span>' +
+    '<span class="pct">' + (tot / YEAR * 100).toFixed(1) + '% OF YEAR</span></span>';
+  names.appendChild(row);
+
+  const mrow = document.createElement("div");
+  mrow.className = "mrow";
+  for (const v of r.m) {
+    const c = document.createElement("div");
+    c.className = "cell" + (v === 0 ? " q0" : "");
+    if (v > 0) {
+      const k = (Math.sqrt(v / MAX) * 100).toFixed(2);   /* both axes: area ∝ amount */
+      c.innerHTML = '<i style="background:' + r.g + '; width:' + k + '%; aspect-ratio:1"></i>';
+    }
+    mrow.appendChild(c);
+  }
+  grid.appendChild(mrow);
+}
+
+/* the marginal total: same law, its own scale, drawn as height because a single
+   row has no second axis to give it */
+const COLS = REPS[0].m.map((_, i) => REPS.reduce((a, r) => a + r.m[i], 0));
+const CMAX = Math.max(...COLS);
+document.getElementById("cells").innerHTML = COLS.map(v =>
+  '<div><i style="height:' + (v / CMAX * 100).toFixed(2) + '%"></i></div>').join("");
+
+const MM = ["09","10","11","12","01","02","03","04","05","06","07","08"];
+document.getElementById("mm").innerHTML =
+  MM.map((m,i) => '<span class="' + (i===0||i===4 ? "y" : "") + '">' + m + '</span>').join("");
+
+/* Park the read-out on the cell it describes: row 2 (سعد), month index 8. It
+   occupies its own cell and grows away from the reading edge. */
+const cell = grid.children[1].children[8];
+const box  = cell.getBoundingClientRect();
+const read = document.getElementById("read");
+read.style.width  = (box.width + 208) + "px";
+read.style.height = box.height + "px";
+read.style.top    = box.top + "px";
+read.style.left   = (box.left - 208) + "px";
+</script>
+</body>
+</html>
