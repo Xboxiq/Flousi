@@ -46,9 +46,15 @@ const STATUS_OPTIONS = [
 
 interface Props {
   product?: Product;
+  /**
+   * Called after a successful save. Supplied when the form is mounted inside a
+   * dialog, so the sheet can close itself; omitted on the standalone `/new`
+   * route, where the redirect below is the whole navigation.
+   */
+  onSaved?: () => void;
 }
 
-export function ProductForm({ product }: Props) {
+export function ProductForm({ product, onSaved }: Props) {
   const router = useRouter();
   const settings = useDataStore((s) => s.settings);
   const createProduct = useDataStore((s) => s.createProduct);
@@ -112,9 +118,14 @@ export function ProductForm({ product }: Props) {
       };
       if (isEdit && product) {
         await updateProduct(product.id, payload);
-        router.push(`/products/view?id=${product.id}`);
+        /* Already ON the product's page when the form is a dialog: pushing the
+           same route would be a no-op navigation that also loses the scroll
+           position the merchant was reading from. */
+        if (onSaved) onSaved();
+        else router.push(`/products/view?id=${product.id}`);
       } else {
         const created = await createProduct(payload);
+        onSaved?.();
         router.push(`/products/view?id=${created.id}`);
       }
     } finally {

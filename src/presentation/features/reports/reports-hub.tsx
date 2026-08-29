@@ -5,66 +5,69 @@ import {
   Package,
   Coins,
   Receipt,
-  ArrowUpLeft,
+  ArrowLeft,
 } from "@phosphor-icons/react/dist/ssr";
 import { REPORT_META, type ReportType } from "@/application/reports";
 import { PageHeader } from "@/presentation/components/layout/page-header";
-import { ReportsFolderScene } from "./reports-folder-scene";
-import { cn } from "@/presentation/lib/cn";
+import { Grid, Panel, Toolbar } from "@/presentation/components/structure";
 
 const ICONS: Record<ReportType, React.ReactNode> = {
-  monthly: <CalendarBlank size={26} weight="fill" />,
-  yearly: <ChartLineUp size={22} />,
-  product: <Package size={22} />,
-  profit: <Coins size={22} />,
-  expense: <Receipt size={22} />,
+  monthly: <CalendarBlank size={20} />,
+  yearly: <ChartLineUp size={20} />,
+  product: <Package size={20} />,
+  profit: <Coins size={20} />,
+  expense: <Receipt size={20} />,
 };
 
 const ORDER: ReportType[] = ["monthly", "yearly", "product", "profit", "expense"];
 
 /**
- * Reports hub bento: exactly N cells for N report types. The featured monthly
- * report carries the screen's ONE mesh moment (SIGNATURE.md law #4); the rest
- * are deliberately quiet cards — the contrast is the aesthetic.
+ * «التقارير» — the five sheets, as a list.
+ *
+ * It was a bento: one featured cell twice the width carrying an illustrated band,
+ * four quiet cells beside it. The featured cell was not more important than the
+ * others — it was first in an array — and a grid that promotes its first item by
+ * size teaches the eye a hierarchy the data does not have. Five destinations of
+ * equal weight are a list, and a list is also the one shape that survives a sixth
+ * report being added.
  */
 export function ReportsHub() {
   return (
     <>
       <PageHeader title="التقارير" />
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {ORDER.map((type, i) => {
-          const featured = i === 0;
-          return (
-            <Link
-              key={type}
-              href={`/reports/${type}`}
-              className={cn(
-                "bento-hover group block overflow-hidden rounded-[var(--radius-xl)] bg-surface shadow-card",
-                featured && "sm:col-span-2",
-              )}
-            >
-              {featured ? (
-                /* the band is an OBJECT with real state (the folder of filed
-                   months), replacing the old icon-on-mesh wash (R30, §1 §8) */
-                <ReportsFolderScene />
-              ) : (
-                <div className="flex items-center justify-between p-5 pb-0">
-                  <span className="text-muted">{ICONS[type]}</span>
-                  <ArrowUpLeft
-                    size={16}
-                    weight="bold"
-                    className="text-subtle opacity-0 transition-opacity duration-[var(--motion-fast)] group-hover:opacity-100"
-                  />
-                </div>
-              )}
-              <div className="p-5">
-                <h3 className="font-display text-lg font-bold text-fg">{REPORT_META[type].title}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-muted">{REPORT_META[type].description}</p>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+
+      <Grid>
+        <Panel span={6} title="ما هو التقرير هنا" bodyClassName="flex flex-col gap-3">
+          <p className="text-[13px] leading-relaxed text-muted">
+            كل تقرير قراءة واحدة من البيانات نفسها التي تراها في الشاشات: لا يُحسب شيء
+            جديد هنا، وإنما يُرتَّب المحسوب في جدول يُصدَّر ويُطبع.
+          </p>
+          <p className="text-[13px] leading-relaxed text-muted">
+            التقارير تُقرأ على الفترة المفتوحة وما قبلها من فترات مغلقة، فما جُمِّد يبقى
+            على ما جُمِّد عليه.
+          </p>
+        </Panel>
+
+        <Panel span={6} bare>
+          <Toolbar title="اختر تقريراً">
+            <span className="r-spacer" />
+          </Toolbar>
+          <div className="flex flex-col">
+            {ORDER.map((type) => (
+              <Link key={type} href={`/reports/${type}`} className="r-datarow">
+                <span className="flex size-9 flex-none items-center justify-center rounded-[var(--radius-sm)] bg-surface-2 text-muted">
+                  {ICONS[type]}
+                </span>
+                <span className="tx">
+                  <b>{REPORT_META[type].title}</b>
+                  <span>{REPORT_META[type].description}</span>
+                </span>
+                <ArrowLeft size={15} className="end flex-none text-subtle" />
+              </Link>
+            ))}
+          </div>
+        </Panel>
+      </Grid>
     </>
   );
 }

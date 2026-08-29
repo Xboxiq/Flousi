@@ -29,7 +29,14 @@ export function Grid({ children, className }: { children: React.ReactNode; class
   return <div className={cn("r-grid", className)}>{children}</div>;
 }
 
-type Span = 3 | 6 | 9 | 12;
+/**
+ * The legal spans, plus "none" for a panel that is NOT a cell of the rhythm grid
+ * — a rail beside a bench, a panel inside a dialog. The default of 12 is right
+ * inside a grid and wrong outside one, and getting it wrong is silent: the panel
+ * takes `grid-column: 1 / -1`, eats every column of whatever grid it happens to
+ * be in, and pushes its sibling onto the next row at the wrong width.
+ */
+type Span = 3 | 6 | 9 | 12 | "none";
 
 /**
  * A panel: the one surface type in the system.
@@ -310,6 +317,45 @@ export function Progress({ share, thin = false }: { share: number; thin?: boolea
     <div className={cn("r-progress", thin && "is-thin")}>
       <i style={{ width: `${pct}%` }} />
     </div>
+  );
+}
+
+/**
+ * A claim at rest, with its reasoning one tap away.
+ *
+ * The rule this exists for: a paragraph is not read before the thing it explains,
+ * it is skipped. So the CLAIM stands in full — bold, always visible, never behind
+ * the fold — and the four clauses that justify it open on demand. That is not
+ * hiding: the sentence a merchant must not miss is the one thing that cannot be
+ * closed.
+ *
+ * Native `<details>`, so it works before hydration, is keyboard-operable for
+ * free, and is findable by the browser's own in-page search.
+ */
+export function Disclose({
+  claim,
+  hint,
+  children,
+  className,
+}: {
+  claim: React.ReactNode;
+  hint?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <details className={cn("r-disclose", className)}>
+      <summary>
+        <span className="min-w-0 flex-1">
+          <b>{claim}</b>
+          {hint && <span className="mt-0.5 block text-[11px] font-normal text-subtle">{hint}</span>}
+        </span>
+        <svg viewBox="0 0 24 24" aria-hidden className="mark">
+          <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </summary>
+      <div className="r-disclose-body">{children}</div>
+    </details>
   );
 }
 
