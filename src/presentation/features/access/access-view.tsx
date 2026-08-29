@@ -284,7 +284,7 @@ function RoleRow({
     <tr data-row>
       <td>
         <span className="flex flex-wrap items-center gap-2">
-          <span className="font-bold text-fg">{role.name}</span>
+          <span className="font-medium text-fg">{role.name}</span>
           {active && <Chip tone="accent" className="h-[18px] text-[10px]">الوضع الحالي</Chip>}
           {owner && <Chip className="h-[18px] text-[10px]">ثابت</Chip>}
         </span>

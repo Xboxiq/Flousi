@@ -111,16 +111,89 @@ impossible to reproduce.
 
 ## 4 · Type
 
-**Tajawal** carries every Arabic word and the Latin inside an Arabic sentence.
-**Archivo** with `font-variant-numeric: tabular-nums` carries every figure.
+Three roles, two skeletons, one voice. The pairing is the oldest working one in
+Arabic typography and not an invention: **Kufi for what is built, Naskh for what
+is read.**
+
+| token | face | what wears it |
+|---|---|---|
+| `--font-display` | **Noto Kufi Arabic** | titles, the wordmark, table heads, eyebrows |
+| `--font-sans` | **IBM Plex Sans Arabic** | every word that is read rather than scanned |
+| `--font-figure` | **IBM Plex Sans** | standalone Latin and every number in the product |
+
+Noto Kufi is geometric and flat-based — the same construction as the four-bar
+mark, which is why it belongs to *this* product rather than to any product. Plex
+Arabic is drawn for interfaces: open counters that survive 11px, seven real
+weights, and a Latin companion cut from the same skeleton, so a Latin word inside
+an Arabic sentence no longer switches design mid-line. The two Plex faces mean the
+whole product is one type design plus one deliberate voice.
+
+What this replaced was **Tajawal for everything plus Archivo for figures**, and the
+client's verdict on it was «خطوط مخزية». The measurement agreed: Tajawal is the
+face every Arabic template ships, it has almost no vertical drama, and a screen set
+entirely in it has one texture — so nothing on it can be more important than
+anything else by voice alone.
+
+**Reem Kufi was tried first and rejected on sight**: it is a display Kufi and its
+joins come apart below about 16px, which is most of this app.
 
 Never set Arabic in a Latin-only face. Doing it once cost this project three
-separate bugs where a heading fell back glyph by glyph and lost its joins.
+separate bugs where a heading fell back glyph by glyph and lost its joins. Each
+stack therefore falls back through the *other two* before it reaches the system, so
+a heading with a year in it resolves that run to Plex rather than to whatever the
+OS hands back.
 
 The figure token is called `--font-figure`, **not** `--font-mono`: a monospace
 face is not what lines a money column up — `tabular-nums` is — and a token named
 "mono" invites the next person to swap in a real monospace and silently break
 every Arabic run sharing the class.
+
+### The weight law
+
+Four weights, one job each. Before this there were 175 weight decisions in the app
+and no law behind them, 135 of them at 600 or 700 — a screen where everything is
+emphasised and therefore nothing is.
+
+```
+400  prose, descriptions, table cells, secondary values. The default.
+500  the identity of a row, nav items, buttons, chips, values in a definition list.
+600  structure: headings, eyebrow labels, table heads, the current nav item.
+700  a figure that carries a decision, and the wordmark. NOTHING ELSE.
+```
+
+The last line is the point: **bold here does not mean "important text", it means
+"a number you act on".** A heading is therefore lighter than the figure under it,
+which looks wrong for one second and then reads correctly forever.
+
+One correction rides on top: weight is optical, so the same apparent colour needs
+less of it as the glyph grows. A figure above 22px steps back one rung — the 56px
+hero is 600, an inline figure in a table cell is 700.
+
+### The tracking law
+
+**Arabic is never tracked.** It is a connected script and `letter-spacing` inserts
+its space *between joined glyphs*: at 0.04em «الشهر» starts to come apart, at
+0.08em it is visibly two words. The app carried 0.04em on `.r-label` and on every
+table head — a Latin habit (tracked-out small caps) applied to a script that has
+no such convention and is damaged by it. Verified by eye at 4× before it was
+removed. An eyebrow is set apart by its **face, its size and its colour**.
+
+Latin figures are the opposite case: they do not join, so tightening them is
+optical work rather than damage, and they tighten as they grow (−0.01em at text
+sizes, −0.03em at the hero).
+
+### The currency mark
+
+`formatCurrency` appends «د.ع.» to the string, and the app used to print it at the
+figure's own size — which made a four-character word as tall as the 56px hero it
+qualifies, and on a phone took most of the line. The client's own dashboard board
+prints it beside the hero at a fraction of its size, and on the rows underneath
+prints no currency at all.
+
+Both `<Money>` and `<Metric>` now split the trailing mark and set it at
+`max(10px, 0.34em)` with 60% opacity. One rule has to serve a 56px hero and an
+11px table cell: the em term keeps it proportional where there is room, the 10px
+floor keeps it legible where there is not.
 
 ### The ladder
 
@@ -133,8 +206,8 @@ other five are the density a product needs and a manual does not.
 --fs-h1    38   --fs-display 56
 ```
 
-Arabic body is set at 1.7 line-height. 1.5 is too tight for Tajawal: the language
-sets a taller x-height and joins across the baseline.
+Arabic body is set at 1.7 line-height. 1.5 is too tight: the language sets a
+taller x-height and joins across the baseline.
 
 ---
 

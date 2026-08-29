@@ -173,9 +173,9 @@ export function DistributionBar({
               className={cn(
                 "font-figure text-[12px] tabular-nums",
                 part.kind === "keep"
-                  ? "font-bold text-accent"
+                  ? "font-semibold text-accent"
                   : part.kind === "overrun"
-                    ? "font-bold text-danger"
+                    ? "font-semibold text-danger"
                     : "text-fg",
               )}
             >

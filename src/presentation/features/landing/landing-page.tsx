@@ -7,10 +7,9 @@ import { LogoMark, LogoWord } from "@/presentation/components/layout/logo";
 import { Delta } from "@/presentation/components/ui";
 import { Odometer } from "@/presentation/components/objects/odometer";
 import { RingGauge } from "@/presentation/components/objects/ring-gauge";
-import { WeekBars } from "@/presentation/components/objects/week-bars";
 import { PriceColumn } from "@/presentation/components/objects/price-column";
+import { Sparkbars } from "@/presentation/components/structure";
 import { DistributionBar } from "@/presentation/components/objects/distribution-bar";
-import { ReportFolder } from "@/presentation/components/objects/report-folder";
 import { Magnetic } from "@/presentation/components/interactive/magnetic";
 import {
   formatCurrency,
@@ -25,8 +24,8 @@ import { cn } from "@/presentation/lib/cn";
  * The landing page is the app, standing still.
  *
  * Every figure and every object on this page comes from the same components the
- * product renders (`Odometer`, `RingGauge`, `WeekBars`, `PriceColumn`,
- * `DistributionBar`, `ReportFolder`) fed a fixed sample month. Nothing here is
+ * product renders (`Odometer`, `RingGauge`, `Sparkbars`, `PriceColumn`,
+ * `DistributionBar`) fed a fixed sample month. Nothing here is
  * drawn for the page: there is no hand-rolled SVG sparkline, no gradient bar
  * chart, no mock screenshot. A visitor looking at the hero is looking at the
  * dashboard, and what convinces is that it is the real instrument
@@ -94,7 +93,7 @@ export function LandingPage() {
           <Magnetic>
             <Link
               href="/dashboard"
-              className="inline-flex h-10 items-center gap-1.5 rounded-full bg-accent px-5 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-strong"
+              className="inline-flex h-10 items-center gap-1.5 rounded-[var(--radius-md)] bg-accent px-5 text-sm font-medium text-accent-fg transition-colors hover:bg-accent-strong"
             >
               فتح التطبيق <ArrowRight size={15} weight="bold" className="rtl:rotate-180" />
             </Link>
@@ -136,14 +135,14 @@ export function LandingPage() {
               <Magnetic strength={0.4}>
                 <Link
                   href="/dashboard"
-                  className="inline-flex h-12 items-center gap-2 rounded-full bg-accent px-7 text-base font-semibold text-accent-fg transition-colors hover:bg-accent-strong"
+                  className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-md)] bg-accent px-7 text-base font-medium text-accent-fg transition-colors hover:bg-accent-strong"
                 >
                   افتح رِتم <ArrowRight size={18} weight="bold" className="rtl:rotate-180" />
                 </Link>
               </Magnetic>
               <a
                 href="#instrument"
-                className="inline-flex h-12 items-center rounded-full border border-border bg-surface px-6 text-base font-medium text-fg transition-colors hover:border-fg/25 hover:bg-surface-2"
+                className="inline-flex h-12 items-center rounded-[var(--radius-md)] border border-border bg-surface px-6 text-base font-medium text-fg transition-colors hover:border-fg/25 hover:bg-surface-2"
               >
                 شاهد الأداة
               </a>
@@ -240,7 +239,7 @@ export function LandingPage() {
                 البيع ولا يمسّ تعديلها غدًا عمليةً ماضية.
               </p>
             </div>
-            <div className="device mt-8 p-5 sm:p-7">
+            <div className="r-slab mt-8 p-5 sm:p-7">
               <DistributionBar
                 className="mx-auto max-w-[820px]"
                 total={20_000}
@@ -263,8 +262,23 @@ export function LandingPage() {
             eyebrow="الإغلاق والتقارير"
             title="أغلق الشهر، وابقَ قادرًا على العودة إليه"
             body="الإغلاق يحفظ لقطة الشهر ويقفلها للقراءة فقط، فلا يتغيّر تقرير أُصدر. والملف يحمل ما أُودع فيه فعلًا: تقارير شهرية وسنوية وللمنتجات والمصاريف، وتصدير إلى PDF أو Excel أو CSV أو الطباعة."
-            frame="w-[240px] py-10"
-            object={<ReportFolder sheets={3} />}
+            frame="w-[240px] py-8"
+            object={
+              /* What the product actually shows on /reports: five destinations of
+                 equal weight, as rows. The illustrated folder that used to sit here
+                 was drawn for this page alone. */
+              <ul className="flex w-full flex-col gap-1.5 text-start">
+                {["تقرير شهري", "تقرير سنوي", "تقرير منتج", "تقرير الأرباح"].map((t) => (
+                  <li
+                    key={t}
+                    className="r-inset flex items-center justify-between px-3 py-2 text-[12px] text-muted"
+                  >
+                    <span>{t}</span>
+                    <span className="text-[10px] text-subtle">CSV · PDF</span>
+                  </li>
+                ))}
+              </ul>
+            }
           />
         </div>
       </section>
@@ -332,7 +346,7 @@ export function LandingPage() {
             </p>
             <Link
               href="/dashboard"
-              className="mt-9 inline-flex h-12 items-center gap-2 rounded-full bg-white px-8 text-base font-semibold text-ink transition-colors hover:bg-white/90"
+              className="mt-9 inline-flex h-12 items-center gap-2 rounded-[var(--radius-md)] bg-white px-8 text-base font-medium text-ink transition-colors hover:bg-white/90"
             >
               افتح رِتم <ArrowRight size={18} weight="bold" className="rtl:rotate-180" />
             </Link>
@@ -373,7 +387,7 @@ export function LandingPage() {
  */
 function DashboardReading() {
   return (
-    <div className="device p-4 sm:p-5">
+    <div className="r-slab p-4 sm:p-5">
       <p className="px-1 text-xs font-semibold text-muted">
         لوحة رِتم · شهر نموذجي
       </p>
@@ -386,7 +400,7 @@ function DashboardReading() {
                 value={SAMPLE.netProfit}
                 format={money}
                 drumHeight={1.3}
-                className="text-[28px] font-bold leading-none sm:text-[40px]"
+                className="text-[28px] font-semibold leading-none sm:text-[40px]"
               />
             </div>
             <span className="mt-3 flex items-center gap-2">
@@ -405,14 +419,19 @@ function DashboardReading() {
 
         <div className="rounded-[var(--radius-lg)] bg-surface/70 p-3">
           <span className="px-1 text-[11px] font-semibold text-fg/70">آخر 7 أيام</span>
-          <WeekBars
-            className="mt-7"
-            height={64}
-            days={SAMPLE.days}
-            activeIndex={SAMPLE.days.length - 1}
-            activeLabel={compact(SAMPLE.days[SAMPLE.days.length - 1].value)}
-            activeCaption="السبت"
-          />
+          {/* The dashboard's own «صافي كل يوم» object. It was a WeekBars — a second
+              weekly-bars component that existed for this page and for the styleguide
+              and appeared on no product screen, so the marketing surface and the
+              product were drifting apart one object at a time. */}
+          <div className="mt-2">
+            <Sparkbars
+              points={SAMPLE.days.map((d) => ({ key: d.mark, value: d.value }))}
+              height={64}
+              label={`صافي كل يوم في آخر سبعة أيام، أعلاها ${compact(
+                Math.max(...SAMPLE.days.map((d) => d.value)),
+              )}`}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -465,7 +484,7 @@ function NarrativeRow({
           A pool needs a subject standing in it, and the housing is the honest
           frame when the subject is smaller than its column (VISUAL-LAW §7). */}
       <div className={cn("flex justify-center", flip && "lg:order-1")}>
-        <div className={cn("device flex justify-center px-6 py-7", frame)}>{object}</div>
+        <div className={cn("r-slab flex justify-center px-6 py-7", frame)}>{object}</div>
       </div>
     </motion.div>
   );

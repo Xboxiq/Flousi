@@ -148,7 +148,7 @@ export function ReportView({ type }: { type: ReportType }) {
                             <td
                               key={j}
                               className={cn(
-                                col.kind === "text" ? "font-bold" : "n",
+                                col.kind === "text" ? "font-medium" : "n",
                                 j > 2 && "pri-3",
                                 j === 2 && "pri-2",
                                 col.kind === "profit" &&

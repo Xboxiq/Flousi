@@ -199,12 +199,12 @@ export function SettlementsView() {
                         {r.settlement.repId && !r.repArchived ? (
                           <Link
                             href={`/reps/view?id=${r.settlement.repId}`}
-                            className="font-bold text-fg hover:text-accent hover:underline"
+                            className="font-medium text-fg hover:text-accent hover:underline"
                           >
                             {r.repName}
                           </Link>
                         ) : (
-                          <span className="font-bold text-fg">
+                          <span className="font-medium text-fg">
                             {r.repName}
                             {r.repArchived && (
                               <Chip className="ms-2 h-[18px] text-[10px]">مؤرشف</Chip>

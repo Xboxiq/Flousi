@@ -60,7 +60,7 @@ export function SplitPreview({
   const contractDiffers = split.ownerShare.minorUnits !== split.ownerKeeps.minorUnits;
 
   return (
-    <div className={cn("device relative px-4 pt-3.5 pb-4", className)} data-part="split-preview">
+    <div className={cn("r-slab relative px-4 pt-3.5 pb-4", className)} data-part="split-preview">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <span className="text-sm font-semibold text-fg">القسمة قبل الحفظ</span>
         <span className="text-[11px] text-subtle">
@@ -77,7 +77,7 @@ export function SplitPreview({
         {`القسمة: لك ${money(keeps)}، وللمندوب ${repName} ${money(split.repShare.amount)}`}
       </p>
       <div className="mt-3 grid grid-cols-2 gap-3">
-        <div className="clay-inset rounded-[var(--radius-md)] px-3 py-2.5">
+        <div className="r-inset px-3 py-2.5">
           <div className="text-xs text-muted">هذا لك</div>
           <LivingNumber
             value={keeps}
@@ -86,7 +86,7 @@ export function SplitPreview({
           />
           <div className="mt-0.5 text-[11px] text-subtle">بعد كل التكاليف</div>
         </div>
-        <div className="clay-inset rounded-[var(--radius-md)] px-3 py-2.5">
+        <div className="r-inset px-3 py-2.5">
           <div className="text-xs text-muted">هذا له</div>
           <LivingNumber
             value={split.repShare.amount}

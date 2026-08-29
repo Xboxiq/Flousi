@@ -252,12 +252,12 @@ export function SchemeOverrides() {
             <li
               key={a.id}
               data-row
-              className="clay-inset flex items-center gap-3 rounded-[var(--radius-lg)] p-3"
+              className="r-inset flex items-center gap-3 p-3"
             >
               <span className="min-w-0 flex-1">
                 <span className="flex flex-wrap items-center gap-2">
                   <Badge>{SCHEME_TIER_LABELS[assignmentTier(a)]}</Badge>
-                  <span className="min-w-0 truncate text-sm font-semibold text-fg">
+                  <span className="min-w-0 truncate text-sm font-medium text-fg">
                     {schemeName(a.schemeId)}
                   </span>
                 </span>
@@ -308,8 +308,8 @@ export function SchemeOverrides() {
                   <li
                     key={tier}
                     className={cn(
-                      "flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-[var(--radius-md)] px-3 py-2 text-[13px]",
-                      won ? "molded molded-quiet font-semibold text-fg" : "text-muted",
+                      "flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 px-3 py-2 text-[13px]",
+                      won ? "r-choice is-on font-medium text-fg" : "text-muted",
                     )}
                   >
                     <span>{SCHEME_TIER_LABELS[tier]}</span>

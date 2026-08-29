@@ -37,7 +37,6 @@ export function CostFields({ costs, currencySymbol, onChange }: Props) {
             min={0}
             step="0.01"
             leading={currencySymbol}
-            className="clay-inset"
             value={costs[line].fixed || ""}
             placeholder="0.00"
             onChange={(e) => onChange(line, "fixed", parseFloat(e.target.value) || 0)}
@@ -49,7 +48,6 @@ export function CostFields({ costs, currencySymbol, onChange }: Props) {
             min={0}
             step="0.1"
             trailing="%"
-            className="clay-inset"
             value={costs[line].percent || ""}
             placeholder="0"
             onChange={(e) => onChange(line, "percent", parseFloat(e.target.value) || 0)}

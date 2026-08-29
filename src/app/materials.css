@@ -64,70 +64,14 @@
     .glass::before { opacity: 0; }
   }
 
-  /* ---- CLAY (R9 family): carved surfaces that respond to pressure ---- */
-  .clay {
-    position: relative;
-    border-radius: var(--radius-lg);
-    /* a body, not a rectangle: lit top face → shaded lower face */
-    background-image: linear-gradient(
-      177deg,
-      #ffffff 0%,
-      var(--surface) 34%,
-      color-mix(in srgb, var(--surface) 82%, var(--sunken)) 100%
-    );
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 1),
-      inset 0 -2px 3px -1px rgba(18, 26, 38, 0.07),
-      var(--shadow-occlusion),
-      0 1px 2px rgba(18, 26, 38, 0.12),
-      0 20px 34px -16px rgba(18, 26, 38, 0.26);
-  }
-  [data-theme="dark"] .clay {
-    background-image: linear-gradient(
-      175deg,
-      color-mix(in srgb, var(--surface) 88%, white),
-      var(--surface) 42%,
-      color-mix(in srgb, var(--surface) 92%, black)
-    );
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.07),
-      var(--shadow-occlusion),
-      0 2px 4px rgba(0, 0, 0, 0.5),
-      0 20px 36px -20px rgba(0, 0, 0, 0.7);
-  }
-  .clay-inset {
-    background-color: var(--surface-2);
-    background-image: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--sunken) 70%, var(--surface-2)),
-      var(--surface-2) 60%
-    );
-    box-shadow:
-      inset 0 2px 5px rgba(18, 26, 38, 0.12),
-      inset 0 -1px 0 var(--neu-hi);
-    border-color: transparent !important;
-    transition: box-shadow var(--motion-fast) var(--ease-out);
-  }
-  [data-theme="dark"] .clay-inset {
-    background-image: linear-gradient(180deg, #0b0b0d, var(--sunken) 60%);
-    box-shadow:
-      inset 0 2px 6px rgba(0, 0, 0, 0.85),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
-  }
-  .clay-inset:focus-within {
-    box-shadow:
-      inset 0 2px 5px rgba(18, 26, 38, 0.12),
-      0 0 0 3px color-mix(in srgb, var(--focus) 26%, transparent);
-  }
-  .clay-press {
-    transition:
-      transform var(--motion-press) var(--ease-out),
-      box-shadow var(--motion-press) var(--ease-out);
-  }
-  .clay-press:active {
-    transform: scale(0.97);
-    box-shadow: inset 0 3px 8px rgba(18, 26, 38, 0.16);
-  }
+  /* The CLAY family (carved wells, moulded tiles, pressure feedback) was
+     removed here, not left unused: it was a SECOND surface language —
+     gradients, inset shadows, drop shadows — living inside a panel system
+     built on flat grounds and one hairline, and it survived on the reps and
+     products screens after the boards were adopted everywhere else. What it
+     said is now said by `.r-inset` (a sunken field) and `.r-choice` (a plate
+     you pick between) in src/app/ritm.css. `.molded-accent` and its siblings
+     stay: a BUTTON is a body you press, which is a different claim. */
 
   /* ---- SCENE FIELD (R1 + R11): the background plane objects sit on ---- */
   /* A studio backdrop, deep enough that white bodies read as objects ON it and
@@ -214,32 +158,8 @@
      From the client's visual feedback (utility-meter renders, chunky 3D icon
      bodies): objects are moulded shells with a lit top face, shaded side rims
      and instruments sunk INTO them. Nothing is printed on a flat rectangle. */
-  .device {
-    position: relative;
-    isolation: isolate;
-    border-radius: 26px;
-    background-image:
-      linear-gradient(178deg, #ffffff 0%, var(--surface) 30%, color-mix(in srgb, var(--surface) 78%, var(--sunken)) 100%);
-    box-shadow:
-      inset 0 2px 0 rgba(255, 255, 255, 1),
-      inset 10px 0 20px -14px rgba(18, 26, 38, 0.35),
-      inset -10px 0 20px -14px rgba(18, 26, 38, 0.35),
-      inset 0 -3px 6px -2px rgba(18, 26, 38, 0.1),
-      var(--shadow-occlusion),
-      0 2px 3px rgba(18, 26, 38, 0.14),
-      0 26px 44px -20px rgba(18, 26, 38, 0.34);
-  }
-  [data-theme="dark"] .device {
-    background-image:
-      linear-gradient(178deg, #2b3038 0%, var(--surface) 34%, #101216 100%);
-    box-shadow:
-      inset 0 2px 0 rgba(255, 255, 255, 0.1),
-      inset 10px 0 20px -14px rgba(0, 0, 0, 0.85),
-      inset -10px 0 20px -14px rgba(0, 0, 0, 0.85),
-      var(--shadow-occlusion),
-      0 2px 4px rgba(0, 0, 0, 0.6),
-      0 28px 48px -22px rgba(0, 0, 0, 0.8);
-  }
+  /* `.device` removed: see `.r-slab` in ritm.css. */
+
   /* the instrument window: sunk into the shell, glass over a dark drum bay */
   .display-window {
     position: relative;
@@ -1310,8 +1230,10 @@
      every transition to 0.01ms, which is the instant appearance these replaced. */
 
   /* ─────────── SEG-PILL: the segmented control's travelling body (P9) ───────────
-     transitions.dev №16, on the app's own material: the moulded accent body is one
+     transitions.dev №16, on the app's own material: a flat sand plate is one
      measured pill that slides (and re-rows, when the group wraps) between options.
+     It was a moulded body until the client's actions board (d4-actions) settled
+     that a filled control is a PLATE here, with no rim light and no shadow.
      Anchored with physical left/top on purpose — offsetLeft is geometric, so the
      anchor must be too, or RTL would double-flip it. */
   .seg-pill {
@@ -1319,7 +1241,7 @@
     left: 0;
     top: 0;
     z-index: 0;
-    border-radius: 9999px;
+    border-radius: var(--radius-sm);
     opacity: 0;
     transition:
       transform var(--motion-base) var(--ease-out),

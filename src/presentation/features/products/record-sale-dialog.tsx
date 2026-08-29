@@ -189,7 +189,7 @@ export function RecordSaleDialog({ product, open, onClose }: Props) {
       {/* A rep with no resolvable rule: the sale still records, and the gap is
           named with the way out instead of a fabricated 50/50. */}
       {rep && !split && (
-        <div className="clay-inset mt-4 rounded-[var(--radius-md)] px-4 py-3">
+        <div className="r-inset mt-4 px-4 py-3">
           <p className="text-[13px] text-fg">لا يوجد نظام قسمة ينطبق على هذه العملية.</p>
           <p className="mt-1 text-[12px] text-muted">
             سيُسجَّل البيع باسم {rep.name} بدون حصة محسوبة، ويظهر في ملفه كحالة تحتاج ضبطًا.

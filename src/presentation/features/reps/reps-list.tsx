@@ -390,7 +390,7 @@ export function RepsList() {
                         <Link
                           href={`/reps/view?id=${row.repId}`}
                           onClick={(e) => e.stopPropagation()}
-                          className="font-bold text-fg outline-none hover:underline focus-visible:ring-2 focus-visible:ring-accent/60"
+                          className="font-medium text-fg outline-none hover:underline focus-visible:ring-2 focus-visible:ring-accent/60"
                         >
                           {row.repName}
                         </Link>

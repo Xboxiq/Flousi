@@ -51,7 +51,7 @@ export function LogoMark({ className, size = 22 }: { className?: string; size?: 
  */
 export function LogoWord({ className }: { className?: string }) {
   return (
-    <span className={cn("text-lg font-bold leading-none tracking-normal text-fg", className)}>
+    <span className={cn("font-display text-lg font-bold leading-none tracking-normal text-fg", className)}>
       رِتم
     </span>
   );

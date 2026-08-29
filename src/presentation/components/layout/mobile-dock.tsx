@@ -58,7 +58,7 @@ export function MobileDock() {
             )}
           >
             <Icon size={20} weight={active ? "fill" : "regular"} />
-            <span className="text-[10px] font-bold">{item.label}</span>
+            <span className="text-[10px] font-semibold">{item.label}</span>
           </Link>
         );
       })}

@@ -554,7 +554,6 @@ export function CommissionBench() {
                     min={0}
                     max={100}
                     trailing="%"
-                    className="clay-inset"
                     value={draft.repPercent || ""}
                     onChange={(e) => set({ repPercent: parseFloat(e.target.value) || 0 })}
                   />
@@ -592,7 +591,6 @@ export function CommissionBench() {
                   min={0}
                   step="0.01"
                   leading={symbol}
-                  className="clay-inset"
                   value={draft.fixedAmountMajor || ""}
                   onChange={(e) => set({ fixedAmountMajor: parseFloat(e.target.value) || 0 })}
                 />
@@ -611,7 +609,6 @@ export function CommissionBench() {
                   min={0}
                   max={100}
                   trailing="%"
-                  className="clay-inset"
                   value={draft.pricePercent || ""}
                   onChange={(e) => set({ pricePercent: parseFloat(e.target.value) || 0 })}
                 />
@@ -965,8 +962,8 @@ function CrumbCase({ label, value, applied }: { label: string; value: string; ap
   return (
     <div
       className={cn(
-        "rounded-[var(--radius-md)] px-3 py-2",
-        applied ? "molded molded-quiet" : "clay-inset",
+        "r-choice px-3 py-2",
+        applied && "is-on",
       )}
     >
       <div className="text-[11px] text-muted">{label}</div>
@@ -994,8 +991,8 @@ function LossCase({
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 rounded-[var(--radius-lg)] px-4 py-3",
-        applied ? "molded molded-quiet" : "clay-inset",
+        "r-choice flex flex-col gap-2 px-4 py-3",
+        applied && "is-on",
       )}
     >
       <div className="flex items-center justify-between gap-2">

@@ -529,3 +529,98 @@ order code. Volume was never the complaint. **Undifferentiated volume was.**
 **A budget is a measurement of a shape. Change the shape and the budget has to be
 re-derived, out loud, against something real — not quietly raised until the new screens
 fit.** The boards are the something real here, because the client approved them.
+
+---
+
+## §24 · صوت واحد على كل سطح / ONE VOICE ON EVERY SURFACE
+
+The client's verdict on the typography was «خطوط مخزية … استخدم خطوط عربية واضحة
+وتتميز بروح الإبداع واوزان جيده متماسكة». Four separate faults sat behind it, and
+each one is now a rule with evidence under it.
+
+### 24.1 · The face had no voice
+
+Tajawal is the face every Arabic template ships. It has almost no vertical drama,
+and a screen set entirely in it has ONE TEXTURE — so nothing on that screen can be
+more important than anything else by voice alone.
+
+Replaced by the oldest working pairing in Arabic typography rather than an
+invention: **Kufi for what is built, Naskh for what is read.** Noto Kufi Arabic
+carries titles, the wordmark, table heads and eyebrows; IBM Plex Sans Arabic
+carries everything that is read; IBM Plex Sans carries the figures. Two of the
+three are one superfamily, so the product is one type design plus one deliberate
+voice.
+
+Reem Kufi was tried first and rejected ON SIGHT: it is a display Kufi and its
+joins come apart below about 16px, which is most of this app. Rendered, magnified,
+looked at, dropped. That is the method, not the outcome.
+
+### 24.2 · Every weight was the same weight
+
+175 weight decisions, 135 of them at 600 or 700. The law is four rungs — 400
+prose, 500 the identity of a row, 600 structure, 700 A FIGURE THAT CARRIES A
+DECISION AND NOTHING ELSE — plus one optical correction: a figure above 22px steps
+back a rung, because the same apparent colour needs less weight as the glyph grows.
+
+**Bold in this product does not mean "important text". It means "a number you act
+on".** That is why a panel title is lighter than the figure underneath it.
+
+### 24.3 · Arabic was tracked
+
+`.r-label` and every table head carried `letter-spacing: 0.04em`. That is a LATIN
+habit — tracked-out small caps — applied to a connected script, and the mechanism
+inserts its space between joined glyphs. Rendered at 4× and looked at: at 0.04em
+«الشهر» loosens, at 0.08em it is visibly two words.
+
+**Arabic is never tracked.** An eyebrow is set apart by its face, its size and its
+colour, which is how Arabic has always done it. Latin figures are the opposite
+case and tighten as they grow.
+
+### 24.4 · Three surface languages in one product
+
+Under the flat, hairline panel system the boards approved, three older languages
+were still running on the reps and products screens and on every button in the app:
+
+| was | what it drew | now |
+|---|---|---|
+| `.clay` / `.clay-inset` / `.clay-press` | carved wells, gradients, inset shadows | `.r-inset` |
+| `.molded molded-quiet` on a tile | a lit, shadowed body for "selected" | `.r-choice` + `.is-on` |
+| `.device` | 26px radius, three gradients, a 44px drop shadow | `.r-slab` |
+| `.molded-accent` on a button | a rim light, a lit top edge, a drop shadow | a flat sand plate |
+
+The button is the one that mattered most, because it is on every screen, and the
+authority is the client's OWN actions board — `renders/d4-actions.png` — which
+draws a primary as a solid sand plate with dark ink and a modest rounded rectangle
+under it. No gradient, no rim, no shadow. The moulded button was drawn before the
+boards were approved and it contradicts them; once every panel around it became one
+hairline on a flat ground, it was the loudest object in the product.
+
+`.molded-accent` and its siblings are gone from buttons. What stays is the press
+(`active:scale`), because travel is feedback and travel is not decoration.
+
+### 24.5 · The currency word was as big as the money
+
+`formatCurrency` appends «د.ع.», and the app printed it at the figure's own size.
+On the 56px hero that made a four-character word as tall as the number it
+qualifies; on a phone it took most of the line. The board prints it beside the hero
+at a fraction of its size, and on the rows underneath it prints no currency at all.
+
+Both `<Money>` and `<Metric>` now split the trailing mark and set it at
+`max(10px, 0.34em)` at 60% opacity — one rule that serves a 56px hero and an 11px
+table cell.
+
+### 24.6 · One locale, one calendar
+
+`Intl.DateTimeFormat("ar", …)` resolves to the Egyptian month names — «أغسطس» —
+while every date this app formats goes through `ar-IQ`, which uses «آب». BOTH WERE
+ON THE SCREEN AT ONCE: the period chip in the top bar said «أغسطس 2026» and the
+rows underneath it said «27 آب». Three call sites had bypassed the app's own
+formatter. A merchant reads one calendar.
+
+### 24.7 · The general form
+
+**A second way of drawing the same thing is not a richer system, it is an
+unfinished migration.** Every one of these survived because it was defensible in
+the file it lived in and only wrong next to the file beside it. That is exactly the
+class of defect a typechecker, a linter and a test suite cannot see, and the reason
+this project renders every surface and looks at it.

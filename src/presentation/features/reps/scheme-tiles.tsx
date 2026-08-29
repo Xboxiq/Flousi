@@ -55,14 +55,11 @@ export function SchemeTiles({
             type="button"
             aria-pressed={selected}
             onClick={() => onSelect(scheme.id)}
-            className={cn(
-              "clay-press relative flex flex-col gap-2 rounded-[var(--radius-lg)] px-4 py-3 text-start",
-              selected ? "molded molded-quiet" : "clay-inset",
-            )}
+            className="r-choice flex flex-col gap-2 px-4 py-3 text-start"
           >
             <span className="flex w-full items-start justify-between gap-2">
               <span className="min-w-0">
-                <span className="block truncate text-sm font-semibold text-fg">{scheme.name}</span>
+                <span className="block truncate text-sm font-medium text-fg">{scheme.name}</span>
                 <span className="mt-1 flex items-baseline gap-1.5">
                   <span className="text-[11px] text-muted">{exampleLabel}</span>
                   <Money className="text-[13px] font-bold text-fg">{example(scheme)}</Money>

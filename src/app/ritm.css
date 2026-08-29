@@ -74,8 +74,8 @@
   .r-card > header > h2,
   .r-card > header > h3 {
     font-size: var(--fs-lead);
-    font-weight: 700;
-    letter-spacing: -0.01em;
+    font-weight: 600;
+    letter-spacing: 0;
   }
   .r-card > .r-body { padding: var(--s-4) }
   .r-card > .r-bare { min-width: 0 }
@@ -96,6 +96,53 @@
     border-radius: var(--radius-sm);
   }
 
+  /* A raised body inside a screen: the split preview, the profit object, the
+     order sheet. It was `.device` — a 26px radius, three inset gradients and a
+     44px drop shadow, drawn to look like a physical instrument. Next to a panel
+     that is one hairline on a flat ground it read as a different application,
+     which is exactly the seam the client saw. Same job, said in the system's
+     terms: a surface, a hairline, a radius from the ramp. */
+  .r-slab {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+
+  /* A plate the reader CHOOSES between: a scheme tile, a priced case, the tier
+     that won. Before this, the selected twin was a moulded body with a gradient
+     and a drop shadow and the unselected one a pressed clay well — a second
+     surface language living inside the panel system, and the one thing on these
+     screens that still looked like a different product. Selection is now stated
+     the way the nav states it, because it is the same fact: a sand edge on the
+     inline start and a filled ground, in one colour and one shape. */
+  .r-choice {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    transition:
+      background var(--motion-fast) var(--ease-out),
+      border-color var(--motion-fast) var(--ease-out);
+  }
+  .r-choice:hover { background: var(--surface-2) }
+  .r-choice[aria-pressed="true"],
+  .r-choice.is-on {
+    background: var(--accent-soft);
+    border-color: var(--accent-fill);
+  }
+  .r-choice[aria-pressed="true"]::before,
+  .r-choice.is-on::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: -1px;
+    top: 20%;
+    bottom: 20%;
+    width: 3px;
+    border-radius: var(--radius-full);
+    background: var(--accent-fill);
+  }
+
   /* the strip above a table or a list: title, filters, search, one action.
      It carries the same hairline as a card header, because it IS one. */
   .r-toolbar {
@@ -107,17 +154,21 @@
     border-bottom: 1px solid var(--line);
   }
   .r-toolbar > h2,
-  .r-toolbar > h3 { font-size: var(--fs-lead); font-weight: 700; flex: none }
+  .r-toolbar > h3 { font-size: var(--fs-lead); font-weight: 600; flex: none }
   .r-toolbar .r-spacer { flex: 1 }
 
   /* ── 3 · TYPE ROLES ──────────────────────────────────────────────────────
      Hierarchy is made with size and weight first. A card, a border, a tint or
      a shadow may only reinforce a hierarchy that already reads in one colour. */
   .r-label {
+    font-family: var(--font-display);
     font-size: var(--fs-label);
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.4;
-    letter-spacing: 0.04em;
+    /* NOT tracked — see the tracking law in globals.css. An eyebrow is set
+       apart by its face, its size and its colour, which is how Arabic has
+       always done it, and not by pulling its letters off each other. */
+    letter-spacing: 0;
     color: var(--subtle);
   }
   .r-caption { font-size: var(--fs-caption); line-height: 1.4; color: var(--subtle) }
@@ -125,9 +176,9 @@
 
   /* every figure in the product passes through here */
   .r-num {
-    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-figure);
     font-variant-numeric: tabular-nums lining-nums;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
     line-height: 1.05;
     direction: ltr;
     unicode-bidi: isolate;
@@ -141,10 +192,13 @@
      the Latin face. Everything else exists to qualify it. */
   .r-metric { display: flex; flex-direction: column; gap: var(--s-1) }
   .r-metric .amount {
-    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-figure);
     font-variant-numeric: tabular-nums lining-nums;
     font-size: var(--fs-h1);
-    font-weight: 500;
+    /* 600 and not 700: the law's top rung is 700, but weight is optical — the
+       same apparent colour needs less of it as the glyph grows, so a figure
+       above 22px steps back one rung. Below that it takes the full 700. */
+    font-weight: 600;
     line-height: 1.05;
     letter-spacing: -0.03em;
     direction: ltr;
@@ -155,12 +209,20 @@
      isolate, or it lays out as part of a Latin run and cramps the last digit. */
   .r-metric .unit {
     font-size: var(--fs-small);
-    font-weight: 700;
+    font-weight: 400;
     color: var(--subtle);
     margin-inline-start: var(--s-1);
   }
+  /* The fraction and the currency mark: smaller AND quieter, so the eye lands on
+     the whole number first. `max(10px, 0.34em)` serves the 56px hero and the 22px
+     small metric from one rule — see the note in money.tsx. */
+  .r-metric .amount .mark {
+    font-size: max(10px, 0.34em);
+    opacity: 0.6;
+    margin-inline-start: 0.15em;
+  }
   .r-metric .headline { display: flex; align-items: baseline }
-  .r-metric .name { font-size: var(--fs-small); font-weight: 700; color: var(--muted) }
+  .r-metric .name { font-size: var(--fs-small); font-weight: 500; color: var(--muted) }
   .r-metric.is-lead .amount { font-size: var(--fs-display) }
   .r-metric.is-small .amount { font-size: var(--fs-h3) }
 
@@ -177,7 +239,7 @@
     background: var(--surface-2);
     color: var(--muted);
     font-size: var(--fs-small);
-    font-weight: 700;
+    font-weight: 500;
     white-space: nowrap;
   }
   .r-badge::before {
@@ -213,9 +275,10 @@
     background: var(--surface-2);
     text-align: start;
     white-space: nowrap;
+    font-family: var(--font-display);
     font-size: var(--fs-label);
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    font-weight: 600;
+    letter-spacing: 0;
     color: var(--subtle);
     border-bottom: 1px solid var(--line);
   }
@@ -232,7 +295,7 @@
   .r-tbl td.n,
   .r-tbl th.n { text-align: end }
   .r-tbl td.n {
-    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-figure);
     font-variant-numeric: tabular-nums;
     direction: ltr;
     unicode-bidi: isolate;
@@ -293,7 +356,7 @@
     box-shadow: inset 3px 0 0 var(--accent-fill);
   }
   .r-datarow .tx { flex: 1; min-width: 0 }
-  .r-datarow .tx b { display: block; font-size: var(--fs-body); font-weight: 700 }
+  .r-datarow .tx b { display: block; font-size: var(--fs-body); font-weight: 500 }
   .r-datarow .tx span {
     display: block;
     font-size: var(--fs-caption);
@@ -322,9 +385,9 @@
     display: grid;
     place-items: center;
     overflow: hidden;
-    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-figure);
     font-size: var(--fs-caption);
-    font-weight: 700;
+    font-weight: 600;
     direction: ltr;
     unicode-bidi: isolate;
   }
@@ -363,7 +426,7 @@
   .r-hbar .v {
     flex: none;
     text-align: end;
-    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-figure);
     font-variant-numeric: tabular-nums;
     font-size: var(--fs-small);
     direction: ltr;
@@ -439,7 +502,7 @@
   .r-navitem[aria-current] {
     background: var(--surface-2);
     color: var(--fg);
-    font-weight: 700;
+    font-weight: 600;
   }
   .r-navitem[aria-current]::before {
     content: "";
@@ -453,7 +516,7 @@
   }
   .r-navitem .count {
     margin-inline-start: auto;
-    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-figure);
     font-variant-numeric: tabular-nums;
     font-size: var(--fs-caption);
     color: var(--subtle);
@@ -466,8 +529,9 @@
     display: block;
     padding-inline: var(--s-2);
     margin-bottom: var(--s-1);
+    font-family: var(--font-display);
     font-size: var(--fs-caption);
-    font-weight: 700;
+    font-weight: 600;
     color: var(--subtle);
   }
 
@@ -490,7 +554,7 @@
   }
   .r-crumbs a:hover { color: var(--muted) }
   .r-crumbs .sep { color: var(--line-strong) }
-  .r-crumbs [aria-current] { color: var(--fg); font-weight: 700 }
+  .r-crumbs [aria-current] { color: var(--fg); font-weight: 500 }
 
   /* ── 9 · RESPONSIVE ──────────────────────────────────────────────────────
      Not a shrunken desktop. Below the tablet threshold the twelve columns

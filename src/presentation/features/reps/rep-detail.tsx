@@ -571,7 +571,7 @@ export function RepDetail({ id }: { id: string }) {
                   label="النظام"
                   value={
                     <span className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-fg">{scheme.name}</span>
+                      <span className="font-medium text-fg">{scheme.name}</span>
                       <Chip className="h-[18px] text-[10px]">
                         {SCHEME_TIER_LABELS[baseline.tier]}
                       </Chip>
@@ -702,7 +702,7 @@ export function RepDetail({ id }: { id: string }) {
                         })}
                       </td>
                       <td>
-                        <span className="block font-bold text-fg">{productName}</span>
+                        <span className="block font-medium text-fg">{productName}</span>
                         <span className="block text-[10px] text-subtle">
                           {row.schemeName ?? "بلا نظام قسمة"}
                           {stale && (
