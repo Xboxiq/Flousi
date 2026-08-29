@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   Flousi — campaign brand system (one system, five art directions)
+   RITM — campaign brand system (one system, five art directions)
 
    Constants across the whole set, so five very different frames still read as
    one brand photographed five times:
@@ -11,7 +11,7 @@
    · MATERIAL  Matte ceramic bodies · one chrome part per frame · glass at most
                once · brushed steel for the editorial frame. Every body carries
                three shadows: contact, cast, edge (§3).
-   · OBJECTS   Only Flousi's own instruments: the plate stack (price column),
+   · OBJECTS   Only RITM's own instruments: the plate stack (price column),
                the till drawer with its lip and sunken bay, the pace rail with a
                hatched remainder, the odometer drum, the ladder rail with milled
                pins, the segmented pill. No generic UI cards, no app screens.
@@ -98,7 +98,7 @@ body {
 }
 
 /* ── The wordmark ───────────────────────────────────────────────────────────
-   The app's mark exactly: an accent tile with the growth glyph, and Flousi in
+   The app's mark exactly: an accent tile with the growth glyph, and RITM in
    Cairo 700 with tight tracking. Scaled by --wm, never redrawn. */
 .wordmark {
   display: inline-flex;

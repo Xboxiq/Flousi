@@ -76,13 +76,13 @@ tile, not a generic template — and the five Next.js template SVGs deleted from
 `public/` along with the default Next favicon.
 EVIDENCE: fetched from the exported build —
 
-    manifest: فلوسي | standalone | dir rtl | icons 3
+    manifest: رِتم | standalone | dir rtl | icons 3
     icon-192/icon-512/apple-touch-icon/favicon.ico → all 200
 
 And a resolution bug caught before it shipped: a relative `./manifest.webmanifest`
 resolves against the PAGE, so on `/dashboard/` it pointed at
 `/dashboard/manifest.webmanifest` — a 404. Next does not apply `basePath` to
 metadata URLs, so the links are prefixed explicitly and verified under BOTH
-deployments: `/manifest.webmanifest` at the root and `/Flousi/manifest.webmanifest`
+deployments: `/manifest.webmanifest` at the root and `/RITM/manifest.webmanifest`
 under the Pages base path. Inside the manifest the paths stay relative — they
 resolve against the manifest's own URL, which is correct in both.

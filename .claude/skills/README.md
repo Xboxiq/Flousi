@@ -1,4 +1,4 @@
-# Flousi — vendored agent skills
+# RITM — vendored agent skills
 
 Installed 2026-08-17 as part of Design Plan v3 (`docs/DESIGN-PLAN.md`, routing table
 inside). These load automatically in Claude Code sessions for this repo.
@@ -16,8 +16,8 @@ inside). These load automatically in Claude Code sessions for this repo.
 | `unlazy` | github.com/Leonxlnx/unlazy | Gates method + gate-check.mjs |
 | `ponytail`, `ponytail-review`, `ponytail-debt` | github.com/DietrichGebert/ponytail | Code-quality ladder (scoped to logic/deps, never design polish) |
 | `layers-conceptual-model`, `layers-surface` | github.com/jamiemill/layers-skills | Object model + vocabulary method |
-| `anti-slop-ui` | **Client-supplied** (uploaded 2026-08-18) | 30 banned UI/UX patterns + a 30-row matrix. Audit run in `gates/phase-a1-anti-slop-ui.md`; the eight material rules Flousi deliberately breaks are reconciled clause by clause in `design-system/VISUAL-LAW.md` §14 |
-| `flousi-anti-slop-gate` | **Flousi-owned** | Consolidated mandatory pre-delivery gate |
+| `anti-slop-ui` | **Client-supplied** (uploaded 2026-08-18) | 30 banned UI/UX patterns + a 30-row matrix. Audit run in `gates/phase-a1-anti-slop-ui.md`; the eight material rules RITM deliberately breaks are reconciled clause by clause in `design-system/VISUAL-LAW.md` §14 |
+| `ritm-anti-slop-gate` | **RITM-owned** | Consolidated mandatory pre-delivery gate |
 
 ## Batch 2 — installed 2026-08-21 on the client's instruction
 
@@ -31,8 +31,8 @@ and symlinks from `.claude/skills/`. `skills-lock.json` records the exact commit
 | `vercel-react-best-practices` | github.com/vercel-labs/agent-skills | 72 impact-tagged rules. The highest-value one so far: `bundle-dynamic-imports` cut 351 KB off the dashboard. `client-localstorage-schema` drove the schema-version stamp |
 | `frontend-ui-engineering` | github.com/addyosmani/agent-skills | Production-quality UI checklist: a11y, state, responsive |
 | `web-design-guidelines` | github.com/antfu/skills | A REVIEW skill: fetches the Vercel Web Interface Guidelines and audits code against them. Found the missing `touch-action` and `overscroll-behavior` |
-| `antfu-design` | github.com/antfu/skills | UnoCSS-first token conventions. Flousi is Tailwind v4, so its *token* discipline applies and its UnoCSS mechanics do not |
-| `pick-ui-library` | github.com/emilkowalski/skills | Choosing a component library. Flousi owns its primitives on purpose; kept for the day a headless dep is considered |
+| `antfu-design` | github.com/antfu/skills | UnoCSS-first token conventions. RITM is Tailwind v4, so its *token* discipline applies and its UnoCSS mechanics do not |
+| `pick-ui-library` | github.com/emilkowalski/skills | Choosing a component library. RITM owns its primitives on purpose; kept for the day a headless dep is considered |
 | `prototype` | github.com/emilkowalski/skills | Fast throwaway prototypes before committing to a build |
 
 **Requested but does not exist:** `antfu/skills --skill frontend-design`. That repo has
@@ -44,7 +44,7 @@ batch 1 and is unrelated.) The rest of the client's list was already installed:
 `better-ui`, `better-accessibility`, `better-colors`.
 
 Consulted but not vendored: `Leonxlnx/taste-skill` (landing-page scoped; its AI-tells
-and pre-flight folded into `flousi-anti-slop-gate`), `VoltAgent/awesome-design-md`
+and pre-flight folded into `ritm-anti-slop-gate`), `VoltAgent/awesome-design-md`
 (reference URLs recorded in the plan), `ckissi/kinetics` and `Subhan-code/Amicro`
 (component galleries — mined for spring/easing values, recorded in MASTER §5),
 `DietrichGebert/ponytail` agents surface, `pols.dev/slop.md` (folded into the gate).
@@ -60,11 +60,11 @@ and pre-flight folded into `flousi-anti-slop-gate`), `VoltAgent/awesome-design-m
 
 * `swamimalode07/rare-ui` — a shadcn registry of 16 Motion components, not a skill.
   Most are showpieces the anti-slop gate would reject on a finance app (fluid WebGL
-  orb, gravity letters, emoji reactions). What maps to real Flousi objects is
+  orb, gravity letters, emoji reactions). What maps to real RITM objects is
   adapted in place with an attribution comment: the OTP-style rolling input
   (the owner-PIN sheet). The folder fan-out was already built independently in v4
   (`report-folder.tsx`) — convergent, not copied.
 * `https://www.beautifului.dev/` — AI-interface primitives (thinking states,
-  streaming text, approval cards, diff tables). Flousi has no AI surface, so almost
+  streaming text, approval cards, diff tables). RITM has no AI surface, so almost
   nothing applies today. Recorded so the next reader does not re-derive that
   conclusion. If an AI feature ever lands, start there.

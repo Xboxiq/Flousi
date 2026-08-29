@@ -93,7 +93,7 @@ screen we have not built yet are queued **with the screen named**.
 
 ## Read but deliberately NOT adopted
 - **"Spend is neutral ink, only income is green."** True for a consumer wallet, where
-  spending is normal. Flousi exists to say when a sale LOST money, so a negative net
+  spending is normal. RITM exists to say when a sale LOST money, so a negative net
   profit keeps `--danger`. The lesson we did take: not every negative deserves the
   colour — quantities and revenue stay neutral ink; only profit carries polarity.
 - **Pastel per-panel tints** (mint / lavender / coral). The composition lesson (a

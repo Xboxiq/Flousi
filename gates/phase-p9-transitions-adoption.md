@@ -9,7 +9,7 @@ EXPECT: `transitions-dev` (32 portable CSS transitions) and `transitions-polish`
 tuning scale) copied into `.claude/skills/` and pinned in `skills-lock.json` at commit
 `ef497bb`. rare-ui recorded as a STUDIED registry (commit `fa71f44`) with inline
 attribution where adapted — it is a component registry, not a skill. beautifului.dev
-recorded as studied-and-mostly-inapplicable: it is an AI-interface library and Flousi
+recorded as studied-and-mostly-inapplicable: it is an AI-interface library and RITM
 has no AI surface; writing that down is what stops the next reader re-deriving it.
 EVIDENCE: the two skills registered and appear in the session's skill list; the lock
 carries commits and hashes; README batch-3 table.
@@ -57,7 +57,7 @@ EVIDENCE: computed styles + the eye.
   cursor-glare: decorative motion on data surfaces — the anti-slop gate and
   VISUAL-LAW §13 both refuse them on a finance app. Recorded, not adopted.
 * №15 shimmer-text / №31 matrix-loader / №28-30 thinking-states, reasoning, streaming:
-  AI-interface furniture with no Flousi surface (same verdict as beautifului.dev).
+  AI-interface furniture with no RITM surface (same verdict as beautifului.dev).
 * №27 toggle double-bounce: the app's switches are Segmented controls; a bouncy thumb
   contradicts the restraint clause.
 * №2 number pop-in and №26 spinning counter: the app already HAS its number

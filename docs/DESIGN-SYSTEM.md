@@ -1,4 +1,4 @@
-# Flousi — Design System (v2 — HISTORICAL)
+# RITM — Design System (v2 — HISTORICAL)
 
 > **Superseded 2026-08-17 by `design-system/MASTER.md` (v3 "Precision Capital").**
 > Kept as the v2 record. Do not build against this file.

@@ -39,9 +39,9 @@ eye-verified: `svg.recharts-surface` present, no console errors, no layout shift
 ## G4 — the localStorage rule, adapted rather than obeyed
 CHECK: `client-localstorage-schema` says version the keys.
 EXPECT: the rule's PURPOSE (safe schema evolution) is taken; its letter is not.
-Renaming `flousi:products` to `flousi:products:v3` would orphan every store already
+Renaming `ritm:products` to `ritm:products:v3` would orphan every store already
 in the field on the first release that got the rename wrong. Instead a
-`flousi:schema-version` stamp drives an ordered migration list.
+`ritm:schema-version` stamp drives an ordered migration list.
 
 The real bug it exposed: `runMigrations` inspected the DATA on every boot to decide
 whether a lift had already happened, so a store migrated months ago still re-read

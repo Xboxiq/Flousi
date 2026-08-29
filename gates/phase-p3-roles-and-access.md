@@ -10,7 +10,7 @@ This is the half still unbuilt, in his words:
 ## G0 — say what this IS, before building it
 
 CHECK: does the feature claim to be something it cannot be?
-EXPECT: Flousi is a **local-first app with no server and no accounts**. Everything
+EXPECT: RITM is a **local-first app with no server and no accounts**. Everything
 lives in one browser's `localStorage`, which anyone holding the device can read with
 the developer tools. Therefore:
 

@@ -1,4 +1,4 @@
-# Flousi — Signature System v2 (Tangible Capital cast)
+# RITM — Signature System v2 (Tangible Capital cast)
 
 > Updated for MASTER v4: the restraint-era caps are repealed — devices appear
 > wherever they do real compositional work. What survives is the AUTHORSHIP rule:

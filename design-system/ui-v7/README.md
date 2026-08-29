@@ -1,4 +1,4 @@
-# Flousi · UI v7 — a product interface, built from references
+# RITM · UI v7 — a product interface, built from references
 
 Six screens and the component system they are made of. Real HTML/CSS at
 1440×900 (the component sheet is taller), rendered at 2×.

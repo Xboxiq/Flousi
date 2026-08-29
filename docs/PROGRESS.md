@@ -1,4 +1,4 @@
-# Flousi — Build Progress Tracker
+# RITM — Build Progress Tracker
 
 > **Autopilot resume file.** This is the single source of truth for "where the build is".
 > When resuming, read this file first, then continue from the first unchecked item.
@@ -6,7 +6,7 @@
 
 **Last updated:** 2026-06-26
 **Current phase:** ✅ All 14 phases complete (v1)
-**Branch:** `build-flousi-foundation`
+**Branch:** `build-ritm-foundation`
 
 ---
 

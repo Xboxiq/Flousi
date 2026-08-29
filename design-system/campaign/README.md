@@ -1,4 +1,4 @@
-# Flousi — campaign series 01–08
+# RITM — campaign series 01–08
 
 Eight 16:9 key visuals, 3840×2160. One brand, eight art directions.
 
@@ -20,11 +20,11 @@ Output: `renders/*.png` (4K, lossless) and `renders/*.jpg` (4K, q93 — the shar
 
 | | |
 |---|---|
-| Wordmark | the app's mark, unaltered: accent tile + growth glyph + Flousi in Cairo 700, tight tracking. Scaled by `--wm`, never redrawn |
+| Wordmark | the app's mark, unaltered: accent tile + growth glyph + RITM in Cairo 700, tight tracking. Scaled by `--wm`, never redrawn |
 | Type | Cairo for display and copy, IBM Plex Mono 500 for every figure. **Two weights per frame, never three.** Figures always latn numerals |
 | Light | one source, always from **above** (VISUAL-LAW §2). A raking side light would invert the physics of every object the moment the layout mirrors for RTL |
 | Material | matte ceramic bodies · at most one chrome part per frame · glass once in the set · brushed steel once. Three shadows per body: contact, cast, edge (§3) |
-| Objects | only Flousi's own instruments — the price column's plate stack, the till with its bays and catch, the pace rail with its hatched remainder, the ring gauge, the ladder rail with milled pins, the segmented pill. No generic UI cards, no fake app screens |
+| Objects | only RITM's own instruments — the price column's plate stack, the till with its bays and catch, the pace rail with its hatched remainder, the ring gauge, the ladder rail with milled pins, the segmented pill. No generic UI cards, no fake app screens |
 | Colour | accent is a **code, not decoration** (§13): it marks the one measured thing, once per frame, and never fills a background. Red appears exactly once in the whole set (frame 05's hot pin) |
 | Grounds | eight frames, eight grounds, none reused: bone · cool grey · warm ceramic · near-black · steel · deep ink blue · warm olive · a hard bone/black seam |
 

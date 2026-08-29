@@ -88,7 +88,7 @@ valid reading). Caught by the existing migration tests, fixed, and pinned by a t
 its own.
 
 ## G4 — the probes lie more often than the app does
-Five of five initial "failures" in G1 were defects in my own sweep, not in Flousi. Each
+Five of five initial "failures" in G1 were defects in my own sweep, not in RITM. Each
 taught a rule now encoded in `scripts/sweeps/README.md`: identify a created row by id
 diff and never by array position; scope a click to the control's own group (an unscoped
 `:has-text("راجعة")` matched a BADGE and toggled the wrong row); pick a subject the

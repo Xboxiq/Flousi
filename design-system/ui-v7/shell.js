@@ -59,7 +59,7 @@ function shell(active, title, crumbs, actions) {
   return `<aside class="sidebar">
   <div class="brand">
     <span class="logo"><svg class="i i-sm" viewBox="0 0 24 24" stroke-width="2.4"><path d="M4 17 9.5 11.5 13 15l7-7"/><path d="M15 8h5v5"/></svg></span>
-    <b>فلوسي</b><span class="env">LOCAL</span>
+    <b>رِتم</b><span class="env">LOCAL</span>
   </div>
   ${nav}
   <div class="sidefoot"><div class="userchip"><span class="av">ح ع</span>

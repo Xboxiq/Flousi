@@ -1,4 +1,4 @@
-# Flousi — working instructions
+# RITM — working instructions
 
 Arabic-first (RTL) local-first finance app: it computes the real net profit of what a
 merchant sells, and splits it with reps who are paid a share of profit instead of a
@@ -8,7 +8,7 @@ salary. Next.js static export, no server, no accounts, `localStorage` only.
 
 > «الشركة ماتريد شي تقليدي من اي عمل مكرر او فكره مستهلكه او ذكاء اصطناعي سلوب»
 
-Nothing generic ships. Every surface goes through `flousi-anti-slop-gate` and
+Nothing generic ships. Every surface goes through `ritm-anti-slop-gate` and
 `design-system/VISUAL-LAW.md` before it is called done.
 
 ## Skills: the primary source (client instruction, 2026-08-21)
@@ -34,7 +34,7 @@ sources and what each one is for.
 `-debt`) · `unlazy` (the gates method) · `layers-conceptual-model` / `layers-surface`
 
 **Anti-slop (mandatory)**
-`flousi-anti-slop-gate` · `anti-slop-ui` · `kill-ai-slop` · `baseline-ui`
+`ritm-anti-slop-gate` · `anti-slop-ui` · `kill-ai-slop` · `baseline-ui`
 
 ### How a skill is used here
 

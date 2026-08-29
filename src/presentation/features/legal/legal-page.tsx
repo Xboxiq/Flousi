@@ -9,7 +9,7 @@ export interface LegalSection {
 }
 
 /**
- * A legal document is the one surface in Flousi with no object in it: nothing here
+ * A legal document is the one surface in RITM with no object in it: nothing here
  * is measured, so nothing here is drawn. It gets the treatment a printed clause
  * sheet gets — a single measured column, numbers in the margin, and hairlines
  * between the clauses. The material layer stays out of it on purpose (VISUAL-LAW §1:
@@ -32,7 +32,7 @@ export function LegalPage({
         <div className="mx-auto flex h-16 max-w-[760px] items-center justify-between px-5">
           <Link href="/" className="flex items-center gap-2.5">
             <LogoMark />
-            <span className="text-lg font-semibold tracking-tight">Flousi</span>
+            <span className="text-lg font-semibold tracking-tight">RITM</span>
           </Link>
           <Link
             href="/"

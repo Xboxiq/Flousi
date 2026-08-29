@@ -1,6 +1,6 @@
 import { chromium } from "/opt/node22/lib/node_modules/playwright/index.mjs";
 const BASE = process.env.BASE || "http://localhost:8123";
-const K = (k) => `flousi:${k}`;
+const K = (k) => `ritm:${k}`;
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const results = [];
 
@@ -102,7 +102,7 @@ await run("createOrder · the builder", "/orders/", async (p) => {
   const beforeO = await rows(p, "orders");
   const beforeS = await rows(p, "sales");
   const beforeIds = await p.evaluate(() =>
-    JSON.parse(localStorage.getItem("flousi:orders") || "[]").map((o) => o.id),
+    JSON.parse(localStorage.getItem("ritm:orders") || "[]").map((o) => o.id),
   );
   await p.click('button:has-text("طلبية جديدة")');
   await p.waitForTimeout(600);

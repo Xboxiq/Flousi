@@ -22,11 +22,11 @@ interface LivingNumberProps {
 }
 
 /**
- * Flousi signature device #1 — the Living Number (design-system/SIGNATURE.md).
+ * RITM signature device #1 — the Living Number (design-system/SIGNATURE.md).
  * The net-profit figure responds to every input: it glides from its CURRENT
  * displayed value to the next (interruptible — never restarts from the target),
  * in tabular mono so only the changing digits move. Snaps instantly under
- * `prefers-reduced-motion`. This is the one place Flousi spends its delight
+ * `prefers-reduced-motion`. This is the one place RITM spends its delight
  * budget; do not reuse it for numbers the user merely reads.
  */
 export function LivingNumber({

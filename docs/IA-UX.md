@@ -1,4 +1,4 @@
-# Flousi — Information Architecture & UX Flows
+# RITM — Information Architecture & UX Flows
 
 ## 1. UX principles
 

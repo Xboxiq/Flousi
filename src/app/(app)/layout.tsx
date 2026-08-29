@@ -4,7 +4,7 @@ import { CommandPalette } from "@/presentation/components/command-palette";
 import { LocaleSync } from "@/presentation/components/locale-sync";
 import { RouteGuard } from "@/presentation/components/layout/route-guard";
 
-/** Wraps all authenticated app pages in the Flousi shell (sidebar + top bar). */
+/** Wraps all authenticated app pages in the RITM shell (sidebar + top bar). */
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>

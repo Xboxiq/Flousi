@@ -1,4 +1,4 @@
-# Flousi UI v6 — «مساحات» / FIELDS
+# RITM UI v6 — «مساحات» / FIELDS
 
 A second product design language, and six screens built in it. Real HTML/CSS at
 1600×1000 (phones at 390×844 inside F5), rendered at 2× → 3200×2000.

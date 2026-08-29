@@ -1,4 +1,4 @@
-# Flousi UI v5 — «آلة تحريرية» / The Editorial Instrument
+# RITM UI v5 — «آلة تحريرية» / The Editorial Instrument
 
 A product design language and seven screens built in it. Real HTML/CSS at
 1600×1000 (and 390×844 phones), rendered at 2× → 3200×2000 PNG/JPEG.

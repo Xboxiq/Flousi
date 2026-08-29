@@ -1,4 +1,4 @@
-# Flousi — خطة التطوير والديزاين v4 «المال الملموس»
+# RITM — خطة التطوير والديزاين v4 «المال الملموس»
 
 > **الملخص التنفيذي (عربي):**
 > العميل غير راضٍ عن الشكل الحالي: محافظ، مسطّح، لا يفاجئ أحداً. القرار: تحول
@@ -6,7 +6,7 @@
 > خزنة، إيصال، كرات زجاجية)، خامات حقيقية (زجاج، ميش محبب، معدن، صلصال ناعم)،
 > إضاءة موحدة المصدر، موشن فيزيائي مُخرَج مشهدياً، وصور/أصول بصرية مُصنّعة
 > خصيصاً — **بقانون واحد فقط: ممنوع الـ AI slop** (البوابة في
-> `.claude/skills/flousi-anti-slop-gate/`)، ومعه أرضيات الجودة غير الجمالية
+> `.claude/skills/ritm-anti-slop-gate/`)، ومعه أرضيات الجودة غير الجمالية
 > (الوصولية، RTL، الأداء). كل قيود «الرصانة» السابقة أُلغيت رسمياً
 > (`design-system/MASTER.md` §9). الخطة تبدأ **ببروفة اتجاه** على شاشة واحدة
 > تُعتمد قبل التعميم، ثم مسبك أصول، ثم إعادة إخراج كل شاشة كمشهد.
@@ -45,7 +45,7 @@ Build the object cast + document it:
   `design-system/RECIPES.md` (mesh money field, two-lip glass, conic rim,
   pointer foil for the Coin, RTL-safe 3D face rig for the Vault, three-role
   shadows, state leaks, metal switch, drum picker, ritual button…). Techniques
-  ported, hexes rebound to Flousi tokens (nova's violet is not).
+  ported, hexes rebound to RITM tokens (nova's violet is not).
 - Coin (hero + small), Orb family v2 (active/idle/done/danger), Vault, Receipt,
   Chart blocks, 4–6 spot illustrations (onboarding, empty-products, backup,
   error) — CSS/SVG first, layered-SVG second, generated renders last resort.
@@ -121,7 +121,7 @@ direction earns shares.
   with reasons; a reference appearing twice is not an argument.
 - **Dial declaration:** every scene brief opens with three dials out of 10
   (variance / motion / density) so no agent silently picks its own intensity.
-  Flousi v4 defaults: variance 8 · motion 6 · density 6 (nova's calibration).
+  RITM v4 defaults: variance 8 · motion 6 · density 6 (nova's calibration).
 - Suite green per push (typecheck/lint/test/build) + scan.mjs trend recorded,
   suppressions only via `/* deslop-ignore */` with the justification comment.
 - SESSION-LOG row per session.
@@ -135,7 +135,7 @@ direction earns shares.
 | `animate`, `emil-design-eng`, `apple-design`, `animation-systems` | choreography, springs, gestures, materials |
 | `fixing-motion-performance` | keeping the cinema at 60fps |
 | `beautiful-shadows`, `better-colors/-typography/-layout/-accessibility` | craft floors on materials |
-| `kill-ai-slop` + `flousi-anti-slop-gate` | the law |
+| `kill-ai-slop` + `ritm-anti-slop-gate` | the law |
 | `unlazy`, `ponytail` | process discipline (gates; lazy code never lazy craft) |
 | `ui-ux-pro-max` data | finance patterns / chart selection cross-checks |
 

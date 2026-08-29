@@ -1,4 +1,4 @@
-# Flousi — STYLE B: «نحاس ودُخان» / Brass & Smoke
+# RITM — STYLE B: «نحاس ودُخان» / Brass & Smoke
 
 Five 16:9 key visuals, 3840×2160. A **second art direction** for the same brand,
 not a variation of the first. Same pipeline as `../campaign` (authored HTML/CSS/SVG,
@@ -8,7 +8,7 @@ photographed by Chromium at 2×, the app's real Cairo and IBM Plex Mono).
     node design-system/campaign-b/render.mjs        # all five
     node design-system/campaign-b/render.mjs b3     # just one
 
-## What stays, so it is still Flousi
+## What stays, so it is still RITM
 
 The wordmark, unaltered · Cairo for display with IBM Plex Mono 500 for every
 figure, latn numerals · the object vocabulary (the till, the price column's

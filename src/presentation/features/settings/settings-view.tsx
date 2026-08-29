@@ -111,7 +111,7 @@ export function SettingsView() {
           <CardHeader>
             <div>
               <CardTitle>المظهر</CardTitle>
-              <CardDescription>اختر شكل فلوسي.</CardDescription>
+              <CardDescription>اختر شكل رِتم.</CardDescription>
             </div>
           </CardHeader>
           <CardContent>

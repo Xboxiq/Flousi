@@ -1,8 +1,8 @@
 /* ============================================================================
-   Flousi v4 MATERIAL LAYER — «المال الملموس»
+   RITM v4 MATERIAL LAYER — «المال الملموس»
    Governed by design-system/VISUAL-LAW.md; techniques ported from the client's
    own Xboxiq/nova and catalogued in design-system/RECIPES.md, with every hue
-   rebound to Flousi tokens.
+   rebound to RITM tokens.
 
    deslop-ignore-file 06 19 20
    ^ Scoped, justified suppression for this file ONLY: a slop scanner built for
@@ -16,7 +16,7 @@
 
 /* ============================================================================
    v4 MATERIALS — «المال الملموس». Techniques ported from the client's own
-   Xboxiq/nova (see design-system/RECIPES.md), hues rebound to Flousi tokens.
+   Xboxiq/nova (see design-system/RECIPES.md), hues rebound to RITM tokens.
    Governed by design-system/VISUAL-LAW.md: bodies not shapes, overhead light,
    three shadow roles, detail at edges, state-bound glows.
    ========================================================================== */
@@ -1035,10 +1035,10 @@
     height: 9px;
     border-radius: 2px;
     background-image: linear-gradient(135deg, var(--accent), var(--success));
-    animation: flousi-shard 0.72s var(--ease-out) forwards;
+    animation: ritm-shard 0.72s var(--ease-out) forwards;
     pointer-events: none;
   }
-  @keyframes flousi-shard {
+  @keyframes ritm-shard {
     to {
       transform: translate(var(--sx), var(--sy)) rotate(var(--sr)) scale(0.15);
       opacity: 0;
@@ -1335,9 +1335,9 @@
      own easing segment. An animation, not a transition, because it is a one-shot
      the element returns from on its own; React re-arms it per failure. */
   .shake-wrong {
-    animation: flousi-shake-wrong 420ms both;
+    animation: ritm-shake-wrong 420ms both;
   }
-  @keyframes flousi-shake-wrong {
+  @keyframes ritm-shake-wrong {
     0% {
       transform: translateX(0);
       animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);

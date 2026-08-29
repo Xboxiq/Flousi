@@ -1,6 +1,6 @@
 import type { Target } from "@/domain";
 import { settingsRepository, targetRepository } from "./persistence/local-storage/repositories";
-import { storage, STORAGE_KEYS } from "./persistence/local-storage/storage";
+import { migrateLegacyNamespace, storage, STORAGE_KEYS } from "./persistence/local-storage/storage";
 
 /**
  * The generation this build expects the store to be at.
@@ -27,6 +27,11 @@ const MIGRATIONS: Array<() => Promise<void>> = [liftLegacyProfitTarget];
  * migrated store does one integer read and stops.
  */
 export async function runMigrations(): Promise<void> {
+  /* Before ANY read, including the schema stamp: a store written under the old
+     «flousi:» namespace has its stamp there too, and reading the new namespace
+     first would see an unstamped store and re-run lifts against empty data. */
+  migrateLegacyNamespace();
+
   const at = readVersion();
   if (at >= SCHEMA_VERSION) return;
 

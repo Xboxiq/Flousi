@@ -1,16 +1,16 @@
-# Flousi — القانون البصري VISUAL LAW (v1)
+# RITM — القانون البصري VISUAL LAW (v1)
 
 > Ported and adapted 2026-08-17 from the client's own `Xboxiq/nova`
 > (`design-system/VISUAL-LAW.md`) — first-party, fully licensed. This law is what
 > turns "رسوم بمستوى الصور" from a wish into a build requirement. It binds every
-> visual object in Flousi. Enforced by design-law gates (see DESIGN-PLAN §process)
+> visual object in RITM. Enforced by design-law gates (see DESIGN-PLAN §process)
 > and the anti-slop matrix.
 
 ## §1 الجسم قبل الشكل — Body before shape
 Every visual element is an OBJECT: it has thickness, a light-catching edge, or an
 overlap proving something is in front of something. A colored rectangle that
 cannot say where its surface ends and its edge begins is filler, not design.
-**The screenshot test:** a Flousi visual object, cropped alone, should be
+**The screenshot test:** a RITM visual object, cropped alone, should be
 mistakable for a rendered image — not for "simple CSS".
 
 ## §2 الضوء من فوق — Light comes from directly overhead
@@ -91,7 +91,7 @@ its rules we already keep, and several of them we keep more strictly than it ask
 Eight of them we **deliberately break**, and the reason is the same in all eight
 cases: the skill is written for a flat, bordered, technical-document aesthetic, and
 it bans the *symptom* (a shadow, a radius, a gradient) rather than the fault (depth
-that reports nothing). Flousi's brief was the opposite and was stated twice:
+that reports nothing). RITM's brief was the opposite and was stated twice:
 «يهتم بالتفاصيل والأشكال ثلاثية الأبعاد» and
 «تكون كأنها صور أو تكوينات احترافية … مو خطوط وكلشي مو متوازن». A 1px
 border on a flat panel is exactly the drawing he rejected.
@@ -253,9 +253,9 @@ appearing twice is not an argument for accepting it.
 | Flat corporate illustration | بلا جسم ولا ضوء — يسقط §1 |
 | Pastel per-icon tiles | لون بلا معنى — يسقط §13 |
 | Side-lit objects | تنقلب فيزياؤها بالمرآة RTL — يسقط §2 |
-| **«الصرف حبر عادي والإيراد فقط ملوّن» (من محفظة استهلاكية، تغذية 5)** | صحيح في محفظة شخصية حيث الصرف طبيعي؛ فلوسي موجود ليقول إن هذه البيعة **خسرت**، فالربح السالب يبقى بالأحمر. الدرس المأخوذ: ليس كل سالب يستحق اللون — الكميات والتكاليف حبر محايد، والقطبية للربح وحده |
+| **«الصرف حبر عادي والإيراد فقط ملوّن» (من محفظة استهلاكية، تغذية 5)** | صحيح في محفظة شخصية حيث الصرف طبيعي؛ رِتم موجود ليقول إن هذه البيعة **خسرت**، فالربح السالب يبقى بالأحمر. الدرس المأخوذ: ليس كل سالب يستحق اللون — الكميات والتكاليف حبر محايد، والقطبية للربح وحده |
 | صبغ الألواح بألوان باستيل حسب الدور (نعناعي/بنفشي/مرجاني) | نأخذ فكرة أن اللوح قد يُصبغ بدوره، لا الأصباغ نفسها؛ ألوانها ليست ألواننا |
-| **استيراد لوحة «lime على أسود» من تغذية 2026-08-17** | المراجع الأربعة داكنة بلون واحد حاد. الدرس الحقيقي هو **التوزيع**: أرضية هادئة ولون واحد فقط مسموح له أن يشير — وهذا قانوننا أصلاً (§6 §13). أُخذ الدرس وطُبّق على أكسنت Flousi؛ استيراد الـ hue نفسه مرفوض. |
+| **استيراد لوحة «lime على أسود» من تغذية 2026-08-17** | المراجع الأربعة داكنة بلون واحد حاد. الدرس الحقيقي هو **التوزيع**: أرضية هادئة ولون واحد فقط مسموح له أن يشير — وهذا قانوننا أصلاً (§6 §13). أُخذ الدرس وطُبّق على أكسنت RITM؛ استيراد الـ hue نفسه مرفوض. |
 | مخطط النقاط (dot-matrix) لمقارنة مبالغ | شبكة نقاط أسوأ قراءةً من قضيب لسؤال «أي منتج ربح أكثر»؛ مؤجّل لشاشة المندوبين حيث الوحدة شخص لا مبلغ |
 | شريط أجزاء يزيد مجموعه على كلّه (التجاوز كقطعة مضافة) | ضُبط في هذه الدفعة: كان الشريط يتجاوز 100% فيُقصّ من طرفه؛ صار التجاوز منطقةً محزّزة فوق الأجزاء التي أكلها (§11b) |
-| Purple/violet hues from nova's legacy HTML | يخالف بوابة السلوب؛ نأخذ التقنية ونعيد ربط الألوان بتوكنات Flousi |
+| Purple/violet hues from nova's legacy HTML | يخالف بوابة السلوب؛ نأخذ التقنية ونعيد ربط الألوان بتوكنات RITM |

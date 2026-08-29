@@ -1,14 +1,14 @@
 ---
-name: flousi-anti-slop-gate
-description: Flousi's mandatory pre-delivery gate against generic/AI-slop design. Run before ANY visual work ships — every screen, component, landing section, chart, export surface, or copy change. Consolidated from kill-ai-slop, impeccable, taste-skill, pols.dev/slop.md, ui-ux-pro-max finance anti-patterns, and jakubkrehel/interfaces. If a single check fails, the surface is not done.
+name: ritm-anti-slop-gate
+description: RITM's mandatory pre-delivery gate against generic/AI-slop design. Run before ANY visual work ships — every screen, component, landing section, chart, export surface, or copy change. Consolidated from kill-ai-slop, impeccable, taste-skill, pols.dev/slop.md, ui-ux-pro-max finance anti-patterns, and jakubkrehel/interfaces. If a single check fails, the surface is not done.
 ---
 
-# Flousi Anti-Slop Gate
+# RITM Anti-Slop Gate
 
 The company's hard requirement: **nothing generic, nothing recycled, no AI-slop look.**
 Clean is the floor, never the achievement — mechanically dodging this blacklist while
 inventing nothing is still slop. Every surface needs one **authored signature moment**
-and must belong to Flousi's one cohesive world (see `design-system/MASTER.md`).
+and must belong to RITM's one cohesive world (see `design-system/MASTER.md`).
 
 ## How to run the gate
 
@@ -19,13 +19,13 @@ and must belong to Flousi's one cohesive world (see `design-system/MASTER.md`).
 
 ## Blacklist — color & light
 
-- Indigo→violet / blue→purple gradients anywhere. Flousi mesh gradients stay inside the
+- Indigo→violet / blue→purple gradients anywhere. RITM mesh gradients stay inside the
   blue family (hue ≤ 265°); no violet, magenta, pink, or purple flats or glows. This is a
   HIGH-severity fintech anti-pattern (ui-ux-pro-max #14/#41/#42).
 - Neon glows, colored `box-shadow` halos as dark-mode accents, pulsing halos.
 - Pure `#000` / pure `#fff`; blue-charcoal dark defaults; pure-white page backgrounds
   (finance anti-pattern #91).
-- More than ONE interactive accent (Flousi lock: Apple blue). Green/red are profit/loss
+- More than ONE interactive accent (RITM lock: Apple blue). Green/red are profit/loss
   semantics only, never decoration. Accent drift between sections.
 - Icon sitting in a 10% tint of its own color (`bg-{c}/10` + `text-{c}` tile).
 - The default semantic rainbow (blue info / amber tip / green success / red error boxes
@@ -58,7 +58,7 @@ and must belong to Flousi's one cohesive world (see `design-system/MASTER.md`).
 - Rounded-square pastel icon tiles in grids; giant decorative filler icons.
 - Badge/pill spam ("✨ جديد", "🔥 الأكثر شيوعاً"); pills overlaid on images.
 - DEFAULT glassmorphism: `backdrop-blur` slapped on a surface with no light logic.
-  Glass is a legitimate Flousi material (MASTER v4) ONLY when authored: specular/
+  Glass is a legitimate RITM material (MASTER v4) ONLY when authored: specular/
   top-edge highlight consistent with the global light, blur ≤ 20px, and a solid
   `prefers-reduced-transparency` fallback. Missing any of those = slop.
 - Sun-and-moon theme toggle cliché; gradient-circle initial avatars; hand-rolled SVG
@@ -68,7 +68,7 @@ and must belong to Flousi's one cohesive world (see `design-system/MASTER.md`).
   the full SaaS template sequence (hero → 3 cards → tabs → pricing → FAQ → CTA slab).
 - Bento with empty cells; bento used for dense tables or live monitoring (bento is for
   the KPI/overview band only).
-- `feTurbulence` grain EXCEPT the sanctioned Flousi use: static (non-scrolling)
+- `feTurbulence` grain EXCEPT the sanctioned RITM use: static (non-scrolling)
   material surfaces at opacity ≤ 0.10 to kill gradient banding. Grain on a
   scrolling container is always slop (repaint cost + noise).
 - Hard offset shadows (`4px 4px 0`) outside genuine neobrutalism; zero-offset halos.

@@ -1,8 +1,20 @@
 /**
- * SSR-safe JSON localStorage helper. All keys are namespaced under "flousi:".
+ * SSR-safe JSON localStorage helper. All keys are namespaced under "ritm:".
  * This is the low-level primitive the localStorage repositories build on.
  */
-const PREFIX = "flousi:";
+const PREFIX = "ritm:";
+
+/**
+ * The namespace this app wrote under before it was renamed to رِتم.
+ *
+ * A rename is a cosmetic act everywhere except here: this app has no server, so a
+ * merchant's ONLY copy of their data is these keys. Changing the prefix without a
+ * lift would not corrupt anything, it would do something worse and quieter — every
+ * screen would come up empty and correct-looking, as though the shop had never
+ * traded. `migrateLegacyNamespace` below copies the old keys forward and leaves the
+ * originals exactly where they are.
+ */
+export const LEGACY_PREFIX = "flousi:";
 
 /**
  * Does the stored value have the same SHAPE as the fallback the caller expects?
@@ -64,6 +76,38 @@ export const storage = {
   },
 };
 
+/**
+ * Copies every key written under the old namespace to the new one, once.
+ *
+ * Copy, never move: the originals stay untouched, so a merchant who opens an older
+ * build of the app after this one still finds their data, and a partial run of this
+ * function can never be the reason a shop's history disappears. Keys already present
+ * under the new prefix win, because they are by definition newer.
+ *
+ * Runs before anything reads. Safe to run any number of times.
+ */
+export function migrateLegacyNamespace(): number {
+  if (typeof window === "undefined") return 0;
+  let copied = 0;
+  try {
+    for (let i = 0; i < window.localStorage.length; i += 1) {
+      const key = window.localStorage.key(i);
+      if (!key || !key.startsWith(LEGACY_PREFIX)) continue;
+      const target = PREFIX + key.slice(LEGACY_PREFIX.length);
+      if (window.localStorage.getItem(target) !== null) continue;
+      const value = window.localStorage.getItem(key);
+      if (value !== null) {
+        window.localStorage.setItem(target, value);
+        copied += 1;
+      }
+    }
+  } catch {
+    /* A storage that throws (private mode, quota) leaves the old keys in place and
+       the app starts empty rather than failing to boot. */
+  }
+  return copied;
+}
+
 export const STORAGE_KEYS = {
   products: "products",
   sales: "sales",
@@ -86,8 +130,8 @@ export const STORAGE_KEYS = {
    * single boot, forever. A stamp makes each one run once
    * (vercel-react-best-practices: `client-localstorage-schema`).
    *
-   * The KEYS are deliberately NOT versioned: renaming `flousi:products` to
-   * `flousi:products:v3` would orphan every store already in the field, and the
+   * The KEYS are deliberately NOT versioned: renaming `ritm:products` to
+   * `ritm:products:v3` would orphan every store already in the field, and the
    * rule's purpose — evolving the schema safely — is served by this stamp plus the
    * migration list, without a rename that has to be right on the first try.
    */

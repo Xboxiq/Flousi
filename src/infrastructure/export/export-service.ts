@@ -117,13 +117,13 @@ export function printReport(table: ExportableTable): void {
     .foot { margin-top: 22px; color: #a7acb6; font-size: 11px; text-align: center; }
   </style></head><body>
     <div class="head">
-      <div class="brand"><span class="mark"></span><b>فلوسي</b></div>
+      <div class="brand"><span class="mark"></span><b>رِتم</b></div>
       <div class="meta">تاريخ الإصدار<br/>${today}</div>
     </div>
     <h1>${table.title}</h1>
-    <p class="sub">تقرير صافي الأرباح — مُولّد من منصّة فلوسي</p>
+    <p class="sub">تقرير صافي الأرباح — مُولّد من منصّة رِتم</p>
     <table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>
-    <div class="foot">فلوسي · حساب صافي أرباح المبيعات للمتاجر والأعمال الصغيرة</div>
+    <div class="foot">رِتم · حساب صافي أرباح المبيعات للمتاجر والأعمال الصغيرة</div>
     <script>window.onload=function(){setTimeout(function(){window.print();},350);};</script>
   </body></html>`);
   win.document.close();

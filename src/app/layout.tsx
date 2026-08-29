@@ -28,12 +28,12 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const metadata: Metadata = {
   title: {
-    default: "فلوسي · صافي أرباح متجرك بدقّة",
-    template: "%s · فلوسي",
+    default: "رِتم · صافي أرباح متجرك بدقّة",
+    template: "%s · رِتم",
   },
   description:
-    "فلوسي يحسب صافي ربح كل منتج تبيعه: الإيراد والتكاليف والهامش ونقطة التعادل والعائد، في لوحة واحدة أنيقة.",
-  applicationName: "Flousi",
+    "رِتم يحسب صافي ربح كل منتج تبيعه: الإيراد والتكاليف والهامش ونقطة التعادل والعائد، في لوحة واحدة أنيقة.",
+  applicationName: "RITM",
   /* Installable (P8): the merchant opens this daily on a phone, so it installs to
      the home screen like an app. ROOT paths with the base path baked in — a
      relative "./manifest.webmanifest" resolves against the PAGE, so on /dashboard/
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "فلوسي",
+    title: "رِتم",
   },
 };
 

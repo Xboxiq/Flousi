@@ -5,7 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 export type ThemePreference = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
 
-const STORAGE_KEY = "flousi-theme";
+const STORAGE_KEY = "ritm-theme";
 
 interface ThemeContextValue {
   preference: ThemePreference;
