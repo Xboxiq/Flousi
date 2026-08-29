@@ -94,7 +94,6 @@ export function PeriodsView() {
       <>
         <PageHeader
           title="الفترات المحاسبية"
-          description="أغلق الأشهر واحفظ التقارير التاريخية للقراءة فقط."
         />
         <Skeleton className="h-48 w-full" />
       </>
@@ -105,7 +104,6 @@ export function PeriodsView() {
     <>
       <PageHeader
         title="الفترات المحاسبية"
-        description="أغلق الأشهر واحفظ التقارير التاريخية للقراءة فقط."
       />
 
       {/* الفترة المفتوحة */}
@@ -159,7 +157,6 @@ export function PeriodsView() {
         <EmptyState
           icon={<CalendarCheck size={24} />}
           title="لا توجد فترة مفتوحة"
-          description="ابدأ فترة محاسبية جديدة لتتبّع أرباح هذا الشهر."
           action={<Button onClick={startFirstPeriod}>بدء فترة جديدة</Button>}
         />
       )}
@@ -218,7 +215,6 @@ export function PeriodsView() {
           setClosing(null);
         }}
         title={`إغلاق ${closing?.label ?? "الفترة"}؟`}
-        description="سيتم قفل الفترة. يصبح تقريرها للقراءة فقط وتُفتح فترة جديدة."
         /* the art is the DATA being sealed: the month's own magnitudes (R29+R47) */
         art={
           closing ? (

@@ -40,7 +40,6 @@ export function ProductDetail({ id }: { id: string }) {
     return (
       <EmptyState
         title="المنتج غير موجود"
-        description="ربما تم حذف هذا المنتج."
         action={
           <Button asChild>
             <Link href="/products">العودة للمنتجات</Link>
@@ -69,7 +68,6 @@ export function ProductDetail({ id }: { id: string }) {
       </div>
       <PageHeader
         title={product.name}
-        description={product.sku ? `SKU ${product.sku}` : "عدّل بيانات المنتج وتكاليفه."}
         actions={
           <>
             <Badge tone={product.status === "active" ? "accent" : "neutral"}>
@@ -109,7 +107,6 @@ export function ProductDetail({ id }: { id: string }) {
         open={confirmDelete}
         onClose={() => setConfirmDelete(false)}
         title="حذف المنتج"
-        description={`سيُحذف "${product.name}" نهائيًا. تبقى المبيعات المسجّلة.`}
         footer={
           <>
             <Button variant="ghost" onClick={() => setConfirmDelete(false)} disabled={deleting}>

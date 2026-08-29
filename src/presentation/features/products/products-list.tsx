@@ -63,16 +63,10 @@ export function ProductsList() {
     </Button>
   ) : undefined;
 
-  /* The description must not promise a figure this session will not be shown: the
-     catalogue reads as a price list to a rep, and as a profit sheet to the merchant. */
-  const description = canSeeCosts
-    ? "كل منتج وصافي ربحه الحقيقي."
-    : "كل منتج وسعر بيعه.";
-
   if (!loaded) {
     return (
       <>
-        <PageHeader title="المنتجات" description={description} actions={actions} />
+        <PageHeader title="المنتجات" actions={actions} />
         <Skeleton className="h-96 w-full" />
       </>
     );
@@ -80,13 +74,12 @@ export function ProductsList() {
 
   return (
     <>
-      <PageHeader title="المنتجات" description={description} actions={actions} />
+      <PageHeader title="المنتجات" actions={actions} />
 
       {products.length === 0 ? (
         <EmptyState
           icon={<Package size={24} />}
           title="لا توجد منتجات بعد"
-          description="أضِف أول منتج لتبدأ بحساب صافي الربح الحقيقي."
           action={
             <Button asChild leadingIcon={<Plus size={16} weight="bold" />}>
               <Link href="/products/new">إضافة منتج</Link>

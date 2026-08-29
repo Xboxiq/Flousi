@@ -62,7 +62,7 @@ export function SettlementsView() {
   if (!loaded) {
     return (
       <>
-        <PageHeader title="التسويات" description="كل دفعة سُلّمت للفريق، ومتى." />
+        <PageHeader title="التسويات" />
         <div className="flex flex-col gap-5">
           <Skeleton className="h-40 rounded-[var(--radius-2xl)]" />
           <Skeleton className="h-72 rounded-[var(--radius-2xl)]" />
@@ -75,15 +75,6 @@ export function SettlementsView() {
     <>
       <PageHeader
         title="التسويات"
-        description={
-          view.count === 0
-            ? "لم تُسجّل أي دفعة بعد."
-            : `دفعات: ${view.count}${
-                view.lastPaidAt
-                  ? ` · آخرها ${formatDate(view.lastPaidAt, { locale: settings.locale })}`
-                  : ""
-              }`
-        }
       />
 
       <div className="flex flex-col gap-6">
@@ -130,7 +121,6 @@ export function SettlementsView() {
               <EmptyState
                 icon={<Receipt size={24} />}
                 title="لا تسويات بعد"
-                description="تُسجَّل الدفعة من ملف المندوب: تفتح «تسوية»، فتُحسم من رصيده المستحق."
               />
             ) : (
               <>

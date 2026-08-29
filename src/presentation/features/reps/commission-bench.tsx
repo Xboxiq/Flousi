@@ -400,7 +400,6 @@ export function CommissionBench() {
   const header = (
     <PageHeader
       title="إعدادات القسمة"
-      description="اضبط القاعدة والأرقام تشرح نفسها."
       actions={
         <>
           {/* A confirmation is not a profit figure, so it stays in neutral ink and
@@ -465,7 +464,6 @@ export function CommissionBench() {
         <EmptyState
           icon={<Sliders size={24} />}
           title="لا يوجد نظام قسمة بعد"
-          description="أنشئ نظامًا واحدًا لتُقسم أرباح كل عملية تلقائيًا بينك وبين مندوبك."
           action={
             <Button leadingIcon={<Plus size={16} weight="bold" />} onClick={addScheme}>
               نظام جديد

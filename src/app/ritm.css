@@ -1,0 +1,453 @@
+/* ═════════════════════════════════════════════════════════════════════════════
+   RITM · الطبقة البنيوية / THE STRUCTURAL LAYER
+   ─────────────────────────────────────────────────────────────────────────────
+   Ported from `design-system/ritm/system.css`, which is the specification the
+   client approved as artboards. That file is authored against the design
+   system's own token names; this one is the same component layer speaking the
+   app's tokens, so there is ONE palette and ONE set of components rather than
+   two systems that drift apart.
+
+   WHAT THIS LAYER IS FOR
+   The identity pass gave the app the board's colours, its type and its mark.
+   It did not give it the board's STRUCTURE — the rhythm grid, the card
+   anatomy, the toolbar, the table, the ranked bar, the split bar, the brief
+   row. Those are what make the artboards read as one product instead of a
+   palette applied to whatever was already there.
+
+   RTL IS THE ARCHITECTURE, NOT A SETTING
+   Every inline axis below is a logical property — padding-inline, inset-inline,
+   border-inline, text-align:start/end. There is no `direction:rtl` applied to a
+   left-to-right layout and no mirrored margin anywhere. The one thing that does
+   NOT flip is a figure: numbers, currency, dates and identifiers are LTR runs,
+   and each sits in an isolate, because `direction:ltr` alone does not re-order
+   a run against RTL surroundings (it printed «#C6A97D» as «C6A97D#» here once).
+
+   THE GRID IS READ OFF THE MARK
+   Four bars of one width at one pitch divide their own width into four equal
+   columns of three, so the legal spans are 3, 6, 9 and 12 and nothing else.
+   The distinctive half of the law is vertical: blocks stack in descending
+   reach and exactly one is deliberately short. Four equal boxes in a row is
+   the one shape this mark cannot make — and it is the shape every finance
+   dashboard opens with.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  /* ── 1 · THE RHYTHM GRID ─────────────────────────────────────────────── */
+  .r-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--grid-gutter);
+    /* Panels in a band match heights. The boards do this deliberately: a row of
+       cards that each stop at their own content turns a band into a staircase,
+       and the eye then reads the ragged bottom edge as a hierarchy that is not
+       there. A panel with room left over spends it on its footer. */
+    align-items: stretch;
+  }
+  .span-3 { grid-column: span 3 }
+  .span-6 { grid-column: span 6 }
+  .span-9 { grid-column: span 9 }
+  .span-12 { grid-column: 1 / -1 }
+
+  /* ── 2 · SURFACES ────────────────────────────────────────────────────────
+     A surface declares its height ONCE: with a lighter ground on dark, with a
+     shadow on light. A hairline border AND a shadow on the same element is the
+     ghost card, and it does not ship. */
+  .r-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    min-width: 0;
+  }
+  .r-card > header,
+  .r-card > footer { flex: none }
+  .r-card > .r-body,
+  .r-card > .r-bare { flex: 1; min-height: 0 }
+  .r-card > header {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-3) var(--s-4);
+    border-bottom: 1px solid var(--line);
+  }
+  .r-card > header > h2,
+  .r-card > header > h3 {
+    font-size: var(--fs-lead);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .r-card > .r-body { padding: var(--s-4) }
+  .r-card > .r-bare { min-width: 0 }
+  .r-card > footer {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-3) var(--s-4);
+    border-top: 1px solid var(--line);
+  }
+  /* the one card on a screen that is asking for a decision */
+  .r-card.is-accent {
+    background: var(--accent-soft);
+    border-color: color-mix(in srgb, var(--accent-fill) 44%, transparent);
+  }
+  .r-inset {
+    background: var(--sunken);
+    border-radius: var(--radius-sm);
+  }
+
+  /* the strip above a table or a list: title, filters, search, one action.
+     It carries the same hairline as a card header, because it IS one. */
+  .r-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    border-bottom: 1px solid var(--line);
+  }
+  .r-toolbar > h2,
+  .r-toolbar > h3 { font-size: var(--fs-lead); font-weight: 700; flex: none }
+  .r-toolbar .r-spacer { flex: 1 }
+
+  /* ── 3 · TYPE ROLES ──────────────────────────────────────────────────────
+     Hierarchy is made with size and weight first. A card, a border, a tint or
+     a shadow may only reinforce a hierarchy that already reads in one colour. */
+  .r-label {
+    font-size: var(--fs-label);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    color: var(--subtle);
+  }
+  .r-caption { font-size: var(--fs-caption); line-height: 1.4; color: var(--subtle) }
+  .r-small { font-size: var(--fs-small); line-height: 1.4; color: var(--muted) }
+
+  /* every figure in the product passes through here */
+  .r-num {
+    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums lining-nums;
+    letter-spacing: 0.01em;
+    line-height: 1.05;
+    direction: ltr;
+    unicode-bidi: isolate;
+    display: inline-block;
+  }
+
+  /* ── 4 · THE FINANCIAL HIERARCHY ─────────────────────────────────────────
+     The same on every surface in the product:
+         amount → label → period → comparison → trend
+     The amount is the largest thing in its container and the only thing set in
+     the Latin face. Everything else exists to qualify it. */
+  .r-metric { display: flex; flex-direction: column; gap: var(--s-1) }
+  .r-metric .amount {
+    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums lining-nums;
+    font-size: var(--fs-h1);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    direction: ltr;
+    unicode-bidi: isolate;
+    display: inline-block;
+  }
+  /* The currency word is Arabic and must NOT sit inside the figure's LTR
+     isolate, or it lays out as part of a Latin run and cramps the last digit. */
+  .r-metric .unit {
+    font-size: var(--fs-small);
+    font-weight: 700;
+    color: var(--subtle);
+    margin-inline-start: var(--s-1);
+  }
+  .r-metric .headline { display: flex; align-items: baseline }
+  .r-metric .name { font-size: var(--fs-small); font-weight: 700; color: var(--muted) }
+  .r-metric.is-lead .amount { font-size: var(--fs-display) }
+  .r-metric.is-small .amount { font-size: var(--fs-h3) }
+
+  /* ── 5 · STATUS ──────────────────────────────────────────────────────────
+     A status is a word plus a shape, never a colour alone: a colour-blind
+     reader and a printed page must both still read it. */
+  .r-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-15);
+    height: 22px;
+    padding-inline: var(--s-2);
+    border-radius: var(--radius-full);
+    background: var(--surface-2);
+    color: var(--muted);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .r-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    flex: none;
+    border-radius: var(--radius-full);
+    background: currentColor;
+  }
+  .r-badge.no-dot::before { display: none }
+  .r-badge.is-success::before { background: var(--success) }
+  .r-badge.is-info::before { background: var(--info) }
+  .r-badge.is-warning { background: var(--warning-soft); color: var(--warning) }
+  .r-badge.is-danger { background: var(--danger-soft); color: var(--danger) }
+  .r-badge.is-accent { background: var(--accent-soft); color: var(--accent) }
+  .r-badge.is-accent::before { background: var(--accent) }
+
+  /* ── 6 · TABLE ───────────────────────────────────────────────────────────
+     The figure column is the only Latin-set thing in a table. The HEAD stays
+     Arabic: a Latin face carries no Arabic and would break «صافي الربح» apart
+     glyph by glyph, which is a bug this project has already paid for. */
+  .r-tablewrap { overflow-x: auto }
+  table.r-tbl {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--fs-table);
+  }
+  .r-tbl thead th {
+    height: var(--h-row-sm);
+    padding-inline: var(--s-3);
+    background: var(--surface-2);
+    text-align: start;
+    white-space: nowrap;
+    font-size: var(--fs-label);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--subtle);
+    border-bottom: 1px solid var(--line);
+  }
+  .r-tbl tbody td {
+    height: var(--h-row);
+    padding-inline: var(--s-3);
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .r-tbl tbody tr:last-child td { border-bottom: 0 }
+  .r-tbl tbody tr:hover td { background: var(--surface-2) }
+  .r-tbl tbody tr[aria-selected="true"] td { background: var(--accent-soft) }
+  .r-tbl td.n,
+  .r-tbl th.n { text-align: end }
+  .r-tbl td.n {
+    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+  .r-tbl tfoot td {
+    height: var(--h-row);
+    padding-inline: var(--s-3);
+    font-weight: 700;
+    background: var(--surface-2);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  /* a row of a list, which is a table's answer on a phone */
+  .r-datarow {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    width: 100%;
+    padding: var(--s-3) var(--s-4);
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    text-align: start;
+    color: inherit;
+    font: inherit;
+    transition: background var(--motion-fast) var(--ease-out);
+  }
+  .r-datarow:last-child { border-bottom: 0 }
+  a.r-datarow:hover,
+  button.r-datarow:hover { background: var(--surface-2) }
+  .r-datarow[aria-current] {
+    background: var(--accent-soft);
+    box-shadow: inset 3px 0 0 var(--accent-fill);
+  }
+  .r-datarow .tx { flex: 1; min-width: 0 }
+  .r-datarow .tx b { display: block; font-size: var(--fs-body); font-weight: 700 }
+  .r-datarow .tx span {
+    display: block;
+    font-size: var(--fs-caption);
+    color: var(--subtle);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .r-datarow .end { flex: none; text-align: end }
+
+  /* ── 7 · CHARTS ──────────────────────────────────────────────────────────
+     Four shapes, each answering a different question:
+       splitbar  where did the revenue go        (part of a whole)
+       hbar      who earned what                 (ordered comparison)
+       spark     what shape was the month        (change over time)
+       progress  how far to the target           (progress to a number)
+     Every series is labelled in place. There is no legend that makes the eye
+     look away from the shape to find out what it is. */
+  .r-splitbar {
+    display: flex;
+    height: var(--s-8);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .r-splitbar > span {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+  /* The ranked row: name and figure on one line, the track on its own line
+     underneath. A three-column grid reads well at span 6 and squeezes the track
+     to fifty pixels at span 3 — and a bar that short is not a comparison, it is
+     a dash. Two lines survive every width the grid can produce. */
+  .r-hbar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+    padding-block: var(--s-2);
+  }
+  .r-hbar .head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-2);
+    min-width: 0;
+  }
+  /* The NAME takes the slack, rather than the figure taking an auto margin.
+     `.v` is an LTR isolate, and a logical margin resolves against the ELEMENT'S
+     OWN direction — so `margin-inline-start:auto` on it added space on the left
+     and left the figure sitting against the name. Growing the name is the same
+     result and cannot be read backwards. */
+  .r-hbar .head > :first-child { flex: 1; min-width: 0 }
+  .r-hbar .track {
+    /* A span is inline until told otherwise, and an inline box ignores height —
+       which is how a row of ranked bars renders as a row of invisible ones. */
+    display: block;
+    height: 10px;
+    background: var(--surface-2);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+  .r-hbar .fill { display: block; height: 100%; border-radius: var(--radius-full) }
+  .r-hbar .v {
+    flex: none;
+    text-align: end;
+    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-size: var(--fs-small);
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+  /* No transition on the fill. Animating width is on the motion blacklist, and
+     a bar that grows on load delays the number beside it for nothing. It is set. */
+  .r-progress {
+    height: 6px;
+    background: var(--surface-2);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+  .r-progress > i {
+    display: block;
+    height: 100%;
+    background: var(--accent-fill);
+    border-radius: var(--radius-full);
+  }
+  .r-progress.is-thin { height: 3px }
+
+  /* ── 8 · NAVIGATION ──────────────────────────────────────────────────────
+     A current item is not a coloured link: it is a filled capsule with a sand
+     edge on the inline start, so it reads as POSITION even in one colour. */
+  .r-navitem {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    height: var(--h-control);
+    padding-inline: var(--s-2);
+    margin-block: 1px;
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    position: relative;
+    transition: background var(--motion-fast) var(--ease-out),
+                color var(--motion-fast) var(--ease-out);
+  }
+  .r-navitem:hover { background: var(--surface-2); color: var(--fg) }
+  .r-navitem[aria-current] {
+    background: var(--surface-2);
+    color: var(--fg);
+    font-weight: 700;
+  }
+  .r-navitem[aria-current]::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: 20%;
+    bottom: 20%;
+    width: 3px;
+    border-radius: var(--radius-full);
+    background: var(--accent-fill);
+  }
+  .r-navitem .count {
+    margin-inline-start: auto;
+    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-size: var(--fs-caption);
+    color: var(--subtle);
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+  /* A group label is a heading for the items under it, not a kicker over a
+     heading — so it is Arabic, like everything else the merchant reads. */
+  .r-navgroup-label {
+    display: block;
+    padding-inline: var(--s-2);
+    margin-bottom: var(--s-1);
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    color: var(--subtle);
+  }
+
+  .r-crumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--s-15);
+    font-size: var(--fs-small);
+    color: var(--subtle);
+    min-width: 0;
+  }
+  /* a crumb is a link people tap: it needs a hit box, not just a line height */
+  .r-crumbs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding-inline: 2px;
+    border-radius: 4px;
+    color: inherit;
+  }
+  .r-crumbs a:hover { color: var(--muted) }
+  .r-crumbs .sep { color: var(--line-strong) }
+  .r-crumbs [aria-current] { color: var(--fg); font-weight: 700 }
+
+  /* ── 9 · RESPONSIVE ──────────────────────────────────────────────────────
+     Not a shrunken desktop. Below the tablet threshold the twelve columns
+     become four, and the four legal spans survive the change: 3, 6, 9 and 12
+     of twelve become 1, 2, 3 and 4 of four. */
+  @media (max-width: 1023px) {
+    .span-9 { grid-column: span 6 }
+  }
+  @media (max-width: 767px) {
+    .r-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) }
+    .span-3 { grid-column: span 4 }
+    .span-6 { grid-column: span 4 }
+    .span-9 { grid-column: span 4 }
+    .span-12 { grid-column: 1 / -1 }
+    .r-metric.is-lead .amount { font-size: var(--fs-h1) }
+  }
+}

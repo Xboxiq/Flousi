@@ -45,16 +45,6 @@ const METRICS = [
  */
 const OPEN_METRICS = METRICS.filter((m) => m.value !== "netProfit");
 
-const MONTH_NAMES = [
-  "كانون الثاني", "شباط", "آذار", "نيسان", "أيار", "حزيران",
-  "تموز", "آب", "أيلول", "تشرين الأول", "تشرين الثاني", "كانون الأول",
-];
-
-function monthLabel(month: string): string {
-  const [y, m] = month.split("-").map(Number);
-  return `${MONTH_NAMES[(m ?? 1) - 1] ?? month} ${y ?? ""}`.trim();
-}
-
 /**
  * «كم استهدف» — the fourth of the seven things the client asked a merchant to be
  * able to read, and the one that had no screen.
@@ -122,7 +112,7 @@ export function TargetsView() {
   if (!loaded) {
     return (
       <>
-        <PageHeader title="الأهداف" description="ما تستهدفه هذا الشهر، ومن أين وصل." />
+        <PageHeader title="الأهداف" />
         <div className="flex flex-col gap-5">
           <Skeleton className="h-56 rounded-[var(--radius-2xl)]" />
           <Skeleton className="h-64 rounded-[var(--radius-2xl)]" />
@@ -138,7 +128,6 @@ export function TargetsView() {
         /* The colon form avoids Arabic number agreement, which changes shape at
            1, 2 (dual), 3–10 and 11+ — «3 هدفًا» is simply wrong Arabic, and a
            dashboard line is not the place to conjugate. */
-        description={`${monthLabel(month)} · أهداف محدّدة: ${view.withTarget}`}
         actions={
           <Segmented aria-label="ما يُقاس" options={metrics} value={metric} onChange={setMetric} />
         }
@@ -172,7 +161,6 @@ export function TargetsView() {
               <EmptyState
                 icon={<TargetIcon size={24} />}
                 title="لا مندوبين بعد"
-                description="أضف مندوبًا من شاشة الفريق، ثم عُد لتحدّد هدفه."
               />
             ) : (
               <ul className="flex flex-col">

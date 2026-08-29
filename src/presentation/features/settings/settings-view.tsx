@@ -103,7 +103,7 @@ export function SettingsView() {
 
   return (
     <>
-      <PageHeader title="الإعدادات" description="التفضيلات والقيم الافتراضية وإدارة البيانات." />
+      <PageHeader title="الإعدادات" />
 
       <div className="flex flex-col gap-6">
         {/* Appearance */}
@@ -306,7 +306,6 @@ export function SettingsView() {
         open={confirmReset}
         onClose={() => setConfirmReset(false)}
         title="تصفير كل البيانات؟"
-        description="سيحذف هذا كل المنتجات والمبيعات والفترات في هذا المتصفّح ويعيد البيانات التجريبية."
         footer={
           <>
             <Button variant="ghost" onClick={() => setConfirmReset(false)}>

@@ -96,19 +96,16 @@ export function LedgerView() {
   if (!loaded) {
     return (
       <>
-        <PageHeader title="السجل" description="كل حركة حدثت، بالترتيب الذي حدثت به." />
+        <PageHeader title="السجل" />
         <Skeleton className="h-[32rem] rounded-[var(--radius-2xl)]" />
       </>
     );
   }
 
-  const count = (kind: MovementKind) => formatNumber(view.counts[kind], { locale: settings.locale });
-
   return (
     <>
       <PageHeader
         title="السجل"
-        description={`مبيعات: ${count("sale")} · تسويات: ${count("settlement")} · إغلاقات: ${count("periodClose")}`}
         actions={
           <Segmented aria-label="نوع الحركة" options={KINDS} value={filter} onChange={onFilter} />
         }
@@ -120,11 +117,6 @@ export function LedgerView() {
             <EmptyState
               icon={<ClockCounterClockwise size={24} />}
               title={filter === "all" ? "لا حركة بعد" : "لا حركة من هذا النوع"}
-              description={
-                filter === "all"
-                  ? "سجّل بيعًا أو سوِّ حساب مندوب، فيظهر هنا بترتيبه الزمني."
-                  : "غيّر النوع أعلاه لترى بقية الحركة."
-              }
             />
           ) : (
             <>

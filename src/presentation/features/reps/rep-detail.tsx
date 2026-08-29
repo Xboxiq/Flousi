@@ -285,7 +285,6 @@ export function RepDetail({ id }: { id: string }) {
       <EmptyState
         icon={<UsersThree size={24} />}
         title="المندوب غير موجود"
-        description="ربما تمت إزالة هذا المندوب من هذا المتصفّح."
         action={
           <Button asChild>
             <Link href="/reps">العودة إلى الفريق</Link>
@@ -326,7 +325,6 @@ export function RepDetail({ id }: { id: string }) {
 
       <PageHeader
         title={name}
-        description={rep?.phone ? rep.phone : "عملياته وحصصه ورصيده المشتقّ."}
         actions={
           /* One labelled primary beside icon-only keys that name themselves (R42):
              three default pills plus the state badges overran a 360px phone and

@@ -30,7 +30,7 @@ const ORDER: ReportType[] = ["monthly", "yearly", "product", "profit", "expense"
 export function ReportsHub() {
   return (
     <>
-      <PageHeader title="التقارير" description="أنشئ وصدّر التقارير المالية." />
+      <PageHeader title="التقارير" />
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {ORDER.map((type, i) => {
           const featured = i === 0;

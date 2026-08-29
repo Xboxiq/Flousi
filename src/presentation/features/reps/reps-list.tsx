@@ -223,7 +223,7 @@ export function RepsList() {
   if (!loaded) {
     return (
       <>
-        <PageHeader title="الفريق" description="من يبيع، وكم له، وكم بقي عليك." actions={actions} />
+        <PageHeader title="الفريق" actions={actions} />
         <Skeleton className="h-96 w-full" />
       </>
     );
@@ -232,11 +232,10 @@ export function RepsList() {
   if (reps.length === 0) {
     return (
       <>
-        <PageHeader title="الفريق" description="من يبيع، وكم له، وكم بقي عليك." actions={actions} />
+        <PageHeader title="الفريق" actions={actions} />
         <EmptyState
           icon={<UsersThree size={24} />}
           title="لا يوجد مندوبون بعد"
-          description="أضِف أول مندوب، ثم اختره عند تسجيل البيع لتُقسم أرباح العملية بينكما فورًا."
           action={
             <Button leadingIcon={<Plus size={16} weight="bold" />} onClick={() => setAddOpen(true)}>
               إضافة مندوب
@@ -250,7 +249,7 @@ export function RepsList() {
 
   return (
     <>
-      <PageHeader title="الفريق" description="من يبيع، وكم له، وكم بقي عليك." actions={actions} />
+      <PageHeader title="الفريق" actions={actions} />
 
       <div className="grid gap-4 lg:grid-cols-[330px_minmax(0,1fr)]">
         <BalanceDevice

@@ -103,7 +103,7 @@ export function OrdersView() {
   if (!loaded) {
     return (
       <>
-        <PageHeader title="الطلبيات" description="كل رحلة توصيل وما حملته." />
+        <PageHeader title="الطلبيات" />
         <div className="flex flex-col gap-5">
           <Skeleton className="h-40 rounded-[var(--radius-2xl)]" />
           <Skeleton className="h-80 rounded-[var(--radius-2xl)]" />
@@ -120,7 +120,6 @@ export function OrdersView() {
            delivery latch already reports, in full, with its own «من أصل» whole: two
            places for one number is one place too many, and the header is the one that
            cannot explain itself (VISUAL-LAW §15). */
-        description={`طلبيات: ${formatNumber(view.total, { locale: settings.locale })}`}
         actions={
           canRecord ? (
             <Button
@@ -252,11 +251,6 @@ export function OrdersView() {
               <EmptyState
                 icon={<Package size={24} />}
                 title="لا طلبيات بعد"
-                description={
-                  canRecord
-                    ? "سجّل طلبية: عدّة أصناف، رحلة واحدة، أجرة توصيل واحدة."
-                    : "لم تُسجَّل أي طلبية بعد."
-                }
                 action={
                   canRecord ? (
                     <Button leadingIcon={<Plus size={16} />} onClick={() => setBuilding(true)}>

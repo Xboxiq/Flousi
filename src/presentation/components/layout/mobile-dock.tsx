@@ -2,34 +2,34 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { House, Package, Calculator, ChartBar, Plus } from "@phosphor-icons/react";
+import { House, Receipt, UsersThree, ChartBar } from "@phosphor-icons/react";
 import type { Capability } from "@/domain";
 import { useAccess } from "@/presentation/hooks/use-access";
 import { cn } from "@/presentation/lib/cn";
 
+/**
+ * The four destinations a phone gets, and they are not the first four of the
+ * sidebar: a rail is a map of the product, a tab bar is the merchant's own
+ * shortlist. On the road he is checking trips and people, not editing costs.
+ */
 const ITEMS: { label: string; href: string; icon: typeof House; needs?: Capability }[] = [
   { label: "الرئيسية", href: "/dashboard", icon: House, needs: "viewCosts" },
-  { label: "المنتجات", href: "/products", icon: Package, needs: "viewProducts" },
-  { label: "الحاسبة", href: "/calculator", icon: Calculator, needs: "viewCosts" },
+  { label: "الطلبيات", href: "/orders", icon: Receipt, needs: "viewProducts" },
+  { label: "الفريق", href: "/reps", icon: UsersThree, needs: "viewTeam" },
   { label: "التقارير", href: "/reports", icon: ChartBar, needs: "viewReports" },
 ];
 
 /**
- * A floating dock for phones (from the client's feedback: the raised pill nav).
+ * The mobile bar, and it is never the desktop sidebar folded up.
  *
- * A lifted rail where the active destination sits in its own raised capsule —
- * the selection is a physical position, not a colour swap.
+ * It replaces the floating dock, for two measured reasons rather than taste. The
+ * dock carried its own «إضافة منتج» circle, which was the SECOND copy of a button
+ * the top bar already showed — two primaries on one screen, and the rule is one.
+ * And a floating pill hovering over content has to be dodged: a bar that sits in
+ * the layout ends the page where the page ends.
  *
- * Only the active key wears its label (RECIPES R44): it shows a FILLED icon and
- * the name inside the capsule, while the others are outline icons with the name
- * kept for assistive tech. Outline ⇄ filled is the whole state grammar — never a
- * different icon. At the rail's end sits the one verb worth a permanent button,
- * as a raised accent circle (R45). The active key is INK, not accent: with a
- * coloured primary on the same rail, two accents compete and neither points
- * (§6 — one spot deserves the colour). Being here is said by the seated capsule.
- *
- * The drawer is NOT repeated here: the topbar's own key already opens it, and
- * the duplicate cost the rail its fit next to the primary at 320px.
+ * Every label is drawn, on every tab. Hiding three of four behind an icon saves
+ * nothing at 390px and costs a merchant who does not know what a glyph means.
  *
  * Hidden from `lg` up, where the sidebar already does this job.
  */
@@ -41,44 +41,27 @@ export function MobileDock() {
   return (
     <nav
       aria-label="التنقّل السريع"
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[max(12px,env(safe-area-inset-bottom))] lg:hidden"
+      className="sticky bottom-0 z-40 flex h-[calc(var(--h-tabbar)+env(safe-area-inset-bottom))] border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
-      <div className="pointer-events-auto flex items-center gap-2">
-        <div className="dock flex items-center gap-1 p-1.5">
-          {items.map((item) => {
-            const active = pathname.startsWith(item.href);
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "flex min-h-11 items-center justify-center gap-1.5 rounded-full",
-                  "transition-colors duration-[var(--motion-fast)] ease-[var(--ease-out)]",
-                  active ? "dock-active min-w-11 px-3 text-fg" : "min-w-10 px-1.5 text-muted",
-                )}
-              >
-                <Icon size={20} weight={active ? "fill" : "regular"} />
-                {active ? (
-                  <span className="text-[12px] font-bold">{item.label}</span>
-                ) : (
-                  <span className="sr-only">{item.label}</span>
-                )}
-              </Link>
-            );
-          })}
-        </div>
-        {/* the one verb worth a permanent button: raised, round, accent (R45) */}
-        <Link
-          href="/products/new"
-          aria-label="إضافة منتج"
-          title="إضافة منتج"
-          className="molded molded-accent flex size-13 items-center justify-center rounded-full text-accent-fg"
-        >
-          <Plus size={23} weight="bold" />
-        </Link>
-      </div>
+      {items.map((item) => {
+        const active = pathname === item.href || pathname.startsWith(item.href + "/");
+        const Icon = item.icon;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={active ? "page" : undefined}
+            className={cn(
+              "flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5",
+              "transition-colors duration-[var(--motion-fast)] ease-[var(--ease-out)]",
+              active ? "text-accent" : "text-subtle",
+            )}
+          >
+            <Icon size={20} weight={active ? "fill" : "regular"} />
+            <span className="text-[10px] font-bold">{item.label}</span>
+          </Link>
+        );
+      })}
     </nav>
   );
 }

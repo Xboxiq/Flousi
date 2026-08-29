@@ -74,7 +74,6 @@ export function CalculatorView() {
     <>
       <PageHeader
         title="حاسبة الأرباح"
-        description="جرّب التسعير والتكاليف فورًا، دون الحاجة للحفظ."
       />
 
       <div className="scene-field p-4 sm:p-6 lg:p-8" data-plane="field">
