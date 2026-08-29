@@ -337,3 +337,39 @@ product that judges money needs both. Those are extensions, and every one of the
 commented as such in `ritm/tokens.css` rather than blended in as though the client had
 chosen it. The same clause as §18.1, arrived at from the other direction: where a role
 needs a value the source does not provide, that is a NEW token — and it says whose it is.
+
+
+---
+
+## §20 · بوابة مكافحة الرداءة / WHAT THE GATE FOUND
+
+`ritm-anti-slop-gate` run over every rebuilt surface. Evidence in
+`gates/phase-ritm-anti-slop-gate.md`. Three clauses come out of it.
+
+### 20.1 · A label over a heading is decoration; a label over a list is a heading
+
+The scanner flags every small letterspaced label as a kicker. It is right about half
+of them and wrong about the other half, and the difference is what sits underneath:
+
+* over a HEADING, restating it — decoration. `01 · COLOUR SYSTEM` above «اللون له دور»
+  and `NEEDS YOU` above «ثلاثة تحصيلات تأخّرت» were both deleted.
+* over a LIST or a panel, being its only label — a heading. Those stay.
+
+The rule that follows: never let an eyebrow and a heading say the same thing. If the
+eyebrow is doing work, it is the heading and the heading is redundant.
+
+### 20.2 · A label the merchant reads is Arabic
+
+The dashboard's own navigation was labelling its groups `TODAY / MONEY / REVIEW`.
+Nobody noticed for a whole build, because the reviewer reads English. Any string that
+reaches a user is Arabic; Latin is for token names, figures and this manual's own
+stamps. A bilingual label that says the same thing twice is one label too many.
+
+### 20.3 · A responsive rule that is only drawn is a wish
+
+`d9-responsive` describes what happens at 360. It described it correctly and proved
+nothing. The first honest attempt to measure it failed twice: once because the check
+was pointed at a fixed 1440 artboard (a frame at 390 measures the frame), and once on
+a real defect — crumb links 20px tall, under the 24 minimum. `p5-mobile` now exists so
+that the media queries actually run and the audit can measure them. **Every rule this
+document states about a size, a mode or a direction needs a surface where it executes.**

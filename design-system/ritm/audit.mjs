@@ -139,9 +139,18 @@ for (const f of pages) {
       const txt = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim());
       const label = (el.textContent || "").trim().slice(0, 22);
 
-      /* nothing may fall off the plane: overflow:hidden hides the defect, it
-         does not fix it, and the footer of one brand board was lost this way */
-      if (b.width && b.height &&
+      /* Nothing may fall off the plane: overflow:hidden hides the defect, it does
+         not fix it, and the footer of one brand board was lost this way. Content
+         inside a deliberate vertical scroller is exempt — on a phone frame,
+         below the fold is where the rest of the page is supposed to be. */
+      const scrolled = (() => {
+        for (let p = el.parentElement; p && p !== plane.parentElement; p = p.parentElement) {
+          const oy = getComputedStyle(p).overflowY;
+          if ((oy === "auto" || oy === "scroll") && p.scrollHeight > p.clientHeight + 1) return true;
+        }
+        return false;
+      })();
+      if (b.width && b.height && !scrolled &&
           (b.bottom > pb.bottom + 1 || b.top < pb.top - 1 || b.right > pb.right + 1 || b.left < pb.left - 1))
         push(out.clip, `${el.tagName.toLowerCase()} «${label}»`);
 
@@ -187,6 +196,38 @@ for (const f of pages) {
   if (errs.length) console.log(`      JS     ${errs[0]}`);
   for (const [k, v] of findings) console.log(`      ${k.padEnd(7)}${v.join("  ·  ")}`);
 }
+
+/* ── 3 · the product screens at 390, in RTL ────────────────────────────────
+   The responsive board DESCRIBES what happens at 360; p5 IS it, so this measures
+   the thing rather than the drawing of it. A rule that only exists on a spec
+   sheet is a wish. Two failures matter here and both are invisible in source: a
+   page that scrolls sideways, and a tap target under 24. The 1440 artboards are
+   deliberately not in this pass — a fixed 1440 frame at 390 measures the frame. */
+console.log("\n── 390 × 844 · RTL ─────────────────────────────────────");
+const phone = await browser.newContext({ viewport: { width: 390, height: 844 },
+  isMobile: true, hasTouch: true });
+const pp = await phone.newPage();
+for (const f of pages.filter(n => /mobile/.test(n))) {
+  await pp.goto(`http://127.0.0.1:${PORT}/${f}`, { waitUntil: "load", timeout: 30000 });
+  await pp.evaluate(() => document.fonts.ready).catch(() => {});
+  await pp.waitForTimeout(500);
+  const r = await pp.evaluate(() => {
+    const de = document.documentElement;
+    const small = [];
+    for (const el of document.querySelectorAll("button,a,input,select,[role=button]")) {
+      const b = el.getBoundingClientRect();
+      if (b.width && b.height && Math.min(b.width, b.height) < 24)
+        small.push(`${el.tagName.toLowerCase()} ${Math.round(b.width)}×${Math.round(b.height)}`);
+    }
+    return { sideways: de.scrollWidth - de.clientWidth, small: [...new Set(small)].slice(0, 4) };
+  });
+  const ok = r.sideways <= 1 && !r.small.length;
+  if (!ok) bad++;
+  console.log(`  ${ok ? "✓" : "✗"} ${f}` +
+    (r.sideways > 1 ? `  scrolls sideways by ${r.sideways}px` : "") +
+    (r.small.length ? `  under 24: ${r.small.join(", ")}` : ""));
+}
+await phone.close();
 
 await browser.close(); srv.close();
 console.log(bad ? `\n${bad} finding group(s). Nothing here ships until this reads clean.`

@@ -43,16 +43,16 @@ export const mark = (size = 24, fill = "var(--accent)") =>
      <rect x="0" y="7" width="4.2" height="32" rx="2.1"/><rect x="6.6" y="3.5" width="4.2" height="29" rx="2.1"/><rect x="13.2" y="0" width="4.2" height="26" rx="2.1"/><rect x="19.8" y="5.5" width="4.2" height="14" rx="2.1"/></svg>`;
 
 export const NAV = [
-  { group: "اليوم", eyebrow: "TODAY", items: [
+  { group: "اليوم", items: [
     { id: "ops",        label: "العمليات",   icon: "ops" },
     { id: "collect",    label: "التحصيلات",  icon: "collect", count: "3" },
   ]},
-  { group: "المال", eyebrow: "MONEY", items: [
+  { group: "المال", items: [
     { id: "commission", label: "العمولات",   icon: "commission" },
     { id: "expense",    label: "المصروفات",  icon: "expense" },
     { id: "settle",     label: "التسويات",   icon: "settle" },
   ]},
-  { group: "المتابعة", eyebrow: "REVIEW", items: [
+  { group: "المتابعة", items: [
     { id: "reps",       label: "المندوبون",  icon: "reps" },
     { id: "target",     label: "الأهداف",    icon: "target" },
     { id: "report",     label: "التقارير",   icon: "report" },
@@ -81,7 +81,7 @@ export const sidebar = (active) => `
   <div class="brand">${mark(22)}<b>رِتم</b><span class="eyebrow spacer">IQ</span></div>
   ${NAV.map(g => `
     <nav class="navgroup">
-      <span class="eyebrow">${g.eyebrow}</span>
+      <span class="navgroup-label">${g.group}</span>
       ${g.items.map(i => `
         <a class="navitem" href="#${i.id}"${i.id === active ? ' aria-current="page"' : ""}>
           ${icon(i.icon)}<span>${i.label}</span>

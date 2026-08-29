@@ -248,7 +248,10 @@ body{
   padding-inline:var(--s-4);border-bottom:1px solid var(--line);flex:none}
 .sidebar .brand b{font-size:var(--fs-h3);font-weight:var(--fw-black);letter-spacing:var(--ls-head)}
 .navgroup{padding:var(--s-4) var(--s-2) 0}
-.navgroup>.eyebrow{padding-inline:var(--s-2);display:block;margin-bottom:var(--s-1)}
+/* a group label is a heading for the items under it, not a kicker over a
+   heading — so it is Arabic, like everything else the merchant reads */
+.navgroup-label{display:block;padding-inline:var(--s-2);margin-bottom:var(--s-1);
+  font-size:var(--fs-caption);font-weight:var(--fw-bold);color:var(--fg-3)}
 .navitem{display:flex;align-items:center;gap:var(--s-2);height:var(--h-control);
   padding-inline:var(--s-2);margin-block:1px;border-radius:var(--r-control);
   color:var(--fg-2);text-decoration:none;font-size:var(--fs-body);font-weight:var(--fw-medium);
@@ -263,7 +266,9 @@ body{
 .topbar{height:var(--h-header);flex:none;display:flex;align-items:center;gap:var(--s-3);
   padding-inline:var(--s-6);border-bottom:1px solid var(--line);background:var(--bg)}
 .crumbs{display:flex;align-items:center;gap:var(--s-15);font-size:var(--fs-small);color:var(--fg-3)}
-.crumbs a{color:inherit;text-decoration:none}
+/* a crumb is a link people tap: it needs a hit box, not just a line height */
+.crumbs a{color:inherit;text-decoration:none;display:inline-flex;align-items:center;
+  min-height:24px;padding-inline:2px;border-radius:var(--r-sm,4px)}
 .crumbs a:hover{color:var(--fg-2)}
 .crumbs .sep{color:var(--line-strong)}
 .crumbs [aria-current]{color:var(--fg);font-weight:var(--fw-bold)}
@@ -417,8 +422,9 @@ table.tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--f
 .rank .pos{font-family:var(--font-lat);font-size:var(--fs-caption);color:var(--fg-3);direction:ltr;unicode-bidi:isolate}
 
 .progress{height:6px;background:var(--surface-2);border-radius:var(--r-capsule);overflow:hidden}
-.progress>i{display:block;height:100%;background:var(--accent);border-radius:var(--r-capsule);
-  transition:width var(--t-enter) var(--ease-move)}
+/* No transition here. Animating width is on the motion blacklist, and a progress
+   fill that grows on load delays the number beside it for no reason. It is set. */
+.progress>i{display:block;height:100%;background:var(--accent);border-radius:var(--r-capsule)}
 .progress.is-thin{height:3px}
 
 /* ── 10 · CHARTS · لغة الرسوم ───────────────────────────────────────────────
@@ -517,3 +523,8 @@ table.tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--f
   .table-wrap table.tbl{display:none}
   .metric.is-lead .amount{font-size:var(--fs-h1)}
 }
+
+/* A measured value printed beside its swatch is DATA, not a label over a heading.
+   It gets its own class so the slop scanner and the reader agree about what it is. */
+.spec-value{font-family:var(--font-lat);font-size:var(--fs-label);letter-spacing:.08em;
+  color:var(--fg-3);direction:ltr;unicode-bidi:isolate;display:inline-block}
