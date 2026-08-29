@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import {
-  IdentificationBadge,
   Lock,
   LockOpen,
   PencilSimple,
@@ -15,28 +14,21 @@ import {
   CAPABILITIES,
   CAPABILITY_LABELS,
   isOwnerRole,
-  type Capability,
   type Role,
 } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { useAccess } from "@/presentation/hooks/use-access";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
-  Badge,
   Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   Dialog,
   Field,
   Input,
   Select,
   Skeleton,
 } from "@/presentation/components/ui";
+import { Grid, Panel, Toolbar, Metric, Chip, Disclose } from "@/presentation/components/structure";
 import { cn } from "@/presentation/lib/cn";
-import { Ladder, Rung } from "@/presentation/features/dashboard/ladder";
 import { RoleDialog } from "./role-dialog";
 
 /**
@@ -63,7 +55,6 @@ export function AccessView() {
   const [switching, setSwitching] = useState<Role | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<Role | null>(null);
   const [pinOpen, setPinOpen] = useState(false);
-  const [whyOpen, setWhyOpen] = useState(false);
 
   const activeReps = useMemo(() => reps.filter((r) => r.status === "active"), [reps]);
 
@@ -84,95 +75,127 @@ export function AccessView() {
       <PageHeader
         title="الأدوار والوصول"
         actions={
-          <Button leadingIcon={<Plus size={16} />} onClick={() => setCreating(true)}>
+          <Button size="sm" leadingIcon={<Plus size={15} />} onClick={() => setCreating(true)}>
             دور جديد
           </Button>
         }
       />
 
-      <div className="flex flex-col gap-6">
-        {/* The claim that must be read before anything else on this screen (gate
-            P3/G0) IS the latch: a closed rung states its own answer, so the sentence
-            is at rest in bold and the four clauses of reasoning behind it are one tap
-            away, word for word. It used to be a five-clause paragraph in a bordered
-            note, on the screen a merchant opens in order to hand a device to someone
-            else (VISUAL-LAW §15). */}
-        <Ladder solo>
-          <Rung
-            title="هذه أوضاع عرض على هذا الجهاز، وليست حسابات دخول"
+      <Grid>
+        {/* ── the claim that must be read before anything else here (P3/G0) ──
+            It stays a full sentence at rest rather than a latch: this is the one
+            screen a merchant opens in order to hand a device to somebody else, and
+            «this is not a login» is not a detail to discover on a second visit. */}
+        <Panel span={6} title="ما الذي يضبطه الدور">
+          {/* The claim stands; the reasoning opens. It is the sentence a merchant
+              must not miss on the screen he uses to hand a device to someone else,
+              and four clauses of justification at rest is a paragraph nobody reads
+              before doing the thing it is warning about (VISUAL-LAW §15). */}
+          <Disclose
+            claim="هذه أوضاع عرض على هذا الجهاز، وليست حسابات دخول."
             hint="ما الذي يضبطه الدور، وما لا يضبطه."
-            open={whyOpen}
-            onToggle={() => setWhyOpen((v) => !v)}
           >
-            <p className="max-w-[68ch] text-sm leading-relaxed text-muted">
-              رِتم يعمل كله داخل متصفّحك بلا خادم، ومن يحمل الجهاز يستطيع قراءة المخزَّن فيه.
-              فالدور يضبط ما يُعرَض وما يُسمَح به، وهو تنظيم حقيقي ونافع: تُعطي مندوبك جهازاً
-              يفتح على صفحته وحدها، وتُبعد أسعار الشراء عن شاشة مشتركة، وتمنع نقرة خاطئة على
-              «إغلاق الشهر». لكنه لا يحمي البيانات من شخص يملك الجهاز ويعرف ما يفعل.
+            <p className="text-[13px] leading-relaxed text-muted">
+              رِتم يعمل كله داخل متصفّحك بلا خادم، ومن يحمل الجهاز يستطيع قراءة المخزَّن
+              فيه. فالدور يضبط ما يُعرَض وما يُسمَح به، وهو تنظيم حقيقي ونافع: تُعطي
+              مندوبك جهازاً يفتح على صفحته وحدها، وتُبعد أسعار الشراء عن شاشة مشتركة،
+              وتمنع نقرة خاطئة على «إغلاق الشهر».
             </p>
-            <p className="mt-3 max-w-[68ch] text-sm leading-relaxed text-muted">
-              ورمز الرجوع يُخزَّن كبصمة مشفَّرة لا كأرقام، وهذا يمنع قراءته بنظرة على المخزَّن،
-              لا أكثر.
+            <p className="text-[13px] leading-relaxed text-muted">
+              لكنه لا يحمي البيانات من شخص يملك الجهاز ويعرف ما يفعل. ورمز الرجوع
+              يُخزَّن كبصمة مشفَّرة لا كأرقام، وهذا يمنع قراءته بنظرة على المخزَّن، لا
+              أكثر.
             </p>
-          </Rung>
-        </Ladder>
+          </Disclose>
+        </Panel>
 
-        {/* One line and one verb, so it is one ROW and not a card with a void where
-            the paragraph used to be: shortening the copy without shortening the box
-            just moves the noise into empty space (VISUAL-LAW §10). */}
-        <Card>
-          <CardHeader className="flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-            <div>
-              <CardTitle>رمز الرجوع</CardTitle>
-              <CardDescription>
-                {pinSet
-                  ? "الرجوع إلى وضع المالك يطلب الرمز."
-                  : "لا رمز محدَّد، فالرجوع إلى وضع المالك بنقرة واحدة."}
-              </CardDescription>
-            </div>
-            <div className="flex flex-wrap items-center gap-2 sm:ms-auto">
-              <Button
-                variant="secondary"
-                size="sm"
-                leadingIcon={pinSet ? <Lock size={16} /> : <LockOpen size={16} />}
-                onClick={() => setPinOpen(true)}
-              >
-                {pinSet ? "تغيير الرمز" : "تحديد رمز"}
+        {/* ── the mode this device is in right now ────────────────────────── */}
+        <Panel span={3} title="وضع هذا الجهاز" bodyClassName="flex flex-col gap-3">
+          <Metric
+            size="sm"
+            amount={access.role.name}
+            name={
+              access.isOwner
+                ? "بلا قيود"
+                : `${AccessPolicy.sanitise(access.role.capabilities).length} صلاحية من ${CAPABILITIES.length}`
+            }
+          />
+          {!access.isOwner && (
+            <p className="text-[12px] leading-relaxed text-muted">
+              ما لا يسمح به هذا الوضع لا يظهر أصلاً: القائمة الجانبية نفسها مُصفّاة، فلا
+              يقود زر إلى رفض.
+            </p>
+          )}
+        </Panel>
+
+        {/* ── the return code: the one decision on this screen ────────────── */}
+        <Panel
+          span={3}
+          accent={!pinSet}
+          title="رمز الرجوع"
+          bodyClassName="flex h-full flex-col gap-3"
+        >
+          <p className="text-[13px] leading-relaxed text-muted">
+            {pinSet
+              ? "الرجوع إلى وضع المالك يطلب الرمز، فلا يعود مندوب إلى شاشتك بنقرة."
+              : "لا رمز محدَّد، فالرجوع إلى وضع المالك بنقرة واحدة. حدّده قبل أن تسلّم الجهاز."}
+          </p>
+          <div className="mt-auto flex flex-wrap items-center gap-2">
+            <Button
+              variant={pinSet ? "secondary" : "primary"}
+              size="sm"
+              leadingIcon={pinSet ? <Lock size={15} /> : <LockOpen size={15} />}
+              onClick={() => setPinOpen(true)}
+            >
+              {pinSet ? "تغيير الرمز" : "تحديد رمز"}
+            </Button>
+            {pinSet && (
+              <Button variant="ghost" size="sm" onClick={() => void setPin(null)}>
+                إزالة
               </Button>
-              {pinSet && (
-                <Button variant="ghost" size="sm" onClick={() => void setPin(null)}>
-                  إزالة الرمز
-                </Button>
-              )}
-            </div>
-          </CardHeader>
-        </Card>
+            )}
+          </div>
+        </Panel>
 
-        <Card>
-          <CardHeader>
-            <div>
-              <CardTitle>الأدوار</CardTitle>
-              <CardDescription>
-                دور المالك ثابت: هو طريق الرجوع دائماً.
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <ul className="flex flex-col">
-              {roles.map((role) => (
-                <RoleRow
-                  key={role.id}
-                  role={role}
-                  active={role.id === access.role.id}
-                  onEdit={() => setEditing(role)}
-                  onDelete={() => setConfirmDelete(role)}
-                  onSwitch={() => setSwitching(role)}
-                />
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
+        {/* ── the work: every role ─────────────────────────────────────────── */}
+        <Panel
+          span={12}
+          bare
+          footer={
+            <span className="text-[11px] text-subtle">
+              دور المالك ثابت: هو طريق الرجوع دائماً، فلا يُعدَّل ولا يُحذف.
+            </span>
+          }
+        >
+          <Toolbar title="الأدوار">
+            <span className="r-spacer" />
+          </Toolbar>
+          <div className="r-tablewrap">
+            <table className="r-tbl">
+              <thead>
+                <tr>
+                  <th>الدور</th>
+                  <th className="pri-3">ماذا يرى</th>
+                  <th className="pri-2 w-[22%] min-w-[130px]">الصلاحيات</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {roles.map((role) => (
+                  <RoleRow
+                    key={role.id}
+                    role={role}
+                    active={role.id === access.role.id}
+                    onEdit={() => setEditing(role)}
+                    onDelete={() => setConfirmDelete(role)}
+                    onSwitch={() => setSwitching(role)}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+      </Grid>
 
       <RoleDialog
         key={editing?.id ?? (creating ? "new" : "closed")}
@@ -229,6 +252,16 @@ export function AccessView() {
   );
 }
 
+/**
+ * One role, as a table row.
+ *
+ * The capability chips are gone. Every role printed its whole permission list as
+ * seven or eight pills that restated the count sitting two lines above them — a
+ * wall of badges that made three roles look like thirty facts, and that nobody
+ * reads word by word. What a role IS gets one sentence in its own column; the
+ * exact matrix lives in the edit sheet, where it is a set of switches you act on
+ * rather than a list you scan.
+ */
 function RoleRow({
   role,
   active,
@@ -245,80 +278,75 @@ function RoleRow({
   const owner = isOwnerRole(role);
   const editable = AccessPolicy.isEditable(role);
   const granted = owner ? CAPABILITIES.length : AccessPolicy.sanitise(role.capabilities).length;
+  const share = CAPABILITIES.length > 0 ? granted / CAPABILITIES.length : 0;
 
   return (
-    <li
-      data-row
-      className="flex flex-col gap-3 border-b border-border-soft py-4 last:border-b-0 sm:flex-row sm:items-start"
-    >
-      <span className="squircle size-10 shrink-0 text-muted" aria-hidden>
-        <IdentificationBadge size={19} weight="bold" />
-      </span>
-
-      <div className="min-w-0 flex-1">
+    <tr data-row>
+      <td>
         <span className="flex flex-wrap items-center gap-2">
-          <span className="font-semibold text-fg">{role.name}</span>
-          {active && <Badge tone="accent">الوضع الحالي</Badge>}
-          {owner && <Badge tone="neutral">ثابت</Badge>}
+          <span className="font-bold text-fg">{role.name}</span>
+          {active && <Chip tone="accent" className="h-[18px] text-[10px]">الوضع الحالي</Chip>}
+          {owner && <Chip className="h-[18px] text-[10px]">ثابت</Chip>}
         </span>
-        {role.description && (
-          <p className="mt-1 max-w-[52ch] text-sm leading-relaxed text-muted">{role.description}</p>
-        )}
-        <p className="mt-1.5 text-xs text-subtle">
-          صلاحيات: {granted} من {CAPABILITIES.length}
-          {owner ? " (كلها)" : ""}
-        </p>
-        {!owner && granted > 0 && (
-          <ul className="mt-2 flex flex-wrap gap-1.5">
-            {AccessPolicy.sanitise(role.capabilities).map((c: Capability) => (
-              <li
-                key={c}
-                className="rounded-full border border-border-soft bg-surface-2 px-2 py-0.5 text-[11px] text-muted"
-              >
-                {CAPABILITY_LABELS[c]}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <div className="flex shrink-0 flex-wrap items-center gap-2">
-        {!active && (
-          <Button variant="secondary" size="sm" leadingIcon={<UserSwitch size={15} />} onClick={onSwitch}>
-            استخدم هذا الوضع
-          </Button>
-        )}
-        {editable && (
-          <>
+      </td>
+      <td className="pri-3 max-w-[46ch] whitespace-normal py-2 text-muted">
+        {role.description ?? "—"}
+      </td>
+      <td className="pri-2">
+        <span className="flex items-center gap-2">
+          <span className="h-2 flex-1 overflow-hidden rounded-full bg-surface-2">
+            <i
+              className="block h-full rounded-full"
+              style={{
+                width: `${Math.max(share > 0 ? 4 : 0, share * 100)}%`,
+                background: owner ? "var(--accent-fill)" : "var(--series-3)",
+              }}
+            />
+          </span>
+          <bdi className="r-num w-[4.5rem] shrink-0 text-end text-[11px] text-subtle">
+            {granted} / {CAPABILITIES.length}
+          </bdi>
+        </span>
+      </td>
+      <td className="text-end">
+        <span className="flex flex-wrap items-center justify-end gap-1">
+          {!active && (
             <Button
-              variant="ghost"
+              variant="secondary"
               size="sm"
-              aria-label={`تعديل ${role.name}`}
-              leadingIcon={<PencilSimple size={15} />}
-              onClick={onEdit}
+              leadingIcon={<UserSwitch size={14} />}
+              onClick={onSwitch}
             >
-              تعديل
+              استخدم
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={`حذف ${role.name}`}
-              onClick={onDelete}
-            >
-              <Trash size={15} />
-            </Button>
-          </>
-        )}
-      </div>
-    </li>
+          )}
+          {editable && (
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-label={`تعديل ${role.name}`}
+                leadingIcon={<PencilSimple size={14} />}
+                onClick={onEdit}
+              >
+                تعديل
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`حذف ${role.name}`}
+                onClick={onDelete}
+              >
+                <Trash size={15} />
+              </Button>
+            </>
+          )}
+        </span>
+      </td>
+    </tr>
   );
 }
 
-/**
- * Switching in. A role without `viewAllSales` MUST be bound to a rep, otherwise the
- * session sees nobody's sales — the policy's honest answer, but a confusing screen.
- * The sheet refuses to switch until a rep is chosen.
- */
 function SwitchDialog({
   role,
   reps,

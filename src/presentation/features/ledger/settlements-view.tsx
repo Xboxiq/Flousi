@@ -81,10 +81,10 @@ export function SettlementsView() {
                 <thead>
                   <tr>
                     <th>العملة</th>
-                    <th className="n">استحقّوا</th>
-                    <th className="n">دُفع</th>
+                    <th className="n pri-3">استحقّوا</th>
+                    <th className="n pri-2">دُفع</th>
                     <th className="n">المتبقّي</th>
-                    <th className="n">الدفعات</th>
+                    <th className="n pri-3">الدفعات</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -95,8 +95,8 @@ export function SettlementsView() {
                           {line.currency}
                         </bdi>
                       </td>
-                      <td className="n">{money(line.earned, line.currency)}</td>
-                      <td className="n">{money(line.paid, line.currency)}</td>
+                      <td className="n pri-3">{money(line.earned, line.currency)}</td>
+                      <td className="n pri-2">{money(line.paid, line.currency)}</td>
                       {/* The WORD, not just the colour: an absolute figure cannot
                           tell a debt from an advance, and «مدفوع مقدّماً» painted the
                           same red as «مستحقّ» is the opposite reading. */}
@@ -106,7 +106,7 @@ export function SettlementsView() {
                           {line.outstanding > 0 ? "مستحقّ" : line.outstanding < 0 ? "مقدّم" : "مسوّى"}
                         </span>
                       </td>
-                      <td className="n text-subtle">{line.count}</td>
+                      <td className="n pri-3 text-subtle">{line.count}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -187,9 +187,9 @@ export function SettlementsView() {
                   <tr>
                     <th>المندوب</th>
                     <th className="n">المبلغ</th>
-                    <th>التاريخ</th>
-                    <th>الطريقة</th>
-                    <th>الفترة</th>
+                    <th className="pri-2">التاريخ</th>
+                    <th className="pri-3">الطريقة</th>
+                    <th className="pri-3">الفترة</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -213,11 +213,11 @@ export function SettlementsView() {
                         )}
                       </td>
                       <td className="n font-bold">{money(r.amount, r.currency)}</td>
-                      <td className="text-muted">
+                      <td className="pri-2 text-muted">
                         {formatDate(r.paidAt, { locale: settings.locale })}
                       </td>
-                      <td className="text-muted">{r.method ?? "—"}</td>
-                      <td className="text-muted">{r.periodLabel ?? "—"}</td>
+                      <td className="pri-3 text-muted">{r.method ?? "—"}</td>
+                      <td className="pri-3 text-muted">{r.periodLabel ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>

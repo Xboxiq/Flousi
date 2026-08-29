@@ -212,19 +212,19 @@ export function PeriodsView() {
                 <thead>
                   <tr>
                     <th>الفترة</th>
-                    <th className="n">الإيراد</th>
-                    <th className="n">التكاليف</th>
+                    <th className="n pri-3">الإيراد</th>
+                    <th className="n pri-3">التكاليف</th>
                     <th className="n">صافي الربح</th>
-                    <th className="n">الهامش</th>
-                    <th>أُغلقت</th>
+                    <th className="n pri-2">الهامش</th>
+                    <th className="pri-2">أُغلقت</th>
                   </tr>
                 </thead>
                 <tbody>
                   {closed.map((period) => (
                     <tr key={period.id}>
                       <td className="font-bold">{period.label}</td>
-                      <td className="n">{period.summary ? money(period.summary.revenue) : "—"}</td>
-                      <td className="n">{period.summary ? money(period.summary.totalCost) : "—"}</td>
+                      <td className="n pri-3">{period.summary ? money(period.summary.revenue) : "—"}</td>
+                      <td className="n pri-3">{period.summary ? money(period.summary.totalCost) : "—"}</td>
                       <td
                         className={`n font-bold ${
                           (period.summary?.netProfit ?? 0) < 0 ? "text-danger" : "text-fg"
@@ -232,12 +232,12 @@ export function PeriodsView() {
                       >
                         {period.summary ? money(period.summary.netProfit) : "—"}
                       </td>
-                      <td className="n text-muted">
+                      <td className="n pri-2 text-muted">
                         {period.summary
                           ? formatPercent(period.summary.margin, { locale: settings.locale })
                           : "—"}
                       </td>
-                      <td className="text-muted">
+                      <td className="pri-2 text-muted">
                         {period.closedAt
                           ? formatDate(period.closedAt, { locale: settings.locale })
                           : "—"}

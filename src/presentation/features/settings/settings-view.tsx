@@ -20,19 +20,8 @@ import {
   clearAll,
 } from "@/infrastructure/persistence/local-storage/backup";
 import { PageHeader } from "@/presentation/components/layout/page-header";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Dialog,
-  Field,
-  Input,
-  Segmented,
-  Select,
-} from "@/presentation/components/ui";
+import { Button, Dialog, Field, Input, Segmented, Select, Skeleton } from "@/presentation/components/ui";
+import { Grid, Panel } from "@/presentation/components/structure";
 import { cn } from "@/presentation/lib/cn";
 
 const CURRENCIES = [
@@ -60,7 +49,38 @@ const THEME_OPTIONS: { value: ThemePreference; label: string; icon: React.ReactN
   { value: "system", label: "تلقائي", icon: <Desktop size={16} /> },
 ];
 
+/**
+ * The screen is split in two so the form can never initialise from an unhydrated
+ * store.
+ *
+ * `useState(settings)` captures its value on the FIRST render, and on that render
+ * the store still holds its defaults — so the draft was IQD / ar-IQ regardless of
+ * what the merchant had saved, and pressing «حفظ التغييرات» before hydration wrote
+ * those defaults over his real settings. That is the same trap P3 documented on
+ * the targets screen, and the same fix: never seed state from async data. Mounting
+ * the form only once `loaded` is true means its initial value IS the stored one.
+ */
 export function SettingsView() {
+  const loaded = useDataStore((s) => s.loaded);
+
+  if (!loaded) {
+    return (
+      <>
+        <PageHeader title="الإعدادات" />
+        <Grid>
+          <Skeleton className="span-6 h-[200px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[200px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[200px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-6 h-[240px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-6 h-[240px] rounded-[var(--radius-md)]" />
+        </Grid>
+      </>
+    );
+  }
+  return <SettingsForm />;
+}
+
+function SettingsForm() {
   const settings = useDataStore((s) => s.settings);
   const saveSettings = useDataStore((s) => s.saveSettings);
   const reload = useDataStore((s) => s.reload);
@@ -103,36 +123,30 @@ export function SettingsView() {
 
   return (
     <>
-      <PageHeader title="الإعدادات" />
+      <PageHeader
+        title="الإعدادات"
+        actions={
+          <>
+            {saved && (
+              <span aria-live="polite" className="text-[12px] text-muted">
+                تم الحفظ.
+              </span>
+            )}
+            <Button size="sm" onClick={onSave} leadingIcon={<FloppyDisk size={15} />}>
+              حفظ التغييرات
+            </Button>
+          </>
+        }
+      />
 
-      <div className="flex flex-col gap-6">
-        {/* Appearance */}
-        <Card>
-          <CardHeader>
-            <div>
-              <CardTitle>المظهر</CardTitle>
-              <CardDescription>اختر شكل رِتم.</CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Segmented
-              aria-label="المظهر"
-              options={THEME_OPTIONS}
-              value={preference}
-              onChange={setPreference}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Localization */}
-        <Card>
-          <CardHeader>
-            <div>
-              <CardTitle>اللغة والعملة</CardTitle>
-              <CardDescription>العملة واللغة لكامل التطبيق.</CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-3">
+      <Grid>
+        {/* ── the two that change how everything else READS ───────────────── */}
+        <Panel span={6} title="اللغة والعملة" bodyClassName="flex flex-col gap-4">
+          <p className="text-[12px] leading-relaxed text-subtle">
+            العملة تُطبَّق على كل رقم في التطبيق. تغييرها لا يحوّل الأرقام المسجَّلة، فما
+            سُجّل بعملة يبقى بها.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-3">
             <Field label="العملة" htmlFor="currency">
               <Select
                 id="currency"
@@ -141,7 +155,7 @@ export function SettingsView() {
                 onChange={(e) => setDraft({ ...draft, currency: e.target.value })}
               />
             </Field>
-            <Field label="تنسيق الأرقام/التاريخ" htmlFor="locale">
+            <Field label="تنسيق الأرقام والتاريخ" htmlFor="locale">
               <Select
                 id="locale"
                 value={draft.locale}
@@ -157,39 +171,42 @@ export function SettingsView() {
                 onChange={(e) => setDraft({ ...draft, language: e.target.value as "en" | "ar" })}
               />
             </Field>
-          </CardContent>
-        </Card>
+          </div>
+        </Panel>
 
-        {/* Targets moved out of settings entirely in P2. Keeping an input here
-            beside the target store would leave two answers to «ما هدف هذا الشهر؟»,
-            and the old value has already been lifted into that store by
-            `runMigrations` (gate P2/G1). */}
-        <Card>
-          <CardHeader>
-            <div>
-              <CardTitle>الأهداف</CardTitle>
-              <CardDescription>
-                انتقلت الأهداف إلى شاشتها الخاصة: هدف للحساب، ولكل مندوب، ولمنتج إن أردت،
-                دائم أو لشهر واحد. هدفك القديم منقول إليها كما هو.
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Button variant="secondary" asChild>
+        {/* ── appearance ─────────────────────────────────────────────────── */}
+        <Panel span={3} title="المظهر" bodyClassName="flex flex-col gap-3">
+          <Segmented
+            aria-label="المظهر"
+            options={THEME_OPTIONS}
+            value={preference}
+            onChange={setPreference}
+          />
+          <p className="text-[12px] leading-relaxed text-subtle">
+            «تلقائي» يتبع إعداد جهازك. يُحفَظ فوراً، فلا يحتاج زر الحفظ.
+          </p>
+        </Panel>
+
+        {/* ── where the targets went ─────────────────────────────────────── */}
+        <Panel span={3} title="الأهداف" bodyClassName="flex h-full flex-col gap-3">
+          <p className="text-[12px] leading-relaxed text-muted">
+            انتقلت الأهداف إلى شاشتها: هدف للحساب، ولكل مندوب، ولمنتج إن أردت، دائم أو
+            لشهر واحد. هدفك القديم منقول إليها كما هو.
+          </p>
+          <div className="mt-auto">
+            <Button variant="secondary" size="sm" asChild>
               <Link href="/targets">فتح الأهداف</Link>
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </Panel>
 
-        {/* Default costs */}
-        <Card>
-          <CardHeader>
-            <div>
-              <CardTitle>التكاليف الافتراضية</CardTitle>
-              <CardDescription>تُملأ تلقائيًا في كل منتج جديد لتوفير الوقت.</CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* ── the defaults that pre-fill a new product ────────────────────── */}
+        <Panel span={6} title="التكاليف الافتراضية" bodyClassName="flex flex-col gap-4">
+          <p className="text-[12px] leading-relaxed text-subtle">
+            تُملأ تلقائياً في كل منتج جديد. لا تمسّ منتجاً موجوداً، فتعديلها هنا لا يغيّر
+            كلفة شيء بعتَه.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="رسوم المنصّة" htmlFor="mp">
               <Input
                 id="mp"
@@ -225,82 +242,75 @@ export function SettingsView() {
                 onChange={(e) => setCost("taxPercent", parseFloat(e.target.value) || 0)}
               />
             </Field>
-          </CardContent>
-        </Card>
+          </div>
+        </Panel>
 
-        <div className="flex items-center gap-3">
-          <Button onClick={onSave} leadingIcon={<FloppyDisk size={16} />}>
-            حفظ التغييرات
-          </Button>
-          {saved && <span className="text-sm text-success">تم الحفظ.</span>}
-        </div>
-
-        {/* Data management */}
-        <Card>
-          <CardHeader>
-            <div>
-              <CardTitle>البيانات</CardTitle>
-              <CardDescription>
-              بياناتك مخزّنة محليًا في هذا المتصفّح. اقرأ{" "}
-              <Link href="/legal/privacy" className="font-medium text-accent hover:underline">
-                سياسة الخصوصية
-              </Link>{" "}
-              و
-              <Link href="/legal/terms" className="font-medium text-accent hover:underline">
-                شروط الاستخدام
-              </Link>
-              .
-            </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            {message && (
-              <p
-                className={cn(
-                  "text-sm",
-                  message.tone === "success" ? "text-success" : "text-danger",
-                )}
-              >
-                {message.text}
-              </p>
-            )}
-            <div className="flex flex-wrap gap-3">
-              <Button
-                variant="secondary"
-                leadingIcon={<DownloadSimple size={16} />}
-                onClick={downloadBackup}
-              >
-                تنزيل نسخة احتياطية
-              </Button>
-              <Button
-                variant="secondary"
-                leadingIcon={<UploadSimple size={16} />}
-                onClick={() => fileRef.current?.click()}
-              >
-                استعادة نسخة
-              </Button>
-              <input
-                ref={fileRef}
-                type="file"
-                accept="application/json"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) void onRestoreFile(file);
-                  e.target.value = "";
-                }}
-              />
-              <Button
-                variant="ghost"
-                leadingIcon={<Warning size={16} />}
-                onClick={() => setConfirmReset(true)}
-              >
-                تصفير كل البيانات
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        {/* ── the data itself, and the one destructive verb in the product ── */}
+        <Panel span={6} title="البيانات" bodyClassName="flex flex-col gap-4">
+          <p className="text-[12px] leading-relaxed text-muted">
+            بياناتك مخزّنة محلياً في هذا المتصفّح وحده. لا خادم، ولا حساب، ولا نسخة عندنا
+            — وهذا يعني أن النسخة الاحتياطية مسؤوليتك. اقرأ{" "}
+            <Link href="/legal/privacy" className="font-bold text-accent hover:underline">
+              سياسة الخصوصية
+            </Link>{" "}
+            و
+            <Link href="/legal/terms" className="font-bold text-accent hover:underline">
+              شروط الاستخدام
+            </Link>
+            .
+          </p>
+          {message && (
+            <p
+              aria-live="polite"
+              className={cn(
+                "text-[13px]",
+                message.tone === "success" ? "text-success" : "text-danger",
+              )}
+            >
+              {message.text}
+            </p>
+          )}
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              leadingIcon={<DownloadSimple size={15} />}
+              onClick={downloadBackup}
+            >
+              تنزيل نسخة احتياطية
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              leadingIcon={<UploadSimple size={15} />}
+              onClick={() => fileRef.current?.click()}
+            >
+              استعادة نسخة
+            </Button>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="application/json"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) void onRestoreFile(file);
+                e.target.value = "";
+              }}
+            />
+          </div>
+          <div className="mt-auto border-t border-line pt-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              leadingIcon={<Warning size={15} />}
+              onClick={() => setConfirmReset(true)}
+            >
+              تصفير كل البيانات
+            </Button>
+          </div>
+        </Panel>
+      </Grid>
 
       <Dialog
         open={confirmReset}

@@ -34,6 +34,17 @@ for (const width of WIDTHS) {
     const out = await page.evaluate(() => ({
       doc: document.documentElement.scrollWidth,
       win: window.innerWidth,
+      /* A table is allowed to scroll in its own box — that is what the box is
+         for — but at 390 it should not NEED to. The system sheds columns by
+         priority (.pri-2 / .pri-3) instead of shrinking, and a table that still
+         overflows at phone width means a column was never given a priority. */
+      tables: [...document.querySelectorAll(".r-tablewrap")]
+        .map((w) => ({
+          over: w.scrollWidth - w.clientWidth,
+          cols: w.querySelectorAll("thead th").length,
+          title: (w.closest(".r-card")?.querySelector("h2")?.textContent || "بلا عنوان").trim(),
+        }))
+        .filter((t) => t.over > 4),
       culprits: [...document.querySelectorAll("main *")]
         .filter((el) => {
           if (el.getBoundingClientRect().width <= window.innerWidth + 1) return false;
@@ -51,6 +62,12 @@ for (const width of WIDTHS) {
       console.log(`✗ ${width}  ${route}   document ${out.doc} > viewport ${out.win}`);
       for (const c of out.culprits) console.log(`     ${c}`);
     }
+    if (width === 390 && out.tables.length) {
+      bad++;
+      console.log(`✗ ${width}  ${route}   a table still needs to scroll at phone width`);
+      for (const t of out.tables)
+        console.log(`     «${t.title}» ${t.cols} columns, ${t.over}px past its box`);
+    }
     await page.close();
   }
   await ctx.close();
@@ -58,6 +75,8 @@ for (const width of WIDTHS) {
 await browser.close();
 console.log(
   "\n" + "═".repeat(60) + "\n" +
-    (bad ? `${bad} page(s) scroll sideways` : `no page scrolls sideways at ${WIDTHS.join(" / ")}`),
+    (bad
+      ? `${bad} overflow problem(s)`
+      : `no page scrolls sideways at ${WIDTHS.join(" / ")}, and no table needs to at 390`),
 );
 process.exit(bad ? 1 : 0);

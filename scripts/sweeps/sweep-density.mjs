@@ -129,6 +129,19 @@ for (const route of ROUTES) {
     const FIG = /[\d٠-٩][\d٠-٩,.٫]*/g;
     const shown = (el) => el.getClientRects().length > 0;
 
+    /* What is BEHIND a disclosure is out of scope — that is what "at rest" means,
+       and it is stated at the top of this file. A closed <details> has to be named
+       explicitly because the geometry lies: this Chromium still returns client
+       rects for the children of a closed <details> (the UA hides the subtree with
+       `content-visibility`, which does not paint but does keep boxes), so the rect
+       test alone counted a claim's four CLOSED clauses as four clauses at rest.
+       `inert` is here for the same reason: the ladder marks its closed bodies with
+       it. The <summary> itself is NOT behind anything — it is the claim, and the
+       claim is exactly what the ceiling is meant to hold to a line. */
+    const behindADisclosure = (node) =>
+      node.closest("summary") === null &&
+      node.closest("details:not([open]) *:not(summary), [inert]") !== null;
+
     /* An object that declares `role="img"` with an `aria-label` reads as ONE thing:
        that is what the attribute means. The Odometer is the case that forced this —
        it renders all ten digits per drum for the rolling effect, so a 7-digit figure
@@ -143,7 +156,10 @@ for (const route of ROUTES) {
          phone layout and once for the desktop one, and only ever one is visible. */
       const marked = [];
       for (const node of el.querySelectorAll("*")) {
-        if (!node.getClientRects().length) { node.setAttribute("data-dq-hidden", ""); marked.push(node); }
+        if (!node.getClientRects().length || behindADisclosure(node)) {
+          node.setAttribute("data-dq-hidden", "");
+          marked.push(node);
+        }
       }
       const clone = el.cloneNode(true);
       for (const node of marked) node.removeAttribute("data-dq-hidden");
@@ -225,7 +241,7 @@ for (const route of ROUTES) {
        card that contains three one-line hints is not a paragraph. */
     let proseBlock = 0;
     for (const el of main.querySelectorAll("p,span,div,dt,dd,li,td,th,h1,h2,h3")) {
-      if (inRow(el) || !shown(el) || el.closest(".sr-only")) continue;
+      if (inRow(el) || !shown(el) || behindADisclosure(el) || el.closest(".sr-only")) continue;
       const own = [...el.childNodes]
         .filter((n) => n.nodeType === 3)
         .map((n) => n.textContent)

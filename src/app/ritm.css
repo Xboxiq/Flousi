@@ -245,6 +245,31 @@
     border-top: 1px solid var(--line-strong);
   }
 
+  /* ── COLUMN PRIORITY ─────────────────────────────────────────────────────
+     A table does not shrink; it sheds.
+
+     The boards replace a table with a row list under the tablet threshold. Doing
+     that here would mean a second, hand-maintained copy of every table's markup
+     — six of them — and two renderings of one truth is how they drift apart. So
+     the table keeps ONE markup and loses columns by priority instead, which is
+     the same progressive disclosure the rest of the system uses and cannot fall
+     out of sync with itself.
+
+     Priority 1 is unmarked: the columns that ARE the row, and they never leave.
+     `.pri-2` is the qualifier a phone can do without; `.pri-3` is the context a
+     laptop has room for. A figure column is never dropped below its own label.
+
+     What is shed is not lost: every row opens its own record, where the full
+     sheet lives at whatever width the reader has. */
+  .pri-2 { display: none }
+  .pri-3 { display: none }
+  @media (min-width: 640px) {
+    th.pri-2, td.pri-2 { display: table-cell }
+  }
+  @media (min-width: 768px) {
+    th.pri-3, td.pri-3 { display: table-cell }
+  }
+
   /* a row of a list, which is a table's answer on a phone */
   .r-datarow {
     display: flex;
@@ -359,6 +384,38 @@
     border-radius: var(--radius-full);
   }
   .r-progress.is-thin { height: 3px }
+
+  /* a claim at rest, its reasoning one tap away */
+  .r-disclose > summary {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-2);
+    cursor: pointer;
+    list-style: none;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+  }
+  .r-disclose > summary::-webkit-details-marker { display: none }
+  .r-disclose > summary:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+  .r-disclose > summary .mark {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    margin-top: 2px;
+    color: var(--subtle);
+    transition: transform var(--motion-fast) var(--ease-out);
+  }
+  .r-disclose[open] > summary .mark { transform: rotate(180deg) }
+  .r-disclose-body {
+    padding-top: var(--s-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
 
   /* ── 8 · NAVIGATION ──────────────────────────────────────────────────────
      A current item is not a coloured link: it is a filled capsule with a sand

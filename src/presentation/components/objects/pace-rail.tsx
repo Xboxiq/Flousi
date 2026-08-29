@@ -8,7 +8,7 @@ export interface PaceRailProps {
   /** Share of the month gone, 0..1. Drawn as a scribe line across the channel. */
   elapsed: number;
   /** success = at or ahead of pace · danger = behind · muted = no target set. */
-  tone?: "success" | "accent" | "danger" | "muted";
+  tone?: "success" | "accent" | "danger" | "warning" | "muted";
   height?: number;
   /** Announced to assistive tech; the channel itself is decorative. */
   label: string;
@@ -18,6 +18,11 @@ export interface PaceRailProps {
 const HUE: Record<NonNullable<PaceRailProps["tone"]>, string> = {
   success: "var(--success)",
   accent: "var(--accent)",
+  /* Behind pace is a WARNING, not a loss. Red in this system judges money going
+     the wrong way — a target that is merely late has lost nobody anything yet,
+     and painting every rep's rail red made a normal mid-month screen read as a
+     failing business (§13). */
+  warning: "var(--warning)",
   danger: "var(--danger)",
   muted: "color-mix(in srgb, var(--fg) 22%, transparent)",
 };
