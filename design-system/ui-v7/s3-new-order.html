@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>فلوسي — رحلة جديدة</title><link rel="stylesheet" href="app.css"></head>
+<body><div class="viewport"><div class="app" id="app"></div></div>
+<script src="shell.js"></script>
+<script>
+/* S3 · the form. shadcn Field: a VISIBLE label on every control, the hint under
+   the field, the error next to the field it belongs to (never only at the top).
+   ux-guidelines #19: the live summary occupies a reserved column so nothing
+   jumps when a figure changes. */
+const money = n => new Intl.NumberFormat("en-US").format(n);
+const LINES = [
+  ["حافظات جلد","LEA-24",24,9000,5500],
+  ["شواحن سريعة","CHG-40",40,4500,2400],
+  ["سماعات لاسلكية","AUD-06",6,15000,6000],
+  ["أكياس هدايا","BAG-30",30,2000,900],
+  ["ستاندات عرض","STD-08",8,7500,4625],
+];
+const sell = LINES.reduce((a,l)=>a+l[2]*l[3],0);
+const cost = LINES.reduce((a,l)=>a+l[2]*l[4],0);
+const deliv = 18000, ret = 0;
+const profit = sell - cost - deliv - ret;
+const share = Math.round(profit * 0.45);
+const kept = profit - share;
+
+document.getElementById("app").innerHTML = shell("الرحلات","رحلة جديدة",
+  `الرحلات ${icon("chevL","i-sm")} ط-1048 · مسوّدة`,
+  `<span class="badge badge-neutral">حُفظت المسوّدة 09:41</span>
+   <button class="btn btn-ghost btn-sm">إلغاء</button>
+   <button class="btn btn-primary btn-sm">${icon("check","i-sm")}احفظ وجمّد القسمة</button>`) + `
+  <div class="content" style="display:grid;grid-template-columns:1fr 360px;gap:var(--gap);align-items:start;grid-auto-rows:min-content">
+
+    <div style="display:flex;flex-direction:column;gap:var(--gap)">
+
+      <section class="card">
+        <div class="card-h"><h2>المندوب والوجهة</h2></div>
+        <div class="card-b" style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+          <div class="field">
+            <label for="f-rep">المندوب <span class="req">*</span></label>
+            <select class="select" id="f-rep"><option>ليث العبيدي</option></select>
+            <span class="hint">قاعدة القسمة: مناصفة الربح الأولى · 45% من صافي الربح</span>
+          </div>
+          <div class="field">
+            <label for="f-dest">الوجهة <span class="req">*</span></label>
+            <input class="input is-focus" id="f-dest" value="زيونة، بغداد">
+            <span class="hint">ثالث رحلة إلى هذه المنطقة هذا الأسبوع</span>
+          </div>
+          <div class="field">
+            <label for="f-date">تاريخ الرحلة</label>
+            <input class="input" id="f-date" value="26 أغسطس 2026">
+          </div>
+          <div class="field">
+            <label for="f-note">ملاحظة داخلية</label>
+            <input class="input" id="f-note" placeholder="اختياري">
+            <span class="hint">لا تظهر للمندوب.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2>القطع</h2>
+          <span class="badge badge-info">أسعار الشراء مجمَّدة من قائمة 19 أغسطس</span>
+          <span class="spacer"></span>
+          <button class="btn btn-outline btn-sm">${icon("plus","i-sm")}أضف قطعة</button></div>
+        <div class="tablewrap"><table class="tbl">
+          <thead><tr><th>القطعة</th><th>الرمز</th><th class="n">العدد</th>
+            <th class="n">سعر البيع</th><th class="n">كلفة الشراء</th><th class="n">الإجمالي</th>
+            <th style="width:36px"></th></tr></thead>
+          <tbody>${LINES.map(([n,sku,q,p,c])=>`<tr>
+            <td class="strong">${n}</td><td style="color:var(--muted-fg)"><span class="num">${sku}</span></td>
+            <td class="n">${q}</td><td class="n">${money(p)}</td>
+            <td class="n" style="color:var(--muted-fg)">${money(c)}</td>
+            <td class="n strong">${money(q*p)}</td>
+            <td><button class="btn btn-ghost btn-sm btn-icon" aria-label="احذف السطر">${icon("x","i-sm")}</button></td>
+          </tr>`).join("")}</tbody>
+          <tfoot><tr><td colspan="2">5 أسطر · 108 وحدة</td><td class="n">108</td><td></td>
+            <td class="n">${money(cost)}</td><td class="n">${money(sell)}</td><td></td></tr></tfoot>
+        </table></div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2>التوصيل والمرتجع</h2></div>
+        <div class="card-b" style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+          <div class="field">
+            <label for="f-del">كلفة التوصيل</label>
+            <span class="ingroup"><input class="input" id="f-del" value="18,000"><span class="suffix">د.ع.</span></span>
+            <span class="hint">تُخصم من الربح قبل القسمة.</span>
+          </div>
+          <div class="field is-error">
+            <label for="f-ret">قيمة المرتجع</label>
+            <span class="ingroup"><input class="input" id="f-ret" value="-3,000"><span class="suffix">د.ع.</span></span>
+            <span class="err">${icon("alert","i-sm")}المرتجع لا يكون بالسالب. اكتب القيمة موجبة.</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:var(--gap)">
+    <aside class="card">
+      <div class="card-h"><h2>أثر الرحلة</h2><span class="spacer"></span>
+        <span class="badge badge-outline">مباشر</span></div>
+      <div class="card-b">
+        <div class="splitbar" role="img" aria-label="قسمة بيع الرحلة">
+          <span style="width:${(kept/sell*100).toFixed(2)}%;background:var(--primary)">${(kept/sell*100).toFixed(0)}%</span>
+          <span style="width:${(share/sell*100).toFixed(2)}%;background:var(--secondary)">${(share/sell*100).toFixed(0)}%</span>
+          <span style="width:${(cost/sell*100).toFixed(2)}%;background:#64748b">${(cost/sell*100).toFixed(0)}%</span>
+          <span style="width:${(deliv/sell*100).toFixed(2)}%;background:var(--accent)"></span>
+        </div>
+        <div class="legend" style="flex-direction:column;gap:8px;margin-top:12px">
+          <span class="li" style="width:100%"><span class="dot" style="background:var(--primary)"></span>
+            <b style="flex:1">يبقى لك</b><span class="num">${money(kept)}</span></span>
+          <span class="li" style="width:100%"><span class="dot" style="background:var(--secondary)"></span>
+            <b style="flex:1">حصة ليث · 45%</b><span class="num">${money(share)}</span></span>
+          <span class="li" style="width:100%"><span class="dot" style="background:#64748b"></span>
+            <b style="flex:1">كلفة الشراء</b><span class="num">${money(cost)}</span></span>
+          <span class="li" style="width:100%"><span class="dot" style="background:var(--accent)"></span>
+            <b style="flex:1">التوصيل</b><span class="num">${money(deliv)}</span></span>
+        </div>
+      </div>
+      <div class="card-b" style="border-top:1px solid var(--border)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <span style="font-size:var(--fs-xs);color:var(--muted-fg)">إجمالي البيع</span>
+          <span class="num" style="font-size:var(--fs-lg)">${money(sell)}</span></div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:6px">
+          <span style="font-size:var(--fs-xs);color:var(--muted-fg)">صافي ربح الرحلة</span>
+          <span class="num pos" style="font-size:var(--fs-lg)">${money(profit)}</span></div>
+      </div>
+      <div class="card-f" style="gap:8px;align-items:flex-start">
+        <span style="color:var(--muted-fg);margin-top:1px">${icon("lock","i-sm")}</span>
+        <p style="font-size:var(--fs-xs);color:var(--muted-fg);line-height:1.5">
+          الحفظ يثبّت سعر الشراء وقاعدة ليث كما هما الآن. تغييرهما لاحقاً لا يمسّ هذه الرحلة.</p>
+      </div>
+    </aside>
+
+    <aside class="card">
+      <div class="card-h"><h2>ما الذي سيُجمَّد</h2></div>
+      <div class="card-b" style="display:flex;flex-direction:column;gap:10px">
+        ${[["أسعار الشراء الخمسة كما في قائمة 19 أغسطس", true],
+           ["قاعدة ليث: 45% من صافي الربح", true],
+           ["كلفة التوصيل 18,000 د.ع.", true],
+           ["حالة الرحلة تبقى قابلة للتعديل", false]].map(([t,on])=>`
+          <span style="display:flex;align-items:flex-start;gap:9px;font-size:var(--fs-sm)">
+            <span class="check ${on?"on":""}" style="margin-top:2px">${on?icon("check","i-sm"):""}</span>
+            <span style="color:${on?"var(--fg)":"var(--muted-fg)"}">${t}</span></span>`).join("")}
+      </div>
+      <div class="card-f">
+        <span class="badge badge-accent">لا يُعاد حساب شهر مضى</span>
+      </div>
+    </aside>
+    </div>
+
+  </div>`;
+</script></body></html>

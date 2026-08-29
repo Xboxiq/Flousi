@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>فلوسي — دليل المكوّنات</title><link rel="stylesheet" href="app.css">
+<style>
+.viewport{height:2000px}
+.sheet{padding:16px 20px;display:flex;flex-direction:column;gap:var(--gap)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.spec{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sw{border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;background:var(--card)}
+.sw i{display:block;height:44px}
+.sw .m{padding:7px 9px}
+.sw b{display:block;font-size:var(--fs-xs);font-weight:600;white-space:nowrap}
+/* the hex is an LTR run; the ratio sentence is Arabic and must not be one */
+.sw code{display:block;font-family:"Mono",monospace;font-size:10px;color:var(--muted-fg);direction:ltr}
+.sw em{display:block;font-style:normal;font-size:10px;color:var(--muted-fg)}
+.rowlab{width:96px;flex:none;font-size:var(--fs-xs);color:var(--muted-fg)}
+.iconcell{display:flex;flex-direction:column;align-items:center;gap:5px;width:72px}
+.iconcell span{font-family:"Mono",monospace;font-size:10px;color:var(--muted-fg)}
+.tokrow{display:flex;align-items:center;gap:10px;height:26px;font-size:var(--fs-xs)}
+.tokrow .bar{height:12px;background:var(--secondary);border-radius:2px}
+.tokrow code{font-family:"Mono",monospace;color:var(--muted-fg);width:64px}
+</style></head>
+<body><div class="viewport"><div class="app" id="app"></div></div>
+<script src="shell.js"></script>
+<script>
+/* S6 · the component sheet. Every state a control can be in is drawn, because a
+   control shown only at rest has not been specified. Each token carries its
+   measured contrast so the palette is auditable, not asserted. */
+const COLORS = [
+  ["أساسي","--primary","#0f172a","أبيض 17.4:1"],
+  ["ثانوي","--secondary","#1e3a8a","أبيض 10.4:1"],
+  ["مميّز","--accent","#a16207","أبيض 4.8:1"],
+  ["خلفية","--bg","#f8fafc","حبر 18.9:1"],
+  ["بطاقة","--card","#ffffff","حبر 19.6:1"],
+  ["مكتوم","--muted","#e8ecf1","حبر 16.2:1"],
+  ["حدّ","--border","#e2e8f0","للفصل فقط"],
+  ["نجاح","--success","#15803d","على أبيض 4.9:1"],
+  ["تحذير","--warning","#b45309","على أبيض 5.1:1"],
+  ["خطر","--destructive","#dc2626","أبيض 4.5:1"],
+];
+const ICONS = ["dashboard","route","split","users","wallet","target","file","settings",
+               "search","plus","filter","download","cal","pkg","pin","bell",
+               "check","x","alert","warn","info","lock","freeze","more",
+               "chevD","chevL","chevR","sort","arrowD","up","down"];
+const SPACE = [["4","نصف خطوة"],["8","فجوة الشبكة"],["12","حشو بطاقة"],["16","حشو المحتوى"],["20","هامش الصفحة"],["24",""],["32",""],["40",""]];
+
+document.getElementById("app").innerHTML = shell("الإعدادات","دليل المكوّنات",
+  "IBM Plex Sans Arabic + IBM Plex Mono · شبكة 8 · نصف قطر 6",
+  `<button class="btn btn-outline btn-sm">${icon("download","i-sm")}تصدير التوكنات</button>`) + `
+  <div class="content" style="padding:0">
+  <div class="sheet">
+
+    <section class="card"><div class="card-h"><h2>اللون</h2>
+      <span class="sub">من colors.csv #42 «Banking / Traditional Finance»، بلا تعديل. النسبة مقيسة.</span></div>
+      <div class="card-b spec">
+        ${COLORS.map(([n,tok,hex,ratio])=>`<span class="sw" style="width:132px">
+          <i style="background:${hex}"></i><span class="m"><b>${n}</b>
+          <code>${hex.toUpperCase()}</code><em>${ratio}</em></span></span>`).join("")}
+      </div>
+      <div class="card-b" style="border-top:1px solid var(--border);display:flex;gap:10px;align-items:center">
+        <span class="rowlab">لون المندوب</span>
+        ${[["ليث","var(--rep-1)"],["سعد","var(--rep-2)"],["زينب","var(--rep-3)"],["نور","var(--rep-4)"]]
+          .map(([n,c])=>`<span style="display:flex;align-items:center;gap:6px;font-size:var(--fs-xs)">
+            <span class="av-lg" style="background:${c};width:22px;height:22px;font-size:10px">${n.slice(0,1)}</span>${n}</span>`).join("")}
+        <span style="font-size:var(--fs-xs);color:var(--muted-fg);margin-inline-start:8px">
+          لون واحد لكل شخص، ثابت في كل شاشة. لا يُستعمل للحالات.</span>
+      </div>
+    </section>
+
+    <div class="grid2">
+      <section class="card"><div class="card-h"><h2>الخط والمقاس</h2></div>
+        <div class="card-b" style="display:flex;flex-direction:column;gap:10px">
+          ${[["28 / 500 · رقم كبير",'<span class="num" style="font-size:28px">1,775,800</span>'],
+             ["20 / 600 · عنوان شاشة",'<span style="font-size:20px;font-weight:600">تقرير أغسطس 2026</span>'],
+             ["16 / 600 · عنوان بطاقة",'<span style="font-size:16px;font-weight:600">أين ذهب إيراد أغسطس</span>'],
+             ["14 / 400 · نص",'<span style="font-size:14px">كل حصة مجمَّدة بالقاعدة الساريَة لحظة البيع.</span>'],
+             ["13 / 400 · خلية جدول",'<span style="font-size:13px">زيونة، بغداد</span>'],
+             ["12 / 600 · عنوان حقل",'<span style="font-size:12px;font-weight:600;color:var(--muted-fg)">كلفة التوصيل</span>']]
+            .map(([lab,html])=>`<div style="display:flex;align-items:baseline;gap:12px">
+              <code style="font-family:'Mono',monospace;font-size:10px;color:var(--muted-fg);width:120px;flex:none">${lab}</code>${html}</div>`).join("")}
+        </div>
+      </section>
+
+      <section class="card"><div class="card-h"><h2>المسافة ونصف القطر</h2></div>
+        <div class="card-b">
+          ${SPACE.map(([v,use])=>`<div class="tokrow"><code>${v}px</code>
+            <span class="bar" style="width:${v}px"></span>
+            <span style="color:var(--muted-fg)">${use}</span></div>`).join("")}
+          <div style="display:flex;gap:14px;align-items:flex-end;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+            ${[["4","حقل، شارة"],["6","بطاقة"],["999","صورة، كبسولة"]].map(([r,u])=>`
+              <span style="text-align:center"><span style="display:block;width:56px;height:36px;background:var(--muted);
+                border:1px solid var(--border-strong);border-radius:${r==="999"?"999px":r+"px"}"></span>
+                <code style="font-family:'Mono',monospace;font-size:10px;color:var(--muted-fg)">${r}</code>
+                <span style="display:block;font-size:10px;color:var(--muted-fg)">${u}</span></span>`).join("")}
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card"><div class="card-h"><h2>الأيقونات</h2>
+      <span class="sub">Lucide · 24 مربّع، حدّ 1.75، أطراف دائرية. لا إيموجي، ولا رسم يدوي.</span></div>
+      <div class="card-b spec" style="gap:6px">
+        ${ICONS.map(n=>`<span class="iconcell">${icon(n)}<span>${n}</span></span>`).join("")}
+      </div>
+    </section>
+
+    <div class="grid2">
+      <section class="card"><div class="card-h"><h2>الأزرار</h2>
+        <span class="sub">فعل رئيسي واحد في الشاشة</span></div>
+        <div class="card-b" style="display:flex;flex-direction:column;gap:12px">
+          <div class="spec"><span class="rowlab">الأنواع</span>
+            <button class="btn btn-primary">${icon("check","i-sm")}احفظ</button>
+            <button class="btn btn-outline">عدّل</button>
+            <button class="btn btn-ghost">إلغاء</button>
+            <button class="btn btn-danger">${icon("x","i-sm")}احذف</button></div>
+          <div class="spec"><span class="rowlab">المقاسات</span>
+            <button class="btn btn-primary">34px</button>
+            <button class="btn btn-primary btn-sm">28px</button>
+            <button class="btn btn-outline btn-icon" aria-label="مثال">${icon("more","i-sm")}</button>
+            <button class="btn btn-outline btn-sm btn-icon" aria-label="مثال">${icon("more","i-sm")}</button></div>
+          <div class="spec"><span class="rowlab">الحالات</span>
+            <button class="btn btn-primary">عادي</button>
+            <button class="btn btn-primary" style="background:#1e293b">مؤشَّر</button>
+            <button class="btn btn-primary is-focus">تركيز</button>
+            <button class="btn btn-primary is-disabled">معطّل</button>
+            <button class="btn btn-primary"><span class="spin"></span>يُحفظ</button></div>
+          <p style="font-size:var(--fs-xs);color:var(--muted-fg)">
+            المعطّل يُكتب سببه بجانبه، لا في إشعار عابر. التركيز حلقة 2px بإزاحة 2px ولا يُزال أبداً.</p>
+        </div>
+      </section>
+
+      <section class="card"><div class="card-h"><h2>الشارات</h2>
+        <span class="sub">للحالة فقط، لا للتزيين</span></div>
+        <div class="card-b spec">
+          <span class="badge badge-neutral">مسوّدة</span>
+          <span class="badge badge-success">${icon("check","i-sm")}مسلَّمة</span>
+          <span class="badge badge-warning">${icon("warn","i-sm")}مفتوحة</span>
+          <span class="badge badge-danger">${icon("alert","i-sm")}مرتجع</span>
+          <span class="badge badge-info">مجمَّد</span>
+          <span class="badge badge-accent">هدف</span>
+          <span class="badge badge-outline">100%</span>
+        </div>
+        <div class="card-b" style="border-top:1px solid var(--border)">
+          <p style="font-size:var(--fs-xs);color:var(--muted-fg)">
+            كل شارة تحمل أيقونة أو كلمة إلى جانب لونها، فلا تعتمد الحالة على اللون وحده.</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid2">
+      <section class="card"><div class="card-h"><h2>الحقول</h2></div>
+        <div class="card-b" style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">
+          <div class="field"><label>عادي</label><input class="input" value="زيونة، بغداد"></div>
+          <div class="field"><label>تركيز</label><input class="input is-focus" value="زيونة، بغداد"></div>
+          <div class="field"><label>فارغ</label><input class="input" placeholder="اكتب الوجهة"></div>
+          <div class="field"><label>معطّل</label><input class="input" value="مقفل" disabled style="background:var(--muted);color:var(--muted-fg)"></div>
+          <div class="field"><label>بلاحقة</label>
+            <span class="ingroup"><input class="input" value="18,000"><span class="suffix">د.ع.</span></span></div>
+          <div class="field is-error"><label>خطأ</label><input class="input" value="-3,000">
+            <span class="err">${icon("alert","i-sm")}القيمة يجب أن تكون موجبة.</span></div>
+          <div class="field"><label>قائمة</label><select class="select"><option>ليث العبيدي</option></select></div>
+          <div class="field"><label>اختيار</label>
+            <span style="display:flex;gap:14px;align-items:center;height:34px">
+              <span style="display:flex;align-items:center;gap:7px;font-size:var(--fs-sm)">
+                <span class="check on">${icon("check","i-sm")}</span>مؤكَّد</span>
+              <span style="display:flex;align-items:center;gap:7px;font-size:var(--fs-sm)">
+                <span class="check"></span>غير مؤكَّد</span></span></div>
+        </div>
+      </section>
+
+      <section class="card"><div class="card-h"><h2>الجدول</h2>
+        <span class="sub">حالات الصف</span></div>
+        <div class="tablewrap"><table class="tbl">
+          <thead><tr><th style="width:34px"><span class="check"></span></th>
+            <th class="sortable" aria-sort="descending"><span class="th">الرحلة ${icon("arrowD","i-sm")}</span></th>
+            <th class="sortable"><span class="th">المندوب ${icon("sort","i-sm")}</span></th>
+            <th class="n">المبلغ</th><th>الحالة</th></tr></thead>
+          <tbody>
+            <tr><td><span class="check"></span></td><td class="strong">ط-1048</td><td>ليث العبيدي</td>
+              <td class="n">606,000</td><td><span class="badge badge-warning">مفتوحة</span></td></tr>
+            <tr style="background:#f1f5f9"><td><span class="check"></span></td><td class="strong">ط-1047</td>
+              <td>سعد الجبوري</td><td class="n">702,500</td><td><span class="badge badge-success">مسلَّمة</span></td></tr>
+            <tr class="is-sel"><td><span class="check on">${icon("check","i-sm")}</span></td><td class="strong">ط-1046</td>
+              <td>زينب الطائي</td><td class="n">214,000</td><td><span class="badge badge-success">مسلَّمة</span></td></tr>
+            <tr><td colspan="5" style="padding:8px 10px">
+              <span class="skel" style="display:block;height:12px;width:70%"></span></td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="3">المجموع</td><td class="n">1,522,500</td><td></td></tr></tfoot>
+        </table></div>
+        <div class="card-b" style="display:flex;gap:16px;align-items:center;font-size:var(--fs-xs);color:var(--muted-fg)">
+          <span>عادي</span><span>مؤشَّر</span><span>مختار</span><span>يُحمَّل</span>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid3">
+      <section class="card"><div class="card-h"><h2>التنقّل داخل الشاشة</h2></div>
+        <div class="card-b" style="display:flex;flex-direction:column;gap:12px">
+          <div class="tabs"><button aria-selected="true">نظرة عامة</button><button>التسويات</button><button>الرحلات</button></div>
+          <div class="seg"><button aria-pressed="true">الكل</button><button>مفتوحة</button><button>مرتجع</button></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:var(--fs-xs);color:var(--muted-fg)">
+            <span>1-16 من 216</span><span style="margin-inline-start:auto"></span>
+            <button class="btn btn-outline btn-sm btn-icon is-disabled" aria-label="السابق">${icon("chevR","i-sm")}</button>
+            <button class="btn btn-outline btn-sm btn-icon" aria-label="التالي">${icon("chevL","i-sm")}</button></div>
+        </div>
+      </section>
+
+      <section class="card"><div class="card-h"><h2>لا شيء بعد</h2></div>
+        <div class="empty">
+          <span class="ic">${icon("route")}</span>
+          <h3>لا رحلة في هذا الشهر</h3>
+          <p>أول رحلة تُسجّل تفتح التقرير والقسمة والتسويات.</p>
+          <button class="btn btn-primary btn-sm">${icon("plus","i-sm")}سجّل أول رحلة</button>
+        </div>
+      </section>
+
+      <section class="card"><div class="card-h"><h2>إشعار وحوار</h2></div>
+        <div class="card-b" style="display:flex;flex-direction:column;gap:12px">
+          <div class="toast">
+            <span style="color:var(--success);margin-top:1px">${icon("check","i-sm")}</span>
+            <span style="flex:1"><b>حُفظت الرحلة ط-1048</b><p>جُمّدت أسعار الشراء وقاعدة ليث.</p></span>
+            <button class="btn btn-ghost btn-sm btn-icon" aria-label="أغلق">${icon("x","i-sm")}</button>
+          </div>
+          <div class="dialog">
+            <div class="card-h"><h2>إغلاق أغسطس؟</h2></div>
+            <div class="card-b"><p style="font-size:var(--fs-sm);color:var(--muted-fg)">
+              بعد الإغلاق يصبح تقرير الشهر للقراءة فقط. أرصدة الفريق تبقى مفتوحة.</p></div>
+            <div class="card-f" style="justify-content:flex-end">
+              <button class="btn btn-ghost btn-sm">ليس الآن</button>
+              <button class="btn btn-primary btn-sm">${icon("lock","i-sm")}أغلق واختم</button></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </div></div>`;
+</script></body></html>

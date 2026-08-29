@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>فلوسي — المندوبون</title><link rel="stylesheet" href="app.css"></head>
+<body><div class="viewport"><div class="app" id="app"></div></div>
+<script src="shell.js"></script>
+<script>
+/* S4 · master–detail. A list on the reading side, the selected record beside it,
+   and shadcn Tabs (#27) inside the record rather than a second page per section. */
+const money = n => new Intl.NumberFormat("en-US").format(n);
+const TEAM = [
+  ["ليث العبيدي","var(--rep-1)","مناصفة الربح الأولى · 45%",1798900,633900,"نشط","success",0],
+  ["سعد الجبوري","var(--rep-2)","نسبة الهامش الرفيع · 30%",2184600,834600,"نشط","success",1],
+  ["زينب الطائي","var(--rep-3)","قسمة القطعة · 1,200 للقطعة",730320,424320,"نشط","success",0],
+  ["نور الحسن","var(--rep-4)","مؤرشف · آخر بيعة في يناير",185000,0,"مؤرشف","neutral",0],
+];
+const SETTLE = [
+  ["2 أغسطس 2026","تحويل بنكي",600000,"مؤكَّدة","success"],
+  ["19 يوليو 2026","نقداً",425000,"مؤكَّدة","success"],
+  ["1 يوليو 2026","نقداً",325000,"مؤكَّدة","success"],
+  ["12 يونيو 2026","نقداً",180000,"مؤكَّدة","success"],
+];
+const MONTHS = [["أغسطس",298700,0],["يوليو",258900,0],["يونيو",131000,0],
+                ["مايو",268400,0],["أبريل",102000,0],["مارس",245600,0]];
+const MMAX = Math.max(...MONTHS.map(m=>m[1]));
+
+document.getElementById("app").innerHTML = shell("المندوبون","المندوبون",
+  "4 مندوبين · 3 نشطون",
+  `<button class="btn btn-outline btn-sm">${icon("download","i-sm")}كشف الفريق</button>
+   <button class="btn btn-primary btn-sm">${icon("plus","i-sm")}أضف مندوباً</button>`) + `
+  <div class="content" style="display:grid;grid-template-columns:300px 1fr;gap:var(--gap);align-items:start">
+
+    <section class="card">
+      <div class="toolbar" style="padding:8px 10px">
+        <span class="search" style="flex:1">${icon("search","i-sm")}
+          <input class="input" aria-label="ابحث عن مندوب" placeholder="ابحث عن مندوب"></span>
+      </div>
+      ${TEAM.map(([n,c,scheme,earned,owed,st,tone,sel])=>`
+        <button class="listitem"${sel?' aria-current="true"':''}>
+          <span class="av-lg" style="background:${c}">${n.slice(0,1)}</span>
+          <span class="tx"><b>${n}</b><span>${scheme}</span></span>
+          <span class="end"><span class="num" style="color:${owed?"var(--warning)":"var(--muted-fg)"}">${money(owed)}</span>
+            <small>مستحق</small></span>
+        </button>`).join("")}
+      <div class="card-f" style="justify-content:center">
+        <span style="font-size:var(--fs-xs);color:var(--muted-fg)">مجموع المستحق
+          <span class="num" style="color:var(--warning);font-weight:600">1,892,820</span> د.ع.</span>
+      </div>
+    </section>
+
+    <div style="display:flex;flex-direction:column;gap:var(--gap)">
+      <section class="card">
+        <div class="card-h" style="padding:14px">
+          <span class="av-xl" style="background:var(--rep-2)">س</span>
+          <span>
+            <h2 style="font-size:var(--fs-lg)">سعد الجبوري</h2>
+            <span class="sub">انضم في سبتمبر 2025 · 07xx xxx 4412</span></span>
+          <span class="badge badge-success">نشط</span>
+          <span class="spacer"></span>
+          <button class="btn btn-outline btn-sm">${icon("settings","i-sm")}عدّل القاعدة</button>
+          <button class="btn btn-primary btn-sm">${icon("wallet","i-sm")}سجّل تسوية</button>
+        </div>
+        <div class="tabs" style="padding-inline:14px">
+          <button aria-selected="true">نظرة عامة</button>
+          <button>التسويات <span class="num" style="color:var(--muted-fg)">4</span></button>
+          <button>الرحلات <span class="num" style="color:var(--muted-fg)">62</span></button>
+          <button>سجل القواعد</button>
+        </div>
+        <div class="card-b" style="padding:0;display:grid;grid-template-columns:repeat(4,1fr)">
+          ${[["استحقّ هذه السنة","2,184,600","",""],
+             ["دُفع له","1,350,000",'<span class="badge badge-neutral">61.8%</span>',""],
+             ["ما زال مستحقاً","834,600",'<span class="badge badge-warning">'+icon("warn","i-sm")+'أكبر فجوة</span>',"var(--warning)"],
+             ["متوسط الحصة للرحلة","35,236",'<span style="font-size:var(--fs-xs);color:var(--muted-fg)">62 رحلة</span>',""]]
+            .map(([lab,val,extra,col],i)=>`
+            <div style="padding:14px;${i?"border-inline-end:1px solid var(--border)":""}">
+              <div class="lab" style="display:flex;gap:6px;font-size:var(--fs-xs);font-weight:600;color:var(--muted-fg)">${lab}</div>
+              <div class="num" style="margin-top:8px;font-size:var(--fs-xl);${col?`color:${col}`:""}">${val}</div>
+              <div style="margin-top:8px;min-height:20px">${extra}</div>
+            </div>`).join("")}
+        </div>
+      </section>
+
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:var(--gap)">
+        <section class="card">
+          <div class="card-h"><h2>آخر التسويات</h2><span class="spacer"></span>
+            <button class="btn btn-ghost btn-sm">الكل ${icon("chevL","i-sm")}</button></div>
+          <div class="tablewrap"><table class="tbl">
+            <thead><tr><th>التاريخ</th><th>الطريقة</th><th class="n">المبلغ</th><th>الحالة</th><th style="width:36px"></th></tr></thead>
+            <tbody>${SETTLE.map(([d,m,v,st,tone])=>`<tr>
+              <td class="strong">${d}</td><td style="color:var(--muted-fg)">${m}</td>
+              <td class="n">${money(v)}</td>
+              <td><span class="badge badge-${tone}">${icon("check","i-sm")}${st}</span></td>
+              <td><button class="btn btn-ghost btn-sm btn-icon" aria-label="إجراءات">${icon("more","i-sm")}</button></td>
+            </tr>`).join("")}</tbody>
+            <tfoot><tr><td colspan="2">مجموع المدفوع</td><td class="n">1,530,000</td><td colspan="2"></td></tr></tfoot>
+          </table></div>
+        </section>
+
+        <section class="card">
+          <div class="card-h"><h2>حصته شهراً بشهر</h2></div>
+          <div class="card-b">
+            ${MONTHS.map(([m,v])=>`<div class="hbar" style="grid-template-columns:56px 1fr 84px">
+              <span style="font-size:var(--fs-xs);color:var(--muted-fg)">${m}</span>
+              <span class="track"><span class="fill" style="width:${(v/MMAX*100).toFixed(1)}%;background:var(--rep-2)"></span></span>
+              <span class="v">${money(v)}</span></div>`).join("")}
+          </div>
+          <div class="card-f">
+            <span style="color:var(--muted-fg)">${icon("freeze","i-sm")}</span>
+            <p style="font-size:var(--fs-xs);color:var(--muted-fg)">قاعدته تغيّرت مرة واحدة في مارس. الأشهر قبلها محسوبة بالقاعدة القديمة.</p>
+          </div>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="card-h"><h2>رحلات سعد في أغسطس</h2>
+          <span class="sub">آخر أربع من 11 · حصة مجمَّدة بقاعدة 30% بعد كلفة الشراء</span>
+          <span class="spacer"></span>
+          <button class="btn btn-ghost btn-sm">الكل ${icon("chevL","i-sm")}</button></div>
+        <div class="tablewrap"><table class="tbl">
+          <thead><tr><th>الرحلة</th><th>التاريخ</th><th>الوجهة</th>
+            <th class="n">البيع</th><th class="n">كلفة الشراء</th><th class="n">هامش</th>
+            <th class="n">حصته</th><th>الحالة</th></tr></thead>
+          <tbody>${[["ط-1047","25 أغسطس","الكرادة",702500,401200,"42.9%",180390,"مسلَّمة","success"],
+                    ["ط-1044","23 أغسطس","الأعظمية",597300,340100,"43.1%",77160,"مسلَّمة","success"],
+                    ["ط-1041","20 أغسطس","الدورة",268900,161300,"40.0%",32280,"مسلَّمة","success"],
+                    ["ط-1038","17 أغسطس","زيونة، بغداد",349100,205600,"41.1%",43050,"مسلَّمة","success"]]
+            .map(([id,d,dest,sell,cost,m,share,st,tone])=>`<tr>
+              <td class="strong">${id}</td><td style="color:var(--muted-fg)">${d}</td><td>${dest}</td>
+              <td class="n">${money(sell)}</td><td class="n" style="color:var(--muted-fg)">${money(cost)}</td>
+              <td class="n">${m}</td><td class="n strong">${money(share)}</td>
+              <td><span class="badge badge-${tone}">${st}</span></td></tr>`).join("")}</tbody>
+        </table></div>
+      </section>
+    </div>
+  </div>`;
+</script></body></html>

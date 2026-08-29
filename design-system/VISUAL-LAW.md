@@ -202,6 +202,38 @@ plane survived four passes of looking at the screens.
    written next to it in the token block. An overlay that carries text must own
    its background too, or its contrast becomes a property of what it sits over.
 
+## §17 v7 «من المرجع» — the reference-built language, and its two conflicts
+
+The client's note on v6 was **«اعتمد على رفرنس والتفكير ك مصمم مو ك رسام»**. It was
+correct: v6 invented a private visual vocabulary and called it product design.
+`design-system/ui-v7/` has no invented vocabulary. Its style, metrics, palette,
+typeface, component set, table rules, form rules and chart choices each cite the
+row of `ui-ux-pro-max` data they came from; the README lists them one by one.
+
+**Only three things in v7 are original, and each is named there:** the split bar,
+one stable hue per rep, and the «مجمَّد» marker on frozen prices and rules. Each
+exists because the product genuinely differs from a generic dashboard, and each is
+assembled from standard parts.
+
+**Two conflicts with the shipped app, recorded rather than settled silently:**
+
+| | v4 (shipped) | v7 (exploration) | why |
+|---|---|---|---|
+| icons | Phosphor, one weight per surface | **Lucide** | shadcn's own icon set is Lucide, and v7's whole point is to follow its reference stack rather than mix vocabularies. If any v7 component is lifted into `src/`, its icons are redrawn in Phosphor at that moment. |
+| card ground | never pure `#fff` | **`#FFFFFF` on an off-white `#F8FAFC` page** | `colors.csv #42` prescribes exactly this pair, and the gate's ban is on pure-white **page** backgrounds. The page here is not white. |
+
+**What the anti-slop gate changed in v7**, before it shipped: the ghost card (a
+hairline border and a shadow on the same element) became border-only elevation;
+the default semantic rainbow became a neutral chip with a coloured dot, with a
+tint reserved for the two states that want a decision; four KPI cards nested
+inside a card became a figure row on hairlines; and one em dash left the copy.
+
+**A fourth engineering law, from v7:** a report that disagrees with its own chart
+is the worst defect a money product can ship. v7's rep table summed to 1,437,670
+while the split bar above it said 769,420. Every figure now derives from one set
+(736,000×45% + 996,000×30% + 116×1,200 = 769,200, the exact rep slice of
+5,164,500), and `audit.mjs` is the standing check on everything else.
+
 ## ميزانية الحركة (من nova — تحمي السينمائية من أكل المقروئية)
 - Max **two simultaneously animating elements** on a product/data surface.
 - Max **one** endless loop per page; **zero** infinite animation on a product
