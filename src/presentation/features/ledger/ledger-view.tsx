@@ -15,14 +15,8 @@ import { useDataStore } from "@/presentation/stores/data-store";
 import { useAccess } from "@/presentation/hooks/use-access";
 import { useUrlState } from "@/presentation/hooks/use-url-state";
 import { PageHeader } from "@/presentation/components/layout/page-header";
-import {
-  Button,
-  Card,
-  CardContent,
-  EmptyState,
-  Segmented,
-  Skeleton,
-} from "@/presentation/components/ui";
+import { Button, EmptyState, Segmented, Skeleton } from "@/presentation/components/ui";
+import { Grid, Panel, Toolbar, Metric } from "@/presentation/components/structure";
 import { formatCurrency, formatDate, formatNumber } from "@/presentation/lib/format";
 import { cn } from "@/presentation/lib/cn";
 
@@ -96,59 +90,139 @@ export function LedgerView() {
   if (!loaded) {
     return (
       <>
-        <PageHeader title="السجل" description="كل حركة حدثت، بالترتيب الذي حدثت به." />
-        <Skeleton className="h-[32rem] rounded-[var(--radius-2xl)]" />
+        <PageHeader title="السجل" />
+        <Grid>
+          <Skeleton className="span-6 h-[200px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[200px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[200px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-12 h-[480px] rounded-[var(--radius-md)]" />
+        </Grid>
       </>
     );
   }
 
-  const count = (kind: MovementKind) => formatNumber(view.counts[kind], { locale: settings.locale });
+  const n = (v: number) => formatNumber(v, { locale: settings.locale });
+  const latest = view.rows[0];
 
   return (
     <>
-      <PageHeader
-        title="السجل"
-        description={`مبيعات: ${count("sale")} · تسويات: ${count("settlement")} · إغلاقات: ${count("periodClose")}`}
-        actions={
-          <Segmented aria-label="نوع الحركة" options={KINDS} value={filter} onChange={onFilter} />
-        }
-      />
+      <PageHeader title="السجل" />
 
-      <Card>
-        <CardContent>
+      <Grid>
+        {/* ── what is in the log ──────────────────────────────────────────
+            Counts of the FULL log, not of the window on screen: a summary
+            that changed every time «عرض المزيد» was pressed would be a
+            reading of the scroll position rather than of the store. */}
+        <Panel
+          span={6}
+          title="ما في السجل"
+          meta={<span className="text-[12px] text-subtle">{n(view.total)} حركة</span>}
+          bare
+        >
+          <div className="r-tablewrap">
+            <table className="r-tbl">
+              <thead>
+                <tr>
+                  <th>نوع الحركة</th>
+                  <th className="n">العدد</th>
+                  <th>ماذا تعني</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>مبيعات</td>
+                  <td className="n font-bold">{n(view.counts.sale)}</td>
+                  <td className="text-subtle">مال داخل</td>
+                </tr>
+                <tr>
+                  <td>تسويات</td>
+                  <td className="n font-bold">{n(view.counts.settlement)}</td>
+                  <td className="text-subtle">مال خارج إلى مندوب</td>
+                </tr>
+                <tr>
+                  <td>إغلاقات</td>
+                  <td className="n font-bold">{n(view.counts.periodClose)}</td>
+                  <td className="text-subtle">لا حركة مال</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+
+        {/* ── one figure worth its own size ───────────────────────────────── */}
+        <Panel span={3} title="آخر حركة" bodyClassName="flex flex-col gap-3">
+          {latest ? (
+            <>
+              <Metric
+                size="sm"
+                amount={formatCurrency(latest.amount, {
+                  currency: latest.currency,
+                  locale: settings.locale,
+                })}
+                name={latest.title}
+              />
+              <p className="text-[12px] text-subtle">
+                {formatDate(latest.at, { locale: settings.locale })}
+              </p>
+            </>
+          ) : (
+            <p className="text-[13px] text-subtle">لا حركة بعد.</p>
+          )}
+        </Panel>
+
+        {/* ── the law of this screen, which is what its third slot is for ── */}
+        <Panel span={3} title="كيف يُقرأ" bodyClassName="flex flex-col gap-2">
+          <p className="text-[12px] leading-relaxed text-muted">
+            لا يُحذف من السجل شيء. التصحيح حركة جديدة تُنسب إلى ما تصحّحه، فيبقى الأصل
+            ظاهراً ومعه ما عدّله.
+          </p>
+          <p className="text-[12px] leading-relaxed text-muted">
+            المبيعات والتسويات لا تُجمع في رصيد واحد: إيراد بيعة ليس مالاً بيدك، ودفعة
+            لمندوب ليست كلفة.
+          </p>
+        </Panel>
+
+        {/* ── the work: the log itself ────────────────────────────────────── */}
+        <Panel
+          span={12}
+          bare
+          footer={
+            <>
+              <span className="text-[11px] text-subtle">
+                {n(view.rows.length)} من {n(view.total)}
+              </span>
+              {view.rows.length < view.total && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="ms-auto"
+                  onClick={() => setShown((cur) => cur + PAGE)}
+                >
+                  عرض المزيد
+                </Button>
+              )}
+            </>
+          }
+        >
+          <Toolbar title="الحركات">
+            <Segmented aria-label="نوع الحركة" options={KINDS} value={filter} onChange={onFilter} />
+            <span className="r-spacer" />
+          </Toolbar>
+
           {view.rows.length === 0 ? (
             <EmptyState
               icon={<ClockCounterClockwise size={24} />}
               title={filter === "all" ? "لا حركة بعد" : "لا حركة من هذا النوع"}
-              description={
-                filter === "all"
-                  ? "سجّل بيعًا أو سوِّ حساب مندوب، فيظهر هنا بترتيبه الزمني."
-                  : "غيّر النوع أعلاه لترى بقية الحركة."
-              }
             />
           ) : (
-            <>
-              <ul className="mx-auto flex max-w-[880px] flex-col">
-                {view.rows.map((m) => (
-                  <MovementRow key={m.id} movement={m} locale={settings.locale} />
-                ))}
-              </ul>
-
-              <div className="mx-auto mt-5 flex max-w-[880px] flex-wrap items-center justify-between gap-3 border-t border-border-soft pt-4">
-                <p className="text-xs text-muted">
-                  ظهر {formatNumber(view.rows.length, { locale: settings.locale })} من{" "}
-                  {formatNumber(view.total, { locale: settings.locale })}
-                </p>
-                {view.rows.length < view.total && (
-                  <Button variant="secondary" size="sm" onClick={() => setShown((n) => n + PAGE)}>
-                    عرض المزيد
-                  </Button>
-                )}
-              </div>
-            </>
+            <ul className="flex flex-col px-4">
+              {view.rows.map((m) => (
+                <MovementRow key={m.id} movement={m} locale={settings.locale} />
+              ))}
+            </ul>
           )}
-        </CardContent>
-      </Card>
+        </Panel>
+      </Grid>
     </>
   );
 }

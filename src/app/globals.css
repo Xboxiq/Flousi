@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./materials.css";
+@import "./ritm.css";
 
 /* ============================================================================
    RITM — the identity, as tokens.
@@ -43,13 +44,39 @@
   --amber-600: #d98a0b;
   --amber-500: #ffab2e;
 
-  /* Radius — generous, Apple-soft */
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --radius-xl: 24px;
-  --radius-2xl: 30px;
+  /* Radius — read off the mark, not chosen for softness. A capsule in the mark
+     is four units tall with a radius of two: exactly half its height. So
+     anything the height of a capsule IS a capsule, anything larger is a panel
+     and takes the panel radius, and there is no in-between value. The previous
+     10/14/18/24/30 ramp was the over-rounded look the brief bans. */
+  --radius-sm: 6px;           /* button, input, select — a pressed thing */
+  --radius-md: 8px;           /* card, panel, menu */
+  --radius-lg: 10px;
+  --radius-xl: 12px;          /* a full-bleed region, a modal, a sheet */
+  --radius-2xl: 16px;
   --radius-full: 9999px;
+
+  /* ---------- The rhythm lattice ----------
+     4px steps with two half-steps for optical work inside controls. Every gap
+     in the structural layer is one of these; a screen never types a pixel. */
+  --s-05: 2px; --s-1: 4px;  --s-15: 6px; --s-2: 8px;  --s-3: 12px;
+  --s-4: 16px; --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px;
+  --s-12: 48px; --s-14: 56px; --s-18: 72px;
+
+  /* ---------- The type ladder ----------
+     Ten steps. Five (13, 16, 22, 38, 56) are the brand's own display ladder;
+     the other five are the density a product needs and a manual does not. */
+  --fs-label: 10px; --fs-caption: 11px; --fs-small: 12px; --fs-table: 13px;
+  --fs-body: 14px;  --fs-lead: 16px;    --fs-h3: 22px;    --fs-h2: 28px;
+  --fs-h1: 38px;    --fs-display: 56px;
+
+  /* ---------- Control dimensions ----------
+     Three control heights, and they are the only three. */
+  --h-control: 36px; --h-control-sm: 28px; --h-control-lg: 44px;
+  --h-row: 38px;     /* 36 was one pixel too tight for Tajawal */
+  --h-row-sm: 32px;  --h-header: 60px; --h-tabbar: 56px;
+  --w-rail: 76px;    --w-sidebar: 248px;
+  --grid-gutter: 12px;   /* the pitch between the mark's bars, scaled */
 
   /* Motion — Emil Kowalski standards (review-animations/STANDARDS.md).
      press = :active feedback · fast = hover/color · base = routine state change
@@ -80,6 +107,20 @@
   --sunken: #e8e2da;
   --border: rgba(11, 14, 17, 0.10);
   --border-soft: rgba(11, 14, 17, 0.06);
+  /* A SOLID rule, not a wash. The structural layer draws card edges, table
+     rules and dividers with this: a translucent border over two different
+     surfaces is two different greys, which is what made the boards' crispness
+     impossible to reproduce with --border alone. */
+  --line: #d8d2c6;
+  --line-control: #9c947f;    /* 3.02 on white — a control's own boundary */
+  --line-strong: #b4ae9e;
+
+  /* Chart bands. A split bar is FILLED, so a band needs both a fill and the ink
+     that survives on it — #2E3238 is legible on ink and unreadable on paper. */
+  --series-1: #b8a880; --on-series-1: #0b0e11;
+  --series-2: #3a4047; --on-series-2: #f2f1ee;
+  --series-3: #949ba3; --on-series-3: #0b0e11;
+  --series-4: #c3bfb4; --on-series-4: #0b0e11;
   --fg: #0b0e11;              /* 17.13 on bg · 15.04 on bone */
   --muted: #3a4047;           /* 9.28 on bg · 8.14 on bone */
   --subtle: #5a6068;          /* 5.62 on bg · 4.93 on bone */
@@ -182,6 +223,15 @@
   --sunken: #090c0e;
   --border: rgba(242, 241, 238, 0.10);
   --border-soft: rgba(242, 241, 238, 0.06);
+  /* On the dark ground the rule IS the third ground at 1px: no invented grey. */
+  --line: #2a2f36;
+  --line-control: #57606a;    /* 3.03 on ink */
+  --line-strong: #3a4047;
+
+  --series-1: #b8a880; --on-series-1: #0b0e11;   /* 8.25 */
+  --series-2: #3a4047; --on-series-2: #f2f1ee;   /* 9.28 */
+  --series-3: #949ba3; --on-series-3: #0b0e11;   /* 6.89 */
+  --series-4: #2a2f36; --on-series-4: #f2f1ee;   /* 11.93 */
   --fg: #f2f1ee;              /* 17.13 on bg · 14.69 on surface */
   --muted: #c3c9d0;           /* 11.60 on bg · 9.95 on surface */
   /* Lifted from #8A9199, which measured 6.07 on the coal ground and 5.21 on
@@ -278,6 +328,9 @@
   --color-fg: var(--fg);
   --color-muted: var(--muted);
   --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-line-control: var(--line-control);
+  --color-line-strong: var(--line-strong);
 
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);

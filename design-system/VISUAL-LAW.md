@@ -470,3 +470,62 @@ explained why, and the name still invited the next person to put code in it or s
 real monospace — which would have broken every Arabic run sharing the class, the fourth
 time this project paid for a Latin-only face. Renamed `--font-figure` across 30 files.
 **When the comment exists to explain away the name, rename the thing.**
+
+---
+
+## §23 · السقف الهادئ في مواجهة اللوحات المعتمَدة / THE QUIET CEILING VS THE BOARDS
+
+> «هذه ملفات استفد منها … كلها تصير نفس شكل وترتيب اللي صار على وفق العلامة
+> التجارية الجديدة»
+
+This is the conflict CLAUDE.md requires to be written down rather than resolved
+silently, and it is between two things the client said at two different times.
+
+**§15, the quiet ceiling**, was written from «التصميم تحسه صعب ومعقد جدا». It capped
+the figures ABOVE the first list at 8, and it was right about the screen it was written
+for: one number over a ladder of collapsed rungs.
+
+**The artboards**, approved later, are a different shape: a BRIEF ROW of three titled
+panels over a work panel. Measured on the client's own boards:
+
+| board | figures on the screen | worst single panel |
+|---|---|---|
+| p1 dashboard | 48 | 13 |
+| p6 monitor | 48 | 9 |
+| p8 ledger | 47 | 3 |
+| p9 product | 68 | 9 |
+| p4 settlement | 55 | 25 *(a detail card, not a layout panel)* |
+| p3 rep | 29 | 4 |
+| p7 archive | 43 | 12 |
+
+Under §15's counting rule every one of those boards fails its own ceiling by four to
+eight times. So one of the two is measuring the wrong thing, and it is the rule.
+
+### 23.1 · The ceiling is per PANEL, because that is the unit the eye reads
+
+A panel carries its own title and its own hairline. The eye reads one at a time, which
+is exactly why three panels of four figures do not feel like twelve, and why 43 figures
+on the rebuilt dashboard read as four calm cards while 124 on the old one did not.
+
+So the region moves from "everything above the first list" to "one panel's own
+non-row figures", and the number is set the way `sentences` was already set: **one
+above the worst honest board panel**, which is 13 → **14**.
+
+### 23.2 · A screen-wide guard stays, because six compliant panels are still a wall
+
+The per-panel rule alone would let a screen grow panels forever. The second guard is
+the boards' own worst screen, p9 at 68 → **72**.
+
+### 23.3 · What §15 keeps
+
+Everything except the number and the region. The prose ceilings, the row ceilings, the
+one-instrument rule and the "measured at rest, before any disclosure" scope are
+unchanged, and they are the clauses that actually caught what the client complained
+about: a five-clause paragraph at the top of /access, a six-figure meta line under an
+order code. Volume was never the complaint. **Undifferentiated volume was.**
+
+### 23.4 · The general form
+
+**A budget is a measurement of a shape. Change the shape and the budget has to be
+re-derived, out loud, against something real — not quietly raised until the new screens
+fit.** The boards are the something real here, because the client approved them.

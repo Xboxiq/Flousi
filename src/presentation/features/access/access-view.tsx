@@ -70,7 +70,7 @@ export function AccessView() {
   if (!loaded) {
     return (
       <>
-        <PageHeader title="الأدوار والوصول" description="من يستخدم هذا الجهاز، وماذا يرى." />
+        <PageHeader title="الأدوار والوصول" />
         <div className="flex flex-col gap-5">
           <Skeleton className="h-32 rounded-[var(--radius-2xl)]" />
           <Skeleton className="h-80 rounded-[var(--radius-2xl)]" />
@@ -83,7 +83,6 @@ export function AccessView() {
     <>
       <PageHeader
         title="الأدوار والوصول"
-        description={`أدوار: ${roles.length} · وضعك الحالي: ${access.role.name}`}
         actions={
           <Button leadingIcon={<Plus size={16} />} onClick={() => setCreating(true)}>
             دور جديد
@@ -201,7 +200,6 @@ export function AccessView() {
         open={confirmDelete !== null}
         onClose={() => setConfirmDelete(null)}
         title={confirmDelete ? `حذف دور «${confirmDelete.name}»؟` : ""}
-        description="لن يتأثر أي مندوب ولا أي بيعة. الحذف يزيل الدور فقط."
         footer={
           <>
             <Button variant="ghost" onClick={() => setConfirmDelete(null)}>
@@ -344,7 +342,6 @@ function SwitchDialog({
       open={role !== null}
       onClose={onClose}
       title={role ? `استخدام وضع «${role.name}»` : ""}
-      description="يبدّل هذا الجهاز فقط. تعود إلى وضع المالك من العلامة أعلى الشاشة."
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={busy}>
@@ -425,7 +422,6 @@ function PinDialog({
       open={open}
       onClose={onClose}
       title="رمز الرجوع إلى وضع المالك"
-      description="أرقام تحفظها. تُخزَّن بصمتها لا هي."
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={busy}>

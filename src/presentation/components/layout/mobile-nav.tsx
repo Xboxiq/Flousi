@@ -56,7 +56,7 @@ export function MobileNav() {
                 this closes for keyboard users too. Deliberately not a <button>, which
                 may not contain links. */}
             <div onClick={() => setMobileNavOpen(false)} className="flex flex-1 flex-col">
-              <SidebarNav idPrefix="mobile" />
+              <SidebarNav />
             </div>
           </motion.aside>
         </div>

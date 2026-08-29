@@ -8,7 +8,6 @@ export default function NewProductPage() {
     <>
       <PageHeader
         title="إضافة منتج"
-        description="أدخل السعر والتكاليف لترى صافي الربح فورًا."
       />
       <ProductForm />
     </>

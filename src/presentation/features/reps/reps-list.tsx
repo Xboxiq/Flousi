@@ -4,33 +4,16 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, UsersThree, Faders } from "@phosphor-icons/react";
-import {
-  computeRepTrends,
-  computeTeamCommissions,
-  toMajor,
-  type RepAggregate,
-} from "@/application/commissions";
+import { computeTeamCommissions, toMajor } from "@/application/commissions";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { useUrlState } from "@/presentation/hooks/use-url-state";
-import { Ladder, Rung } from "@/presentation/features/dashboard/ladder";
 import { PageHeader } from "@/presentation/components/layout/page-header";
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  EmptyState,
-  Money,
-  Segmented,
-  Skeleton,
-} from "@/presentation/components/ui";
+import { Button, EmptyState, Segmented, Skeleton } from "@/presentation/components/ui";
+import { Grid, Panel, Toolbar, Metric, Progress, Chip } from "@/presentation/components/structure";
 import {
   DistributionBar,
   type DistributionPart,
 } from "@/presentation/components/objects/distribution-bar";
-import { Sparkline } from "@/presentation/components/objects/sparkline";
 import {
   formatCurrency,
   formatDate,
@@ -39,7 +22,7 @@ import {
 } from "@/presentation/lib/format";
 import { REP_STATUS_LABELS } from "@/presentation/lib/labels";
 import { cn } from "@/presentation/lib/cn";
-import { BalanceDevice, Figure } from "./balance-device";
+import { Figure } from "./balance-device";
 import { RepDialog } from "./rep-dialog";
 
 /** A real filter: it changes which sales are aggregated, not just a label (R38). */
@@ -77,7 +60,6 @@ export function RepsList() {
 
   const [scope, setScope] = useUrlState<Scope>("scope", "month", ["month", "all"]);
   const [addOpen, setAddOpen] = useState(false);
-  const [splitOpen, setSplitOpen] = useState(false);
 
   const money = (n: number) =>
     formatCurrency(n, { currency: settings.currency, locale: settings.locale });
@@ -128,10 +110,6 @@ export function RepsList() {
     [input, windowSales, settings.currency],
   );
 
-  const trends = useMemo(
-    () => computeRepTrends(input, { currency: settings.currency, months: 6 }),
-    [input, settings.currency],
-  );
 
   /* The window's ranking joined to the all-history balance, plus the strongest
      MAGNITUDE in the window — never the largest signed value, or a month of
@@ -207,24 +185,29 @@ export function RepsList() {
   }, [windowTeam, settings.locale]);
 
   const actions = (
-    <div className="flex items-center gap-2.5">
-      <Button leadingIcon={<Plus size={17} weight="bold" />} onClick={() => setAddOpen(true)}>
-        إضافة مندوب
-      </Button>
-      {/* one labelled primary beside an icon-only sibling that names itself (R42) */}
-      <Button asChild variant="graphite" size="icon">
-        <Link href="/reps/schemes" aria-label="إعدادات القسمة" title="إعدادات القسمة">
-          <Faders size={19} />
+    <>
+      <Button asChild variant="secondary" size="sm" className="hidden sm:inline-flex">
+        <Link href="/reps/schemes">
+          <Faders size={15} />
+          إعدادات القسمة
         </Link>
       </Button>
-    </div>
+      <Button size="sm" leadingIcon={<Plus size={15} weight="bold" />} onClick={() => setAddOpen(true)}>
+        إضافة مندوب
+      </Button>
+    </>
   );
 
   if (!loaded) {
     return (
       <>
-        <PageHeader title="الفريق" description="من يبيع، وكم له، وكم بقي عليك." actions={actions} />
-        <Skeleton className="h-96 w-full" />
+        <PageHeader title="الفريق" actions={actions} />
+        <Grid>
+          <Skeleton className="span-6 h-[240px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[240px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[240px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-12 h-[380px] rounded-[var(--radius-md)]" />
+        </Grid>
       </>
     );
   }
@@ -232,11 +215,10 @@ export function RepsList() {
   if (reps.length === 0) {
     return (
       <>
-        <PageHeader title="الفريق" description="من يبيع، وكم له، وكم بقي عليك." actions={actions} />
+        <PageHeader title="الفريق" actions={actions} />
         <EmptyState
           icon={<UsersThree size={24} />}
           title="لا يوجد مندوبون بعد"
-          description="أضِف أول مندوب، ثم اختره عند تسجيل البيع لتُقسم أرباح العملية بينكما فورًا."
           action={
             <Button leadingIcon={<Plus size={16} weight="bold" />} onClick={() => setAddOpen(true)}>
               إضافة مندوب
@@ -248,240 +230,233 @@ export function RepsList() {
     );
   }
 
+  const owedTotal = toMajor(team.outstandingMinor, team.currency);
+  const earnedTotal = toMajor(team.earnedMinor, team.currency);
+  const settledTotal = toMajor(team.settledMinor, team.currency);
+  const needsScheme = rows.filter(({ row }) => row.needsSchemeCount > 0);
+
   return (
     <>
-      <PageHeader title="الفريق" description="من يبيع، وكم له، وكم بقي عليك." actions={actions} />
+      <PageHeader title="الفريق" actions={actions} />
 
-      <div className="grid gap-4 lg:grid-cols-[330px_minmax(0,1fr)]">
-        <BalanceDevice
-          label="المستحق للفريق"
-          outstanding={toMajor(team.outstandingMinor, team.currency)}
-          earned={toMajor(team.earnedMinor, team.currency)}
-          settled={toMajor(team.settledMinor, team.currency)}
-          money={money}
-          caption="الرصيد مشتقّ دائمًا: الحصص المجمّدة ناقص التسويات."
-        />
-
-        {/* The split was open beside the balance and the two competed: the balance is
-            the daily question («كم له؟»), the split is a weekly diagnostic. Latched, it
-            still states its own headline while closed (VISUAL-LAW §15). */}
-        <Ladder solo className="self-start">
-          <Rung
-            title="قسمة الأرباح"
-            hint={SCOPE_WORD[scope]}
-            open={splitOpen}
-            onToggle={() => setSplitOpen((v) => !v)}
-            summary={
-              <span className="font-figure text-sm font-semibold text-fg">
-                {share(
-                  windowTeam.basisMinor === 0
-                    ? 0
-                    : windowTeam.repShareMinor / windowTeam.basisMinor,
-                )}
-              </span>
-            }
-          >
-            <div className="flex flex-col gap-3">
+      <Grid>
+        {/* ── the whole, divided ──────────────────────────────────────────
+            Owner share plus every rep share sums to the basis as an integer
+            identity, so the bar can never draw past its own whole (§11b). */}
+        <Panel
+          span={6}
+          title="قسمة الأرباح"
+          meta={
             <Segmented
-              className="self-start"
               aria-label="نطاق القراءة"
               options={SCOPES}
               value={scope}
               onChange={setScope}
             />
-            {split ? (
-              <DistributionBar
-                parts={split.parts}
-                total={split.total}
-                format={money}
-                formatShare={share}
-                label={`قسمة الأساس المقسوم بين حصتك وحصص المندوبين، ${SCOPE_WORD[scope]}`}
-              />
-            ) : (
-              /* Not drawable as a whole: a negative basis has no parts to divide,
-                 so the figures are stated instead of forced into a bar. */
-              <div className="flex flex-col gap-2 text-[13px]">
-                <p className="text-muted">
-                  {windowTeam.saleCount === 0
-                    ? "لا توجد عمليات منسوبة لمندوب في هذه الفترة."
-                    : "الأساس المقسوم في هذه الفترة لا يقبل القسمة كحصص موجبة."}
-                </p>
-                <div className="flex flex-wrap gap-x-6 gap-y-2">
-                  <Figure
-                    label="الأساس المقسوم"
-                    value={money(toMajor(windowTeam.basisMinor, windowTeam.currency))}
-                    polarity={windowTeam.basisMinor}
-                  />
-                  <Figure
-                    label="حصتك"
-                    value={money(toMajor(windowTeam.ownerShareMinor, windowTeam.currency))}
-                  />
-                  <Figure
-                    label="حصص الفريق"
-                    value={money(toMajor(windowTeam.repShareMinor, windowTeam.currency))}
-                  />
-                </div>
+          }
+        >
+          {split ? (
+            <DistributionBar
+              parts={split.parts}
+              total={split.total}
+              format={money}
+              formatShare={share}
+              label={`قسمة الأساس المقسوم بين حصتك وحصص المندوبين، ${SCOPE_WORD[scope]}`}
+            />
+          ) : (
+            /* Not drawable as a whole: a negative basis has no parts to divide,
+               so the figures are stated instead of forced into a bar. */
+            <div className="flex flex-col gap-3 text-[13px]">
+              <p className="text-muted">
+                {windowTeam.saleCount === 0
+                  ? "لا توجد عمليات منسوبة لمندوب في هذه الفترة."
+                  : "الأساس المقسوم في هذه الفترة لا يقبل القسمة كحصص موجبة."}
+              </p>
+              <div className="flex flex-wrap gap-x-6 gap-y-2">
+                <Figure
+                  label="الأساس المقسوم"
+                  value={money(toMajor(windowTeam.basisMinor, windowTeam.currency))}
+                  polarity={windowTeam.basisMinor}
+                />
+                <Figure
+                  label="حصتك"
+                  value={money(toMajor(windowTeam.ownerShareMinor, windowTeam.currency))}
+                />
+                <Figure
+                  label="حصص الفريق"
+                  value={money(toMajor(windowTeam.repShareMinor, windowTeam.currency))}
+                />
               </div>
-            )}
             </div>
-          </Rung>
-        </Ladder>
-      </div>
+          )}
+        </Panel>
 
-      {/* the count is a figure, so it is a bdi island rather than digits loose in
-          an RTL sentence — parentheses around it would resolve on either side */}
-      <h2 className="mt-7 mb-3 flex items-baseline gap-1.5 text-sm font-medium text-subtle">
-        المندوبون <Money>{count(rows.length)}</Money>
-      </h2>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        {rows.map(({ row, balance, lastSaleAt, pull, leading }) => (
-          <RepCard
-            key={row.repId}
-            row={row}
-            balance={balance}
-            lastSaleAt={lastSaleAt}
-            pull={pull}
-            leading={leading}
-            scope={scope}
-            trend={trends.get(row.repId) ?? []}
-            money={money}
-            count={count}
-            share={share}
-            locale={settings.locale}
-            href={`/reps/view?id=${row.repId}`}
-            onOpen={() => router.push(`/reps/view?id=${row.repId}`)}
+        {/* ── one figure worth its own size ────────────────────────────────
+            All-history, never windowed: a payable does not reset with a month,
+            and «المستحق» scoped to August would say the merchant owes nothing
+            the day a month turns over. */}
+        <Panel span={3} title="المستحق للفريق" bodyClassName="flex flex-col gap-3">
+          <Metric
+            size="sm"
+            amount={money(Math.abs(owedTotal))}
+            name={owedTotal < 0 ? "مدفوع مقدّماً" : "من كل السجل"}
           />
-        ))}
-      </div>
+          {earnedTotal > 0 && <Progress share={settledTotal / earnedTotal} />}
+          <dl className="flex flex-col gap-1.5 text-[12px]">
+            <div className="flex justify-between">
+              <dt className="text-subtle">استحقّوا</dt>
+              <dd><bdi className="r-num text-fg">{money(earnedTotal)}</bdi></dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-subtle">دُفع</dt>
+              <dd><bdi className="r-num text-fg">{money(settledTotal)}</bdi></dd>
+            </div>
+          </dl>
+          <p className="mt-auto text-[11px] leading-relaxed text-subtle">
+            الرصيد مشتقّ دائماً: الحصص المجمّدة ناقص التسويات.
+          </p>
+        </Panel>
+
+        {/* ── the one panel asking for a decision ─────────────────────────── */}
+        <Panel span={3} accent title="ما يحتاج قراراً" bodyClassName="flex h-full flex-col gap-3">
+          {needsScheme.length > 0 ? (
+            <>
+              <Metric
+                size="sm"
+                amount={count(needsScheme.reduce((sum, r) => sum + r.row.needsSchemeCount, 0))}
+                name="بيعة منسوبة لمندوب بلا نظام قسمة"
+              />
+              <p className="text-[12px] leading-relaxed text-muted">
+                حصة هذه البيعات لم تُجمّد، فهي ليست مستحقّة بعد. اربطها بنظام قسمة حتى
+                تدخل الرصيد.
+              </p>
+              <div className="mt-auto">
+                <Button asChild size="sm" variant="secondary">
+                  <Link href="/reps/schemes">إعدادات القسمة</Link>
+                </Button>
+              </div>
+            </>
+          ) : (
+            <p className="text-[13px] leading-relaxed text-muted">
+              كل بيعة منسوبة لمندوب لها نظام قسمة، وحصتها مجمّدة.
+            </p>
+          )}
+        </Panel>
+
+        {/* ── the work: every rep ─────────────────────────────────────────── */}
+        <Panel
+          span={12}
+          bare
+          footer={
+            <span className="text-[11px] text-subtle">
+              {count(rows.length)} مندوب · الرصيد من كل السجل، والحصة {SCOPE_WORD[scope]}
+            </span>
+          }
+        >
+          <Toolbar title="المندوبون">
+            <span className="r-spacer" />
+          </Toolbar>
+
+          <div className="r-tablewrap">
+            <table className="r-tbl">
+              <thead>
+                <tr>
+                  <th>المندوب</th>
+                  <th className="n">حصته</th>
+                  <th>نسبته إلى أعلى حصة</th>
+                  <th className="n">الرصيد</th>
+                  <th>آخر بيع</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map(({ row, balance, lastSaleAt, pull, leading }) => {
+                  const owed = toMajor(balance.balanceMinor, balance.currency);
+                  const losing = row.repShareMinor < 0;
+                  /* Nothing is drawn for a reading that does not exist; above zero
+                     the fill keeps a 4% stub so it can never vanish. */
+                  const drawn = pull > 0.002;
+                  const pct = drawn ? Math.max(4, pull * 100) : 0;
+                  return (
+                    <tr
+                      key={row.repId}
+                      data-row
+                      className="cursor-pointer"
+                      onClick={() => router.push(`/reps/view?id=${row.repId}`)}
+                    >
+                      <td>
+                        {/* The row is clickable for the mouse and the NAME is a real
+                            link, so the keyboard has the same road. The link stops
+                            the bubble: one click is one navigation. */}
+                        <Link
+                          href={`/reps/view?id=${row.repId}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="font-bold text-fg outline-none hover:underline focus-visible:ring-2 focus-visible:ring-accent/60"
+                        >
+                          {row.repName}
+                        </Link>
+                        {row.status === "archived" && (
+                          <Chip className="ms-2 h-[18px] text-[10px]">
+                            {REP_STATUS_LABELS.archived}
+                          </Chip>
+                        )}
+                        {row.needsSchemeCount > 0 && (
+                          <Chip tone="warning" className="ms-2 h-[18px] text-[10px]">
+                            {`${count(row.needsSchemeCount)} بلا قسمة`}
+                          </Chip>
+                        )}
+                      </td>
+                      <td className={cn("n font-bold", losing && "text-danger")}>
+                        {money(toMajor(row.repShareMinor, row.currency))}
+                      </td>
+                      <td className="w-[34%] min-w-[140px]">
+                        <span className="flex items-center gap-2">
+                          <span className="h-2 flex-1 overflow-hidden rounded-full bg-surface-2">
+                            {drawn && (
+                              <i
+                                className="block h-full rounded-full"
+                                style={{
+                                  width: `${pct}%`,
+                                  /* Only the leader stays solid: a quieted reading
+                                     is the same colour at a lower weight (§11a). */
+                                  background: losing
+                                    ? "var(--danger)"
+                                    : leading
+                                      ? "var(--accent-fill)"
+                                      : "var(--series-3)",
+                                }}
+                              />
+                            )}
+                          </span>
+                          <bdi className="r-num w-[3.5rem] shrink-0 text-end text-[11px] text-subtle">
+                            {share(pull)}
+                          </bdi>
+                        </span>
+                      </td>
+                      <td className={cn("n", owed < 0 && "text-accent")}>
+                        {money(Math.abs(owed))}
+                        {owed < 0 && (
+                          <span className="ms-1.5 text-[10px] font-normal text-subtle">مقدّم</span>
+                        )}
+                      </td>
+                      <td className="text-muted">
+                        {lastSaleAt
+                          ? formatDate(lastSaleAt, {
+                              locale: settings.locale,
+                              month: "short",
+                              day: "numeric",
+                            })
+                          : "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+      </Grid>
 
       <RepDialog open={addOpen} onClose={() => setAddOpen(false)} />
     </>
-  );
-}
-
-/**
- * One partner, one body. Four readings, each carried once: what he is owed, what
- * he earned in the window, how many pieces he moved, and where he stands against
- * the strongest rep. The leader is marked inside the chart (R37) — his rail stays
- * solid while the others keep the hue and drop to a dot screen — never by a medal.
- */
-function RepCard({
-  row,
-  balance,
-  lastSaleAt,
-  pull,
-  leading,
-  scope,
-  trend,
-  money,
-  count,
-  share,
-  locale,
-  href,
-  onOpen,
-}: {
-  row: RepAggregate;
-  balance: RepAggregate;
-  lastSaleAt: string | null;
-  pull: number;
-  leading: boolean;
-  scope: Scope;
-  trend: number[];
-  money: (n: number) => string;
-  count: (n: number) => string;
-  share: (r: number) => string;
-  locale: string;
-  href: string;
-  onOpen: () => void;
-}) {
-  const owed = toMajor(balance.balanceMinor, balance.currency);
-  const losing = row.repShareMinor < 0;
-  /* The RingGauge rule: nothing is drawn for a reading that does not exist, so at
-     zero the carved rail hatch is the whole statement and the badge prints «0%»
-     against it. Above zero the fill keeps a 4% stub so it can never vanish. */
-  const drawn = pull > 0.002;
-  const pct = drawn ? Math.max(4, pull * 100) : 0;
-
-  return (
-    <Card data-row className="bento-hover cursor-pointer" onClick={onOpen}>
-      <CardHeader>
-        <div className="min-w-0">
-          {/* the whole card is clickable for the mouse, and the name is a real
-              link so the keyboard has the same road — the link stops the bubble
-              so one click is one navigation, not the Link plus the card's push */}
-          <CardTitle className="truncate">
-            <Link href={href} className="hover:underline" onClick={(e) => e.stopPropagation()}>
-              {row.repName}
-            </Link>
-          </CardTitle>
-          <span className="mt-1 block text-[11px] text-subtle">
-            {lastSaleAt
-              ? `آخر بيع ${formatDate(lastSaleAt, { locale, month: "short", day: "numeric" })}`
-              : "لا مبيعات بعد"}
-          </span>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          {row.status === "archived" && <Badge>{REP_STATUS_LABELS.archived}</Badge>}
-          {row.needsSchemeCount > 0 && (
-            <Badge tone="warning">{`${count(row.needsSchemeCount)} بلا نظام قسمة`}</Badge>
-          )}
-          {/* the trend is a drawn line, never animated; phones drop it entirely.
-              A rep's share is a QUANTITY of money changing hands, not a profit, so
-              the line stays neutral ink — success means the merchant keeps (§13) */}
-          <Sparkline
-            className="hidden md:block"
-            values={trend}
-            tone="neutral"
-            label={`اتجاه حصة ${row.repName} في آخر ستة أشهر`}
-          />
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex flex-col gap-3.5">
-        <div className="flex flex-wrap gap-x-6 gap-y-3">
-          <Figure
-            label={owed < 0 ? "مدفوع مقدّمًا" : "الرصيد"}
-            value={money(Math.abs(owed))}
-            hint="كل السجل"
-          />
-          <Figure
-            label="حصته"
-            value={money(toMajor(row.repShareMinor, row.currency))}
-            hint={SCOPE_WORD[scope]}
-          />
-          {/* «القطع المبيعة» and the reversal note both moved to the rep's own
-              profile: a card in a list answers «كم له؟», and every extra figure on it
-              is one the eye has to sort past to answer that (VISUAL-LAW §15). */}
-        </div>
-
-
-        <div>
-          <div className="flex items-baseline justify-between gap-3 text-[11px]">
-            <span className="text-muted">نسبته إلى أعلى حصة</span>
-            {leading && <span className="text-subtle">القراءة المرجعية</span>}
-          </div>
-          <div className="rail relative mt-1.5 h-6 overflow-hidden rounded-[10px]">
-            {drawn && (
-              <div
-                className={cn(
-                  "rail-fill absolute inset-y-0 start-0 rounded-[10px]",
-                  losing ? "bg-danger" : "bg-accent",
-                  /* dots = a quieted reading (§11a): only the leader stays solid */
-                  !leading && "capsule-fill-quiet",
-                )}
-                style={{ width: `${pct}%` }}
-              />
-            )}
-            <span
-              className="rail-badge px-1.5 py-[3px] text-[10px] font-bold text-fg"
-              style={{ insetInlineStart: `max(4px, calc(${pct}% - 38px))` }}
-            >
-              <Money>{share(pull)}</Money>
-            </span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
   );
 }

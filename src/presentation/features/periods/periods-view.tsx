@@ -8,12 +8,7 @@ import { buildPeriodReport, toExportableTable } from "@/application/reports";
 import { downloadReport, printReport } from "@/infrastructure/export/export-service";
 import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
-  Badge,
   Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
   Dialog,
   EmptyState,
   Money,
@@ -25,6 +20,7 @@ import {
   THead,
   TR,
 } from "@/presentation/components/ui";
+import { Grid, Panel, Toolbar, Metric, Chip } from "@/presentation/components/structure";
 import type { Product, Sale } from "@/domain";
 import { formatCurrency, formatDate, formatPercent } from "@/presentation/lib/format";
 import { MagnitudeRings } from "@/presentation/components/objects/magnitude-rings";
@@ -92,11 +88,12 @@ export function PeriodsView() {
   if (!loaded) {
     return (
       <>
-        <PageHeader
-          title="الفترات المحاسبية"
-          description="أغلق الأشهر واحفظ التقارير التاريخية للقراءة فقط."
-        />
-        <Skeleton className="h-48 w-full" />
+        <PageHeader title="الفترات المحاسبية" />
+        <Grid>
+          <Skeleton className="span-9 h-[260px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[260px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-12 h-[320px] rounded-[var(--radius-md)]" />
+        </Grid>
       </>
     );
   }
@@ -105,21 +102,11 @@ export function PeriodsView() {
     <>
       <PageHeader
         title="الفترات المحاسبية"
-        description="أغلق الأشهر واحفظ التقارير التاريخية للقراءة فقط."
-      />
-
-      {/* الفترة المفتوحة */}
-      {active && liveSummary ? (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <CardTitle>{active.label}</CardTitle>
-              <Badge tone="success" dot>
-                مفتوحة
-              </Badge>
-            </div>
+        actions={
+          active && liveSummary ? (
             <Button
-              leadingIcon={<Lock size={16} />}
+              size="sm"
+              leadingIcon={<Lock size={15} />}
               onClick={() => {
                 setClosing({ label: active.label, summary: liveSummary });
                 setConfirmOpen(true);
@@ -127,15 +114,25 @@ export function PeriodsView() {
             >
               إغلاق الفترة
             </Button>
-          </CardHeader>
-          <CardContent>
+          ) : undefined
+        }
+      />
+
+      <Grid>
+        {/* ── the month still open ────────────────────────────────────────── */}
+        {active && liveSummary ? (
+          <Panel
+            span={9}
+            title={active.label}
+            meta={<Chip tone="success">مفتوحة</Chip>}
+            bodyClassName="flex flex-col gap-5"
+          >
             <SummaryGrid summary={liveSummary} money={money} locale={settings.locale} live />
-            <ExportButtons label={active.label} periodId={active.id} products={products} sales={sales} />
-            {/* Six columns per product, one of them a percentage, standing open under
-                the month's own four figures: the question «أي منتج ربّحني» is asked
-                when it is asked, not every time this screen opens. Behind a latch the
+            {/* Six columns per product, one of them a percentage, standing open
+                under the month's own four figures: «أي منتج ربّحني» is asked when
+                it is asked, not every time the screen opens. Behind a latch the
                 table keeps every column it had (VISUAL-LAW §15). */}
-            <Ladder solo className="mt-5">
+            <Ladder solo>
               <Rung
                 flat
                 title="الربح حسب المنتج"
@@ -153,62 +150,106 @@ export function PeriodsView() {
                 />
               </Rung>
             </Ladder>
-          </CardContent>
-        </Card>
-      ) : (
-        <EmptyState
-          icon={<CalendarCheck size={24} />}
-          title="لا توجد فترة مفتوحة"
-          description="ابدأ فترة محاسبية جديدة لتتبّع أرباح هذا الشهر."
-          action={<Button onClick={startFirstPeriod}>بدء فترة جديدة</Button>}
-        />
-      )}
+            <ExportButtons
+              label={active.label}
+              periodId={active.id}
+              products={products}
+              sales={sales}
+            />
+          </Panel>
+        ) : (
+          <Panel span={9} title="لا توجد فترة مفتوحة">
+            <EmptyState
+              icon={<CalendarCheck size={24} />}
+              title="لا توجد فترة مفتوحة"
+              action={<Button onClick={startFirstPeriod}>بدء فترة جديدة</Button>}
+            />
+          </Panel>
+        )}
 
-      {/* السجل */}
-      <h2 className="mt-8 mb-3 text-sm font-medium text-subtle">
-        الفترات المغلقة
-      </h2>
-      {closed.length === 0 ? (
-        <p className="text-sm text-muted">
-          لا توجد فترات مغلقة بعد. ستظهر الأشهر المغلقة هنا للقراءة فقط.
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {closed.map((period) => (
-            <Card key={period.id}>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <CardTitle>{period.label}</CardTitle>
-                  <Badge tone="neutral">مقفلة</Badge>
-                </div>
-                {period.closedAt && (
-                  <span className="text-xs text-subtle">
-                    أُغلقت {formatDate(period.closedAt, { locale: settings.locale })}
-                  </span>
-                )}
-              </CardHeader>
-              <CardContent>
-                {period.summary && (
-                  <div className="flex flex-col gap-4">
-                    {/* the month's magnitudes as nested areas (R47) beside its figures */}
-                    <MagnitudeRings
-                      rings={[
-                        { label: "الإيراد", value: period.summary.revenue, kind: "whole" },
-                        { label: "التكاليف", value: period.summary.totalCost, kind: "cost" },
-                        { label: "صافي الربح", value: period.summary.netProfit, kind: "keep" },
-                      ]}
-                      size={116}
-                      format={money}
-                    />
-                    <SummaryGrid summary={period.summary} money={money} locale={settings.locale} />
-                  </div>
-                )}
-                <ExportButtons label={period.label} periodId={period.id} products={products} sales={sales} />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+        {/* ── what closing actually does, which is the decision on this screen ── */}
+        <Panel span={3} accent title="ما يعنيه الإغلاق" bodyClassName="flex h-full flex-col gap-3">
+          {active && liveSummary ? (
+            <>
+              <Metric
+                size="sm"
+                amount={money(liveSummary.netProfit)}
+                name={`صافي ${active.label} حتى الآن`}
+              />
+              <p className="text-[12px] leading-relaxed text-muted">
+                الإغلاق يُجمّد أرقام الشهر ويفتح الذي يليه. بعده تُقرأ الفترة ولا تُعدَّل،
+                وحصص المندوبين فيها تبقى على ما جُمّدت عليه.
+              </p>
+            </>
+          ) : (
+            <p className="text-[13px] leading-relaxed text-muted">
+              ابدأ فترة حتى تُنسب إليها البيعات والطلبيات، وتصير للأرقام حدود شهر.
+            </p>
+          )}
+        </Panel>
+
+        {/* ── the archive ─────────────────────────────────────────────────── */}
+        <Panel
+          span={12}
+          bare
+          footer={
+            <span className="text-[11px] text-subtle">
+              {closed.length} فترة مغلقة · تُقرأ ولا تُعدَّل
+            </span>
+          }
+        >
+          <Toolbar title="الفترات المغلقة">
+            <span className="r-spacer" />
+          </Toolbar>
+
+          {closed.length === 0 ? (
+            <p className="p-6 text-center text-[13px] text-subtle">
+              لا توجد فترات مغلقة بعد. ستظهر الأشهر المغلقة هنا للقراءة فقط.
+            </p>
+          ) : (
+            <div className="r-tablewrap">
+              <table className="r-tbl">
+                <thead>
+                  <tr>
+                    <th>الفترة</th>
+                    <th className="n">الإيراد</th>
+                    <th className="n">التكاليف</th>
+                    <th className="n">صافي الربح</th>
+                    <th className="n">الهامش</th>
+                    <th>أُغلقت</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {closed.map((period) => (
+                    <tr key={period.id}>
+                      <td className="font-bold">{period.label}</td>
+                      <td className="n">{period.summary ? money(period.summary.revenue) : "—"}</td>
+                      <td className="n">{period.summary ? money(period.summary.totalCost) : "—"}</td>
+                      <td
+                        className={`n font-bold ${
+                          (period.summary?.netProfit ?? 0) < 0 ? "text-danger" : "text-fg"
+                        }`}
+                      >
+                        {period.summary ? money(period.summary.netProfit) : "—"}
+                      </td>
+                      <td className="n text-muted">
+                        {period.summary
+                          ? formatPercent(period.summary.margin, { locale: settings.locale })
+                          : "—"}
+                      </td>
+                      <td className="text-muted">
+                        {period.closedAt
+                          ? formatDate(period.closedAt, { locale: settings.locale })
+                          : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Panel>
+      </Grid>
 
       {/* Confirm close */}
       <Dialog
@@ -218,7 +259,6 @@ export function PeriodsView() {
           setClosing(null);
         }}
         title={`إغلاق ${closing?.label ?? "الفترة"}؟`}
-        description="سيتم قفل الفترة. يصبح تقريرها للقراءة فقط وتُفتح فترة جديدة."
         /* the art is the DATA being sealed: the month's own magnitudes (R29+R47) */
         art={
           closing ? (

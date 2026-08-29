@@ -59,7 +59,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 ) {
   const flat = variant === "ghost" || variant === "outline";
   const classes = cn(
-    "inline-flex select-none items-center justify-center font-semibold",
+    "inline-flex select-none items-center justify-center whitespace-nowrap font-semibold",
     "transition-[background-color,color,transform,opacity] duration-[var(--motion-fast)]",
     flat && "active:scale-[0.98]",
     "disabled:pointer-events-none disabled:opacity-50",

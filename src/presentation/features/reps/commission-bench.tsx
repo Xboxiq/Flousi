@@ -400,7 +400,6 @@ export function CommissionBench() {
   const header = (
     <PageHeader
       title="إعدادات القسمة"
-      description="اضبط القاعدة والأرقام تشرح نفسها."
       actions={
         <>
           {/* A confirmation is not a profit figure, so it stays in neutral ink and
@@ -414,16 +413,23 @@ export function CommissionBench() {
             {saved ? "تم الحفظ." : null}
           </span>
           <Button
-            leadingIcon={<FloppyDisk size={16} />}
+            size="sm"
+            leadingIcon={<FloppyDisk size={15} />}
             loading={saving}
             onClick={save}
             disabled={!selected}
           >
             حفظ
           </Button>
+          {/* The second verb steps aside on a phone. Two labelled buttons plus the
+              bar's own controls measured 320px inside a 358px content width and
+              pushed the theme key off the left edge — and «نظام جديد» is a setup
+              action, not one a merchant reaches for standing in the shop. */}
           <Button
+            size="sm"
             variant="secondary"
-            leadingIcon={<Plus size={16} weight="bold" />}
+            className="hidden sm:inline-flex"
+            leadingIcon={<Plus size={15} weight="bold" />}
             onClick={addScheme}
           >
             نظام جديد
@@ -465,7 +471,6 @@ export function CommissionBench() {
         <EmptyState
           icon={<Sliders size={24} />}
           title="لا يوجد نظام قسمة بعد"
-          description="أنشئ نظامًا واحدًا لتُقسم أرباح كل عملية تلقائيًا بينك وبين مندوبك."
           action={
             <Button leadingIcon={<Plus size={16} weight="bold" />} onClick={addScheme}>
               نظام جديد

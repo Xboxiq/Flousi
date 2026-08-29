@@ -6,7 +6,6 @@ import { ArrowLeft, FileCsv, FilePdf, FileXls, Printer } from "@phosphor-icons/r
 import {
   buildReport,
   toExportableTable,
-  REPORT_META,
   type CellKind,
   type ReportType,
 } from "@/application/reports";
@@ -110,7 +109,6 @@ export function ReportView({ type }: { type: ReportType }) {
       </div>
       <PageHeader
         title={report.title}
-        description={REPORT_META[type].description}
         actions={loaded ? actions : undefined}
       />
 
