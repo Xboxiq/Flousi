@@ -259,3 +259,45 @@ appearing twice is not an argument for accepting it.
 | مخطط النقاط (dot-matrix) لمقارنة مبالغ | شبكة نقاط أسوأ قراءةً من قضيب لسؤال «أي منتج ربح أكثر»؛ مؤجّل لشاشة المندوبين حيث الوحدة شخص لا مبلغ |
 | شريط أجزاء يزيد مجموعه على كلّه (التجاوز كقطعة مضافة) | ضُبط في هذه الدفعة: كان الشريط يتجاوز 100% فيُقصّ من طرفه؛ صار التجاوز منطقةً محزّزة فوق الأجزاء التي أكلها (§11b) |
 | Purple/violet hues from nova's legacy HTML | يخالف بوابة السلوب؛ نأخذ التقنية ونعيد ربط الألوان بتوكنات RITM |
+
+
+---
+
+## §18 · نظام رِتم / THE RITM DESIGN SYSTEM
+
+`design-system/ritm/` is the product layer of the identity in `design-system/brand/`.
+The brand is the source and is not re-opened here; what was added is the answer a
+brand manual cannot give — what each colour, size and duration MEANS in a product.
+
+Published: https://claude.ai/code/artifact/c205bf8a-7a37-4a45-a2ba-ab09b7918dd0
+
+### The two clauses this phase adds
+
+**18.1 · A palette that works on one ground is half a palette.** The identity was
+settled on ink. Moving it to paper needed a token the dark mode does not have:
+sand is `1.98:1` on paper, so `--accent` (a fill) and `--accent-ink` `#7C6036`
+(a word) are two different tokens and are never interchangeable. The general rule:
+when a mode needs a value the other does not, that is a NEW TOKEN, never the same
+token quietly reassigned.
+
+**18.2 · A rule that cannot be run is a wish.** Every rule in this document that
+governs `ritm/` is executable in `ritm/audit.mjs`: contrast for 37 pairs in both
+modes, the plane, the ten-step scale, the 4px lattice, the ghost card, Arabic in a
+Latin face, and unisolated LTR runs. Two of its checks are FAILING controls — sand
+and teal as text on paper must stay below AA. A check that can only pass cannot
+catch a regression that loosens a threshold.
+
+### Recorded conflicts
+
+* **The brand's six display steps vs a product's density.** The manual sets 116 /
+  56 / 38 / 22 / 16 / 13. A table row and an axis tick live below that floor. The
+  product ramp keeps five of the six as members (13, 16, 22, 38, 56) and adds the
+  five the manual has no reason to name (10, 11, 12, 14, 28). Resolved in favour of
+  the product, and `brand/Type.dc.html` now says «ستّ درجات للهوية» rather than
+  «لا سابعة».
+* **Teal is «the live signal, dark only» and is also this manual's annotation
+  colour.** Both are true; the Colour board now says so, and teal is not a general
+  fill anywhere in the product.
+* **A white card on an off-white page** (recorded in §17) stands: light mode is
+  `#FFFFFF` on `#F2F1EE`, because the brand's light ground is warm and a card that
+  is not lighter than it has no elevation at all.

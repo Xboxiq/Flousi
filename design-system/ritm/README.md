@@ -8,6 +8,8 @@ and the work was to answer the question a brand manual cannot — what each of t
 **means** inside a product that computes a merchant's real profit and splits it with the
 people who sell for him.
 
+    https://claude.ai/code/artifact/c205bf8a-7a37-4a45-a2ba-ab09b7918dd0
+
     node audit.mjs      # measure: contrast both modes, plane, scale, lattice, RTL
     node render.mjs     # look:    every screen photographed at 2x into renders/
 
