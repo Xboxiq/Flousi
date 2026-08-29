@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- RITM · the symbol, redrawn as vector from the original artwork.
+     Four bars, fully rounded ends, width 4.2, pitch 6.6 on a 24 x 39 box.
+     Bottoms step by one pitch: 39, 32.5, 26, 19.5 (reading right to left they
+     ascend). Tops of the three long bars step by half a pitch: 7, 3.5, 0.
+     The fourth bar is short — 14, a little over two pitches — and hangs between,
+     which is what stops the run reading as a plain ascending bar chart.
+     Measured against the source: bar width 12.5px and pitch 19.7px in a 71px
+     mark, i.e. w/pitch = 0.635. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="39" viewBox="0 0 24 39" fill="currentColor">
+  <rect x="0"    y="7"   width="4.2" height="32" rx="2.1"/>
+  <rect x="6.6"  y="3.5" width="4.2" height="29" rx="2.1"/>
+  <rect x="13.2" y="0"   width="4.2" height="26" rx="2.1"/>
+  <rect x="19.8" y="5.5" width="4.2" height="14" rx="2.1"/>
+</svg>
