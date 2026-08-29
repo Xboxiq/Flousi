@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head><meta charset="utf-8"><title>RITM · الأفعال والنماذج</title>
+<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="system.css"><link rel="stylesheet" href="docs.css"></head>
+<body>
+<div class="plane">
+  <div class="head">
+    <div><span class="eyebrow">04 · ACTIONS &amp; FORMS</span>
+      <h1 style="margin-top:8px">كل حالة مرسومة، لا مفترضة</h1></div>
+    <span class="eyebrow">DEFAULT · HOVER · FOCUS · ACTIVE · DISABLED · LOADING</span>
+  </div>
+
+  <div class="work" style="flex-direction:row;gap:var(--s-6)">
+
+    <div class="panel" style="flex:1.15">
+      <span class="eyebrow">BUTTONS · فعل أول واحد في الشاشة</span>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr>
+          <th></th>
+          <th class="state-label" style="padding:var(--s-2);text-align:start">DEFAULT</th>
+          <th class="state-label" style="padding:var(--s-2);text-align:start">HOVER</th>
+          <th class="state-label" style="padding:var(--s-2);text-align:start">FOCUS</th>
+          <th class="state-label" style="padding:var(--s-2);text-align:start">DISABLED</th>
+        </tr></thead>
+        <tbody id="btns"></tbody>
+      </table>
+      <p class="note">الرملي هو مادة الفعل الأول. إذا حمل شيئان في شاشة واحدة لوناً رملياً،
+        فأحدهما يكذب على القارئ بشأن أهميته.</p>
+
+      <div class="divider"></div>
+      <span class="eyebrow">LOADING · الانتظار يُقاس بما ينتظره</span>
+      <div class="spec-row" style="gap:var(--s-3)">
+        <button class="btn btn-primary is-loading">تسوية الشهر</button>
+        <button class="btn btn-secondary">إلغاء</button>
+        <span class="note" style="flex:1">الزرّ يحتفظ بعرضه فلا تقفز الصفحة تحته.</span>
+      </div>
+
+      <div class="divider"></div>
+      <span class="eyebrow">GROUPS · قرار واحد بحافة واحدة</span>
+      <div class="spec-row" style="gap:var(--s-6)">
+        <span class="btn-group">
+          <button class="btn btn-secondary">الشهر</button>
+          <button class="btn btn-secondary">الربع</button>
+          <button class="btn btn-secondary">السنة</button>
+        </span>
+        <span class="btn-split">
+          <button class="btn btn-primary">تصدير</button>
+          <button class="btn btn-primary"><svg class="i i-sm" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+        </span>
+        <span class="seg">
+          <button aria-pressed="true">الكل</button><button>مفتوح</button><button>مسوّى</button>
+        </span>
+      </div>
+    </div>
+
+    <div class="panel" style="flex:1">
+      <span class="eyebrow">FIELDS · تسمية ظاهرة فوق كل حقل</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4)">
+        <div class="field">
+          <label>اسم المندوب <span class="req">*</span></label>
+          <input class="input" value="ليث العبيدي">
+          <span class="help">كما يظهر في كل تقرير.</span>
+        </div>
+        <div class="field">
+          <label>الحصة</label>
+          <span class="affix">
+            <input class="input is-amount" value="45"><span class="unit">%</span>
+          </span>
+          <span class="help">من صافي ربح الطلب.</span>
+        </div>
+        <div class="field">
+          <label>مبلغ التحصيل</label>
+          <input class="input is-amount is-focus" value="606,000">
+          <span class="help">دينار عراقي.</span>
+        </div>
+        <div class="field is-error">
+          <label>سعر الشراء</label>
+          <input class="input" value="0">
+          <span class="error">
+            <svg class="i i-sm" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></svg>
+            اكتب سعر الشراء لنحسب الربح.</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <span class="eyebrow">CHOICE · اختيار</span>
+      <div class="spec-row" style="gap:var(--s-6)">
+        <span class="choice"><span class="check is-on"><svg class="i i-sm" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span>مجمَّد</span>
+        <span class="choice"><span class="check"></span>مفتوح</span>
+        <span class="choice"><span class="radio is-on"><span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span></span>نسبة</span>
+        <span class="choice"><span class="radio"></span>مبلغ ثابت</span>
+        <span class="choice"><span class="toggle is-on"></span>إشعار يومي</span>
+      </div>
+
+      <div class="divider"></div>
+      <span class="eyebrow">MULTI · اختيار متعدّد وبحث</span>
+      <div class="spec-row" style="gap:var(--s-3);align-items:stretch">
+        <span class="tokens" style="flex:1">
+          <span class="token">ليث<button>×</button></span>
+          <span class="token">سعد<button>×</button></span>
+          <span class="caption">أضف مندوباً</span>
+        </span>
+        <span class="search" style="flex:1">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="input" placeholder="ابحث برقم الطلب">
+        </span>
+      </div>
+    </div>
+
+    <div class="panel" style="flex:.85">
+      <span class="eyebrow">NAVIGATION · التنقّل</span>
+      <div class="card" style="padding:var(--s-2)">
+        <a class="navitem" href="#" aria-current="page">
+          <svg class="i" viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg><span>العمليات</span></a>
+        <a class="navitem" href="#">
+          <svg class="i" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>
+          <span>التحصيلات</span><span class="count">3</span></a>
+        <a class="navitem" href="#">
+          <svg class="i" viewBox="0 0 24 24"><path d="M6 18 18 6"/><circle cx="7.5" cy="7.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>
+          <span>العمولات</span></a>
+      </div>
+      <p class="note">الحالي ليس رابطاً ملوّناً: كبسولة ممتلئة وحافة رملية على جهة القراءة،
+        فيُقرأ كموضع حتى بلا لون.</p>
+
+      <div class="divider"></div>
+      <span class="eyebrow">TABS &amp; CRUMBS</span>
+      <nav class="crumbs">
+        <a href="#">العمليات</a><span class="sep">/</span>
+        <a href="#">أغسطس</a><span class="sep">/</span>
+        <span aria-current="page">تسوية</span>
+      </nav>
+      <div class="tabs">
+        <button aria-selected="true">الملخّص</button>
+        <button>الطلبات</button>
+        <button>المرتجع</button>
+      </div>
+
+      <div class="divider"></div>
+      <span class="eyebrow">MENU · قائمة</span>
+      <div class="menu" style="width:200px">
+        <button><svg class="i i-sm" viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v3h16v-3"/></svg>تصدير CSV</button>
+        <button><svg class="i i-sm" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>تجميد الشهر</button>
+        <div class="sep"></div>
+        <button class="danger"><svg class="i i-sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>حذف المسودة</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="eyebrow">HIT TARGET 44 · ONE PRIMARY PER VIEW · LABELS ARE NOT PLACEHOLDERS</span>
+    <span class="eyebrow">الأفعال · 04</span>
+  </div>
+</div>
+<script>
+const kinds = [["أساسي","btn-primary"],["ثانوي","btn-secondary"],["ثالثي","btn-tertiary"],["خطر","btn-danger"]];
+document.getElementById("btns").innerHTML = kinds.map(([ar, c]) => `
+  <tr>
+    <td style="padding:var(--s-2) 0;font-size:var(--fs-small);color:var(--fg-3);white-space:nowrap">${ar}</td>
+    <td style="padding:var(--s-2)"><button class="btn ${c}">تسوية</button></td>
+    <td style="padding:var(--s-2)"><button class="btn ${c} is-hover">تسوية</button></td>
+    <td style="padding:var(--s-2)"><button class="btn ${c} is-focus">تسوية</button></td>
+    <td style="padding:var(--s-2)"><button class="btn ${c} is-disabled" disabled>تسوية</button></td>
+  </tr>`).join("");
+</script>
+</body></html>

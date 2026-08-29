@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head><meta charset="utf-8"><title>RITM · لوحة التاجر · فاتح</title>
+<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="system.css"><link rel="stylesheet" href="docs.css"></head>
+<body>
+<div class="plane app">
+  <div class="app" style="height:900px">
+    <div id="side"></div>
+    <div class="main" style="display:flex;flex-direction:column;min-width:0">
+      <div id="top"></div>
+      <div style="flex:1;overflow:hidden;padding:var(--s-6);display:flex;flex-direction:column;gap:var(--s-4)">
+
+        <!-- ONE NUMBER FIRST. Not four cards: the screen is about a single figure,
+             and everything under it exists to explain that figure. -->
+        <section class="grid" style="align-items:stretch">
+          <div class="span-8 card" style="padding:var(--s-5) var(--s-6);display:flex;
+               align-items:flex-end;justify-content:space-between;gap:var(--s-6)">
+            <div class="metric is-lead">
+              <span class="headline"><span class="amount" id="net">1,775,800</span><span class="unit">د.ع.</span></span>
+              <span class="name">ما بقي لك من أغسطس</span>
+              <span class="compare">
+                <span class="trend up">46.2%</span>
+                مقابل <span class="num">1,214,600</span> في يوليو
+                <span class="sep" style="color:var(--line-strong)">·</span>
+                <span class="num">216</span> طلباً
+              </span>
+            </div>
+            <div style="flex:1;max-width:300px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:var(--s-2)">
+                <span class="caption">هدف الشهر</span>
+                <span class="num" style="font-size:var(--fs-small)">88.8%</span></div>
+              <div class="progress" style="height:8px"><i style="width:88.8%"></i></div>
+              <div class="caption" style="margin-top:var(--s-2)">
+                يتبقّى <span class="num">224,200</span> وخمسة أيام.</div>
+            </div>
+          </div>
+
+          <!-- the one thing that needs a decision today, not a fifth statistic -->
+          <div class="span-4 card is-accent" style="padding:var(--s-4) var(--s-5);display:flex;
+               flex-direction:column;justify-content:space-between">
+            <div>
+              <span class="eyebrow" style="color:var(--accent-ink)">NEEDS YOU</span>
+              <h3 style="font-size:var(--fs-lead);font-weight:var(--fw-bold);margin-top:var(--s-2)">
+                ثلاثة تحصيلات تأخّرت</h3>
+              <p class="caption" style="margin-top:var(--s-1)">
+                <span class="num">1,892,820</span> دينار، أقدمها <span class="num">12</span> يوماً.</p>
+            </div>
+            <div class="row" style="gap:var(--s-2);margin-top:var(--s-3)">
+              <button class="btn btn-primary btn-sm">افتح التحصيلات</button>
+              <button class="btn btn-tertiary btn-sm">لاحقاً</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="grid" style="flex:1;min-height:0;align-items:stretch">
+
+          <!-- where the revenue went: the product's whole reason to exist -->
+          <div class="span-4 card" style="display:flex;flex-direction:column">
+            <header><h3>أين ذهب الإيراد</h3>
+              <span class="num spacer" style="font-size:var(--fs-small);color:var(--fg-3)">5,164,500</span></header>
+            <div class="body" style="flex:1;display:flex;flex-direction:column;gap:var(--s-3)">
+              <div class="splitbar">
+                <span style="width:34.4%;background:var(--series-1);color:var(--on-series-1)">34%</span>
+                <span style="width:45.2%;background:var(--series-2);color:var(--on-series-2)">45%</span>
+                <span style="width:14.9%;background:var(--series-3);color:var(--on-series-3)">15%</span>
+                <span style="width:5.5%;background:var(--series-4);color:var(--on-series-4)">6%</span>
+              </div>
+              <div id="key"></div>
+              <div style="margin-top:var(--s-2)">
+                <span class="eyebrow">DAILY NET · صافي كل يوم</span>
+                <svg viewBox="0 0 300 56" style="width:100%;height:56px;margin-top:var(--s-2)" role="img"
+                     aria-label="صافي الربح اليومي في أغسطس">
+                  <g id="bars"></g>
+                </svg>
+              </div>
+              <div style="margin-top:auto;padding-top:var(--s-3);border-top:1px solid var(--line);
+                   display:flex;align-items:baseline;justify-content:space-between">
+                <span class="small">هامش الربح</span>
+                <span class="num" style="font-size:var(--fs-lead);color:var(--accent)">34.4%</span></div>
+              <p class="caption">من كل <span class="num">1,000</span> دينار بعتها، بقي لك
+                <span class="num">344</span>.</p>
+            </div>
+          </div>
+
+          <!-- who earned what, ranked, with the rule that produced it -->
+          <div class="span-4 card" style="display:flex;flex-direction:column">
+            <header><h3>حصص المندوبين</h3>
+              <span class="badge badge-accent spacer">مجمَّد</span></header>
+            <div class="body" style="flex:1;display:flex;flex-direction:column;gap:var(--s-6)" id="reps"></div>
+            <div style="margin-top:auto;padding:0 var(--s-4) var(--s-3);display:flex;gap:var(--s-4)">
+              <span style="flex:1"><span class="caption" style="display:block">مدفوع</span>
+                <span class="num" style="font-size:var(--fs-table)">357,200</span></span>
+              <span style="flex:1"><span class="caption" style="display:block">متبقّي للتسوية</span>
+                <span class="num money neg" style="font-size:var(--fs-table)">412,000</span></span>
+              <span style="flex:1"><span class="caption" style="display:block">من الربح</span>
+                <span class="num" style="font-size:var(--fs-table)">30.2%</span></span>
+            </div>
+            <footer style="justify-content:space-between">
+              <span class="small">المجموع</span>
+              <span class="num" style="font-size:var(--fs-lead)">769,200</span></footer>
+          </div>
+
+          <!-- the month's shape, and the orders behind it -->
+          <div class="span-4 card" style="display:flex;flex-direction:column;min-height:0">
+            <header><h3>آخر الطلبات</h3>
+              <span class="spacer"></span>
+              <button class="btn btn-tertiary btn-sm">الكل</button></header>
+            <div style="flex:1;min-height:0;overflow:hidden" id="orders"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { sidebar, topbar, icon, MONTH, fmt } from "./shell.js";
+document.getElementById("side").outerHTML = sidebar("ops");
+document.getElementById("top").outerHTML = topbar(
+  ["العمليات", "أغسطس 2026"],
+  `<button class="btn btn-secondary btn-sm">${icon("export", "i i-sm")}تصدير</button>
+   <button class="btn btn-primary btn-sm">${icon("plus", "i i-sm")}طلب جديد</button>`);
+
+const key = [
+  ["ما بقي لك", MONTH.net, "var(--series-1)"],
+  ["كلفة الشراء", MONTH.cost, "var(--series-2)"],
+  ["حصص المندوبين", MONTH.shares, "var(--series-3)"],
+  ["التوصيل والمرتجع", MONTH.delivery, "var(--series-4)"],
+];
+document.getElementById("key").innerHTML = key.map(([t, v, c]) => `
+  <div style="display:flex;align-items:center;gap:var(--s-2);padding-block:var(--s-15);
+       border-bottom:1px solid var(--line)">
+    <i style="width:8px;height:8px;border-radius:2px;background:${c};flex:none"></i>
+    <span style="flex:1;font-size:var(--fs-table)">${t}</span>
+    <span class="num" style="font-size:var(--fs-table)">${fmt(v)}</span></div>`).join("");
+
+/* one bar per day: the shape of the month at the size a card can hold */
+const days = [42,55,38,61,49,72,66,51,80,58,74,63,88,70,59,91,77,68,84,62,95,73,86,79,102,88,94,81,97];
+document.getElementById("bars").innerHTML = days.map((v, i) => {
+  const w = 300 / days.length;
+  return `<rect x="${300 - (i + 1) * w + 1}" y="${56 - v / 102 * 52}" width="${w - 2}"
+    height="${v / 102 * 52}" rx="1" fill="var(--${i === days.length - 1 ? "accent" : "series-2"})"/>`;
+}).join("");
+
+document.getElementById("reps").innerHTML = MONTH.reps.map((r, i) => `
+  <div>
+    <div style="display:flex;align-items:baseline;gap:var(--s-2)">
+      <span style="flex:1;font-size:var(--fs-body);font-weight:var(--fw-bold)">${r.name}</span>
+      <span class="num" style="font-size:var(--fs-body)">${fmt(r.share)}</span></div>
+    <div class="progress" style="margin-block:var(--s-15)">
+      <i style="width:${[100, 90.2, 42][i]}%;background:var(--${r.key})"></i></div>
+    <div style="display:flex;gap:var(--s-2)">
+      <span class="caption">${r.rule}</span>
+      <span class="caption" style="color:var(--line-strong)">·</span>
+      <span class="caption">على <span class="num">${fmt(r.base)}</span></span></div>
+  </div>`).join("");
+
+const orders = [
+  ["ط-1048", "زيونة، بغداد", "ليث العبيدي", 278000, "rep-1", "في الطريق", "info"],
+  ["ط-1047", "الكرادة", "سعد الجبوري", 241300, "rep-2", "مسوّى", "success"],
+  ["ط-1046", "الجادرية", "زينب الطائي", 68400, "rep-3", "مسوّى", "success"],
+  ["ط-1045", "حي الجامعة", "ليث العبيدي", 121500, "rep-1", "بانتظار التحصيل", "warning"],
+  ["ط-1044", "الأعظمية", "سعد الجبوري", 203100, "rep-2", "مسوّى", "success"],
+  ["ط-1043", "الكاظمية", "زينب الطائي", 54200, "rep-3", "مرتجع", "danger"],
+];
+document.getElementById("orders").innerHTML = orders.map(([id, dest, who, v, k, st, sk], i) => `
+  <button class="datarow enter enter-${Math.min(i, 5)}">
+    <span class="avatar avatar-sm" style="background:var(--${k});color:var(--bg)">${who[0]}</span>
+    <span class="tx"><b>${id} <span style="font-weight:var(--fw-regular);color:var(--fg-3)">${dest}</span></b>
+      <span>${who}</span></span>
+    <span class="end">
+      <span class="num" style="display:block;font-size:var(--fs-body);font-weight:var(--fw-bold)">${fmt(v)}</span>
+      <span class="badge badge-${sk}" style="height:18px;font-size:var(--fs-label);margin-top:2px">${st}</span>
+    </span></button>`).join("");
+</script>
+</body></html>

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head><meta charset="utf-8"><title>RITM · لغة الرسوم</title>
+<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="system.css"><link rel="stylesheet" href="docs.css"></head>
+<body>
+<div class="plane">
+  <div class="head">
+    <div><span class="eyebrow">07 · CHART LANGUAGE</span>
+      <h1 style="margin-top:8px">أربعة أشكال، كل واحد يجيب سؤالاً مختلفاً</h1></div>
+    <span class="eyebrow">SPLIT · RANK · TREND · GAUGE</span>
+  </div>
+
+  <div class="work" style="flex-direction:row;gap:var(--s-6)">
+
+    <div style="flex:1.1;display:flex;flex-direction:column;gap:var(--s-4);min-width:0">
+      <div class="panel">
+        <span class="eyebrow">SPLIT · أين ذهب الإيراد · جزء من كلّ</span>
+        <div class="splitbar">
+          <span style="width:34.4%;background:var(--series-1);color:var(--on-series-1)">34%</span>
+          <span style="width:45.2%;background:var(--series-2);color:var(--on-series-2)">45%</span>
+          <span style="width:14.9%;background:var(--series-3);color:var(--on-series-3)">15%</span>
+          <span style="width:5.5%;background:var(--series-4);color:var(--on-series-4)">6%</span>
+        </div>
+        <div class="splitkey">
+          <span class="k"><i style="background:var(--series-1)"></i>ما بقي لك <b class="num">1,775,800</b></span>
+          <span class="k"><i style="background:var(--series-2)"></i>كلفة الشراء <b class="num">2,334,920</b></span>
+          <span class="k"><i style="background:var(--series-3)"></i>حصص المندوبين <b class="num">769,200</b></span>
+          <span class="k"><i style="background:var(--series-4)"></i>التوصيل والمرتجع <b class="num">284,580</b></span>
+        </div>
+        <p class="note">الشريط يبدأ من جهة القراءة بما يخصّ التاجر، لا بأكبر رقم.
+          والمجموع <span class="num">5,164,500</span>: هو الإيراد نفسه، لا رقم آخر.</p>
+      </div>
+
+      <div class="panel" style="flex:1">
+        <span class="eyebrow">RANK · من كسب ماذا · مقارنة مرتّبة</span>
+        <div class="hbar"><span>ليث العبيدي</span>
+          <span class="track"><i class="fill" style="width:100%;background:var(--rep-1)"></i></span>
+          <span class="v">331,200</span></div>
+        <div class="hbar"><span>سعد الجبوري</span>
+          <span class="track"><i class="fill" style="width:90.2%;background:var(--rep-2)"></i></span>
+          <span class="v">298,800</span></div>
+        <div class="hbar"><span>زينب الطائي</span>
+          <span class="track"><i class="fill" style="width:42%;background:var(--rep-3)"></i></span>
+          <span class="v">139,200</span></div>
+        <p class="note">مرتّب تنازلياً دائماً، والقيمة مكتوبة عند طرف كل شريط.
+          الترتيب هو المعلومة؛ الطول يؤكّده فقط.</p>
+      </div>
+    </div>
+
+    <div class="panel" style="flex:1.25">
+      <span class="eyebrow">TREND · شكل الشهر · تغيّر عبر الزمن</span>
+      <div class="chart" style="height:280px">
+        <svg viewBox="0 0 560 240" style="width:100%;height:100%" role="img"
+             aria-label="صافي الربح اليومي التراكمي في أغسطس مقابل يوليو">
+          <g class="grid-line">
+            <line x1="40" y1="20"  x2="548" y2="20"  stroke="var(--line)"/>
+            <line x1="40" y1="75"  x2="548" y2="75"  stroke="var(--line)"/>
+            <line x1="40" y1="130" x2="548" y2="130" stroke="var(--line)"/>
+            <line x1="40" y1="185" x2="548" y2="185" stroke="var(--line)"/>
+          </g>
+          <text class="axis" x="34" y="24"  text-anchor="end">2.0M</text>
+          <text class="axis" x="34" y="79"  text-anchor="end">1.5M</text>
+          <text class="axis" x="34" y="134" text-anchor="end">1.0M</text>
+          <text class="axis" x="34" y="189" text-anchor="end">0.5M</text>
+          <!-- July: a dashed line, so the two series differ by STYLE and not by hue alone -->
+          <polyline fill="none" stroke="var(--fg-3)" stroke-width="1.5" stroke-dasharray="4 4"
+            points="548,205 500,196 452,186 404,176 356,163 308,152 260,141 212,131 164,120 116,110 68,101 40,96"/>
+          <polyline fill="none" stroke="var(--accent)" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round"
+            points="548,206 500,192 452,178 404,160 356,146 308,128 260,113 212,96 164,78 116,62 68,48 40,42"/>
+          <circle cx="40" cy="42" r="4" fill="var(--accent)"/>
+          <text class="axis" x="548" y="228" text-anchor="middle">01</text>
+          <text class="axis" x="308" y="228" text-anchor="middle">15</text>
+          <text class="axis" x="40"  y="228" text-anchor="middle">29</text>
+        </svg>
+      </div>
+      <div class="splitkey">
+        <span class="k"><i style="background:var(--accent);border-radius:0;height:2px;width:16px"></i>أغسطس <b class="num">1,775,800</b></span>
+        <span class="k"><i style="background:var(--fg-3);border-radius:0;height:2px;width:16px"></i>يوليو <b class="num">1,214,600</b></span>
+      </div>
+      <div class="divider"></div>
+      <span class="eyebrow">SMALL · نفس الخط داخل صفّ</span>
+      <div class="card" style="padding:var(--s-2) var(--s-4)" id="sparks"></div>
+      <p class="note">الشكل نفسه بمقاس الصفّ: بلا محاور ولا شبكة، لأن سؤاله هنا
+        «هل يصعد أم يهبط» لا «كم بالضبط». الرقم بجانبه يجيب الثاني.</p>
+      <p class="note">خطّان يفترقان بالأسلوب لا باللون وحده: المتّصل هو الشهر الجاري،
+        والمتقطّع هو ما يُقارن به. النقطة الأخيرة وحدها معلَّمة، لأنها الرقم الذي يهمّ اليوم.</p>
+    </div>
+
+    <div style="flex:.95;display:flex;flex-direction:column;gap:var(--s-4);min-width:0">
+      <div class="panel">
+        <span class="eyebrow">GAUGE · كم بقي للهدف</span>
+        <div class="metric is-small" style="margin-bottom:var(--s-2)">
+          <span class="headline"><span class="amount">88.8</span><span class="unit">% من الهدف</span></span>
+          <span class="name">صافي ربح أغسطس</span>
+        </div>
+        <div class="progress" style="height:10px"><i style="width:88.8%"></i></div>
+        <div style="display:flex;justify-content:space-between;margin-top:var(--s-2)">
+          <span class="caption">يتبقّى <span class="num">224,200</span></span>
+          <span class="caption"><span class="num">2,000,000</span></span>
+        </div>
+        <p class="note">المقياس يقول المسافة الباقية بالدينار، لا بالنسبة وحدها.
+          النسبة تُطمئن، والمبلغ يُحرّك.</p>
+      </div>
+
+      <div class="panel" style="flex:1">
+        <span class="eyebrow">NOT IN THIS SYSTEM · ما لا يُرسم هنا</span>
+        <ul class="note" style="padding-inline-start:16px;line-height:2;color:var(--fg-2)">
+          <li>رسم دائري بأكثر من شريحتين: العين لا تقارن الزوايا.</li>
+          <li>محور مقطوع لا يبدأ من الصفر في رسم مالي.</li>
+          <li>تدرّج لوني تحت خط، ولا ظلّ، ولا ثلاثية أبعاد.</li>
+          <li>مفتاح بعيد عن الشكل يجبر القارئ على النظر بعيداً ليعرف ما يرى.</li>
+          <li>حركة عند الظهور تؤخّر قراءة رقم.</li>
+          <li>لون لكل عمود حين يكفي لون واحد.</li>
+        </ul>
+        <div class="alert alert-info" style="margin-top:auto">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+          <div><h4>الرسم يتّفق مع جدوله دائماً</h4>
+            <p>كل رقم في هذه الصفحة مشتقّ من مجموعة واحدة تُجمَع إلى <span class="num">5,164,500</span>.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="eyebrow">EVERY SERIES LABELLED IN PLACE · NO DECORATIVE CHART SHIPS</span>
+    <span class="eyebrow">الرسوم · 07</span>
+  </div>
+</div>
+<script>
+const series = [
+  ["ليث العبيدي", "var(--rep-1)", [18,16,15,13,12,10,9,7,6,4,3], "331,200"],
+  ["سعد الجبوري", "var(--rep-2)", [19,18,18,16,15,15,13,12,10,9,8], "298,800"],
+  ["زينب الطائي", "var(--rep-3)", [19,19,18,18,17,17,16,16,15,14,14], "139,200"],
+];
+document.getElementById("sparks").innerHTML = series.map(([n, c, pts, v]) => {
+  const d = pts.map((y, i) => `${100 - i * 10},${y}`).join(" ");
+  return `<div style="display:flex;align-items:center;gap:var(--s-3);padding-block:var(--s-2);
+      border-bottom:1px solid var(--line)">
+    <span style="flex:1;font-size:var(--fs-table);white-space:nowrap">${n}</span>
+    <svg viewBox="0 0 100 22" style="width:120px;height:22px;flex:none">
+      <polyline fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round" points="${d}"/></svg>
+    <span class="num" style="font-size:var(--fs-table);width:8ch;text-align:end">${v}</span>
+  </div>`;
+}).join("");
+</script>
+</body></html>

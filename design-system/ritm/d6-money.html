@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head><meta charset="utf-8"><title>RITM · لغة المال</title>
+<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="system.css"><link rel="stylesheet" href="docs.css"></head>
+<body>
+<div class="plane">
+  <div class="head">
+    <div><span class="eyebrow">06 · FINANCIAL LANGUAGE</span>
+      <h1 style="margin-top:8px">المبلغ، ثم اسمه، ثم مدّته، ثم ما يُقارن به</h1></div>
+    <span class="eyebrow">AMOUNT · LABEL · PERIOD · COMPARISON · TREND</span>
+  </div>
+
+  <div class="work" style="flex-direction:row;gap:var(--s-6)">
+
+    <div class="panel" style="flex:1.15">
+      <span class="eyebrow">THE HIERARCHY · خمس طبقات، بهذا الترتيب دائماً</span>
+      <div class="card" style="padding:var(--s-5)">
+        <div class="metric is-lead">
+          <span class="headline"><span class="amount">1,775,800</span><span class="unit">د.ع.</span></span>
+          <span class="name">صافي الربح</span>
+          <span class="period">أغسطس 2026 · حتى اليوم 29</span>
+          <span class="compare">
+            <span class="trend up">46.2%</span>
+            مقابل <span class="num">1,214,600</span> في يوليو
+          </span>
+        </div>
+      </div>
+      <p class="note">المبلغ أكبر شيء في وعائه، وهو الشيء الوحيد المضبوط بالمحرف اللاتيني.
+        ما تحته موجود ليقيّده: اسمه يقول ماذا هو، ومدّته تقول متى، والمقارنة تقول
+        مقابل ماذا، والاتجاه يقول إلى أين. حذف أي طبقة يترك رقماً بلا معنى.</p>
+
+      <div class="divider"></div>
+      <span class="eyebrow">ELEVEN WORDS · أحد عشر مصطلحاً، لكل واحد شكل ثابت</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3)" id="terms"></div>
+    </div>
+
+    <div class="panel" style="flex:1">
+      <span class="eyebrow">DIRECTION · الاتجاه يُقال مرّتين</span>
+      <div class="card" style="padding:var(--s-4)">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-block:var(--s-2)">
+          <span class="small">ربح الطلب ط-1048</span>
+          <span class="num money pos" style="font-size:var(--fs-lead)">+278,000</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-block:var(--s-2);border-top:1px solid var(--line)">
+          <span class="small">مرتجع ط-1041</span>
+          <span class="num money neg" style="font-size:var(--fs-lead)">−96,400</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-block:var(--s-2);border-top:1px solid var(--line)">
+          <span class="small">تسوية سعد</span>
+          <span class="num" style="font-size:var(--fs-lead)">0</span></div>
+      </div>
+      <p class="note">اللون يقول الاتجاه، والإشارة تقوله مرّة ثانية. من لا يرى الأخضر
+        يرى <span class="lat">+</span> و<span class="lat">−</span>، والصفر لا يأخذ لوناً لأنه ليس حكماً.</p>
+
+      <div class="divider"></div>
+      <span class="eyebrow">FROZEN · ما لا يُعاد كتابته</span>
+      <div class="card" style="padding:var(--s-3) var(--s-4)">
+        <div style="display:flex;align-items:center;gap:var(--s-3)">
+          <span class="badge badge-accent">مجمَّد</span>
+          <span style="flex:1;min-width:0">
+            <b style="display:block;font-size:var(--fs-small)">أسعار أغسطس</b>
+            <span class="caption">جُمِّدت في <span class="num">2026-09-01</span></span></span>
+          <svg class="i" viewBox="0 0 24 24" style="color:var(--accent)">
+            <rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        </div>
+      </div>
+      <p class="note">وعد المنتج أن شهراً مضى لا يُعاد كتابته. الوعد الذي لا يُرى ليس وعداً،
+        فله شارة ظاهرة في كل مكان يظهر فيه رقم مجمَّد.</p>
+
+      <div class="divider"></div>
+      <span class="eyebrow">MOTION · الرقم يُعدّ، ولا يطير</span>
+      <div class="card" style="padding:var(--s-4);display:flex;align-items:baseline;gap:var(--s-3)">
+        <span class="num" id="count" style="font-size:var(--fs-h2)">0</span>
+        <span class="caption">يُعدّ إلى قيمته الجديدة في <span class="num">640ms</span></span>
+      </div>
+    </div>
+
+    <div class="panel" style="flex:1.05">
+      <span class="eyebrow">A SETTLEMENT · ما يراه التاجر آخر الشهر</span>
+      <div class="card">
+        <header><h3>تسوية أغسطس</h3><span class="badge badge-success spacer">مسوّى</span></header>
+        <div style="padding:var(--s-2) var(--s-4)" id="ledger"></div>
+        <footer style="justify-content:space-between">
+          <span style="font-size:var(--fs-small);font-weight:var(--fw-bold)">ما بقي لك</span>
+          <span class="num" style="font-size:var(--fs-h3);color:var(--accent)">1,775,800</span>
+        </footer>
+      </div>
+      <p class="note">سطر واحد لكل شيء غادر الإيراد، بالترتيب الذي غادر به، وآخر سطر هو الجواب.
+        التقرير الذي لا يتّفق مع رسمه هو أسوأ عيب يشحنه منتج مالي.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="eyebrow">MINOR UNITS IN THE DOMAIN · LATN NUMERALS · ONE THOUSANDS SEPARATOR</span>
+    <span class="eyebrow">لغة المال · 06</span>
+  </div>
+</div>
+<script>
+const terms = [
+  ["الإيراد","5,164,500","fg"],["كلفة الشراء","2,334,920","fg"],
+  ["حصص المندوبين","769,200","fg"],["التوصيل والمرتجع","284,580","fg"],
+  ["صافي الربح","1,775,800","accent"],["العمولة","45%","fg"],
+  ["التحصيل","3,271,680","fg"],["المتأخّر","1,892,820","loss"],
+  ["التسوية","769,200","fg"],["النمو","+46.2%","profit"],["الهدف","88.8%","fg"],
+];
+document.getElementById("terms").innerHTML = terms.map(([t, v, k]) => {
+  const c = k === "accent" ? "var(--accent)" : k === "loss" ? "var(--loss-fg)"
+          : k === "profit" ? "var(--profit-fg)" : "var(--fg)";
+  return `<div style="display:flex;justify-content:space-between;align-items:baseline;
+      padding:var(--s-2) var(--s-3);background:var(--surface);border-radius:var(--r-control)">
+    <span style="font-size:var(--fs-small);color:var(--fg-2)">${t}</span>
+    <span class="num" style="font-size:var(--fs-body);color:${c}">${v}</span></div>`;
+}).join("");
+
+const rows = [
+  ["الإيراد", "5,164,500", "fg", "+"],
+  ["كلفة الشراء", "2,334,920", "muted", "−"],
+  ["حصص المندوبين", "769,200", "muted", "−"],
+  ["التوصيل والمرتجع", "284,580", "muted", "−"],
+];
+document.getElementById("ledger").innerHTML = rows.map(([t, v, k, sign]) => `
+  <div style="display:flex;align-items:center;gap:var(--s-3);padding-block:var(--s-2);
+      border-bottom:1px solid var(--line)">
+    <span class="num" style="width:14px;color:var(--fg-3)">${sign}</span>
+    <span style="flex:1;font-size:var(--fs-table)">${t}</span>
+    <span class="num" style="font-size:var(--fs-table);color:${k === "fg" ? "var(--fg)" : "var(--fg-2)"}">${v}</span>
+  </div>`).join("");
+
+/* the one motion money is allowed: a figure counting to its new value */
+const el = document.getElementById("count"), end = 1775800, t0 = performance.now();
+(function tick(t) {
+  const p = Math.min(1, (t - t0) / 640);
+  el.textContent = new Intl.NumberFormat("ar-IQ-u-nu-latn").format(Math.round(end * (1 - (1 - p) ** 3)));
+  if (p < 1) requestAnimationFrame(tick);
+})(t0);
+</script>
+</body></html>

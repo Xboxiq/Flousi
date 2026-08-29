@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>RITM · الأساس · اللون</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="system.css">
+<link rel="stylesheet" href="docs.css">
+</head>
+<body>
+<div class="plane">
+  <div class="head">
+    <div>
+      <span class="eyebrow">01 · COLOUR SYSTEM</span>
+      <h1 style="margin-top:8px">اللون له دور، والدور مقيس</h1>
+    </div>
+    <span class="eyebrow">RITM DESIGN SYSTEM</span>
+  </div>
+
+  <div class="work" style="flex-direction:row;gap:var(--s-6)">
+
+    <!-- ── the two modes, side by side, on the same tokens ───────────────── -->
+    <div class="panel" style="flex:1.35">
+      <span class="eyebrow">SURFACES · الأسطح · أربعة مستويات</span>
+      <p class="note">العمق على الداكن ضوء، لا ظل: الظلّ على أرضية قريبة من السواد لا يُرى.
+        وعلى الفاتح يعود العمق ظلاً. المستوى يُعلن مرّة واحدة، فلا حدّ وظلّ على العنصر نفسه.</p>
+
+      <div style="display:flex;gap:var(--s-2)">
+        <div style="flex:1;display:flex;flex-direction:column;gap:var(--s-1)">
+          <div class="swatch" style="background:var(--bg);box-shadow:inset 0 0 0 1px var(--line)"></div>
+          <b style="font-size:var(--fs-small)">الصفحة</b>
+          <span class="eyebrow" style="font-size:var(--fs-label)">BG · #0B0E11</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:var(--s-1)">
+          <div class="swatch" style="background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)"></div>
+          <b style="font-size:var(--fs-small)">سطح</b>
+          <span class="eyebrow" style="font-size:var(--fs-label)">SURFACE · #14181D</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:var(--s-1)">
+          <div class="swatch" style="background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line)"></div>
+          <b style="font-size:var(--fs-small)">سطح ثانٍ</b>
+          <span class="eyebrow" style="font-size:var(--fs-label)">SURFACE-2 · #1C2128</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:var(--s-1)">
+          <div class="swatch" style="background:var(--surface-3);box-shadow:inset 0 0 0 1px var(--line)"></div>
+          <b style="font-size:var(--fs-small)">طافٍ</b>
+          <span class="eyebrow" style="font-size:var(--fs-label)">SURFACE-3 · #242A31</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <span class="eyebrow">TEXT · الحبر · النسبة مقيسة على الصفحة</span>
+      <div class="spec" id="ink-dark"></div>
+      <div class="divider"></div>
+      <span class="eyebrow">FOCUS · حلقة واحدة، على كل ما يُركَّز عليه، لا تُنزع أبداً</span>
+      <div class="spec-row" style="gap:var(--s-4)">
+        <button class="btn btn-primary is-focus">تسوية الشهر</button>
+        <button class="btn btn-secondary is-focus">تصدير</button>
+        <span class="check is-on is-focus"><svg class="i i-sm" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span>
+        <span class="note">حلقة <span class="num">2px</span> برملي، بإزاحة <span class="num">2px</span>.</span>
+      </div>
+    </div>
+
+    <!-- ── the same tokens, light ─────────────────────────────────────────── -->
+    <div class="panel" data-theme="light"
+         style="flex:1.35;background:var(--bg);color:var(--fg);border-color:var(--line)">
+      <span class="eyebrow">LIGHT · الوضع الفاتح · نفس الرموز</span>
+      <p class="note">ليس قلباً للداكن. الورق دافئ والحبر هو أسود العلامة، فتُقرأ الصفحة
+        كمطبوعة لا كواجهة داكنة مقلوبة. كل رمز يُعاد تعريفه هنا، ولا يُترك واحد ليرث.</p>
+
+      <div style="display:flex;gap:var(--s-2)">
+        <div style="flex:1;display:flex;flex-direction:column;gap:var(--s-1)">
+          <div class="swatch" style="background:var(--bg);box-shadow:inset 0 0 0 1px var(--line)"></div>
+          <b style="font-size:var(--fs-small)">الصفحة</b>
+          <span class="eyebrow" style="font-size:var(--fs-label)">BG · #F2F1EE</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:var(--s-1)">
+          <div class="swatch" style="background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)"></div>
+          <b style="font-size:var(--fs-small)">سطح</b>
+          <span class="eyebrow" style="font-size:var(--fs-label)">SURFACE · #FFFFFF</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:var(--s-1)">
+          <div class="swatch" style="background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line)"></div>
+          <b style="font-size:var(--fs-small)">سطح ثانٍ</b>
+          <span class="eyebrow" style="font-size:var(--fs-label)">SURFACE-2 · #E6E2DA</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:var(--s-1)">
+          <div class="swatch" style="background:var(--surface-3);box-shadow:var(--e-2)"></div>
+          <b style="font-size:var(--fs-small)">طافٍ</b>
+          <span class="eyebrow" style="font-size:var(--fs-label)">SURFACE-3 · #FFFFFF + ظل</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <span class="eyebrow">TEXT · الحبر · النسبة مقيسة على الصفحة</span>
+      <div class="spec" id="ink-light"></div>
+      <div class="divider"></div>
+      <span class="eyebrow">ELEVATION · الارتفاع على الفاتح ظلّ، لا حدّ</span>
+      <div class="spec-row" style="gap:var(--s-3);align-items:stretch">
+        <span style="flex:1;height:56px;border-radius:var(--r-surface);background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:var(--fs-small)">سطح</span>
+        <span style="flex:1;height:56px;border-radius:var(--r-surface);background:var(--surface-3);box-shadow:var(--e-2);display:grid;place-items:center;font-size:var(--fs-small)">قائمة</span>
+        <span style="flex:1;height:56px;border-radius:var(--r-surface);background:var(--surface-3);box-shadow:var(--e-3);display:grid;place-items:center;font-size:var(--fs-small)">نافذة</span>
+      </div>
+      <p class="note">حدّ وظلّ معاً على العنصر نفسه ممنوع: هو «البطاقة الشبح»، والارتفاع يُعلن مرّة.</p>
+    </div>
+
+    <!-- ── meaning ────────────────────────────────────────────────────────── -->
+    <div class="panel" style="flex:1">
+      <span class="eyebrow">MEANING · دلالة اللون</span>
+      <div class="spec" id="sem"></div>
+
+      <div class="divider"></div>
+      <span class="eyebrow">REP KEY · مفتاح المندوبين · لون ثابت لكل شخص</span>
+      <div class="spec-row" style="gap:var(--s-4)">
+        <span class="badge no-dot" style="background:var(--rep-1);color:var(--fg-on-accent)">ليث</span>
+        <span class="badge no-dot" style="background:var(--rep-2);color:var(--bg)">سعد</span>
+        <span class="badge no-dot" style="background:var(--rep-3);color:var(--bg)">زينب</span>
+        <span class="badge no-dot" style="background:var(--rep-4);color:var(--fg)">شاغر</span>
+      </div>
+      <p class="note">تطبيق عمولات يذكر الأشخاص أنفسهم في كل صفحة. إذا تحرّك لونهم، أعاد التاجر تعلّم كل رسم من جديد.</p>
+      <div class="divider"></div>
+      <span class="eyebrow">THE THREE THAT COST US MOST</span>
+      <ol class="note" style="padding-inline-start:16px;line-height:1.9;color:var(--fg-2)">
+        <li>الرملي على الفاتح تعبئة لا نصّ: <span class="num">1.98:1</span> على الورق.
+            فللفاتح رمزان لا رمز واحد — <span class="lat">accent</span> للتعبئة
+            و<span class="lat">accent-ink</span> للكلمة.</li>
+        <li>التركوازي إشارة حيّة على الداكن حصراً: <span class="num">2.74:1</span> على الورق.</li>
+        <li>الأخضر والأحمر حكمان على المال. التنبيه برتقالي والمعلومة تركوازية،
+            فلا يستعير أحدهما لون الآخر.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="eyebrow">MEASURED BY audit.mjs · WCAG AA · BOTH MODES</span>
+    <span class="eyebrow">اللون · 01</span>
+  </div>
+</div>
+
+<script type="module">
+import { ratio } from "./contrast.js";
+const row = (name, hex, ground, label) => {
+  const r = ratio(hex, ground);
+  return `<div class="spec-row" style="justify-content:space-between;
+      padding:var(--s-2) var(--s-3);background:${ground};border-radius:var(--r-control)">
+    <span style="color:${hex};font-size:var(--fs-body);font-weight:var(--fw-medium);flex:1">${name}</span>
+    <span class="eyebrow" style="color:${hex}">${label}</span>
+    <span class="ratio" style="width:56px;text-align:end;color:${hex}">${r.toFixed(2)}:1</span>
+    <span class="pass" style="width:26px;text-align:end">${r >= 4.5 ? "AA" : r >= 3 ? "AA-L" : "—"}</span>
+  </div>`;
+};
+document.getElementById("ink-dark").innerHTML = [
+  ["نصّ أساسي", "#F2F1EE", "#0B0E11", "FG"],
+  ["نصّ مساند", "#C3C9D0", "#0B0E11", "FG-2"],
+  ["نصّ مكتوم", "#8A9199", "#0B0E11", "FG-3"],
+  ["معطَّل",   "#5A6068", "#0B0E11", "DISABLED"],
+].map(a => row(...a)).join("");
+document.getElementById("ink-light").innerHTML = [
+  ["نصّ أساسي", "#0B0E11", "#F2F1EE", "FG"],
+  ["نصّ مساند", "#3A4047", "#F2F1EE", "FG-2"],
+  ["نصّ مكتوم", "#5A6068", "#F2F1EE", "FG-3"],
+  ["معطَّل",   "#8A8578", "#F2F1EE", "DISABLED"],
+].map(a => row(...a)).join("");
+
+const sem = [
+  ["الفعل",      "الرملي · لون واحد للفعل الأول", "#C6A97D", "#7C6036", "ACCENT"],
+  ["الربح",      "الأرقام الموجبة وحدها",         "#5FBF95", "#2D7154", "PROFIT"],
+  ["الخسارة",    "الأرقام السالبة والأخطاء",      "#EF8A82", "#C32519", "LOSS"],
+  ["التنبيه",    "قرار مؤجَّل ينتظر صاحبه",       "#E8863B", "#9F4F13", "WARNING"],
+  ["المعلومة",   "المباشر والآن",                 "#0AA3A3", "#077171", "INFO"],
+];
+document.getElementById("sem").innerHTML = sem.map(([t, s, d, l, e]) => {
+  const rd = ratio(d, "#0B0E11"), rl = ratio(l, "#F2F1EE");
+  return `<div style="display:flex;align-items:center;gap:var(--s-3);
+      padding:var(--s-2) var(--s-3);background:var(--surface);border-radius:var(--r-control)">
+    <span style="width:22px;height:22px;border-radius:var(--r-control);background:${d};flex:none"></span>
+    <span style="width:22px;height:22px;border-radius:var(--r-control);background:${l};flex:none"></span>
+    <span style="flex:1;min-width:0">
+      <b style="display:block;font-size:var(--fs-small)">${t}</b>
+      <span class="note">${s}</span></span>
+    <span style="text-align:end">
+      <span class="ratio" style="display:block;color:${d}">${rd.toFixed(2)}</span>
+      <span class="ratio" style="display:block;color:var(--fg-3)">${rl.toFixed(2)}</span></span>
+  </div>`;
+}).join("");
+</script>
+</body></html>

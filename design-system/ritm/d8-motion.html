@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head><meta charset="utf-8"><title>RITM · الحركة</title>
+<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="system.css"><link rel="stylesheet" href="docs.css">
+<style>
+  .track-demo{position:relative;height:56px;background:var(--surface-2);border-radius:var(--r-control);overflow:hidden}
+  .track-demo i{position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;
+    border-radius:var(--r-capsule);background:var(--accent);inset-inline-start:var(--s-3)}
+  .ease-card{display:flex;flex-direction:column;gap:var(--s-2)}
+  .ease-card svg{width:100%;height:72px}
+</style></head>
+<body>
+<div class="plane">
+  <div class="head">
+    <div><span class="eyebrow">08 · MOTION</span>
+      <h1 style="margin-top:8px">الحركة تشرح ما الذي تغيّر، أو تُحذف</h1></div>
+    <span class="eyebrow">BEAT 120 · EXIT FASTER THAN ENTER · OPACITY + TRANSLATE ONLY</span>
+  </div>
+
+  <div class="work" style="flex-direction:row;gap:var(--s-6)">
+
+    <div class="panel" style="flex:1">
+      <span class="eyebrow">DURATIONS · من ضربة الهوية</span>
+      <div class="stack" id="durs"></div>
+      <p class="note">الضربة <span class="num">120ms</span> هي وحدة الحركة في الهوية،
+        وكل مدّة هنا مشتقّة منها. الخروج ثلثا الدخول دائماً: القارئ قرّر بالفعل،
+        فلا معنى لإبطائه وهو يغادر.</p>
+
+      <div class="divider"></div>
+      <span class="eyebrow">EASING · ثلاثة منحنيات لا رابع لها</span>
+      <div style="display:flex;gap:var(--s-4)">
+        <div class="ease-card" style="flex:1">
+          <svg viewBox="0 0 100 60"><path d="M0 60 C 20 12, 40 0, 100 0" fill="none" stroke="var(--accent)" stroke-width="2"/></svg>
+          <b style="font-size:var(--fs-small)">دخول</b>
+          <span class="caption lat">.2, .8, .2, 1</span>
+          <span class="caption">يتباطأ فيستقرّ</span>
+        </div>
+        <div class="ease-card" style="flex:1">
+          <svg viewBox="0 0 100 60"><path d="M0 60 C 40 60, 60 48, 100 0" fill="none" stroke="var(--fg-3)" stroke-width="2"/></svg>
+          <b style="font-size:var(--fs-small)">خروج</b>
+          <span class="caption lat">.4, 0, 1, 1</span>
+          <span class="caption">يتسارع فيختفي</span>
+        </div>
+        <div class="ease-card" style="flex:1">
+          <svg viewBox="0 0 100 60"><path d="M0 60 C 40 60, 60 0, 100 0" fill="none" stroke="var(--fg-2)" stroke-width="2"/></svg>
+          <b style="font-size:var(--fs-small)">انتقال</b>
+          <span class="caption lat">.4, 0, .2, 1</span>
+          <span class="caption">يسافر بين موضعين</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="flex:1">
+      <span class="eyebrow">WHAT MOVES · وماذا يعني</span>
+      <div class="stack">
+        <div class="card" style="padding:var(--s-3) var(--s-4)">
+          <b style="font-size:var(--fs-small)">رقم تغيّر</b>
+          <p class="note">يُعدّ إلى قيمته الجديدة في <span class="num">640ms</span>.
+            لا يطير ولا يومض. المال يُعاد عدّه، ولا يُحرَّك.</p>
+        </div>
+        <div class="card" style="padding:var(--s-3) var(--s-4)">
+          <b style="font-size:var(--fs-small)">صفّ وصل</b>
+          <p class="note">ينزلق <span class="num">2px</span> من الجهة التي جاء منها،
+            ويظهر في <span class="num">200ms</span>. المسافة صغيرة عمداً: هي إشارة لا رحلة.</p>
+        </div>
+        <div class="card" style="padding:var(--s-3) var(--s-4)">
+          <b style="font-size:var(--fs-small)">سطح فُتح</b>
+          <p class="note">القائمة <span class="num">200ms</span>، والدرج
+            <span class="num">320ms</span> لأنه يقطع الشاشة. كلاهما يخرج أسرع.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <span class="eyebrow">STAGGER 40MS · التتابع · خمسة عناصر كحدّ</span>
+      <div class="stack" style="gap:var(--s-1)">
+        <div class="datarow enter" style="border-radius:var(--r-control)"><span class="tx"><b>ط-1048</b><span>زيونة، بغداد</span></span><span class="num end">278,000</span></div>
+        <div class="datarow enter enter-1" style="border-radius:var(--r-control)"><span class="tx"><b>ط-1047</b><span>الكرادة</span></span><span class="num end">241,300</span></div>
+        <div class="datarow enter enter-2" style="border-radius:var(--r-control)"><span class="tx"><b>ط-1046</b><span>الجادرية</span></span><span class="num end">68,400</span></div>
+        <div class="datarow enter enter-3" style="border-radius:var(--r-control);border-bottom:0"><span class="tx"><b>ط-1045</b><span>حي الجامعة</span></span><span class="num end">121,500</span></div>
+      </div>
+      <p class="note">بعد الخامس يتوقّف التتابع ويظهر الباقي دفعة واحدة،
+        وإلا صار الانتظار جزءاً من قراءة جدول.</p>
+    </div>
+
+    <div class="panel" style="flex:.9">
+      <span class="eyebrow">NEVER · ما لا يتحرّك هنا</span>
+      <ul class="note" style="padding-inline-start:16px;line-height:2;color:var(--fg-2)">
+        <li>لا حركة عند تحميل الصفحة لمجرّد الظهور.</li>
+        <li>لا ارتداد ولا زنبرك: هذا منتج مال، لا لعبة.</li>
+        <li>لا تكرار لا نهائي إلا في مؤشّر انتظار حقيقي.</li>
+        <li>لا تكبير ولا تدوير ولا ميل: الشفافية والإزاحة فقط.</li>
+        <li>لا حركة على أكثر من عنصرين في وقت واحد.</li>
+        <li>لا شيء يتحرّك لأكثر من <span class="num">320ms</span> إلا عدّ رقم.</li>
+      </ul>
+
+      <div class="divider"></div>
+      <span class="eyebrow">REDUCED MOTION · من طلب سكوناً</span>
+      <div class="card is-accent" style="padding:var(--s-3) var(--s-4)">
+        <b style="font-size:var(--fs-small);color:var(--accent-ink)">لا حركة، لا حركة أبطأ</b>
+        <p class="note" style="color:var(--fg-2)">
+          عند <span class="lat">prefers-reduced-motion</span> تصير كل المدد
+          <span class="num">1ms</span> والإزاحة <span class="num">0</span>.
+          الشيء الوحيد الباقي هو ما تكون حركته هي المعلومة نفسها، مثل مؤشّر انتظار.</p>
+      </div>
+
+      <div class="divider"></div>
+      <span class="eyebrow">DISTANCE · إزاحة واحدة</span>
+      <div class="track-demo"><i></i></div>
+      <p class="note">كل دخول في النظام يقطع <span class="num">2px</span> على المحور الرأسي.
+        قيمة واحدة، فلا تتفاوض كل شاشة على مسافتها.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="eyebrow">MOTION EXPLAINS WHAT CHANGED, OR IT IS REMOVED</span>
+    <span class="eyebrow">الحركة · 08</span>
+  </div>
+</div>
+<script>
+const durs = [["ضربة","--beat","120ms","وحدة القياس"],["لمسة","--t-instant","80ms","عنصر تحكّم يستجيب"],
+  ["دخول","--t-enter","200ms","سطح يصل"],["خروج","--t-exit","130ms","السطح نفسه يغادر"],
+  ["طبقة","--t-overlay","320ms","درج يقطع الشاشة"],["عدّ","--t-count","640ms","رقم يُعاد عدّه"]];
+document.getElementById("durs").innerHTML = durs.map(([n, tok, v, w], i) => `
+  <div style="display:flex;align-items:center;gap:var(--s-3)">
+    <span style="width:46px;font-size:var(--fs-small);font-weight:var(--fw-bold)">${n}</span>
+    <span style="flex:1;height:8px;background:var(--surface-2);border-radius:var(--r-capsule);overflow:hidden">
+      <span style="display:block;height:100%;width:${Math.round(parseInt(v) / 640 * 100)}%;
+        background:${i === 5 ? "var(--profit-fg)" : "var(--accent)"};border-radius:var(--r-capsule)"></span></span>
+    <span class="num" style="width:6ch;text-align:end;font-size:var(--fs-small)">${v}</span>
+    <span class="caption" style="width:15ch">${w}</span>
+  </div>`).join("");
+</script>
+</body></html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head><meta charset="utf-8"><title>RITM · الاستجابة</title>
+<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="system.css"><link rel="stylesheet" href="docs.css">
+<style>
+  .device{border:1px solid var(--line);border-radius:var(--r-tile);overflow:hidden;background:var(--bg);flex:none}
+  .device .bar{height:28px;display:flex;align-items:center;padding-inline:var(--s-3);
+    border-bottom:1px solid var(--line);gap:var(--s-2)}
+  .mini{font-size:var(--fs-caption)}
+</style></head>
+<body>
+<div class="plane">
+  <div class="head">
+    <div><span class="eyebrow">09 · RESPONSIVE</span>
+      <h1 style="margin-top:8px">الهاتف ليس مكتباً مصغَّراً</h1></div>
+    <span class="eyebrow">360 · 768 · 1024 · 1440</span>
+  </div>
+
+  <div class="work" style="flex-direction:row;gap:var(--s-6);align-items:stretch">
+
+    <div class="panel" style="flex:1.1">
+      <span class="eyebrow">WHAT CHANGES · وماذا يبقى</span>
+      <table style="width:100%;border-collapse:collapse;font-size:var(--fs-small)">
+        <thead><tr>
+          <th class="state-label" style="text-align:start;padding:var(--s-2) 0">&nbsp;</th>
+          <th class="state-label" style="text-align:start;padding:var(--s-2) 0">1440</th>
+          <th class="state-label" style="text-align:start;padding:var(--s-2) 0">768</th>
+          <th class="state-label" style="text-align:start;padding:var(--s-2) 0">360</th>
+        </tr></thead>
+        <tbody id="rules"></tbody>
+      </table>
+      <p class="note">العروض الأربعة المسموحة تنجو من التحوّل:
+        <span class="num">2</span> و<span class="num">4</span> و<span class="num">6</span>
+        و<span class="num">8</span> من اثني عشر تصير <span class="num">1</span>
+        و<span class="num">2</span> و<span class="num">3</span> و<span class="num">4</span> من أربعة.
+        الشبكة تتقلّص، ولا تُستبدل.</p>
+
+      <div class="divider"></div>
+      <span class="eyebrow">THE TABLE PROBLEM · الجدول على الهاتف</span>
+      <p class="note">جدول بخمسة أعمدة على شاشة <span class="num">360</span> إمّا يُقصّ أو يُمرَّر أفقياً،
+        وكلاهما يخفي المال. فالجدول يصير صفوفاً: اسم فوق، رقم أسفل، والحالة شارة.
+        لا تمرير أفقي في هذا النظام.</p>
+    </div>
+
+    <div class="panel" style="flex:1.5;align-items:center">
+      <span class="eyebrow" style="align-self:flex-start">TABLET 768 · طاولة المحل</span>
+      <div class="device" style="width:440px">
+        <div class="bar"><span class="mini" style="font-weight:var(--fw-bold)">العمليات</span>
+          <span class="spacer"></span><span class="badge badge-count">3</span></div>
+        <div style="display:flex">
+          <div style="width:64px;border-inline-end:1px solid var(--line);padding:var(--s-2) 0;
+                      display:flex;flex-direction:column;align-items:center;gap:var(--s-3)">
+            <svg class="i" viewBox="0 0 24 24" style="color:var(--accent)"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
+            <svg class="i" viewBox="0 0 24 24" style="color:var(--fg-3)"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>
+            <svg class="i" viewBox="0 0 24 24" style="color:var(--fg-3)"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/></svg>
+            <svg class="i" viewBox="0 0 24 24" style="color:var(--fg-3)"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9h8M8 13h8"/></svg>
+          </div>
+          <div style="flex:1;padding:var(--s-3);display:flex;flex-direction:column;gap:var(--s-2)">
+            <div class="metric is-small">
+              <span class="headline"><span class="amount" style="font-size:28px">1,775,800</span></span>
+              <span class="name" style="font-size:var(--fs-caption)">صافي الربح · أغسطس</span></div>
+            <div class="splitbar" style="height:24px">
+              <span style="width:34.4%;background:var(--series-1)"></span>
+              <span style="width:45.2%;background:var(--series-2)"></span>
+              <span style="width:14.9%;background:var(--series-3)"></span>
+              <span style="width:5.5%;background:var(--series-4)"></span></div>
+            <div style="display:flex;gap:var(--s-2)">
+              <span class="card" style="flex:1;padding:var(--s-2)">
+                <span class="caption" style="display:block">التحصيل</span>
+                <span class="num" style="font-size:var(--fs-small)">3,271,680</span></span>
+              <span class="card" style="flex:1;padding:var(--s-2)">
+                <span class="caption" style="display:block">المتأخّر</span>
+                <span class="num money neg" style="font-size:var(--fs-small)">1,892,820</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note" style="align-self:flex-start">الشريط يطوي نفسه إلى سكّة أيقونات بعرض
+        <span class="num">76</span>. الأسماء تختفي، والمواضع لا.</p>
+    </div>
+
+    <div class="panel" style="flex:1;align-items:center">
+      <span class="eyebrow" style="align-self:flex-start">PHONE 360 · جيب المندوب</span>
+      <div class="device" style="width:230px">
+        <div class="bar"><span class="mini" style="font-weight:var(--fw-bold)">ليث العبيدي</span></div>
+        <div style="padding:var(--s-3);display:flex;flex-direction:column;gap:var(--s-2)">
+          <div class="metric is-small">
+            <span class="headline"><span class="amount" style="font-size:28px">331,200</span></span>
+            <span class="name" style="font-size:var(--fs-caption)">حصّتك · أغسطس</span></div>
+          <div class="progress"><i style="width:82%"></i></div>
+          <span class="caption">من هدفك <span class="num">400,000</span></span>
+          <div class="datarow" style="padding:var(--s-2) 0;gap:var(--s-2)">
+            <span class="tx"><b style="font-size:var(--fs-small)">ط-1048</b><span>زيونة</span></span>
+            <span class="num end" style="font-size:var(--fs-small)">278,000</span></div>
+          <div class="datarow" style="padding:var(--s-2) 0;gap:var(--s-2);border-bottom:0">
+            <span class="tx"><b style="font-size:var(--fs-small)">ط-1045</b><span>حي الجامعة</span></span>
+            <span class="num end" style="font-size:var(--fs-small)">121,500</span></div>
+          <button class="btn btn-primary btn-lg" style="width:100%">سجّل طلباً</button>
+        </div>
+        <div class="tabbar" style="height:44px">
+          <a href="#" aria-current="page"><svg class="i i-sm" viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>اليوم</a>
+          <a href="#"><svg class="i i-sm" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/></svg>التحصيل</a>
+          <a href="#"><svg class="i i-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>هدفي</a>
+        </div>
+      </div>
+      <p class="note" style="align-self:flex-start">شريط سفلي بثلاثة مواضع، وفعل أول بارتفاع
+        <span class="num">44</span>، ورقم واحد كبير في الأعلى. هذا كل ما يحتاجه المندوب واقفاً.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="eyebrow">NO HORIZONTAL SCROLL · TOUCH TARGET 44 · SPANS SURVIVE THE FOLD</span>
+    <span class="eyebrow">الاستجابة · 09</span>
+  </div>
+</div>
+<script>
+const rules = [
+  ["التنقّل", "شريط جانبي 248", "سكّة أيقونات 76", "شريط سفلي 56"],
+  ["الشبكة", "12 عموداً", "12 عموداً", "4 أعمدة"],
+  ["الجدول", "جدول", "جدول", "صفوف"],
+  ["الفعل الأول", "36", "36", "44 بعرض كامل"],
+  ["الرقم الأول", "38", "28", "28"],
+  ["الهامش", "24", "24", "16"],
+];
+document.getElementById("rules").innerHTML = rules.map(([a, b, c, d]) => `
+  <tr style="border-top:1px solid var(--line)">
+    <td style="padding:var(--s-2) 0;color:var(--fg-3)">${a}</td>
+    <td style="padding:var(--s-2) 0">${b}</td>
+    <td style="padding:var(--s-2) 0">${c}</td>
+    <td style="padding:var(--s-2) 0;color:var(--accent)">${d}</td>
+  </tr>`).join("");
+</script>
+</body></html>
