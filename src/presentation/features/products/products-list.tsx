@@ -160,7 +160,7 @@ export function ProductsList() {
                       {product.name}
                     </Link>
                     {product.sku && (
-                      <div className="font-mono text-xs text-subtle" dir="ltr">{product.sku}</div>
+                      <div className="font-figure text-xs text-subtle" dir="ltr">{product.sku}</div>
                     )}
                   </TD>
                   <TD className="text-muted">{product.category ?? "—"}</TD>
@@ -172,12 +172,12 @@ export function ProductsList() {
                       />
                     </TD>
                   )}
-                  <TD className="text-start font-mono tabular-nums" dir="ltr">
+                  <TD className="text-start font-figure tabular-nums" dir="ltr">
                     {money(product.sellingPrice, product.currency)}
                   </TD>
                   {canSeeCosts && (
                     <TD
-                      className={`text-start font-mono tabular-nums ${result.netProfit >= 0 ? "text-success" : "text-danger"}`}
+                      className={`text-start font-figure tabular-nums ${result.netProfit >= 0 ? "text-success" : "text-danger"}`}
                       dir="ltr"
                     >
                       {money(result.netProfit, product.currency)}

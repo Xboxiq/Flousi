@@ -154,7 +154,7 @@ export function SettlementsView() {
                           {r.method ? ` · ${r.method}` : ""}
                         </span>
                       </span>
-                      <bdi dir="ltr" className="shrink-0 font-mono text-sm font-semibold text-fg">
+                      <bdi dir="ltr" className="shrink-0 font-figure text-sm font-semibold text-fg">
                         {money(r.amount, r.currency)}
                       </bdi>
                     </li>
@@ -195,7 +195,7 @@ export function SettlementsView() {
                             )}
                           </TD>
                           <TD>
-                            <bdi dir="ltr" className="font-mono font-semibold text-fg">
+                            <bdi dir="ltr" className="font-figure font-semibold text-fg">
                               {money(r.amount, r.currency)}
                             </bdi>
                           </TD>
@@ -238,10 +238,10 @@ function CurrencyLine({
   return (
     <li>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <span className="font-mono text-xs font-semibold text-muted">{line.currency}</span>
+        <span className="font-figure text-xs font-semibold text-muted">{line.currency}</span>
         <span className="text-xs text-muted">
           {ahead ? "مدفوع مقدّمًا" : "ما زال مستحقًّا"}{" "}
-          <bdi dir="ltr" className={cn("font-mono font-bold", ahead ? "text-accent" : "text-fg")}>
+          <bdi dir="ltr" className={cn("font-figure font-bold", ahead ? "text-accent" : "text-fg")}>
             {money(Math.abs(line.outstanding), line.currency)}
           </bdi>
         </span>
@@ -268,7 +268,7 @@ function CurrencyLine({
       <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-muted">
         <span>
           دُفع{" "}
-          <bdi dir="ltr" className="font-mono font-semibold text-fg">
+          <bdi dir="ltr" className="font-figure font-semibold text-fg">
             {money(line.paid, line.currency)}
           </bdi>{" "}
           في {line.count} دفعة
@@ -276,7 +276,7 @@ function CurrencyLine({
         {hasWhole && (
           <span>
             استحقّ الفريق{" "}
-            <bdi dir="ltr" className="font-mono font-semibold text-fg">
+            <bdi dir="ltr" className="font-figure font-semibold text-fg">
               {money(line.earned, line.currency)}
             </bdi>
           </span>

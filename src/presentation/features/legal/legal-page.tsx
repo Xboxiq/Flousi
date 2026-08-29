@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
-import { LogoMark } from "@/presentation/components/layout/logo";
+import { LogoMark, LogoWord } from "@/presentation/components/layout/logo";
 
 export interface LegalSection {
   /** Numbered in the margin, so a clause can be cited by number. */
@@ -32,7 +32,7 @@ export function LegalPage({
         <div className="mx-auto flex h-16 max-w-[760px] items-center justify-between px-5">
           <Link href="/" className="flex items-center gap-2.5">
             <LogoMark />
-            <span className="text-lg font-semibold tracking-tight">RITM</span>
+            <LogoWord />
           </Link>
           <Link
             href="/"
@@ -45,7 +45,7 @@ export function LegalPage({
       </header>
 
       <main className="mx-auto max-w-[760px] px-5 py-14">
-        <p className="font-mono text-xs text-subtle">آخر تحديث {updated}</p>
+        <p className="font-figure text-xs text-subtle">آخر تحديث {updated}</p>
         <h1 className="mt-3 font-display text-[clamp(2rem,4vw,2.8rem)] font-semibold leading-[1.2] tracking-[-0.02em]">
           {title}
         </h1>
@@ -59,7 +59,7 @@ export function LegalPage({
             >
               {/* The clause number is a citation handle, not decoration: a merchant
                   asking "which clause?" needs an answer shorter than a sentence. */}
-              <span className="font-mono text-sm text-subtle tabular-nums">
+              <span className="font-figure text-sm text-subtle tabular-nums">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div>

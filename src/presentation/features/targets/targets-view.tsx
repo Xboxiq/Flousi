@@ -288,7 +288,7 @@ function AccountReading({
           <p className="mt-3 text-sm font-medium text-fg/70">
             {p.hasTarget ? (
               <>
-                من هدف <bdi dir="ltr" className="font-mono font-semibold">{fmt(p.targetAmount)}</bdi>
+                من هدف <bdi dir="ltr" className="font-figure font-semibold">{fmt(p.targetAmount)}</bdi>
                 {row.fromOverride && " (هدف هذا الشهر)"}
               </>
             ) : (
@@ -349,7 +349,7 @@ function AccountReading({
                 make, not what has been made (§11). */}
             <span>
               {p.met ? "فوق الهدف بـ" : "يتبقّى"}{" "}
-              <bdi dir="ltr" className="font-mono font-semibold text-fg">
+              <bdi dir="ltr" className="font-figure font-semibold text-fg">
                 {fmt(p.met ? p.surplus : p.remaining)}
               </bdi>
             </span>
@@ -389,13 +389,13 @@ function SubjectRow({
         <span className="mt-0.5 block text-xs text-muted">
           {p.hasTarget ? (
             <>
-              <bdi dir="ltr" className="font-mono">{fmt(p.actual)}</bdi>
+              <bdi dir="ltr" className="font-figure">{fmt(p.actual)}</bdi>
               {" من "}
-              <bdi dir="ltr" className="font-mono">{fmt(p.targetAmount)}</bdi>
+              <bdi dir="ltr" className="font-figure">{fmt(p.targetAmount)}</bdi>
             </>
           ) : (
             <>
-              <bdi dir="ltr" className="font-mono">{fmt(p.actual)}</bdi>
+              <bdi dir="ltr" className="font-figure">{fmt(p.actual)}</bdi>
               {" · بلا هدف"}
             </>
           )}

@@ -120,7 +120,7 @@ export function Segmented<T extends string>({
               /* nowrap: a squeezed group used to break «في الطريق» in half INSIDE
                  its own pill. Labels ride above the pill on their own layer. */
               "relative z-[1] inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-[var(--motion-base)] ease-[var(--ease-out)]",
-              active ? "font-semibold text-white" : "text-muted hover:text-fg",
+              active ? "font-semibold text-accent-fg" : "text-muted hover:text-fg",
             )}
           >
             {opt.icon}

@@ -78,7 +78,7 @@ export function MagnitudeRings({ rings, size = 148, format, className }: Props) 
             <bdi
               dir="ltr"
               className={cn(
-                "ms-auto font-mono text-[11px] tabular-nums",
+                "ms-auto font-figure text-[11px] tabular-nums",
                 r.kind === "keep" ? "font-bold text-success" : "text-fg",
               )}
             >

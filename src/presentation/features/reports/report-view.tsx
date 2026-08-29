@@ -144,7 +144,7 @@ export function ReportView({ type }: { type: ReportType }) {
                     return (
                       <TD
                         key={j}
-                        className={`${col.kind === "text" ? "font-medium" : "text-end font-mono tabular-nums"} ${profitTone}`}
+                        className={`${col.kind === "text" ? "font-medium" : "text-end font-figure tabular-nums"} ${profitTone}`}
                       >
                         {fmt(cell, col.kind)}
                       </TD>

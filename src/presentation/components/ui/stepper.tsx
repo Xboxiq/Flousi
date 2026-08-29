@@ -58,7 +58,7 @@ function Node({ step }: { step: Step }) {
     );
   }
   if (step.state === "active") {
-    return <GlossyOrb tone="blue" size={44}>{step.icon}</GlossyOrb>;
+    return <GlossyOrb tone="sand" size={44}>{step.icon}</GlossyOrb>;
   }
   return (
     <span className="neu-raised-sm inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-surface text-subtle">

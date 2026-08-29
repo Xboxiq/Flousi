@@ -2,31 +2,37 @@
 @import "./materials.css";
 
 /* ============================================================================
-   RITM Design System — grounded in the reference screens.
-   Apple HIG / Linear / Stripe DNA: a cool light-gray canvas, crisp white
-   cards with hairline borders + soft diffuse shadows, a clean geometric
-   grotesk (Cairo), big bold tabular numbers (IBM Plex Mono), vivid Apple
-   blue for intent, green/red finance deltas, glossy 3D orbs as accents, and
-   smooth grainy blue→indigo→violet gradients reserved for hero / bento / CTA.
-   Arabic-first (RTL). Restraint over ornament.
+   RITM — the identity, as tokens.
+
+   The palette is the client's own board, measured off the original artwork:
+   coal #0B0E11, graphite #1A1F24, steel #2A2F36, sand #B8A880, bone #E8E2DA,
+   teal #3D8680. Dark is the identity's native mode; the light ground (paper
+   #F2F1EE) is an EXTENSION — the board prints no light ground, and that is
+   said out loud here rather than smuggled in as if it were given.
+
+   Sand is a PLATE, not a word: #B8A880 is 2.08:1 on paper and can never carry
+   text there. So --accent holds the darkened sand #736440 (5.13:1) for anything
+   that reads, and --accent-fill holds the board's own sand for anything that
+   fills. Getting this backwards is the single easiest way to ship an
+   inaccessible screen that looks right in a mockup.
+
+   Type is Tajawal (every Arabic word) + Archivo with tabular figures (every
+   number). Arabic-first, RTL by logical properties only.
    ========================================================================== */
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  /* Accent — Apple system blue scale */
-  --blue-700: #0a4fc4;
-  --blue-600: #0a6cff;
-  --blue-500: #2f86ff;
-  --blue-400: #5aa0ff;
-  --blue-300: #9cc4ff;
-  /* Deep-indigo mesh endpoint — the coolest hue allowed anywhere (≤265°).
-     Violet/magenta/rose flats and gradients are banned (finance anti-pattern;
-     see design-system/MASTER.md §1 and the ritm-anti-slop-gate skill). */
-  --indigo: #4f5dff;
-
-  /* Static contrast pair for elements sitting on fixed-dark mesh surfaces
-     (never theme-flipped): near-black ink on true-white paper. */
+  /* Accent — the identity's sand, as a ramp. #B8A880 is the value the board
+     prints; the rest are lifts and shades of it and are never used as text on a
+     light ground (2.08:1 on paper) — that is what --accent carries. */
+  --sand-700: #5c5033;
+  --sand-600: #736440;
+  --sand-500: #b8a880;
+  --sand-400: #d0c4a4;
+  --sand-300: #e2dac4;
+  /* Static contrast pair for elements that sit on a fixed-dark ground in both
+     themes (never theme-flipped): near-black ink on true-white paper. */
   --ink: #14151a;
   --paper: #ffffff;
 
@@ -58,32 +64,42 @@
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
-  /* ---------- Semantic (light) ---------- */
-  --bg: #f4f4f6;
-  --bg-tint: #fafafb;
+  /* ---------- Semantic (light) ----------
+     RITM's own palette, applied. The six values the identity board prints are used
+     unchanged; everything else is derived and says so. Every pair below is measured
+     against the surface it actually sits on (design-system/ritm/audit.mjs).
+
+     THE ONE TRAP THIS MODE HAS: sand #B8A880 is 2.08:1 on paper, so it cannot be a
+     word. `--accent` therefore carries the darkened sand — because `text-accent` is
+     used in 25 places and every one of them must stay legible — and `--accent-fill`
+     carries the plate for the places that want the sand itself. */
+  --bg: #f2f1ee;              /* the board's own light ground */
+  --bg-tint: #f7f6f3;
   --surface: #ffffff;
-  --surface-2: #f6f7f9;
-  --sunken: #eceef1;
-  --border: rgba(17, 18, 23, 0.08);
-  --border-soft: rgba(17, 18, 23, 0.05);
-  --fg: #14151a;
-  --muted: #6b7079;
-  --subtle: #a0a4ad;
+  --surface-2: #e8e2da;       /* bone */
+  --sunken: #e8e2da;
+  --border: rgba(11, 14, 17, 0.10);
+  --border-soft: rgba(11, 14, 17, 0.06);
+  --fg: #0b0e11;              /* 17.13 on bg · 15.04 on bone */
+  --muted: #3a4047;           /* 9.28 on bg · 8.14 on bone */
+  --subtle: #5a6068;          /* 5.62 on bg · 4.93 on bone */
 
-  --accent: #0a6cff;
-  --accent-strong: #0a4fc4;
-  --accent-fg: #ffffff;
-  --accent-soft: #e9f1ff;
+  --accent: #736440;          /* 5.13 on bg · 4.90 on its own wash */
+  --accent-strong: #5c5033;
+  --accent-fg: #ffffff;       /* 5.79 on the accent */
+  --accent-soft: rgba(184, 168, 128, 0.22);
+  --accent-fill: #b8a880;     /* the sand plate; ink on it, never the reverse */
+  --accent-fill-fg: #0b0e11;  /* 8.25 on the plate */
 
-  --success: #0c9a52;
-  --success-soft: #e3f6ec;
-  --danger: #e5322b;
-  --danger-soft: #fdeae9;
-  --warning: #d98a0b;
-  --warning-soft: #fdf2dd;
-  --info: #0a6cff;
-  --info-soft: #e9f1ff;
-  --focus: #0a6cff;
+  --success: #2d7154;         /* 5.17 on its wash */
+  --success-soft: rgba(95, 191, 149, 0.16);
+  --danger: #c32519;          /* 5.09 */
+  --danger-soft: rgba(239, 138, 130, 0.16);
+  --warning: #9f4f13;         /* 5.05 */
+  --warning-soft: rgba(232, 134, 59, 0.16);
+  --info: #2c645f;            /* 5.61 */
+  --info-soft: rgba(61, 134, 128, 0.16);
+  --focus: #736440;
 
   --material: rgba(255, 255, 255, 0.72);
 
@@ -114,7 +130,7 @@
   --shadow-md: 0 4px 8px -2px rgba(17, 18, 23, 0.07), 0 16px 36px -12px rgba(17, 18, 23, 0.16);
   --shadow-lg: 0 10px 20px -6px rgba(17, 18, 23, 0.10), 0 30px 60px -20px rgba(17, 18, 23, 0.22);
   --shadow-xl: 0 24px 50px -12px rgba(17, 18, 23, 0.18), 0 48px 90px -30px rgba(17, 18, 23, 0.28);
-  --shadow-accent: 0 8px 20px -6px rgba(10, 108, 255, 0.40);
+  --shadow-accent: 0 8px 20px -6px rgba(115, 100, 64, 0.34);
 
   /* Card elevation — declared ONCE per element (never border + shadow together).
      Light: shadow-as-border triple (self-colored ring + two tight directional layers). */
@@ -152,35 +168,45 @@
   --shadow-cast: 0 22px 44px -14px rgba(18, 26, 38, 0.32);
   --shadow-occlusion: inset 0 0 0 1px rgba(18, 26, 38, 0.08);
 
-  --grain-opacity: 0.08;
 }
 
 [data-theme="dark"] {
-  --bg: #0a0a0b;
-  --bg-tint: #0e0e10;
-  --surface: #161619;
-  --surface-2: #1d1d21;
-  --sunken: #0e0e11;
-  --border: rgba(255, 255, 255, 0.09);
-  --border-soft: rgba(255, 255, 255, 0.06);
-  --fg: #f4f4f7;
-  --muted: #9a9ea8;
-  --subtle: #6a6e77;
+  /* Dark is the identity's home: the board is drawn on ink and every one of its
+     six colours is used here unchanged. Sand needs no darkened twin on this
+     ground — it measures 8.25:1 — so `--accent` and `--accent-fill` are the
+     same value, and the light mode is the one that has to carry two. */
+  --bg: #0b0e11;              /* ink */
+  --bg-tint: #14181d;
+  --surface: #1a1f24;         /* coal */
+  --surface-2: #2a2f36;       /* graphite */
+  --sunken: #090c0e;
+  --border: rgba(242, 241, 238, 0.10);
+  --border-soft: rgba(242, 241, 238, 0.06);
+  --fg: #f2f1ee;              /* 17.13 on bg · 14.69 on surface */
+  --muted: #c3c9d0;           /* 11.60 on bg · 9.95 on surface */
+  /* Lifted from #8A9199, which measured 6.07 on the coal ground and 5.21 on
+     --surface, and then 4.23 on --surface-2 — the ground the reps' balance note
+     and the calculator's captions actually sit on. A token is only as good as
+     its WORST ground, so this one is set against steel, not against coal. */
+  --subtle: #939aa2;          /* 6.90 on bg · 5.92 on surface · 4.74 on surface-2 */
 
-  --accent: #2f86ff;
-  --accent-strong: #0a6cff;
-  --accent-fg: #ffffff;
-  --accent-soft: rgba(47, 134, 255, 0.16);
+  --accent: #b8a880;          /* 8.25 on bg · 7.07 on surface · 5.35 on its wash */
+  --accent-strong: #d0c4a4;
+  --accent-fg: #0b0e11;       /* 8.25 on the accent */
+  --accent-soft: rgba(184, 168, 128, 0.15);
+  --accent-fill: #b8a880;
+  --accent-fill-fg: #0b0e11;
 
-  --success: #1fc06e;
-  --success-soft: rgba(25, 179, 100, 0.16);
-  --danger: #ff5a52;
-  --danger-soft: rgba(255, 70, 60, 0.16);
-  --warning: #ffab2e;
-  --warning-soft: rgba(255, 171, 46, 0.16);
-  --info: #2f86ff;
-  --info-soft: rgba(47, 134, 255, 0.16);
-  --focus: #2f86ff;
+  --success: #5fbf95;         /* 8.64 on bg · 5.46 on its wash */
+  --success-soft: rgba(95, 191, 149, 0.16);
+  --danger: #ef8a82;          /* 7.95 · 5.19 */
+  --danger-soft: rgba(239, 138, 130, 0.16);
+  --warning: #e8863b;         /* 7.28 · 4.87 */
+  --warning-soft: rgba(232, 134, 59, 0.16);
+  --info: #55b3aa;            /* the board's teal lifted until it can carry a word:
+                                 #3D8680 is 3.89:1 on coal and fails as body text */
+  --info-soft: rgba(61, 134, 128, 0.16);
+  --focus: #b8a880;
 
   --material: rgba(22, 22, 25, 0.72);
   --neu-hi: rgba(255, 255, 255, 0.04);
@@ -228,13 +254,19 @@
   --shadow-cast: 0 24px 48px -14px rgba(0, 0, 0, 0.75);
   --shadow-occlusion: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
 
-  --grain-opacity: 0.10;
 }
 
 @theme inline {
-  --font-sans: var(--font-cairo), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono-ibm), ui-monospace, monospace;
-  --font-display: var(--font-cairo), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-tajawal), ui-sans-serif, system-ui, sans-serif;
+  /* Figures are Archivo with tabular numerals, not a monospace face: the
+     lining-up is done by `tabular-nums`, and a Latin-only mono carries no
+     Arabic, which is how «صافي الربح» once lost its joins in a table head.
+     The token is called --font-figure and not --font-mono for exactly that
+     reason: a name that says "mono" invites the next person to put code in it,
+     or to swap in a real monospace and quietly break every Arabic run that
+     shares the class. */
+  --font-figure: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-tajawal), ui-sans-serif, system-ui, sans-serif;
 
   --color-bg: var(--bg);
   --color-bg-tint: var(--bg-tint);
@@ -328,13 +360,15 @@
     letter-spacing: -0.005em;
   }
   /* Tabular figures everywhere numbers matter */
-  .tnum, .font-mono { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .tnum, .font-figure { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
   :focus-visible {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
     border-radius: var(--radius-sm);
   }
-  ::selection { background-color: var(--accent); color: var(--paper); }
+  /* The selection plate is the accent, so its ink is the accent's own ink:
+     --paper here put white on dark-mode sand at 1.9:1. */
+  ::selection { background-color: var(--accent); color: var(--accent-fg); }
 }
 
 @layer components {
@@ -382,54 +416,11 @@
     transition: none !important;
   }
 
-  /* Grain overlay (kept very subtle — premium, not noisy).
-     STATIC surfaces only (hero/CTA mesh tiles) — never on scrolling containers. */
-  .grainy { position: relative; isolation: isolate; }
-  .grainy::after {
-    content: "";
-    position: absolute; inset: 0; border-radius: inherit;
-    pointer-events: none; z-index: 1;
-    opacity: var(--grain-opacity); mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  /* Smooth grainy blue → deep indigo (reference bento / hero).
-     Mesh hue is capped at the indigo end (≤265°) — no violet/magenta/pink,
-     a HIGH-severity fintech anti-pattern. One mesh moment per screen, max. */
-  .mesh-aurora {
-    background-color: #1f5bff;
-    background-image:
-      radial-gradient(70% 80% at 20% 12%, #6aa6ff 0%, transparent 58%),
-      radial-gradient(75% 80% at 88% 6%, #2f6bff 0%, transparent 55%),
-      linear-gradient(160deg, #2f6bff 0%, #3d63ff 48%, #4f5dff 100%);
-  }
-  /* Bento tile: gradient blooms from the top, dissolves into the card */
-  .mesh-bento {
-    background-color: var(--surface);
-    background-image:
-      radial-gradient(95% 80% at 28% -8%, #2f6bff 0%, transparent 58%),
-      radial-gradient(80% 70% at 95% -10%, #4f5dff 0%, transparent 55%),
-      linear-gradient(180deg, #4f6dff 0%, transparent 60%);
-  }
-  /* Dark CTA glow rising from below */
-  .mesh-night {
-    background-color: #0a0a0c;
-    background-image:
-      radial-gradient(85% 70% at 50% 122%, rgba(79, 93, 255, 0.95) 0%, rgba(47, 107, 255, 0.6) 32%, transparent 68%),
-      radial-gradient(55% 50% at 16% 112%, rgba(47, 134, 255, 0.55) 0%, transparent 60%);
-  }
-  /* Semantic LOSS surface — danger red glow. Reserved for negative-profit /
-     destructive heroes only, never decoration. */
-  .mesh-night-danger {
-    background-color: #0a0a0c;
-    background-image: radial-gradient(85% 70% at 50% 122%, rgba(255, 70, 60, 0.9) 0%, rgba(140, 30, 24, 0.55) 32%, transparent 68%);
-  }
-
   /* Glossy 3D orbs — small premium accents (selection markers, logos, steps) */
   .orb { border-radius: var(--radius-full); position: relative; }
-  .orb-blue {
-    background: radial-gradient(circle at 33% 25%, #cfe2ff 0%, #2f86ff 38%, #0a4fc4 100%);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -8px 14px rgba(0,30,90,0.45), 0 8px 18px rgba(10,108,255,0.5);
+  .orb-sand {
+    background: radial-gradient(circle at 33% 25%, #efe7d4 0%, #b8a880 38%, #736440 100%);
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.65), inset 0 -8px 14px rgba(40,32,14,0.42), 0 8px 18px rgba(115,100,64,0.42);
   }
   .orb-silver {
     background: radial-gradient(circle at 33% 25%, #ffffff 0%, #e1e3e9 42%, #b6bac3 100%);

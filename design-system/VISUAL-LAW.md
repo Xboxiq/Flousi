@@ -402,3 +402,71 @@ The rule: **before building surfaces, read the domain and list its objects.** Th
 model board (`d10`) exists because that question was answered late. Every object it
 names is read off `src/domain`, not off the screens, because the screens are downstream
 of the model and can only repeat its mistakes.
+
+---
+
+## §22 · نظام لا يعمل على شاشة أحد ليس نظامًا / A SYSTEM NOBODY'S SCREEN RUNS
+
+> «ماكو تغييرات ولا تطبيق للشكل الجديد والالوان المقترحة وديزاين جديد ولوجو جديد
+> كلشي ماتطبق»
+
+Three phases produced a brand, a token architecture and nineteen artboards. All of it
+lived in `design-system/`. The product in `src/` was untouched: Apple blue, Cairo, a
+tick in a rounded tile. Every gate in those phases was honestly closed, and the client
+still opened the app and saw nothing.
+
+### 22.1 · A design system is not delivered until the product runs it
+
+A board is a proposal. A spec is a proposal. The deliverable is the screen the merchant
+opens. **A phase that produces only artboards must name, in its own gates, the phase
+that lands them — or it is not finished, it is staged.**
+
+### 22.2 · The identity's own colour is usually not a text colour
+
+`#B8A880` is the mark's colour and it is 2.08:1 on paper, 1.9:1 under white. A palette
+built by pointing `--accent` at the brand colour puts the brand's own hue on every
+label, button and link in the product and fails all of them at once.
+
+So the accent splits in two, permanently:
+
+* `--accent` — the value that must READ. Darkened until it passes on the ground it sits
+  on (`#736440`, 5.13 on paper).
+* `--accent-fill` — the value that FILLS. The board's own sand, with `--accent-fill-fg`
+  as the only ink allowed on it.
+
+**The brand colour is a plate. Deciding which of the two a token is comes before
+choosing its hex.**
+
+### 22.3 · A palette swap breaks contrast silently
+
+Nothing throws when `text-white` stays on a token that used to be a vivid blue and is
+now a pale sand. The build is green, the typecheck is green, the screenshot looks
+plausible, and the merchant is the one who cannot read the button.
+
+`scripts/sweeps/sweep-contrast.mjs` measures every text run on every route in both
+themes. Three separate things had to be fixed in the MEASUREMENT before its answer was
+worth anything:
+
+1. it walked past an opaque gradient body to the page ground behind it;
+2. it matched `rgb()` with a regex, and `color-mix()` / `oklab()` survive into computed
+   styles — so it missed exactly the colours these materials are mixed from;
+3. it walked ancestors, and the segmented control paints its accent pill as an
+   absolutely-positioned SIBLING under the label.
+
+**A ground is what the compositor paints, not what the DOM tree suggests.** Ground a run
+by hit test, resolve colours through the engine, and stop at the first opaque paint.
+
+### 22.4 · A token is only as good as its worst ground
+
+`--subtle` was documented "6.07 on bg · 5.21 on surface". Both true. It was also 4.23 on
+`--surface-2`, which is where the reps' balance note and the calculator's captions
+actually sit. **A comment that lists only the grounds where a token passes is worse than
+no comment**, because it ends the question.
+
+### 22.5 · A name is a bug waiting for its author
+
+`--font-mono` pointed at Archivo. Every figure in the product was correct, every comment
+explained why, and the name still invited the next person to put code in it or swap in a
+real monospace — which would have broken every Arabic run sharing the class, the fourth
+time this project paid for a Latin-only face. Renamed `--font-figure` across 30 files.
+**When the comment exists to explain away the name, rename the thing.**

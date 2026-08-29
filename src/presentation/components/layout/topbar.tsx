@@ -56,7 +56,7 @@ export function TopBar() {
       >
         <MagnifyingGlass size={16} />
         <span>ابحث أو انتقل…</span>
-        <kbd className="ms-auto rounded-md border border-border bg-surface px-1.5 py-0.5 font-mono text-[11px]">
+        <kbd className="ms-auto rounded-md border border-border bg-surface px-1.5 py-0.5 font-figure text-[11px]">
           ⌘K
         </kbd>
       </button>

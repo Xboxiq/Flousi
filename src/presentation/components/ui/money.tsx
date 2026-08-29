@@ -37,7 +37,7 @@ export function Money({ children, polarity, className, ...props }: MoneyProps) {
     <bdi
       dir="ltr"
       className={cn(
-        "font-mono tabular-nums",
+        "font-figure tabular-nums",
         polarity !== undefined && toneOf(polarity),
         className,
       )}

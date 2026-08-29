@@ -181,13 +181,13 @@ export function OrdersView() {
             <div className="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-2 text-sm">
               <span className="text-muted">
                 قُبض{" "}
-                <bdi dir="ltr" className="font-mono font-semibold text-fg">
+                <bdi dir="ltr" className="font-figure font-semibold text-fg">
                   {money(delivery.charged)}
                 </bdi>
               </span>
               <span className="text-muted">
                 دُفع{" "}
-                <bdi dir="ltr" className="font-mono font-semibold text-fg">
+                <bdi dir="ltr" className="font-figure font-semibold text-fg">
                   {money(delivery.paid)}
                 </bdi>
               </span>
@@ -196,7 +196,7 @@ export function OrdersView() {
                 <bdi
                   dir="ltr"
                   className={cn(
-                    "font-mono font-bold",
+                    "font-figure font-bold",
                     delivery.margin < 0
                       ? "text-danger"
                       : delivery.margin > 0
@@ -393,7 +393,7 @@ function OrderRowView({
           <bdi
             dir="ltr"
             className={cn(
-              "block font-mono text-sm font-semibold tabular-nums",
+              "block font-figure text-sm font-semibold tabular-nums",
               o.collected === 0 ? "text-muted" : "text-fg",
               /* A semantic strike, not decoration: the amount exists on the order but
                  was never collected, which is the accounting convention for a voided
@@ -410,7 +410,7 @@ function OrderRowView({
             <bdi
               dir="ltr"
               className={cn(
-                "mt-0.5 block font-mono text-[11px] tabular-nums",
+                "mt-0.5 block font-figure text-[11px] tabular-nums",
                 o.netProfit < 0 ? "text-danger" : "text-muted",
               )}
             >
@@ -438,20 +438,20 @@ function OrderRowView({
                       <span className="block truncate text-fg">{row.names[i]}</span>
                       <span className="text-xs text-muted">
                         {line.quantity} ×{" "}
-                        <bdi dir="ltr" className="font-mono">
+                        <bdi dir="ltr" className="font-figure">
                           {money(line.unitPrice)}
                         </bdi>
                         {canSeeCosts && lineResult && lineResult.deliveryShare > 0 && (
                           <>
                             {" · توصيل "}
-                            <bdi dir="ltr" className="font-mono">
+                            <bdi dir="ltr" className="font-figure">
                               {money(lineResult.deliveryShare)}
                             </bdi>
                           </>
                         )}
                       </span>
                     </span>
-                    <bdi dir="ltr" className="shrink-0 font-mono text-sm tabular-nums text-fg">
+                    <bdi dir="ltr" className="shrink-0 font-figure text-sm tabular-nums text-fg">
                       {money(lineResult?.revenue ?? 0)}
                     </bdi>
                   </li>
@@ -484,7 +484,7 @@ function OrderRowView({
                   )}
                   <p className="mt-1 text-[11px] leading-relaxed text-subtle">
                     قيمة شراء الأصناف ليست خسارة: الأصناف عندك. لو سُلّمت هذه الطلبية لكانت حصّلت{" "}
-                    <bdi dir="ltr" className="font-mono">
+                    <bdi dir="ltr" className="font-figure">
                       {money(r.collected)}
                     </bdi>
                     .
@@ -573,7 +573,7 @@ function Row({
         <bdi
           dir="ltr"
           className={cn(
-            "font-mono tabular-nums",
+            "font-figure tabular-nums",
             strong ? "font-bold text-fg" : "text-fg",
             tone === "danger" && "text-danger",
             tone === "success" && "text-success",

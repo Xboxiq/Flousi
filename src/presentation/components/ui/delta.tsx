@@ -32,7 +32,7 @@ export function Delta({ value, label, against, className }: DeltaProps) {
         )}
       >
         <Caret size={10} weight="fill" />
-        <bdi dir="ltr" className="font-mono tabular-nums">
+        <bdi dir="ltr" className="font-figure tabular-nums">
           {label}
         </bdi>
       </span>

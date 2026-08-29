@@ -192,7 +192,7 @@ function Slab({
             <bdi
               dir="ltr"
               className={cn(
-                "font-mono text-[11px] tabular-nums",
+                "font-figure text-[11px] tabular-nums",
                 onMetal ? "text-fg/65" : "text-white/90",
               )}
             >
@@ -216,7 +216,7 @@ function Slab({
               <bdi
                 dir="ltr"
                 className={cn(
-                  "font-mono text-[9px] tabular-nums",
+                  "font-figure text-[9px] tabular-nums",
                   onMetal ? "text-fg/60" : "text-white/85",
                 )}
               >

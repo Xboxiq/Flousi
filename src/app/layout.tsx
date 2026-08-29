@@ -1,24 +1,30 @@
 import type { Metadata, Viewport } from "next";
-import { Cairo, IBM_Plex_Mono } from "next/font/google";
+import { Tajawal, Archivo } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider, themeNoFlashScript } from "@/presentation/components/theme/theme-provider";
 
 /**
- * Type system (grounded in the reference screens — Apple SF Pro / Linear / Stripe):
- * Cairo is a precise geometric Arabic+Latin grotesk (the closest open equivalent
- * to SF Pro Arabic) used for every UI and display weight. IBM Plex Mono carries
- * the financial figures with tabular precision. Deliberately NOT a rounded/bubbly
- * display face — restraint is what reads as senior, not playfulness.
+ * The identity's own pairing. Tajawal carries every Arabic word and the Latin that
+ * sits inside an Arabic sentence; Archivo carries standalone Latin and, with
+ * tabular figures, every number in the product.
+ *
+ * Archivo replaces IBM Plex Mono for figures deliberately: a monospace face is not
+ * what makes a column of money line up — `font-variant-numeric: tabular-nums` is,
+ * and Archivo has it. Plex Mono also carries no Arabic at all, which cost this
+ * project three separate bugs where a header fell back glyph by glyph.
+ *
+ * Tajawal and Archivo stand in for the commercial Tajawal Next and Neue Montreal
+ * until those are licensed; swapping them is a change to this block alone.
  */
-const cairo = Cairo({
-  variable: "--font-cairo",
+const tajawal = Tajawal({
+  variable: "--font-tajawal",
   subsets: ["arabic", "latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["300", "400", "500", "700", "800", "900"],
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-mono-ibm",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
@@ -54,9 +60,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  /* The browser chrome paints the app's own ground: paper in light, coal in
+     dark. These two values are `--bg` from globals.css and must move with it —
+     a themeColor that lags the ground shows as a seam above the header. */
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f4f6" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0b" },
+    { media: "(prefers-color-scheme: light)", color: "#f2f1ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0e11" },
   ],
 };
 
@@ -69,7 +78,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${cairo.variable} ${plexMono.variable} h-full`}
+      className={`${tajawal.variable} ${archivo.variable} h-full`}
       suppressHydrationWarning
     >
       <head>

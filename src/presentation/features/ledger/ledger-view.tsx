@@ -219,7 +219,7 @@ function MovementRow({ movement, locale }: { movement: Movement; locale: string 
         <bdi
           dir="ltr"
           className={cn(
-            "block font-mono text-sm font-semibold tabular-nums",
+            "block font-figure text-sm font-semibold tabular-nums",
             m.direction === "none" ? "text-muted" : "text-fg",
             // Struck, not hidden: the figure is what the sale WOULD have brought in,
             // and the strike is what says it did not (gate P5/G2).
@@ -235,7 +235,7 @@ function MovementRow({ movement, locale }: { movement: Movement; locale: string 
           <bdi
             dir="ltr"
             className={cn(
-              "mt-0.5 block font-mono text-[11px] tabular-nums",
+              "mt-0.5 block font-figure text-[11px] tabular-nums",
               m.secondary < 0 ? "text-danger" : "text-muted",
             )}
           >
