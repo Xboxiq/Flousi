@@ -1,31 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { Receipt } from "@phosphor-icons/react";
-import { computeSettlements, type CurrencyTotal } from "@/application/ledger";
-import { Ladder, Rung } from "@/presentation/features/dashboard/ladder";
+import { computeSettlements } from "@/application/ledger";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { useAccess } from "@/presentation/hooks/use-access";
 import { PageHeader } from "@/presentation/components/layout/page-header";
-import {
-  Badge,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  EmptyState,
-  Money,
-  Skeleton,
-  Table,
-  THead,
-  TBody,
-  TR,
-  TH,
-  TD,
-} from "@/presentation/components/ui";
-import { PaceRail } from "@/presentation/components/objects/pace-rail";
+import { EmptyState, Skeleton } from "@/presentation/components/ui";
+import { Grid, Panel, Toolbar, Metric, Progress, Chip } from "@/presentation/components/structure";
 import { formatCurrency, formatDate } from "@/presentation/lib/format";
 import { cn } from "@/presentation/lib/cn";
 
@@ -45,7 +28,6 @@ export function SettlementsView() {
   const orders = useDataStore((s) => s.orders);
   const settings = useDataStore((s) => s.settings);
   const access = useAccess();
-  const [totalsOpen, setTotalsOpen] = useState(false);
 
   const view = useMemo(
     () =>
@@ -63,215 +45,187 @@ export function SettlementsView() {
     return (
       <>
         <PageHeader title="التسويات" />
-        <div className="flex flex-col gap-5">
-          <Skeleton className="h-40 rounded-[var(--radius-2xl)]" />
-          <Skeleton className="h-72 rounded-[var(--radius-2xl)]" />
-        </div>
+        <Grid>
+          <Skeleton className="span-6 h-[220px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[220px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[220px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-12 h-[400px] rounded-[var(--radius-md)]" />
+        </Grid>
       </>
     );
   }
 
+  const primary = view.totals[0];
+  const owing = view.totals.filter((t) => t.outstanding > 0);
+
   return (
     <>
-      <PageHeader
-        title="التسويات"
-      />
+      <PageHeader title="التسويات" />
 
-      <div className="flex flex-col gap-6">
-        {/* One line per currency, three figures each: with two currencies that was a
-            twelve-figure device standing over a four-row list. Latched, with the one
-            figure that answers «كم بقي عليّ؟» on the closed latch (VISUAL-LAW §15). */}
-        {view.totals.length > 0 && (
-          <Ladder solo>
-            <Rung
-              title="المستحق والمدفوع"
-              hint="سطر لكل عملة، ولا تُجمع العملات."
-              open={totalsOpen}
-              onToggle={() => setTotalsOpen((v) => !v)}
-              /* Neutral ink, like the line it summarises: «ما زال مستحقًّا» is a
-                 liability the merchant owes his own team, not a loss he took, and
-                 §13 spends danger on profit that went the wrong way. Painted red on
-                 the latch and neutral inside, one figure had two meanings. */
-              summary={
-                <Money className="font-semibold text-fg">
-                  {money(view.totals[0].outstanding, view.totals[0].currency)}
-                </Money>
-              }
-            >
-          <div className="flex flex-col gap-5">
-            <ul className="flex flex-col divide-y divide-border-soft [&>li]:py-4 [&>li:first-child]:pt-0 [&>li:last-child]:pb-0">
-              {view.totals.map((line) => (
-                <CurrencyLine key={line.currency} line={line} money={money} />
-              ))}
-            </ul>
-          </div>
-            </Rung>
-          </Ladder>
-        )}
-
-        <Card>
-          <CardHeader>
-            <div>
-              <CardTitle>سجل الدفعات</CardTitle>
-              <CardDescription>الأحدث أولًا. كل دفعة تُقرأ بعملتها التي دُفعت بها.</CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {view.rows.length === 0 ? (
-              <EmptyState
-                icon={<Receipt size={24} />}
-                title="لا تسويات بعد"
-              />
-            ) : (
-              <>
-                {/* Below sm the table becomes rows: five columns on a 360px screen
-                    is a sideways-scrolling strip, which is the P1 lesson. */}
-                <ul className="flex flex-col sm:hidden">
-                  {view.rows.map((r) => (
-                    <li
-                      key={r.settlement.id}
-                      className="flex items-baseline justify-between gap-3 border-b border-border-soft py-3 last:border-b-0"
-                    >
-                      <span className="min-w-0">
-                        <span className="block truncate font-medium text-fg">
-                          {r.repName}
-                          {r.repArchived && (
-                            <span className="ms-2 align-middle text-[11px] text-subtle">مؤرشف</span>
-                          )}
+      <Grid>
+        {/* ── the balances, one line per currency ─────────────────────────
+            Never summed. The domain holds no exchange rates by design and
+            `Money.add` throws on a mismatch, so a total across two lines is a
+            number that does not exist (gate P2/G5). */}
+        <Panel
+          span={6}
+          title="الأرصدة"
+          meta={<span className="text-[12px] text-subtle">سطر لكل عملة، ولا سطر جامع</span>}
+          bare
+        >
+          {view.totals.length === 0 ? (
+            <p className="p-6 text-center text-[13px] text-subtle">لا دفعة بعد.</p>
+          ) : (
+            <div className="r-tablewrap">
+              <table className="r-tbl">
+                <thead>
+                  <tr>
+                    <th>العملة</th>
+                    <th className="n">استحقّوا</th>
+                    <th className="n">دُفع</th>
+                    <th className="n">المتبقّي</th>
+                    <th className="n">الدفعات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {view.totals.map((line) => (
+                    <tr key={line.currency}>
+                      <td>
+                        <bdi className="r-num rounded-[4px] bg-surface-2 px-1.5 py-0.5 text-[11px] font-bold">
+                          {line.currency}
+                        </bdi>
+                      </td>
+                      <td className="n">{money(line.earned, line.currency)}</td>
+                      <td className="n">{money(line.paid, line.currency)}</td>
+                      {/* The WORD, not just the colour: an absolute figure cannot
+                          tell a debt from an advance, and «مدفوع مقدّماً» painted the
+                          same red as «مستحقّ» is the opposite reading. */}
+                      <td className={cn("n font-bold", line.outstanding > 0 ? "text-danger" : "text-accent")}>
+                        {money(Math.abs(line.outstanding), line.currency)}
+                        <span className="ms-1.5 text-[10px] font-normal text-subtle">
+                          {line.outstanding > 0 ? "مستحقّ" : line.outstanding < 0 ? "مقدّم" : "مسوّى"}
                         </span>
-                        <span className="mt-0.5 block text-xs text-muted">
-                          {formatDate(r.paidAt, { locale: settings.locale })}
-                          {r.method ? ` · ${r.method}` : ""}
-                        </span>
-                      </span>
-                      <bdi dir="ltr" className="shrink-0 font-figure text-sm font-semibold text-fg">
-                        {money(r.amount, r.currency)}
-                      </bdi>
-                    </li>
+                      </td>
+                      <td className="n text-subtle">{line.count}</td>
+                    </tr>
                   ))}
-                </ul>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Panel>
 
-                <div className="hidden sm:block">
-                  <Table>
-                    <THead>
-                      <TR>
-                        <TH>المندوب</TH>
-                        <TH>المبلغ</TH>
-                        <TH>التاريخ</TH>
-                        <TH>الطريقة</TH>
-                        <TH>الفترة</TH>
-                      </TR>
-                    </THead>
-                    <TBody>
-                      {view.rows.map((r) => (
-                        <TR key={r.settlement.id} data-row>
-                          <TD>
-                            {r.settlement.repId && !r.repArchived ? (
-                              <Link
-                                href={`/reps/view?id=${r.settlement.repId}`}
-                                className="font-medium text-fg hover:text-accent hover:underline"
-                              >
-                                {r.repName}
-                              </Link>
-                            ) : (
-                              <span className="font-medium text-fg">
-                                {r.repName}
-                                {r.repArchived && (
-                                  <Badge tone="neutral" className="ms-2">
-                                    مؤرشف
-                                  </Badge>
-                                )}
-                              </span>
+        {/* ── one figure worth its own size ───────────────────────────────── */}
+        <Panel span={3} title="ما دُفع" bodyClassName="flex flex-col gap-3">
+          {primary ? (
+            <>
+              <Metric
+                size="sm"
+                amount={money(primary.paid, primary.currency)}
+                name={`مدفوع للمندوبين بـ${primary.currency}`}
+              />
+              {primary.earned > 0 ? (
+                <Progress share={primary.paid / primary.earned} />
+              ) : (
+                <p className="text-[11px] text-subtle">
+                  لم يستحقّ الفريق شيئاً بهذه العملة، فلا نسبة تُقاس.
+                </p>
+              )}
+              <p className="text-[12px] text-subtle">
+                {primary.count} دفعة
+                {view.lastPaidAt
+                  ? ` · آخرها ${formatDate(view.lastPaidAt, { locale: settings.locale })}`
+                  : ""}
+              </p>
+            </>
+          ) : (
+            <p className="text-[13px] text-subtle">لم تُسجّل أي دفعة بعد.</p>
+          )}
+        </Panel>
+
+        {/* ── the one panel asking for a decision ─────────────────────────── */}
+        <Panel span={3} accent title="ما يحتاج قراراً" bodyClassName="flex h-full flex-col gap-3">
+          {owing.length > 0 ? (
+            <>
+              <Metric
+                size="sm"
+                amount={money(owing[0].outstanding, owing[0].currency)}
+                name="ما زال مستحقًّا للفريق"
+              />
+              <p className="text-[12px] leading-relaxed text-muted">
+                هذه حصص مجمّدة على بيعات وصلت. تُدفع من صفحة المندوب نفسه، حتى تُنسب
+                الدفعة إلى من استحقّها.
+              </p>
+            </>
+          ) : (
+            <p className="text-[13px] leading-relaxed text-muted">
+              لا مستحقّ على أحد: كل حصة مجمّدة قوبلت بدفعة.
+            </p>
+          )}
+        </Panel>
+
+        {/* ── the work: every payment ─────────────────────────────────────── */}
+        <Panel
+          span={12}
+          bare
+          footer={
+            <span className="text-[11px] text-subtle">
+              {view.rows.length} من {view.count} دفعة · كل دفعة تُقرأ بعملتها
+            </span>
+          }
+        >
+          <Toolbar title="سجل الدفعات">
+            <span className="r-spacer" />
+          </Toolbar>
+
+          {view.rows.length === 0 ? (
+            <EmptyState icon={<Receipt size={24} />} title="لا تسويات بعد" />
+          ) : (
+            <div className="r-tablewrap">
+              <table className="r-tbl">
+                <thead>
+                  <tr>
+                    <th>المندوب</th>
+                    <th className="n">المبلغ</th>
+                    <th>التاريخ</th>
+                    <th>الطريقة</th>
+                    <th>الفترة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {view.rows.map((r) => (
+                    <tr key={r.settlement.id} data-row>
+                      <td>
+                        {r.settlement.repId && !r.repArchived ? (
+                          <Link
+                            href={`/reps/view?id=${r.settlement.repId}`}
+                            className="font-bold text-fg hover:text-accent hover:underline"
+                          >
+                            {r.repName}
+                          </Link>
+                        ) : (
+                          <span className="font-bold text-fg">
+                            {r.repName}
+                            {r.repArchived && (
+                              <Chip className="ms-2 h-[18px] text-[10px]">مؤرشف</Chip>
                             )}
-                          </TD>
-                          <TD>
-                            <bdi dir="ltr" className="font-figure font-semibold text-fg">
-                              {money(r.amount, r.currency)}
-                            </bdi>
-                          </TD>
-                          <TD className="text-muted">
-                            {formatDate(r.paidAt, { locale: settings.locale })}
-                          </TD>
-                          <TD className="text-muted">{r.method ?? "—"}</TD>
-                          <TD className="text-muted">{r.periodLabel ?? "—"}</TD>
-                        </TR>
-                      ))}
-                    </TBody>
-                  </Table>
-                </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+                          </span>
+                        )}
+                      </td>
+                      <td className="n font-bold">{money(r.amount, r.currency)}</td>
+                      <td className="text-muted">
+                        {formatDate(r.paidAt, { locale: settings.locale })}
+                      </td>
+                      <td className="text-muted">{r.method ?? "—"}</td>
+                      <td className="text-muted">{r.periodLabel ?? "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Panel>
+      </Grid>
     </>
-  );
-}
-
-function CurrencyLine({
-  line,
-  money,
-}: {
-  line: CurrencyTotal;
-  money: (n: number, currency: string) => string;
-}) {
-  // How much of what the team earned in this currency has actually been handed
-  // over. The rail's remainder IS the outstanding balance (§11).
-  const share = line.earned > 0 ? line.paid / line.earned : 0;
-  const ahead = line.outstanding < 0;
-  // A rail needs a WHOLE to divide. Paying dollars against a dinar debt leaves
-  // this currency with payments and nothing earned, and a full rail would then
-  // read as «تمّت التسوية» — the exact opposite of «مدفوع مقدّماً». No whole, no
-  // object: the figures say it instead (§8, §11).
-  const hasWhole = line.earned > 0;
-
-  return (
-    <li>
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <span className="font-figure text-xs font-semibold text-muted">{line.currency}</span>
-        <span className="text-xs text-muted">
-          {ahead ? "مدفوع مقدّمًا" : "ما زال مستحقًّا"}{" "}
-          <bdi dir="ltr" className={cn("font-figure font-bold", ahead ? "text-accent" : "text-fg")}>
-            {money(Math.abs(line.outstanding), line.currency)}
-          </bdi>
-        </span>
-      </div>
-
-      {hasWhole ? (
-        <PaceRail
-          className="mt-2"
-          height={14}
-          attainment={share}
-          elapsed={0}
-          tone={ahead ? "accent" : share >= 1 ? "success" : "accent"}
-          label={`${line.currency}: دُفع ${money(line.paid, line.currency)} من ${money(
-            line.earned,
-            line.currency,
-          )} استحقّها الفريق`}
-        />
-      ) : (
-        <p className="mt-2 text-xs text-subtle">
-          لم يستحقّ الفريق شيئًا بهذه العملة، فلا نسبة تُقاس. الدفعة محسوبة كمقدّم.
-        </p>
-      )}
-
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-muted">
-        <span>
-          دُفع{" "}
-          <bdi dir="ltr" className="font-figure font-semibold text-fg">
-            {money(line.paid, line.currency)}
-          </bdi>{" "}
-          في {line.count} دفعة
-        </span>
-        {hasWhole && (
-          <span>
-            استحقّ الفريق{" "}
-            <bdi dir="ltr" className="font-figure font-semibold text-fg">
-              {money(line.earned, line.currency)}
-            </bdi>
-          </span>
-        )}
-      </div>
-    </li>
   );
 }

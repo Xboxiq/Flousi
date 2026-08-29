@@ -49,7 +49,12 @@ const TEXTURES = ["seg-solid", "seg-dots", "seg-hatch", "seg-grid", "seg-dense",
 
 function plateFor(part: DistributionPart, spendIndex: number) {
   if (part.kind === "keep") {
-    return { color: "var(--success)", texture: "seg-solid", ink: "rgba(255,255,255,0.5)" };
+    /* SAND, not green. Green in this system judges the DIRECTION of money —
+       a profit against a loss — and the merchant's own share of a split is
+       neither: it is one part of a whole, and painting it green said «good»
+       about an arithmetic fact. Sand is the accent, and the accent is what
+       marks the part the reader is being pointed at. */
+    return { color: "var(--accent-fill)", texture: "seg-solid", ink: "rgba(11,14,17,0.55)" };
   }
   if (part.kind === "overrun") {
     return { color: "var(--danger)", texture: "seg-overrun", ink: "rgba(255,255,255,0.5)" };
@@ -168,7 +173,7 @@ export function DistributionBar({
               className={cn(
                 "font-figure text-[12px] tabular-nums",
                 part.kind === "keep"
-                  ? "font-bold text-success"
+                  ? "font-bold text-accent"
                   : part.kind === "overrun"
                     ? "font-bold text-danger"
                     : "text-fg",

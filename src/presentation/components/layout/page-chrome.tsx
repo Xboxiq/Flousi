@@ -70,7 +70,7 @@ export function usePageChrome(): PageChrome | null {
  * check upstream), and the alternative — a memoised snapshot — is how a Save
  * button ends up permanently greyed out after the form becomes valid.
  */
-export function usePublishChrome(chrome: PageChrome) {
+export function usePublishChrome(chrome: PageChrome): { hasShell: boolean } {
   const store = useContext(Ctx);
   const { section, title, actions } = chrome;
   useEffect(() => {
@@ -80,4 +80,5 @@ export function usePublishChrome(chrome: PageChrome) {
        which is what keeps a data-dependent action in sync. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [section, title, actions]);
+  return { hasShell: store !== null };
 }

@@ -72,7 +72,7 @@ export function TopBar() {
         </span>
       </nav>
 
-      <div className="ms-auto flex items-center gap-2">
+      <div className="ms-auto flex min-w-0 shrink items-center gap-2">
         {/* The screen's own actions. One primary among them, never two. */}
         {chrome?.actions}
 

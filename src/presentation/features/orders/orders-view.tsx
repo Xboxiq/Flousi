@@ -1,32 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Package, Plus, Warning } from "@phosphor-icons/react";
+import { MagnifyingGlass, Package, Plus } from "@phosphor-icons/react";
 import { computeDelivery, computeOrders, type OrderRow } from "@/application/orders";
 import { computeCash } from "@/application/cash";
 import { AccessPolicy, DELIVERY_ALLOCATION_LABELS, isFreeDelivery } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { useAccess } from "@/presentation/hooks/use-access";
+import { useUrlState } from "@/presentation/hooks/use-url-state";
 import { PageHeader } from "@/presentation/components/layout/page-header";
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  EmptyState,
-  Money,
-  Skeleton,
-} from "@/presentation/components/ui";
-import { PaceRail } from "@/presentation/components/objects/pace-rail";
-import { CashTill } from "@/presentation/components/objects/cash-till";
+import { Badge, Button, EmptyState, Segmented, Skeleton } from "@/presentation/components/ui";
+import { Grid, Panel, Toolbar, Metric, Progress } from "@/presentation/components/structure";
 import { OrderStatusControl, STATE_MARK, stateLabel, stateOf } from "./order-status-control";
-import { Ladder, Rung } from "@/presentation/features/dashboard/ladder";
 import {
-  NOUNS,
-  countedNoun,
   formatCurrency,
   formatDate,
   formatNumber,
@@ -36,6 +22,24 @@ import { cn } from "@/presentation/lib/cn";
 import { OrderBuilder } from "./order-builder";
 
 const PAGE = 12;
+
+/**
+ * The filter row over the trips.
+ *
+ * These are the five states an order can actually be in — `stateOf` reads two
+ * independent fields to decide, so the filter compares against the SAME function
+ * the rows use rather than re-deriving the state and quietly disagreeing.
+ */
+const STATE_FILTERS = ["all", "inHand", "withCourier", "pending", "returned"] as const;
+type StateFilter = (typeof STATE_FILTERS)[number];
+
+const STATE_OPTIONS: { label: string; value: StateFilter }[] = [
+  { label: "الكل", value: "all" },
+  { label: "بيدك", value: "inHand" },
+  { label: "عند التوصيل", value: "withCourier" },
+  { label: "في الطريق", value: "pending" },
+  { label: "راجعة", value: "returned" },
+];
 
 /**
  * «الطلبيات» — the trips, and what each one actually made.
@@ -57,7 +61,6 @@ export function OrdersView() {
 
   const [shown, setShown] = useState(PAGE);
   const [building, setBuilding] = useState(false);
-  const [deliveryOpen, setDeliveryOpen] = useState(false);
 
   const view = useMemo(
     () =>
@@ -100,30 +103,59 @@ export function OrdersView() {
   const canRecord = access.can("recordSales");
   const canSeeCosts = access.can("viewCosts");
 
+  const [filter, setFilter] = useUrlState<StateFilter>("state", "all", STATE_FILTERS);
+  const [query, setQuery] = useState("");
+
+  /* The filter runs over the COMPUTED rows, not over raw orders, because the
+     state a row wears is `stateOf(order)` — two fields read together — and
+     re-deriving it here is how the toolbar and the rows end up disagreeing. */
+  const rows = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return view.rows.filter((row) => {
+      if (filter !== "all" && stateOf(row.order) !== filter) return false;
+      if (!q) return true;
+      const hay = [row.order.code, row.order.customerName, row.order.customerArea, row.repName]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return hay.includes(q);
+    });
+  }, [view.rows, filter, query]);
+
   if (!loaded) {
     return (
       <>
         <PageHeader title="الطلبيات" />
-        <div className="flex flex-col gap-5">
-          <Skeleton className="h-40 rounded-[var(--radius-2xl)]" />
-          <Skeleton className="h-80 rounded-[var(--radius-2xl)]" />
-        </div>
+        <Grid>
+          <Skeleton className="span-6 h-[220px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[220px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[220px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-12 h-[420px] rounded-[var(--radius-md)]" />
+        </Grid>
       </>
     );
   }
+
+  /* «أين الطلبات، وأين المال» — the two facts a trip carries, side by side and
+     never added together. A row of the table below is a STATE, and its money
+     column says what that state means for cash: money already in hand, money a
+     courier is holding, money that has not been earned yet. */
+  const states: { key: string; label: string; trips: number; value: number; note: string }[] = [
+    { key: "inHand", label: "بيدك", trips: cash.inHand.trips, value: cash.inHand.collected, note: "محصّلة" },
+    { key: "withCourier", label: "عند التوصيل", trips: cash.withCourier.trips, value: cash.withCourier.collected, note: "عند المندوب" },
+    { key: "pending", label: "في الطريق", trips: cash.inFlight.trips, value: cash.inFlight.expected, note: "متوقّعة" },
+    { key: "void", label: "راجعة أو ملغاة", trips: cash.lost.trips, value: 0, note: "لا ينطبق" },
+  ];
 
   return (
     <>
       <PageHeader
         title="الطلبيات"
-        /* The subsidised COUNT used to be stated here too. It is a cost fact the
-           delivery latch already reports, in full, with its own «من أصل» whole: two
-           places for one number is one place too many, and the header is the one that
-           cannot explain itself (VISUAL-LAW §15). */
         actions={
           canRecord ? (
             <Button
-              leadingIcon={<Plus size={16} weight="bold" />}
+              size="sm"
+              leadingIcon={<Plus size={15} weight="bold" />}
               onClick={() => setBuilding(true)}
             >
               طلبية جديدة
@@ -132,168 +164,196 @@ export function OrdersView() {
         }
       />
 
-      <div className="flex flex-col gap-6">
-        {/* «كم عندي» comes FIRST, before any profit reading: in a market where the
-            courier holds the cash for weeks, that is the question the merchant
-            actually opens the app with (gate P5/G3). */}
-        <CashTill
-          reading={cash}
-          money={money}
-          showLoss={canSeeCosts}
-          windowLabel={activePeriod?.label}
-          audience={access.salesScope === undefined ? "owner" : "rep"}
-        />
-
-        {/* The delivery reading is a DIAGNOSTIC, not a daily question: «هل توصيلي
-            يخسر؟» is asked weekly at most, so it sits behind a latch that states its
-            own answer while closed. Before P11 it stood open beside the till and the
-            two competed — 18 figures in a summary that answers one question, which is
-            what «صعب ومعقد» was pointing at (VISUAL-LAW §15). */}
-        {canSeeCosts && delivery.trips > 0 && (
-          <Ladder solo>
-            <Rung
-              title="التوصيل: مقبوض مقابل مدفوع"
-              open={deliveryOpen}
-              onToggle={() => setDeliveryOpen((v) => !v)}
-              summary={
-                <Money polarity={delivery.margin} className="font-semibold">
-                  {money(delivery.margin)}
-                </Money>
-              }
-            >
-          <div className="flex flex-col gap-4">
-            {/* The fill is what the merchant KEPT of the delivery money, and the
-                hatched remainder is what went to the couriers. The first version
-                filled it with `paid / charged`, so a FULLER green bar meant MORE of
-                the fee had been eaten — a rail that read as better the worse it got.
-                Fill must always mean the good direction (§13). */}
-            <PaceRail
-              height={16}
-              attainment={
-                delivery.charged > 0 ? Math.max(0, delivery.margin) / delivery.charged : 0
-              }
-              elapsed={0}
-              tone={delivery.margin < 0 ? "danger" : delivery.margin > 0 ? "success" : "muted"}
-              label={`بقي لك ${money(delivery.margin)} من ${money(delivery.charged)} قُبضت على التوصيل`}
-            />
-
-            <div className="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-2 text-sm">
-              <span className="text-muted">
-                قُبض{" "}
-                <bdi dir="ltr" className="font-figure font-semibold text-fg">
-                  {money(delivery.charged)}
-                </bdi>
-              </span>
-              <span className="text-muted">
-                دُفع{" "}
-                <bdi dir="ltr" className="font-figure font-semibold text-fg">
-                  {money(delivery.paid)}
-                </bdi>
-              </span>
-              <span className="text-muted">
-                {delivery.margin < 0 ? "خسارة التوصيل " : "ربح التوصيل "}
-                <bdi
-                  dir="ltr"
-                  className={cn(
-                    "font-figure font-bold",
-                    delivery.margin < 0
-                      ? "text-danger"
-                      : delivery.margin > 0
-                        ? "text-success"
-                        : "text-fg",
-                  )}
-                >
-                  {money(Math.abs(delivery.margin))}
-                </bdi>
-              </span>
-            </div>
-
-            {delivery.freeTrips > 0 && (
-              <p className="text-xs leading-relaxed text-muted">
-                توصيل مجاني تحمّلت أجرته في{" "}
-                {countedNoun(delivery.freeTrips, NOUNS.order, { locale: settings.locale })}: عرض
-                اخترته، لا خسارة.
-              </p>
-            )}
-            {delivery.subsidised > 0 && (
-              <p className="flex items-start gap-2 rounded-[var(--radius-md)] bg-danger-soft p-3 text-xs leading-relaxed text-danger">
-                <Warning size={15} weight="bold" className="mt-0.5 shrink-0" />
-                <span>
-                  {/* The colon form here on purpose: after «في» the Arabic dual takes
-                      «طلبيتين», not the nominative «طلبيتان» that `countedNoun`
-                      produces, so the count goes after the colon instead. */}
-                  رحلات دفعتَ فيها على التوصيل أكثر مما قبضت:{" "}
-                  {formatNumber(delivery.subsidised, { locale: settings.locale })} من أصل{" "}
-                  {formatNumber(delivery.trips, { locale: settings.locale })}.
-                </span>
-              </p>
-            )}
+      <Grid>
+        {/* ── where the trips are, and where their money is ─────────────── */}
+        <Panel
+          span={6}
+          title="أين الطلبات، وأين المال"
+          meta={
+            <span className="text-[12px] text-subtle">
+              {formatNumber(view.total, { locale: settings.locale })} طلبية في{" "}
+              {activePeriod?.label ?? "الفترة"}
+            </span>
+          }
+          bare
+        >
+          <div className="r-tablewrap">
+            <table className="r-tbl">
+              <thead>
+                <tr>
+                  <th>حالة الطلب</th>
+                  <th className="n">العدد</th>
+                  <th className="n">القيمة</th>
+                  <th>أين المال</th>
+                </tr>
+              </thead>
+              <tbody>
+                {states.map((st) => (
+                  <tr key={st.key}>
+                    <td>{st.label}</td>
+                    <td className="n font-bold">{formatNumber(st.trips, { locale: settings.locale })}</td>
+                    <td className="n">{st.value > 0 ? money(st.value) : "—"}</td>
+                    <td className="text-subtle">{st.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>المجموع</td>
+                  <td className="n">{formatNumber(view.total, { locale: settings.locale })}</td>
+                  <td className="n">{money(cash.spendable + cash.awaiting)}</td>
+                  <td className="text-subtle">المحصَّل والمعلّق</td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
-            </Rung>
-          </Ladder>
+        </Panel>
+
+        {/* ── the delivery reading: charged against paid ────────────────── */}
+        {canSeeCosts ? (
+          <Panel span={3} title="التوصيل" bodyClassName="flex flex-col gap-3">
+            <Metric
+              size="sm"
+              amount={money(delivery.margin)}
+              name={delivery.margin < 0 ? "خسارة على التوصيل" : "بقي لك من أجور التوصيل"}
+              className={delivery.margin < 0 ? "[&_.amount]:text-danger" : ""}
+            />
+            {/* The fill is what the merchant KEPT of the delivery money. Filling
+                it with paid/charged made a FULLER bar mean MORE of the fee eaten:
+                a rail that read as better the worse it got (§13). */}
+            <Progress share={delivery.charged > 0 ? Math.max(0, delivery.margin) / delivery.charged : 0} />
+            <dl className="mt-1 flex flex-col gap-1.5 text-[12px]">
+              <div className="flex justify-between">
+                <dt className="text-subtle">قُبض</dt>
+                <dd><bdi className="r-num text-fg">{money(delivery.charged)}</bdi></dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-subtle">دُفع</dt>
+                <dd><bdi className="r-num text-fg">{money(delivery.paid)}</bdi></dd>
+              </div>
+              {delivery.freeTrips > 0 && (
+                <div className="flex justify-between">
+                  <dt className="text-subtle">توصيل مجاني</dt>
+                  <dd><bdi className="r-num text-fg">{formatNumber(delivery.freeTrips, { locale: settings.locale })}</bdi></dd>
+                </div>
+              )}
+            </dl>
+          </Panel>
+        ) : (
+          <Panel span={3} title="التوصيل">
+            <p className="text-[13px] text-subtle">أرقام التوصيل مخفية عن هذا الدور.</p>
+          </Panel>
         )}
 
-        <Card>
-          <CardHeader>
-            <div>
-              <CardTitle>الرحلات</CardTitle>
-              <CardDescription>
-                الأحدث أولاً.
-                {view.looseSales > 0 &&
-                  ` وهناك ${countedNoun(view.looseSales, NOUNS.sale, {
-                    locale: settings.locale,
-                  })} مسجّلة بلا طلبية، من قبل هذه الميزة أو من صفحة منتج.`}
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {view.rows.length === 0 ? (
-              <EmptyState
-                icon={<Package size={24} />}
-                title="لا طلبيات بعد"
-                action={
-                  canRecord ? (
-                    <Button leadingIcon={<Plus size={16} />} onClick={() => setBuilding(true)}>
-                      طلبية جديدة
-                    </Button>
-                  ) : undefined
-                }
+        {/* ── the one panel asking for a decision ───────────────────────── */}
+        <Panel span={3} accent title="ما يحتاج قراراً" bodyClassName="flex h-full flex-col gap-3">
+          {canSeeCosts && delivery.subsidised > 0 ? (
+            <>
+              <Metric
+                size="sm"
+                amount={formatNumber(delivery.subsidised, { locale: settings.locale })}
+                name={`رحلة دفعت فيها أكثر مما قبضت، من أصل ${formatNumber(delivery.trips, { locale: settings.locale })}`}
               />
-            ) : (
-              <>
-                <ul className="flex flex-col">
-                  {view.rows.map((row) => (
-                    <OrderRowView
-                      key={row.order.id}
-                      row={row}
-                      money={money}
-                      locale={settings.locale}
-                      canSeeCosts={canSeeCosts}
-                      canRecord={canRecord}
-                      audience={access.salesScope === undefined ? "owner" : "rep"}
-                    />
-                  ))}
-                </ul>
-                {/* A pagination counter is only news while something is BEING held
-                    back. Shown always, «ظهر 7 من 7» repeated the header's own count
-                    at the bottom of the same screen and read as a figure to check
-                    (VISUAL-LAW §15). */}
-                {view.rows.length < view.total && (
-                  <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border-soft pt-4">
-                    <p className="text-xs text-muted">
-                      ظهر {formatNumber(view.rows.length, { locale: settings.locale })} من{" "}
-                      {formatNumber(view.total, { locale: settings.locale })}
-                    </p>
-                    <Button variant="secondary" size="sm" onClick={() => setShown((n) => n + PAGE)}>
-                      عرض المزيد
-                    </Button>
-                  </div>
-                )}
-              </>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+              <p className="text-[12px] leading-relaxed text-muted">
+                أجرة المندوب أعلى مما تأخذه من الزبون في هذه الرحلات. راجع السعر أو المنطقة.
+              </p>
+            </>
+          ) : cash.withCourier.trips > 0 ? (
+            <>
+              <Metric
+                size="sm"
+                amount={money(cash.awaiting)}
+                name={`${formatNumber(cash.withCourier.trips, { locale: settings.locale })} طلبية مالها عند المندوب`}
+              />
+              <p className="text-[12px] leading-relaxed text-muted">
+                حصّلها وسجّلها «بيدك» حتى يصير الرقم الأول في اللوحة صحيحاً.
+              </p>
+            </>
+          ) : (
+            <p className="text-[13px] leading-relaxed text-muted">
+              لا شيء معلّق: لا رحلة بالخسارة ولا مال عند مندوب.
+            </p>
+          )}
+        </Panel>
+
+        {/* ── the work: every trip, filterable ──────────────────────────── */}
+        <Panel
+          span={12}
+          bare
+          footer={
+            <>
+              <span className="text-[11px] text-subtle">
+                {formatNumber(rows.length, { locale: settings.locale })} من{" "}
+                {formatNumber(view.total, { locale: settings.locale })}
+                {view.looseSales > 0 &&
+                  ` · ${formatNumber(view.looseSales, { locale: settings.locale })} بيعة بلا طلبية`}
+              </span>
+              {view.rows.length < view.total && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="ms-auto"
+                  onClick={() => setShown((n) => n + PAGE)}
+                >
+                  عرض المزيد
+                </Button>
+              )}
+            </>
+          }
+        >
+          <Toolbar title="الرحلات">
+            <div className="relative w-full max-w-[220px]">
+              <MagnifyingGlass
+                size={15}
+                className="pointer-events-none absolute inset-inline-start-2.5 top-1/2 -translate-y-1/2 text-subtle"
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="ابحث برقم الطلب أو الزبون"
+                aria-label="ابحث في الرحلات"
+                className="h-9 w-full rounded-[var(--radius-sm)] border border-line bg-surface-2 ps-8 pe-3 text-[13px] text-fg placeholder:text-subtle focus-visible:outline-2 focus-visible:outline-offset-[-1px] focus-visible:outline-[var(--focus)]"
+              />
+            </div>
+            <Segmented
+              aria-label="حالة الطلب"
+              options={STATE_OPTIONS}
+              value={filter}
+              onChange={setFilter}
+            />
+            <span className="r-spacer" />
+          </Toolbar>
+
+          {rows.length === 0 ? (
+            <EmptyState
+              icon={<Package size={24} />}
+              title={view.rows.length === 0 ? "لا طلبيات بعد" : "لا رحلة تطابق هذا البحث"}
+              action={
+                view.rows.length === 0 && canRecord ? (
+                  <Button leadingIcon={<Plus size={16} />} onClick={() => setBuilding(true)}>
+                    طلبية جديدة
+                  </Button>
+                ) : undefined
+              }
+            />
+          ) : (
+            <ul className="flex flex-col">
+              {rows.map((row) => (
+                <OrderRowView
+                  key={row.order.id}
+                  row={row}
+                  money={money}
+                  locale={settings.locale}
+                  canSeeCosts={canSeeCosts}
+                  canRecord={canRecord}
+                  audience={access.salesScope === undefined ? "owner" : "rep"}
+                />
+              ))}
+            </ul>
+          )}
+        </Panel>
+      </Grid>
 
       {canRecord && <OrderBuilder open={building} onClose={() => setBuilding(false)} />}
     </>

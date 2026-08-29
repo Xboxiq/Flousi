@@ -288,7 +288,7 @@ export function DashboardView() {
                 المال محسوب لك، لكنه ليس بيدك: حصّله من المندوب قبل أن يتقادم.
               </p>
               <div className="mt-auto flex items-center gap-2">
-                <Button asChild size="sm">
+                <Button asChild size="sm" variant="secondary">
                   <Link href="/orders">افتح التحصيلات</Link>
                 </Button>
               </div>
@@ -300,7 +300,7 @@ export function DashboardView() {
                 أجرة التوصيل دُفعت ولم يقابلها بيع. راجع أسبابها قبل أن تتكرّر.
               </p>
               <div className="mt-auto">
-                <Button asChild size="sm">
+                <Button asChild size="sm" variant="secondary">
                   <Link href="/orders">راجِعها</Link>
                 </Button>
               </div>

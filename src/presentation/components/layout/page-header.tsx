@@ -26,6 +26,20 @@ interface PageHeaderProps {
  * where it can be read next to the thing it explains.
  */
 export function PageHeader({ title, section, actions }: PageHeaderProps) {
-  usePublishChrome({ title, section, actions });
-  return null;
+  const { hasShell } = usePublishChrome({ title, section, actions });
+
+  /* Inside the shell this renders nothing: the top bar has the title and the
+     verbs. Outside it — a screen mounted on its own, which is how the tests and
+     any future embed render one — there IS no top bar, so the header draws
+     itself rather than leaving the screen nameless and its actions unreachable.
+     A component that silently disappears when its context is missing is a trap
+     for whoever mounts it next. */
+  if (hasShell) return null;
+
+  return (
+    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <h1 className="text-[22px] font-bold tracking-tight text-fg">{title}</h1>
+      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+    </div>
+  );
 }

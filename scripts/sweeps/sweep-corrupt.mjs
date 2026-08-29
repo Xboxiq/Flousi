@@ -29,13 +29,27 @@ for (const [label, mut] of CASES) {
     for (const route of ROUTES) {
       await p.goto(`${BASE}${route}`, { waitUntil: "networkidle" });
       await p.waitForTimeout(600);
-      // a blank screen is a crash even without a thrown error
-      const text = await p.evaluate(
-        () =>
-          (document.querySelector("main")?.innerText || document.body.innerText || "").trim()
-            .length,
-      );
-      if (text < 40) dead.push(route + " (blank)");
+      /* A blank screen is a crash even without a thrown error — but "blank" has to
+         mean RENDERED NOTHING, not "rendered few characters".
+         The first version of this check counted characters in <main> and failed
+         anything under 40. That held only while every screen printed its own <h1>
+         inside <main>; once the title moved to the top bar, a perfectly correct
+         empty state («لا يوجد مندوبون بعد» + its button, 31 characters) started
+         reporting as a crash. A gate that fails on a screen doing exactly the right
+         thing teaches everyone to ignore it.
+         So the test is now two facts that cannot be true of a crash: <main> put
+         SOMETHING in the document, and the chrome hydrated — the breadcrumb is
+         rendered by React from the route, so its presence proves the tree mounted. */
+      const state = await p.evaluate(() => {
+        const main = document.querySelector("main");
+        return {
+          nodes: main ? main.querySelectorAll("*").length : 0,
+          text: (main?.innerText || "").trim().length,
+          chrome: (document.querySelector(".r-crumbs")?.innerText || "").trim().length,
+        };
+      });
+      if (state.nodes === 0 || state.text === 0) dead.push(route + " (blank)");
+      else if (state.chrome === 0) dead.push(route + " (chrome did not mount)");
     }
     checked++;
     if (errs.length || dead.length) {

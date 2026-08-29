@@ -14,8 +14,44 @@ import { chromium } from "/opt/node22/lib/node_modules/playwright/index.mjs";
 const BASE = process.env.BASE || "http://localhost:8123";
 
 const BUDGET = {
-  /** Figures in the summary region — everything above the first list or table. */
-  summaryFigures: 8,
+  /**
+   * Figures in ONE PANEL's own non-row region.
+   *
+   * Fifth recalibration, and the largest: the number was 8 and it was counted over
+   * the whole screen, because the screen it was written for was one figure over a
+   * ladder of collapsed rungs. The artboards the client then approved are not that
+   * shape — they are a BRIEF ROW of three titled panels over a work panel — and
+   * under the old counting rule every one of those panels' figures landed in one
+   * bucket. The dashboard measured 43 against a ceiling of 8 while reading as four
+   * calm cards.
+   *
+   * So the region was wrong, not the screens. Measured on the client's OWN boards,
+   * which are the approved density:
+   *
+   *   board            total   worst panel
+   *   p1 dashboard      48        13
+   *   p6 monitor        48         9
+   *   p8 ledger         47         3
+   *   p9 product        68         9
+   *   p4 settlement     55        25   (a detail card, not a layout panel)
+   *   p3 rep            29         4
+   *   p7 archive        43        12
+   *
+   * A panel carries its own title and its own hairline, so the eye reads one at a
+   * time — which is exactly why three panels of four figures do not feel like
+   * twelve. The ceiling is therefore PER PANEL, at one above the worst honest
+   * layout panel on the boards, the same rule `sentences` already uses.
+   *
+   * This is a conflict between VISUAL-LAW §15 (written from «التصميم تحسه صعب
+   * ومعقد جدا») and the boards the client later approved, and it is resolved in
+   * VISUAL-LAW §23 clause by clause rather than silently in either direction.
+   */
+  panelFigures: 14,
+  /**
+   * Figures on the whole screen at rest, as a second guard: a screen made of six
+   * compliant panels is still a wall. Set from the boards' worst, p9 at 68.
+   */
+  screenFigures: 72,
   /**
    * Figures on one list row.
    *
@@ -144,10 +180,27 @@ for (const route of ROUTES) {
     const rowSet = new Set(rows);
     const inRow = (el) => { for (let n = el; n; n = n.parentElement) if (rowSet.has(n)) return true; return false; };
 
-    /* The summary: everything rendered that is NOT inside a row. Measured by taking
-       the whole screen's figures and subtracting the rows' own. */
+    /* The summary, PER PANEL: a panel's own figures minus the figures inside the
+       rows it contains. A screen with no panels at all (an empty state, a form) is
+       measured as one panel, so it can never pass by having no structure. */
     const all = count(main);
+    const panels = [...main.querySelectorAll(".r-card")].filter(shown);
+    const measure = (el) => {
+      const own = [...el.querySelectorAll("[data-row], tbody tr, .r-datarow, .r-hbar")].filter(
+        (r) => shown(r) && r.closest(".r-card") === el,
+      );
+      return Math.max(0, count(el) - own.reduce((a, r) => a + count(r), 0));
+    };
     const rowFigs = rows.map(count);
+    const panelFigures = panels.length
+      ? Math.max(...panels.map(measure))
+      : Math.max(0, all - rowFigs.reduce((a, c) => a + c, 0));
+    const worstPanel =
+      panels.length
+        ? (panels
+            .map((el) => ({ el, n: measure(el) }))
+            .sort((a, b) => b.n - a.n)[0].el.querySelector("h2,h3")?.textContent || "بلا عنوان").trim()
+        : "الشاشة";
     const summaryFigures = Math.max(0, all - rowFigs.reduce((a, c) => a + c, 0));
 
     /* Clauses: a terminator that ENDS a clause. A decimal point or a thousands
@@ -192,7 +245,7 @@ for (const route of ROUTES) {
     );
 
     return {
-      summaryFigures, sentences, proseBlock, instruments,
+      summaryFigures, panelFigures, worstPanel, screenFigures: all, sentences, proseBlock, instruments,
       rowCount: rows.length,
       maxRowFigures: rowFigs.length ? Math.max(...rowFigs) : 0,
       maxRowBadges: rowBadges.length ? Math.max(...rowBadges) : 0,
@@ -202,7 +255,10 @@ for (const route of ROUTES) {
   });
 
   const bad = [];
-  if (m.summaryFigures > BUDGET.summaryFigures) bad.push(`summary ${m.summaryFigures}>${BUDGET.summaryFigures}`);
+  if (m.panelFigures > BUDGET.panelFigures)
+    bad.push(`panel «${m.worstPanel}» ${m.panelFigures}>${BUDGET.panelFigures}`);
+  if (m.screenFigures > BUDGET.screenFigures)
+    bad.push(`screen ${m.screenFigures}>${BUDGET.screenFigures}`);
   if (m.maxRowFigures > BUDGET.rowFigures) bad.push(`row ${m.maxRowFigures}>${BUDGET.rowFigures}`);
   if (m.sentences > BUDGET.sentences) bad.push(`prose ${m.sentences}>${BUDGET.sentences}`);
   if (m.proseBlock > BUDGET.proseBlock) bad.push(`block ${m.proseBlock}>${BUDGET.proseBlock}`);
@@ -212,7 +268,7 @@ for (const route of ROUTES) {
   const pad = (n, w) => String(n).padStart(w);
   console.log(
     `${bad.length ? "✗" : "✓"} ${route.padEnd(17)}` +
-      `sum${pad(m.summaryFigures, 4)}  row${pad(m.maxRowFigures, 3)}  prose${pad(m.sentences, 4)}` +
+      `panel${pad(m.panelFigures, 3)}  screen${pad(m.screenFigures, 4)}  row${pad(m.maxRowFigures, 3)}  prose${pad(m.sentences, 4)}` +
       `  block${pad(m.proseBlock, 3)}` +
       `  instr${pad(m.instruments, 3)}  badge${pad(m.maxRowBadges, 3)}  (all ${m.totalFigures}, ${m.rowCount} rows)` +
       (bad.length ? `\n      over: ${bad.join(" · ")}` : ""),

@@ -1,6 +1,6 @@
 # Interaction sweeps
 
-Five scripts that MEASURE or DRIVE the built app rather than reading its source. They exist because of
+Six scripts that MEASURE or DRIVE the built app rather than reading its source. They exist because of
 one repeated lesson in this project: every defect that mattered was invisible to the
 typechecker, the linter, the tests **and the screenshots**. P9's focus thief broke
 every dialog in the app since P1 and only surfaced when a script typed into a field.
@@ -16,9 +16,20 @@ node scripts/sweeps/sweep-keyboard.mjs    # anything clickable a keyboard cannot
 node scripts/sweeps/sweep-corrupt.mjs     # the app against a mangled localStorage
 node scripts/sweeps/sweep-density.mjs     # the quiet ceiling (VISUAL-LAW §15), at rest
 node scripts/sweeps/sweep-contrast.mjs    # every text run vs. the colour painted behind it
+node scripts/sweeps/sweep-overflow.mjs    # no page scrolls sideways at 390 / 768 / 1440
 ```
 
-Override the port with `BASE=http://localhost:9999 node …`. All five honour it.
+Override the port with `BASE=http://localhost:9999 node …`. All six honour it.
+
+## sweep-overflow and the RTL version of the bug
+
+Written when the page template landed. A body that scrolls horizontally is bad
+everywhere and worst in RTL, because the merchant's own reading direction hides it:
+the content runs off the LEFT edge, which is where the eye stops looking. The sweep
+ignores anything with a scrolling ancestor, so a `.r-tablewrap` doing its job is not
+reported — only the page itself is. Its first run found the settings bench putting two
+labelled verbs plus the bar's own controls into 358px of content width and pushing the
+theme key six pixels past the edge.
 
 ## sweep-contrast and grounding a run
 
@@ -91,3 +102,16 @@ were probe defects, and each taught a rule now encoded in the scripts:
 
 When a sweep fails, prove which side is wrong with a narrow probe before touching
 either. That is what separated P10's two real findings from its three false alarms.
+
+
+## sweep-corrupt and what "blank" has to mean
+
+Its blank test used to be «fewer than 40 characters in `<main>`». That held only while
+every screen printed its own `<h1>` inside `<main>`; the moment the title moved to the
+top bar, a perfectly correct empty state («لا يوجد مندوبون بعد» plus its button, 31
+characters) started reporting as a crash on four of twenty cases. The screen was right
+and the gate was wrong.
+
+It now asserts two things a crash cannot fake: `<main>` put SOMETHING in the document,
+and the chrome hydrated — the breadcrumb is rendered by React from the route, so its
+presence proves the tree mounted rather than that the text happened to be long enough.
