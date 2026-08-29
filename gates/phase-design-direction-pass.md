@@ -114,13 +114,35 @@ sideways at 390/768/1440 and no table needs to at 390 · `sweep-keyboard` every
 clickable reachable · `sweep-writes` 12/12 · `sweep-corrupt` 20/20 · twelve
 screens eye-verified in both themes at 1440, three at 390, plus the product bench.
 
+## G11 — the last three routes, and the seam they made
+
+CHECK: with the main screens done, what does a reviewer hit who clicks freely?
+EXPECT: measured, not guessed. A script walked every route and counted `.r-card`
+panels against surviving rounded card bodies.
+EVIDENCE: three routes were still off the system, and all three sat one click from
+a screen that was on it — which is the definition of a seam:
+
+| route | how it was reached | what was wrong |
+|---|---|---|
+| `/reps/view` | clicking any rep name on `/reps` | 5 old cards, 0 panels · green on every figure · a nested-circles chart outside the system's four shapes · a lit "device" for the balance |
+| `/reps/schemes` | the team screen's own settings link | 2 old cards, and a `.clay` slab for the example bench |
+| `/reports/monthly` and its four siblings | every row of the reports hub | 1 old card |
+
+All three are rebuilt. The rep sheet keeps every figure it had and loses the
+instruments: the balance is a `Metric` in a panel like every other figure in the
+product, the three magnitudes are a list on one axis rather than an area-scaled
+ring the eye cannot read as a ratio, and the ledger is a real table with column
+priority. `BalanceDevice` and `RepSaleRows` went with it — one screen owning its
+own instrument for one number is how a system stops being one.
+
+Re-measured after: **15 of 15 routes on the system, zero old cards.** The
+kill-ai-slop scan fell from 136 hits to 67 over the same period.
+
 ## What is still open
 
-* **The rep detail screen (board p3)** is not rebuilt. At 758 lines it is the
-  largest screen in the app and it deserves its own pass rather than a partial one.
+* **The landing page and the styleguide** still exercise objects no product
+  screen uses any more (`Odometer`, `WeekBars`, `RingGauge`, `PriceColumn`). They
+  are a marketing surface and a showcase, not product screens, but the two
+  vocabularies should be reconciled rather than left to diverge.
 * **The light ground is still an extension.** The board prints none; `#F2F1EE` is
   a derivation, said out loud where it is declared. Still the client's call.
-* **`instruments-study` and the landing page** still exercise objects the product
-  screens no longer use (`RingGauge`, `WeekBars`, `PriceColumn`, `Odometer`).
-  They are a showcase and a marketing page, not product surfaces, but the two
-  vocabularies should be reconciled rather than left to diverge.
