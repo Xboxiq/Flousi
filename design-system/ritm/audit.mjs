@@ -23,39 +23,49 @@ const srv = createServer((req, res) => {
   const p = join(DIR, decodeURIComponent(req.url.split("?")[0]));
   let buf; try { buf = readFileSync(p); } catch { res.writeHead(404); res.end(); return; }
   res.writeHead(200, { "content-type": MIME[extname(p)] || "text/plain" }); res.end(buf);
-}).listen(8141);
+}).listen(0);
+/* a free port: a stale server from an interrupted run must never block this one */
+const PORT = srv.address().port;
 
 /* ── 1 · the token file's own arithmetic ──────────────────────────────────
    Each pair the comments claim is recomputed. A comment that drifts from the
    value beside it is worse than no comment: it is a false certificate. */
 const css = readFileSync(join(DIR, "tokens.css"), "utf8");
 const hex = n => (css.match(new RegExp(`--${n}:(#[0-9A-Fa-f]{6})`)) || [])[1];
-const P = Object.fromEntries(["ink","coal","slate","line-d","graphite","steel","grey","mist",
-  "fog","line-l","bone","paper","white","sand","teal","profit","loss","amber",
+const P = Object.fromEntries(["ink","coal","graphite","sand","bone","teal",
+  "steel","grey","mist","fog","line-l","paper","white",
+  "teal-lift","profit","loss","amber",
   "sand-ink","teal-ink","profit-ink","loss-ink","amber-ink"].map(n => [n, hex(n)]));
 
 const AA = 4.5, AA_LARGE = 3, NON_TEXT = 3;
 const claims = [
-  /* dark: every ink on every ground it is allowed to sit on */
-  ["fg on bg",            P.paper, P.ink,   AA],
-  ["fg on surface-2",     P.paper, P.slate, AA],
-  ["fg-2 on bg",          P.fog,   P.ink,   AA],
-  ["fg-2 on surface-2",   P.fog,   P.slate, AA],
-  ["fg-3 on bg",          P.mist,  P.ink,   AA],
-  ["fg-3 on surface",     P.mist,  P.coal,  AA],
-  ["fg-3 on surface-2",   P.mist,  P.slate, AA],
-  ["fg-3 on surface-3",   P.mist,  P["line-d"], AA],
-  ["accent on bg",        P.sand,  P.ink,   AA],
-  ["accent on surface",   P.sand,  P.coal,  AA],
-  ["on-accent over sand", P.ink,   P.sand,  AA],
-  ["profit on bg",        P.profit, P.ink,  AA],
-  ["profit on surface",   P.profit, P.coal, AA],
-  ["loss on bg",          P.loss,  P.ink,   AA],
-  ["loss on surface",     P.loss,  P.coal,  AA],
-  ["warning on bg",       P.amber, P.ink,   AA],
-  ["info on bg",          P.teal,  P.ink,   AA],
-  ["disabled on bg",      P.grey,  P.ink,   AA_LARGE],
-  ["line-control on bg",  "#57606A", P.ink, NON_TEXT],
+  /* dark: every ink on every one of the board's three grounds */
+  ["fg on bg",            P.paper, P.ink,      AA],
+  ["fg on surface",       P.paper, P.coal,     AA],
+  ["fg on surface-2",     P.paper, P.graphite, AA],
+  ["fg-2 on bg",          P.fog,   P.ink,      AA],
+  ["fg-2 on surface",     P.fog,   P.coal,     AA],
+  ["fg-2 on surface-2",   P.fog,   P.graphite, AA],
+  ["fg-3 on bg",          P.mist,  P.ink,      AA],
+  ["fg-3 on surface",     P.mist,  P.coal,     AA],
+  ["fg-3 on surface-2",   P.mist,  P.graphite, AA],
+  ["accent on bg",        P.sand,  P.ink,      AA],
+  ["accent on surface",   P.sand,  P.coal,     AA],
+  ["accent on surface-2", P.sand,  P.graphite, AA],
+  ["on-accent over sand", P.ink,   P.sand,     AA],
+  ["profit on bg",        P.profit, P.ink,     AA],
+  ["profit on surface",   P.profit, P.coal,    AA],
+  ["loss on bg",          P.loss,  P.ink,      AA],
+  ["loss on surface",     P.loss,  P.coal,     AA],
+  ["warning on bg",       P.amber, P.ink,      AA],
+  ["warning on surface",  P.amber, P.coal,     AA],
+  ["info on bg",          P["teal-lift"], P.ink,      AA],
+  ["info on surface",     P["teal-lift"], P.coal,     AA],
+  ["info on surface-2",   P["teal-lift"], P.graphite, AA],
+  ["signal fill on s-2",  P.teal,  P.graphite, NON_TEXT],
+  ["on-signal over teal", P.ink,   P.teal,     AA],
+  ["disabled on bg",      P.grey,  P.ink,      AA_LARGE],
+  ["line-control on bg",  "#57606A", P.ink,    NON_TEXT],
   /* the series bands: each fill carries an ink that must survive on it */
   ["on-series-2 over steel",    P.paper, P.steel,    AA],
   ["on-series-3 over mist",     P.ink,   P.mist,     AA],
@@ -64,8 +74,9 @@ const claims = [
   ["fg on bg (light)",       P.ink,        P.paper, AA],
   ["fg on surface-2 (light)",P.ink,        P.bone,  AA],
   ["fg-2 on bg (light)",     P.steel,      P.paper, AA],
+  ["fg-2 on surface-2 (l)",  P.steel,      P.bone,  AA],
   ["fg-3 on bg (light)",     P.grey,       P.paper, AA],
-  ["fg-3 on surface-2 (light)", P.grey,    P.bone,  AA],
+  ["fg-3 on surface-2 (l)",  P.grey,       P.bone,  AA],
   ["accent-ink on bone",     P["sand-ink"],   P.bone, AA],
   ["profit-ink on bone",     P["profit-ink"], P.bone, AA],
   ["loss-ink on bone",       P["loss-ink"],   P.bone, AA],
@@ -75,11 +86,13 @@ const claims = [
   ["line-control on white",  "#9C947F",       P.white, NON_TEXT],
   ["on-series-4 over C3BFB4","#0B0E11",       "#C3BFB4", AA],
 ];
-/* the two the brand manual proved are NOT allowed, kept as failing controls:
-   if either ever passes, someone lightened a ground and broke the light rules */
+/* Failing controls. Each is a rule the identity itself proved, and each must
+   keep FAILING: if one ever passes, a ground was lightened or a value drifted
+   and the rule broke quietly. A check that can only pass catches nothing. */
 const forbidden = [
-  ["sand as text on paper", P.sand, P.paper, AA],
-  ["teal as text on paper", P.teal, P.paper, AA],
+  ["sand as text on paper",  P.sand, P.paper, AA],
+  ["sand as text on bone",   P.sand, P.bone,  AA],
+  ["board teal as body text", P.teal, P.coal, AA],
 ];
 
 let bad = 0;
@@ -87,12 +100,12 @@ console.log("── tokens ─────────────────�
 for (const [name, a, b, min] of claims) {
   const r = ratio(a, b), ok = r >= min;
   if (!ok) bad++;
-  console.log(`${ok ? "  ✓" : "  ✗"} ${name.padEnd(28)} ${a} on ${b}  ${r.toFixed(2)} (needs ${min})`);
+  console.log(`${ok ? "  ✓" : "  ✗"} ${name.padEnd(26)} ${a} on ${b}  ${r.toFixed(2)} (needs ${min})`);
 }
 for (const [name, a, b, min] of forbidden) {
   const r = ratio(a, b), ok = r < min;
   if (!ok) bad++;
-  console.log(`${ok ? "  ✓" : "  ✗"} ${name.padEnd(28)} ${a} on ${b}  ${r.toFixed(2)} (must stay under ${min})`);
+  console.log(`${ok ? "  ✓" : "  ✗"} ${name.padEnd(26)} ${a} on ${b}  ${r.toFixed(2)} (must stay under ${min})`);
 }
 
 /* ── 2 · every rendered screen ─────────────────────────────────────────── */
@@ -107,7 +120,7 @@ for (const f of pages) {
   const errs = [];
   page.removeAllListeners("pageerror");
   page.on("pageerror", e => errs.push(String(e).slice(0, 80)));
-  await page.goto(`http://127.0.0.1:8141/${f}`, { waitUntil: "load", timeout: 30000 });
+  await page.goto(`http://127.0.0.1:${PORT}/${f}`, { waitUntil: "load", timeout: 30000 });
   await page.evaluate(() => document.fonts.ready).catch(() => {});
   await page.waitForTimeout(700);
 

@@ -24,7 +24,9 @@ const srv = createServer((req, res) => {
   try { buf = readFileSync(p); } catch { res.writeHead(404); res.end(); return; }
   res.writeHead(200, { "content-type": MIME[extname(p)] || "text/plain" });
   res.end(buf);
-}).listen(8130);
+}).listen(0);
+/* a free port: a stale server from an interrupted run must never block this one */
+const PORT = srv.address().port;
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
@@ -34,7 +36,7 @@ mkdirSync(join(DIR, "renders"), { recursive: true });
 let bad = 0;
 for (const b of boards) {
   const name = b.replace(".dc.html", "");
-  await page.goto(`http://127.0.0.1:8130/_prev/${name}.html`, { waitUntil: "load", timeout: 45000 });
+  await page.goto(`http://127.0.0.1:${PORT}/_prev/${name}.html`, { waitUntil: "load", timeout: 45000 });
   await page.evaluate(() => document.fonts.ready).catch(() => {});
   await page.waitForTimeout(400);
   const r = await page.evaluate(() => {

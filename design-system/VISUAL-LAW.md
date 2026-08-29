@@ -301,3 +301,39 @@ catch a regression that loosens a threshold.
 * **A white card on an off-white page** (recorded in §17) stands: light mode is
   `#FFFFFF` on `#F2F1EE`, because the brand's light ground is warm and a card that
   is not lighter than it has no elevation at all.
+
+
+---
+
+## §19 · المصدر الأصلي / THE SOURCE ARRIVED LATE
+
+The client supplied the original artwork after the identity boards and the whole design
+system had been built. The symbol in it is **four vertical bars**, not the stepped
+horizontal capsules everything had been built on. `brand/README.md` had recorded that
+choice as a stated assumption; the assumption was wrong.
+
+### 19.1 · A stated assumption is a debt, and it comes due
+
+Writing «الرمز مُوحَّد على الكبسولات المتدرّجة… ونسخة الأشرطة الرأسية غير مبنيّة» was the
+right thing to do — it is what made this reversible. But an assumption about the SOURCE
+is not the same as an assumption about a detail: it sits under everything above it. The
+rule that follows: when an assumption concerns the identity itself, stop and ask for the
+artwork before building on it. Thirty-six marks, six colour tokens, eleven boards and a
+grid law were rebuilt because that question was not asked.
+
+### 19.2 · A derivation is only as good as the thing it derives from
+
+The rhythm grid's four legal spans (2, 4, 6, 8) were read off the old mark's four capsule
+WIDTHS. The real mark's bars are all one width, so that derivation did not survive: the
+spans are now 3, 6, 9, 12 — four equal columns — and the distinctive law moved to the
+vertical, where the real mark actually varies. The lesson is not "do not derive"; it is
+that a derivation must name what it derives from, so that when the source changes you
+can see immediately what falls with it.
+
+### 19.3 · What the source does not say, say yourself, out loud
+
+The identity board prints six colours and no light ground, and no profit or red. A
+product that judges money needs both. Those are extensions, and every one of them is
+commented as such in `ritm/tokens.css` rather than blended in as though the client had
+chosen it. The same clause as §18.1, arrived at from the other direction: where a role
+needs a value the source does not provide, that is a NEW token — and it says whose it is.

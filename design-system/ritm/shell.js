@@ -33,12 +33,14 @@ const P = {
 export const icon = (n, cls = "i") =>
   `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[n] || ""}</svg>`;
 
-/* The RITM mark: four capsules on a 24-unit grid — 8, 12, 16 and 4 wide,
-   descending to a point. Never redrawn, never re-proportioned. */
+/* The RITM mark, redrawn from the client's own artwork at pixel precision:
+   four bars, fully rounded, width 4.2 and pitch 6.6 on a 24 x 39 box. The
+   bottoms step down by one pitch each; the fourth bar is short and hangs
+   between the others, which is what stops it reading as a bar chart.
+   `size` is the WIDTH — the mark is taller than it is wide. */
 export const mark = (size = 24, fill = "var(--accent)") =>
-  `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill}" aria-hidden="true">
-     <rect x="16" y="1" width="8" height="4" rx="2"/><rect x="10" y="7" width="12" height="4" rx="2"/>
-     <rect x="4" y="13" width="16" height="4" rx="2"/><rect x="0" y="19" width="4" height="4" rx="2"/></svg>`;
+  `<svg width="${size}" height="${size * 39 / 24}" viewBox="0 0 24 39" fill="${fill}" aria-hidden="true">
+     <rect x="0" y="7" width="4.2" height="32" rx="2.1"/><rect x="6.6" y="3.5" width="4.2" height="29" rx="2.1"/><rect x="13.2" y="0" width="4.2" height="26" rx="2.1"/><rect x="19.8" y="5.5" width="4.2" height="14" rx="2.1"/></svg>`;
 
 export const NAV = [
   { group: "اليوم", eyebrow: "TODAY", items: [

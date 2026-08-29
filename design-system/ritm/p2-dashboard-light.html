@@ -13,7 +13,7 @@
         <!-- ONE NUMBER FIRST. Not four cards: the screen is about a single figure,
              and everything under it exists to explain that figure. -->
         <section class="grid" style="align-items:stretch">
-          <div class="span-8 card" style="padding:var(--s-5) var(--s-6);display:flex;
+          <div class="span-9 card" style="padding:var(--s-5) var(--s-6);display:flex;
                align-items:flex-end;justify-content:space-between;gap:var(--s-6)">
             <div class="metric is-lead">
               <span class="headline"><span class="amount" id="net">1,775,800</span><span class="unit">د.ع.</span></span>
@@ -36,7 +36,7 @@
           </div>
 
           <!-- the one thing that needs a decision today, not a fifth statistic -->
-          <div class="span-4 card is-accent" style="padding:var(--s-4) var(--s-5);display:flex;
+          <div class="span-3 card is-accent" style="padding:var(--s-4) var(--s-5);display:flex;
                flex-direction:column;justify-content:space-between">
             <div>
               <span class="eyebrow" style="color:var(--accent-ink)">NEEDS YOU</span>
@@ -55,7 +55,7 @@
         <section class="grid" style="flex:1;min-height:0;align-items:stretch">
 
           <!-- where the revenue went: the product's whole reason to exist -->
-          <div class="span-4 card" style="display:flex;flex-direction:column">
+          <div class="span-6 card" style="display:flex;flex-direction:column">
             <header><h3>أين ذهب الإيراد</h3>
               <span class="num spacer" style="font-size:var(--fs-small);color:var(--fg-3)">5,164,500</span></header>
             <div class="body" style="flex:1;display:flex;flex-direction:column;gap:var(--s-3)">
@@ -65,13 +65,18 @@
                 <span style="width:14.9%;background:var(--series-3);color:var(--on-series-3)">15%</span>
                 <span style="width:5.5%;background:var(--series-4);color:var(--on-series-4)">6%</span>
               </div>
-              <div id="key"></div>
-              <div style="margin-top:var(--s-2)">
-                <span class="eyebrow">DAILY NET · صافي كل يوم</span>
-                <svg viewBox="0 0 300 56" style="width:100%;height:56px;margin-top:var(--s-2)" role="img"
-                     aria-label="صافي الربح اليومي في أغسطس">
-                  <g id="bars"></g>
-                </svg>
+              <div style="flex:1;display:flex;gap:var(--s-6);align-items:flex-start">
+                <div id="key" style="flex:1;min-width:0"></div>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+                  <span class="eyebrow">DAILY NET · صافي كل يوم</span>
+                  <svg viewBox="0 0 300 120" preserveAspectRatio="none"
+                       style="width:100%;height:104px;margin-top:var(--s-2)" role="img"
+                       aria-label="صافي الربح اليومي في أغسطس">
+                    <g id="bars"></g>
+                  </svg>
+                  <span class="caption" style="margin-top:var(--s-2)">
+                    آخر يوم <span class="num">97,400</span> · أعلى يوم في الشهر</span>
+                </div>
               </div>
               <div style="margin-top:auto;padding-top:var(--s-3);border-top:1px solid var(--line);
                    display:flex;align-items:baseline;justify-content:space-between">
@@ -83,7 +88,7 @@
           </div>
 
           <!-- who earned what, ranked, with the rule that produced it -->
-          <div class="span-4 card" style="display:flex;flex-direction:column">
+          <div class="span-3 card" style="display:flex;flex-direction:column">
             <header><h3>حصص المندوبين</h3>
               <span class="badge badge-accent spacer">مجمَّد</span></header>
             <div class="body" style="flex:1;display:flex;flex-direction:column;gap:var(--s-6)" id="reps"></div>
@@ -101,7 +106,7 @@
           </div>
 
           <!-- the month's shape, and the orders behind it -->
-          <div class="span-4 card" style="display:flex;flex-direction:column;min-height:0">
+          <div class="span-3 card" style="display:flex;flex-direction:column;min-height:0">
             <header><h3>آخر الطلبات</h3>
               <span class="spacer"></span>
               <button class="btn btn-tertiary btn-sm">الكل</button></header>
@@ -127,19 +132,23 @@ const key = [
   ["حصص المندوبين", MONTH.shares, "var(--series-3)"],
   ["التوصيل والمرتجع", MONTH.delivery, "var(--series-4)"],
 ];
+/* each line carries its own share of the revenue, so the list is a chart too */
 document.getElementById("key").innerHTML = key.map(([t, v, c]) => `
-  <div style="display:flex;align-items:center;gap:var(--s-2);padding-block:var(--s-15);
-       border-bottom:1px solid var(--line)">
-    <i style="width:8px;height:8px;border-radius:2px;background:${c};flex:none"></i>
-    <span style="flex:1;font-size:var(--fs-table)">${t}</span>
-    <span class="num" style="font-size:var(--fs-table)">${fmt(v)}</span></div>`).join("");
+  <div style="padding-block:var(--s-2);border-bottom:1px solid var(--line)">
+    <div style="display:flex;align-items:center;gap:var(--s-2)">
+      <i style="width:8px;height:8px;border-radius:2px;background:${c};flex:none"></i>
+      <span style="flex:1;font-size:var(--fs-table)">${t}</span>
+      <span class="num" style="font-size:var(--fs-table)">${fmt(v)}</span></div>
+    <div class="progress is-thin" style="margin-top:var(--s-15)">
+      <i style="width:${(v / MONTH.revenue * 100).toFixed(1)}%;background:${c}"></i></div>
+  </div>`).join("");
 
 /* one bar per day: the shape of the month at the size a card can hold */
 const days = [42,55,38,61,49,72,66,51,80,58,74,63,88,70,59,91,77,68,84,62,95,73,86,79,102,88,94,81,97];
 document.getElementById("bars").innerHTML = days.map((v, i) => {
-  const w = 300 / days.length;
-  return `<rect x="${300 - (i + 1) * w + 1}" y="${56 - v / 102 * 52}" width="${w - 2}"
-    height="${v / 102 * 52}" rx="1" fill="var(--${i === days.length - 1 ? "accent" : "series-2"})"/>`;
+  const w = 300 / days.length, H = 120;
+  return `<rect x="${300 - (i + 1) * w + 1}" y="${H - v / 102 * (H - 4)}" width="${w - 2}"
+    height="${v / 102 * (H - 4)}" fill="var(--${i === days.length - 1 ? "accent" : "series-2"})"/>`;
 }).join("");
 
 document.getElementById("reps").innerHTML = MONTH.reps.map((r, i) => `

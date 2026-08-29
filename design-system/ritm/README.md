@@ -36,17 +36,23 @@ confirmation.
 
 ## Five decisions worth defending
 
-**1 · The grid comes from the mark.** The symbol is four capsules of 8, 12, 16 and 4
-units on a 24 grid. As twelfths that is 4, 6, 8 and 2, so those are the only legal
-column spans. There is no `.span-3`, `.span-5` or `.span-7`. This is what structurally
-prevents the four identical cards every finance dashboard opens with: `4+4+4` is legal
-and rare, `8+4` and `6+6` and `8+2+2` are what the grid is for.
+**1 · The grid comes from the mark.** The symbol is four bars of ONE width at ONE
+pitch whose feet step down by exactly that pitch, with the fourth deliberately short.
+Horizontally that divides its own width into four equal columns of three, so the legal
+spans are 3, 6, 9 and 12 — there is no `.span-4`, `.span-5` or `.span-8`. The
+distinctive half of the law is vertical, because that is where the mark varies: blocks
+stack in descending reach and exactly one is deliberately short. Four equal boxes in a
+row is the one shape this mark cannot make, and it is precisely the shape every finance
+dashboard opens with.
 
-**2 · Light mode needed a token the dark mode does not have.** Sand `#C6A97D` is
-`1.98:1` on paper. It cannot be a word. So light mode carries `--accent` (a fill, dark
-ink on top) and `--accent-ink` `#7C6036` (`5.17:1`) as two different tokens, and the
-audit holds sand *below* the AA threshold on paper as a failing control: if it ever
-passes, someone has lightened a ground and broken the rule silently.
+**2 · Two roles needed a token the source does not print.** Sand `#B8A880` is `2.08:1`
+on paper, so it cannot be a word: light mode carries `--accent` (a fill, dark ink on
+top) and `--accent-ink` `#736440` (`5.13:1`). The board's teal `#3D8680` is `3.89:1` on
+coal, so it cannot be a word either: `--signal` fills and `--info` `#4AA49C` carries the
+word. Both are the same rule — where a role needs a value the source does not provide,
+that is a NEW token, never the same one quietly reassigned — and the audit holds sand
+and teal *below* AA as failing controls. If either ever passes, a ground was lightened
+and the rule broke silently.
 
 **3 · The dashboard is one number, then a ladder.** Not four cards and a chart. The
 screen answers «ما بقي لك» first, at 38px; underneath, where the revenue went, who
@@ -74,6 +80,15 @@ the Latin face; and that no `direction: ltr` run is missing its isolate.
 
 Each of those rules exists because the corresponding defect shipped in this project at
 least once and was invisible to reading the source.
+
+## The source
+
+`../assets/original/` holds the client's own artwork and the mark redrawn from it. The
+six colours the identity board prints are used unchanged; everything else here is
+derived and says so. Two gaps in the source are marked as extensions rather than
+papered over: the board carries **no light ground** (paper `#F2F1EE` and its whole light
+set are ours), and it carries **no profit or loss colour** (a product that judges money
+must have them).
 
 ## Two standing substitutions
 

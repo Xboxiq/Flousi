@@ -56,12 +56,24 @@ body{
   direction:ltr;unicode-bidi:isolate;display:inline-block}
 
 /* ── 2 · THE RHYTHM GRID · الشبكة ───────────────────────────────────────────
-   Twelve columns; four legal spans, read off the mark: 2, 4, 6, 8.
-   `.span-3`, `.span-5`, `.span-7` do not exist, and that is the point. */
+   Read off the mark, which is four bars of ONE width at ONE pitch, whose feet
+   step down by exactly that pitch, and one of which is deliberately short.
+
+   Horizontally that gives four equal columns of three, so the legal spans are
+   3, 6, 9 and 12 — a quarter, a half, three quarters, the whole. There is no
+   .span-4, .span-5 or .span-8: a column that is not a multiple of the bar is
+   not in the system.
+
+   The distinctive half of the law is VERTICAL, because that is where the mark
+   varies. Blocks stack in descending reach, and exactly one block in a
+   composition is deliberately short — the fourth bar. A screen of four equal
+   boxes is the one shape this mark cannot make.
+
+   Spacing is a 4px lattice with two half-steps for optical work inside
+   controls. Every gap in the system is one of these. */
 .grid{display:grid;grid-template-columns:repeat(var(--grid-cols),minmax(0,1fr));gap:var(--grid-gutter)}
-.span-2{grid-column:span 2} .span-4{grid-column:span 4}
-.span-6{grid-column:span 6} .span-8{grid-column:span 8}
-.span-12{grid-column:1 / -1}
+.span-3{grid-column:span 3} .span-6{grid-column:span 6}
+.span-9{grid-column:span 9} .span-12{grid-column:1 / -1}
 .stack{display:flex;flex-direction:column;gap:var(--s-3)}
 .stack-4{display:flex;flex-direction:column;gap:var(--s-4)}
 .stack-6{display:flex;flex-direction:column;gap:var(--s-6)}
@@ -492,14 +504,14 @@ table.tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--f
   .app{grid-template-columns:var(--w-rail) minmax(0,1fr)}
   .sidebar .navitem span:not(.count){display:none}
   .sidebar .navitem{justify-content:center}
-  .span-8{grid-column:span 6}
+  .span-9{grid-column:span 6}
 }
 @media (max-width:767px){
   :root{--grid-cols:4;--grid-margin:var(--s-4)}
   .app{grid-template-columns:minmax(0,1fr)}
   .sidebar{display:none}
-  .span-2{grid-column:span 1} .span-4{grid-column:span 2}
-  .span-6{grid-column:span 3} .span-8{grid-column:span 4}
+  .span-3{grid-column:span 1} .span-6{grid-column:span 2}
+  .span-9{grid-column:span 3} .span-12{grid-column:span 4}
   .topbar{padding-inline:var(--s-4)}
   .btn-primary{height:var(--h-control-lg)}
   .table-wrap table.tbl{display:none}

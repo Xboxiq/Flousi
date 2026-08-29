@@ -1,9 +1,11 @@
 # Gate · RITM design system
 
 **CHECK** every colour pair the system relies on clears WCAG AA in both modes.
-**EXPECT** 37 measured pairs pass; the two the brand proved impossible (sand as text on
-paper, teal as text on paper) stay *below* the threshold as failing controls.
-**EVIDENCE** `node design-system/ritm/audit.mjs` → all 37 `✓`, sand `1.98`, teal `2.74`.
+**EXPECT** 43 measured pairs pass; the three the identity itself proves impossible
+(sand as text on paper, sand as text on bone, the board's teal as body text on coal)
+stay *below* the threshold as failing controls.
+**EVIDENCE** `node design-system/ritm/audit.mjs` → all 43 `✓`; sand `2.08` and `1.82`,
+teal `3.89`.
 
 **CHECK** no screen loses content off its plane.
 **EXPECT** nothing outside 1440×900 (or the device frame) on all thirteen screens.
@@ -40,3 +42,28 @@ printed ratio true for the ground it sits on.
 **EVIDENCE** `node design-system/brand/audit.mjs` → eleven `✓`. Twenty-one review
 findings fixed in commit `96b782a`, including four contrast ratios measured against the
 wrong ground and an AA badge that failed AA.
+
+
+## Re-gated after the client's original artwork arrived
+
+**CHECK** the mark in every artefact is the real one.
+**EXPECT** no stepped-capsule mark survives anywhere.
+**EVIDENCE** 36 occurrences replaced across `shell.js`, `d3-rhythm.html` and six brand
+boards; `assets/original/reconstruction-proof.png` overlays the redrawn mark on the
+source; `grep` for the old rect set returns nothing.
+
+**CHECK** every token is the board's own value, or is marked as an extension.
+**EXPECT** the six printed colours used unchanged; every derived value commented.
+**EVIDENCE** `tokens.css` §1 — six marked "the board prints", the rest under "derived";
+paper and the whole light set carry the sentence "THE LIGHT GROUND IS AN EXTENSION".
+
+**CHECK** the boards that describe the mark's geometry describe the real one.
+**EXPECT** the construction table, the rule, the clear space and the pattern all match.
+**EVIDENCE** `Mark.dc.html` rebuilt on the 24 × 39 grid with the measured table;
+`Rhythm.dc.html` rebuilt on vertical bars; `Wordmark.dc.html` clear space redefined as
+3X where X is the bar width and drawn at exactly 3X.
+
+**CHECK** the grid law follows the new mark rather than the old one.
+**EXPECT** spans 3 / 6 / 9 / 12, and the vertical law stated.
+**EVIDENCE** `system.css` §2 and `tokens.css` §4 rewritten; every `.span-2/-4/-8` in the
+screens migrated; audit clean on all thirteen.

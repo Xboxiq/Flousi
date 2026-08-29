@@ -11,20 +11,26 @@
    MEASURED, not asserted. The ratios in the comments are computed values
    (audit.mjs recomputes them on every run and fails the build if one drifts).
 
-   The brand is the source. `design-system/brand/` settled the identity —
-   ink, coal, slate, graphite, bone, paper, sand, teal, profit, loss, Tajawal +
-   Archivo, the stepped-capsule mark. Nothing here redraws any of it. What is
-   added is the part a brand manual cannot carry: what each colour MEANS in a
-   product, on both grounds, in every state.
+   The identity is the source. `design-system/assets/original/` holds the client's
+   own artwork; the six colours below marked "the board prints" are read straight
+   off it, and the mark is `assets/original/mark.svg`, redrawn from it at pixel
+   precision. Nothing here redraws any of that. What is added is the part an
+   identity board cannot carry: what each colour MEANS in a product, on both
+   grounds, in every state — and, where the board is silent, a value that says so.
 
    THREE LAWS INHERITED FROM THE BRAND, ENFORCED HERE AS TOKENS
-   1  Sand is a fill on light ground, never a text colour: #C6A97D on paper is
-      1.98:1. So light mode gets `--accent` (the fill, ink on top) and
+   1  Sand is a fill on light ground, never a text colour: #B8A880 on paper is
+      1.82:1. So light mode gets `--accent` (the fill, ink on top) and
       `--accent-ink` (a darkened sand that clears AA) as two different tokens.
       They are not interchangeable and the audit knows it.
-   2  Teal is the live signal, and on dark ground only: 2.74:1 on paper.
+   2  Teal is a FILL, not a word. The board's #3D8680 is 4.53:1 on ink but
+      3.89:1 on coal and 3.16:1 on graphite: it clears the 3:1 a shape needs
+      and misses the 4.5 a word needs. So `--signal` fills and `--info`
+      (#4AA49C, the same hue lifted) carries the word.
    3  Green and red judge money. They are not decoration and not general status.
       Warning is orange, information is teal, neither borrows the money colours.
+   4  THE BOARD CARRIES NO LIGHT GROUND. Paper #F2F1EE and everything derived
+      for it are an extension, marked as one wherever they are declared.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── typefaces · the brand's two, one system ─────────────────────────────────
@@ -53,35 +59,39 @@
 /* ═══ 1 · PRIMITIVES · الأصباغ ══════════════════════════════════════════════
    Raw brand pigment. NOTHING in a component may reference these directly —
    they exist only to be assigned a role in §2. A primitive has no meaning. */
-  --ink:#0B0E11;        /* the brand's ground */
-  --coal:#14181D;
-  --slate:#1C2128;
-  --line-d:#242A31;     /* the rule that runs through all eleven brand boards */
-  --graphite:#2E3238;
-  --steel:#3A4047;
-  --grey:#5A6068;
-  --mist:#8A9199;
-  --fog:#C3C9D0;
-  --line-l:#DAD7CF;
-  --bone:#E6E2DA;
-  --paper:#F2F1EE;      /* the brand's light ground */
+  /* the six the identity board prints, unchanged */
+  --ink:#0B0E11;        /* the ground */
+  --coal:#1A1F24;       /* second ground */
+  --graphite:#2A2F36;   /* third ground, and the rule that runs between them */
+  --sand:#B8A880;       /* the one accent */
+  --bone:#E8E2DA;       /* the warm light */
+  --teal:#3D8680;       /* the live signal */
+
+  /* derived, because a product needs inks and states a board does not print */
+  --steel:#3A4047;      /* an emphasised rule, and the second chart band */
+  --grey:#5A6068;       /* disabled */
+  --mist:#949BA3;       /* muted ink — lifted from the board's greys until it
+                           clears 4.5 on #2A2F36, the lightest ground it sits on */
+  --fog:#C3C9D0;        /* secondary ink */
+  --line-l:#D8D2C6;     /* the light-ground rule */
+  --paper:#F2F1EE;      /* THE LIGHT GROUND IS AN EXTENSION: the board carries
+                           none. Declared here so the debt is visible. */
   --white:#FFFFFF;
 
-  --sand:#C6A97D;       /* the one accent */
-  --teal:#0AA3A3;       /* the live signal */
-  --profit:#5FBF95;
+  --teal-lift:#4AA49C;  /* the signal, lifted until it can carry a word:
+                           #3D8680 is 3.89:1 on coal and fails as body text */
+  --profit:#5FBF95;     /* not on the board — a money product must judge money */
   --loss:#EF8A82;
-  --amber:#E8863B;      /* warning — deliberately NOT sand, so a caution can
+  --amber:#E8863B;      /* warning, deliberately not sand, so a caution can
                            never be mistaken for the action colour */
 
-  /* Light-ground counterparts. Each is the same hue and saturation as its dark
-     sibling, darkened until it clears 4.5:1 on BONE — the darkest light surface
-     in the system — so it holds on paper and white too. */
-  --sand-ink:#7C6036;   /* 4.54 on bone · 5.17 on paper · 5.53 on white */
-  --teal-ink:#077171;   /* 4.50 on bone */
-  --profit-ink:#2D7154; /* 4.51 on bone */
-  --loss-ink:#C32519;   /* 4.52 on bone */
-  --amber-ink:#9F4F13;  /* 4.51 on bone */
+  /* Light-ground counterparts, each darkened until it clears 4.5:1 on BONE —
+     the darkest light surface in the system — so it holds on paper and white. */
+  --sand-ink:#736440;   /* 4.50 on bone · 5.13 on paper · 5.79 on white */
+  --teal-ink:#336F6A;   /* 4.51 on bone */
+  --profit-ink:#2D7154; /* 4.53 on bone */
+  --loss-ink:#C32519;   /* 4.54 on bone */
+  --amber-ink:#9F4F13;  /* 4.53 on bone */
 
 /* ═══ 2 · SEMANTIC COLOUR · دلالة اللون ═════════════════════════════════════
    Dark is the default: the brand lives on ink, and a merchant reads this app at
@@ -97,45 +107,50 @@
      invisible and only costs paint. */
   --bg:var(--ink);              /* the page */
   --surface:var(--coal);        /* a card, a panel, a row group */
-  --surface-2:var(--slate);     /* a nested surface, a table head, an input */
-  --surface-3:var(--line-d);    /* a menu, a popover, a tooltip: floats above */
+  --surface-2:var(--graphite);  /* a nested surface, a table head, an input */
+  --surface-3:var(--graphite);  /* a menu or popover: it takes a shadow, not
+                                   a fourth grey the board never printed */
   --surface-inset:#090C0E;      /* a well: chart plots, code, empty tracks */
 
   /* lines. One rule weight for structure, one stronger for controls, because a
      control's boundary must clear 3:1 on its own (WCAG 1.4.11) and a divider
      between two surfaces need not. */
-  --line:var(--line-d);         /* dividers, card edges */
+  --line:var(--graphite);       /* dividers and card edges are the third
+                                   ground at 1px: no invented grey */
   --line-control:#57606A;       /* 3.03 on ink — input, checkbox, radio edges */
   --line-strong:var(--steel);   /* a deliberate emphasis line */
 
   /* ink on those grounds */
-  --fg:var(--paper);            /* 17.13 on bg · 14.33 on surface-2 */
-  --fg-2:var(--fog);            /* 11.60 on bg · 9.70 on surface-2 */
-  --fg-3:var(--mist);           /* 6.07 on bg · 5.59 on surface · 5.08 on surface-2 */
+  --fg:var(--paper);            /* 17.13 on bg · 14.69 on surface · 11.93 on surface-2 */
+  --fg-2:var(--fog);            /* 11.60 on bg · 9.95 on surface · 8.08 on surface-2 */
+  --fg-3:var(--mist);           /* 6.89 on bg · 5.91 on surface · 4.80 on surface-2 */
   --fg-disabled:var(--grey);    /* 3.05 on bg — disabled is meant to recede */
-  --fg-on-accent:var(--ink);    /* 8.64 on sand */
+  --fg-on-accent:var(--ink);    /* 8.25 on sand */
 
   /* action */
-  --accent:var(--sand);         /* 8.64 on bg · 7.96 on surface */
+  --accent:var(--sand);         /* 8.25 on bg · 7.07 on surface · 5.74 on surface-2 */
   --accent-ink:var(--sand);     /* on dark the fill and the ink are the same */
-  --accent-quiet:rgba(198,169,125,.14);   /* a wash under a selected row */
-  --accent-line:rgba(198,169,125,.42);
+  --accent-quiet:rgba(184,168,128,.15);   /* a wash under a selected row */
+  --accent-line:rgba(184,168,128,.44);
 
   /* money — the only place green and red are allowed */
-  --profit-fg:var(--profit);    /* 8.64 on bg · 7.96 on surface */
-  --loss-fg:var(--loss);        /* 7.95 on bg · 7.32 on surface */
+  --profit-fg:var(--profit);    /* 8.64 on bg · 7.41 on surface */
+  --loss-fg:var(--loss);        /* 7.95 on bg · 6.82 on surface */
   --profit-quiet:rgba(95,191,149,.13);
   --loss-quiet:rgba(239,138,130,.13);
 
   /* status — four, each with an ink and a quiet wash, none borrowing another */
   --success:var(--profit);      /* 8.64 · a settled state IS a money outcome */
-  --warning:var(--amber);       /* 7.28 on bg */
-  --danger:var(--loss);         /* 7.95 on bg */
-  --info:var(--teal);           /* 6.25 on bg */
+  --warning:var(--amber);       /* 7.28 on bg · 6.25 on surface */
+  --danger:var(--loss);         /* 7.95 on bg · 6.82 on surface */
+  --info:var(--teal-lift);      /* 6.53 on bg · 5.60 on surface · 4.54 on surface-2 */
+  --signal:var(--teal);         /* THE BOARD'S TEAL, and it is a FILL: 3.16 against
+                                   surface-2 clears the 3:1 a shape needs and misses
+                                   the 4.5 a word needs. Dots, bars, borders only. */
   --success-quiet:rgba(95,191,149,.13);
   --warning-quiet:rgba(232,134,59,.14);
   --danger-quiet:rgba(239,138,130,.13);
-  --info-quiet:rgba(10,163,163,.15);
+  --info-quiet:rgba(61,134,128,.20);
 
   /* focus. One ring, on every focusable thing, never removed. */
   --ring:var(--sand);
@@ -148,14 +163,14 @@
   /* chart series. A split bar is filled, so each band needs BOTH a fill and the
      ink that survives on it. Primitives cannot be used directly here: #2E3238 is
      a legible band on ink and an unreadable one on paper. */
-  --series-1:var(--sand);      --on-series-1:var(--ink);    /* 8.64 */
-  --series-2:var(--steel);     --on-series-2:var(--paper);  /* 8.16 */
-  --series-3:var(--mist);      --on-series-3:var(--ink);    /* 6.07 */
-  --series-4:var(--graphite);  --on-series-4:var(--paper);  /* 11.28 */
+  --series-1:var(--sand);      --on-series-1:var(--ink);    /* 8.25 */
+  --series-2:var(--steel);     --on-series-2:var(--paper);  /* 9.28 */
+  --series-3:var(--mist);      --on-series-3:var(--ink);    /* 6.89 */
+  --series-4:var(--graphite);  --on-series-4:var(--paper);  /* 11.93 */
 
-  --rep-1:var(--sand);          /* 8.64 */
+  --rep-1:var(--sand);          /* 8.25 */
   --rep-2:var(--fog);           /* 11.60 */
-  --rep-3:var(--mist);          /* 6.07 */
+  --rep-3:var(--mist);          /* 6.89 */
   --rep-4:var(--steel);         /* fill only — never carries text */
 
 /* ═══ 3 · TYPE · المقياس ════════════════════════════════════════════════════
@@ -201,19 +216,15 @@
 /* ═══ 4 · RHYTHM · الشبكة والمسافات ═════════════════════════════════════════
    THE RHYTHM GRID — the one piece of layout this system does not borrow.
 
-   The mark is four capsules on a 24-unit grid: 8, 12, 16 and 4 units wide.
-   As twelfths of the grid that is 4, 6, 8 and 2. So the product's twelve-column
-   grid has exactly four legal spans:
+   The mark is four bars of ONE width at ONE pitch. Their feet step down by
+   exactly one pitch, and the fourth is deliberately short. So horizontally the
+   mark divides its own width into four equal columns of three, and the legal
+   spans are 3, 6, 9 and 12 — nothing else.
 
-        span-2   the point      a control, a unit, a single figure
-        span-4   the third      a metric, a filter, a form field
-        span-6   the half       a chart, a table, a list
-        span-8   the long one   the thing the screen is actually about
-
-   No 3, no 5, no 7. A layout built only from these reads as the mark does:
-   descending, deliberate, ending on a point. This is what stops the four
-   identical boxes in a row that every finance dashboard defaults to — 4+4+4 is
-   legal but 8+4 and 6+6 and 8+2+2 are what the grid is FOR.
+   The distinctive law is the vertical one, because that is where the mark
+   varies: blocks stack in descending reach and exactly one is deliberately
+   short. Four equal boxes in a row is the one shape this mark cannot make,
+   which is precisely the shape every finance dashboard opens with.
 
    Spacing is a 4px lattice with two half-steps for optical work inside
    controls. Every gap in the system is one of these. */
@@ -322,15 +333,15 @@
 
   --fg:var(--ink);              /* 17.13 on bg · 14.98 on surface-2 */
   --fg-2:var(--steel);          /* 9.28 on bg */
-  --fg-3:var(--grey);           /* 5.62 on bg · 6.35 on surface · 4.91 on surface-2 */
+  --fg-3:var(--grey);           /* 5.62 on bg · 6.35 on surface · 4.93 on surface-2 */
   --fg-disabled:#8A8578;        /* 3.04 on bg */
-  --fg-on-accent:var(--ink);    /* 8.64 on sand — unchanged, sand is sand */
+  --fg-on-accent:var(--ink);    /* 8.25 on sand — unchanged, sand is sand */
 
   /* THE RULE THAT ONLY LIGHT MODE NEEDS: the fill and the ink are two tokens */
-  --accent:var(--sand);         /* fill only: 1.98 against paper as text */
-  --accent-ink:var(--sand-ink); /* 5.17 on bg — every sand-coloured WORD */
-  --accent-quiet:rgba(198,169,125,.22);
-  --accent-line:rgba(124,96,54,.34);
+  --accent:var(--sand);         /* fill only: 1.82 against paper as text */
+  --accent-ink:var(--sand-ink); /* 5.13 on bg — every sand-coloured WORD */
+  --accent-quiet:rgba(184,168,128,.24);
+  --accent-line:rgba(115,100,64,.34);
 
   --profit-fg:var(--profit-ink);
   --loss-fg:var(--loss-ink);
@@ -341,10 +352,11 @@
   --warning:var(--amber-ink);
   --danger:var(--loss-ink);
   --info:var(--teal-ink);
+  --signal:var(--teal-ink);
   --success-quiet:rgba(45,113,84,.10);
   --warning-quiet:rgba(159,79,19,.10);
   --danger-quiet:rgba(195,37,25,.09);
-  --info-quiet:rgba(7,113,113,.10);
+  --info-quiet:rgba(51,111,106,.10);
 
   --ring:var(--sand-ink);
   --ring-offset:var(--bg);
@@ -375,13 +387,13 @@
     --fg:var(--ink); --fg-2:var(--steel); --fg-3:var(--grey);
     --fg-disabled:#8A8578; --fg-on-accent:var(--ink);
     --accent:var(--sand); --accent-ink:var(--sand-ink);
-    --accent-quiet:rgba(198,169,125,.22); --accent-line:rgba(124,96,54,.34);
+    --accent-quiet:rgba(184,168,128,.24); --accent-line:rgba(115,100,64,.34);
     --profit-fg:var(--profit-ink); --loss-fg:var(--loss-ink);
     --profit-quiet:rgba(45,113,84,.10); --loss-quiet:rgba(195,37,25,.09);
     --success:var(--profit-ink); --warning:var(--amber-ink);
-    --danger:var(--loss-ink); --info:var(--teal-ink);
+    --danger:var(--loss-ink); --info:var(--teal-ink); --signal:var(--teal-ink);
     --success-quiet:rgba(45,113,84,.10); --warning-quiet:rgba(159,79,19,.10);
-    --danger-quiet:rgba(195,37,25,.09); --info-quiet:rgba(7,113,113,.10);
+    --danger-quiet:rgba(195,37,25,.09); --info-quiet:rgba(51,111,106,.10);
     --ring:var(--sand-ink); --ring-offset:var(--bg);
     --series-1:var(--sand); --on-series-1:var(--ink);
     --series-2:var(--steel); --on-series-2:var(--paper);

@@ -12,7 +12,9 @@ const srv = createServer((req, res) => {
   const p = join(DIR, decodeURIComponent(req.url.split("?")[0]));
   let buf; try { buf = readFileSync(p); } catch { res.writeHead(404); res.end(); return; }
   res.writeHead(200, { "content-type": MIME[extname(p)] || "text/plain" }); res.end(buf);
-}).listen(8140);
+}).listen(0);
+/* a free port: a stale server from an interrupted run must never block this one */
+const PORT = srv.address().port;
 
 const only = process.argv[2];
 const pages = readdirSync(DIR).filter(f => /^[dp]\d.*\.html$/.test(f) && (!only || f.includes(only))).sort();
@@ -24,7 +26,7 @@ for (const f of pages) {
   const page = await ctx.newPage();
   const errs = [];
   page.on("pageerror", e => errs.push(String(e)));
-  await page.goto(`http://127.0.0.1:8140/${f}`, { waitUntil: "load", timeout: 30000 });
+  await page.goto(`http://127.0.0.1:${PORT}/${f}`, { waitUntil: "load", timeout: 30000 });
   await page.evaluate(() => document.fonts.ready).catch(() => {});
   await page.waitForTimeout(900);
   const el = await page.$(".plane");
