@@ -272,7 +272,7 @@ export function RepsList() {
             open={splitOpen}
             onToggle={() => setSplitOpen((v) => !v)}
             summary={
-              <span className="font-mono text-sm font-semibold text-fg">
+              <span className="font-figure text-sm font-semibold text-fg">
                 {share(
                   windowTeam.basisMinor === 0
                     ? 0

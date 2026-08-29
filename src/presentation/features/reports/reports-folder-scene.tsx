@@ -21,7 +21,7 @@ export function ReportsFolderScene() {
       </div>
       <div className="text-end">
         <span className="block text-[13px] font-semibold text-fg/75">أشهر مؤرشفة</span>
-        <bdi dir="ltr" className="mt-1 block font-mono text-[34px] leading-none font-bold tabular-nums text-fg">
+        <bdi dir="ltr" className="mt-1 block font-figure text-[34px] leading-none font-bold tabular-nums text-fg">
           {closedCount}
         </bdi>
         <span className="mt-1 block text-[11px] text-muted">

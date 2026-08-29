@@ -119,13 +119,13 @@ export default function StyleguidePage() {
               ].map((row) => (
                 <TR key={row[0]}>
                   <TD className="font-medium">{row[0]}</TD>
-                  <TD className="font-mono tabular-nums">{row[1]}</TD>
+                  <TD className="font-figure tabular-nums">{row[1]}</TD>
                   <TD
-                    className={`font-mono tabular-nums ${row[2].startsWith("-") ? "text-danger" : "text-success"}`}
+                    className={`font-figure tabular-nums ${row[2].startsWith("-") ? "text-danger" : "text-success"}`}
                   >
                     {row[2]}
                   </TD>
-                  <TD className="font-mono tabular-nums text-muted">{row[3]}</TD>
+                  <TD className="font-figure tabular-nums text-muted">{row[3]}</TD>
                 </TR>
               ))}
             </TBody>

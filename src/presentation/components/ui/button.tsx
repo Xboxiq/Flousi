@@ -14,7 +14,7 @@ export type ButtonSize = "sm" | "md" | "lg" | "icon";
  * stay flat on purpose: they are not objects, they are text with a hit area.
  */
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: "molded molded-accent text-white",
+  primary: "molded molded-accent text-accent-fg",
   secondary: "molded molded-quiet text-fg",
   graphite: "molded molded-graphite text-white",
   ghost: "text-muted hover:bg-surface-2 hover:text-fg",

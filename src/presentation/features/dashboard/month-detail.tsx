@@ -187,7 +187,7 @@ export function MonthDetail({
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-0 w-4 border-t-[1.5px] border-dashed border-success/70" />
                   {threshold.isTarget ? "الهدف" : "معدّلك"}
-                  <bdi dir="ltr" className="font-mono tabular-nums text-fg">
+                  <bdi dir="ltr" className="font-figure tabular-nums text-fg">
                     {money(threshold.value)}
                   </bdi>
                 </span>
@@ -222,7 +222,7 @@ export function MonthDetail({
             </div>
             <span className="text-xs text-muted">
               {overrun ? "من تكاليف هذا الشهر" : "من إيراد هذا الشهر"}{" "}
-              <bdi dir="ltr" className="font-mono font-semibold tabular-nums text-fg">
+              <bdi dir="ltr" className="font-figure font-semibold tabular-nums text-fg">
                 {money(overrun ? spent : metrics.monthRevenue)}
               </bdi>
             </span>
@@ -271,7 +271,7 @@ export function MonthDetail({
                     className="rail-badge px-1.5 py-[3px] text-[10px] font-bold text-fg"
                     style={{ insetInlineStart: `calc(${pct}% - 34px)` }}
                   >
-                    <bdi dir="ltr" className="font-mono tabular-nums">
+                    <bdi dir="ltr" className="font-figure tabular-nums">
                       {pct}%
                     </bdi>
                   </span>

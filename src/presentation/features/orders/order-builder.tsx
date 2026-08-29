@@ -293,7 +293,7 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
                     {share && allocation !== "orderOnly" && (
                       <p className="col-span-2 text-[11px] text-subtle sm:col-span-4">
                         نصيبه من التوصيل{" "}
-                        <bdi dir="ltr" className="font-mono">{money(share.deliveryShare)}</bdi>
+                        <bdi dir="ltr" className="font-figure">{money(share.deliveryShare)}</bdi>
                         {share.netProfit < 0 ? " · خسارته " : " · ربحه "}
                         {/* The word carries the sign. «-1,028 د.ع.» inside an LTR
                             isolate puts the currency mark on the wrong side of the
@@ -301,7 +301,7 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
                             rule the ledger already follows. */}
                         <bdi
                           dir="ltr"
-                          className={cn("font-mono", share.netProfit < 0 ? "text-danger" : "")}
+                          className={cn("font-figure", share.netProfit < 0 ? "text-danger" : "")}
                         >
                           {money(Math.abs(share.netProfit))}
                         </bdi>
@@ -356,7 +356,7 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
           {/* The figure that did not exist before: is the trip earning or costing? */}
           <p className="text-sm">
             <span className="text-muted">نتيجة التوصيل </span>
-            <bdi dir="ltr" className={cn("font-mono font-bold", marginTone)}>
+            <bdi dir="ltr" className={cn("font-figure font-bold", marginTone)}>
               {money(result.deliveryMargin)}
             </bdi>
             <span className="text-muted">
@@ -463,15 +463,15 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
           {result.discountTotal > 0 && (
             <p className="text-sm">
               <span className="text-muted">قبل العرض </span>
-              <bdi dir="ltr" className="font-mono text-muted line-through decoration-[1.5px]">
+              <bdi dir="ltr" className="font-figure text-muted line-through decoration-[1.5px]">
                 {money(result.listRevenue)}
               </bdi>
               <span className="text-muted"> · الخصم </span>
-              <bdi dir="ltr" className="font-mono font-semibold text-fg">
+              <bdi dir="ltr" className="font-figure font-semibold text-fg">
                 {money(result.discountTotal)}
               </bdi>
               <span className="text-muted"> · الأصناف بعد العرض </span>
-              <bdi dir="ltr" className="font-mono font-bold text-fg">
+              <bdi dir="ltr" className="font-figure font-bold text-fg">
                 {money(result.goodsRevenue)}
               </bdi>
             </p>
@@ -541,7 +541,7 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm">
               <span className="text-muted">
                 حصّلت{" "}
-                <bdi dir="ltr" className="font-mono font-semibold text-fg">
+                <bdi dir="ltr" className="font-figure font-semibold text-fg">
                   {money(result.collected)}
                 </bdi>
               </span>
@@ -550,7 +550,7 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
                 <bdi
                   dir="ltr"
                   className={cn(
-                    "font-mono font-bold",
+                    "font-figure font-bold",
                     result.netProfit < 0 ? "text-danger" : "text-success",
                   )}
                 >

@@ -124,7 +124,7 @@ export function ProfitPanel({
 
         <div className="mt-3 flex items-center justify-between text-sm">
           <span className="text-muted">
-            الهامش <bdi dir="ltr" className="font-mono tabular-nums text-fg">{formatPercent(result.margin, { locale })}</bdi>
+            الهامش <bdi dir="ltr" className="font-figure tabular-nums text-fg">{formatPercent(result.margin, { locale })}</bdi>
           </span>
           <span className="text-subtle text-xs">لكل وحدة مبيعة</span>
         </div>

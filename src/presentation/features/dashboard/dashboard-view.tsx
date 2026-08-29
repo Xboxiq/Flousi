@@ -219,7 +219,7 @@ export function DashboardView() {
                   <bdi
                     dir="ltr"
                     className={cn(
-                      "font-mono text-[11px] tabular-nums",
+                      "font-figure text-[11px] tabular-nums",
                       profitDelta < 0 ? "text-danger" : "text-success",
                     )}
                   >

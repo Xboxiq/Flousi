@@ -106,7 +106,7 @@ export function RingGauge({
         <bdi
           dir="ltr"
           className={cn(
-            "font-mono text-[15px] font-bold leading-none tabular-nums",
+            "font-figure text-[15px] font-bold leading-none tabular-nums",
             tone === "danger" ? "text-danger" : "text-fg",
           )}
         >

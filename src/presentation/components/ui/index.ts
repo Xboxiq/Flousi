@@ -22,8 +22,6 @@ export { Spinner } from "./spinner";
 export { EmptyState } from "./empty-state";
 export { Table, THead, TBody, TR, TH, TD } from "./table";
 export { Dialog } from "./dialog";
-export { MeshSurface } from "./mesh-surface";
-export type { MeshVariant } from "./mesh-surface";
 export { GlossyOrb } from "./glossy-orb";
 export type { OrbTone } from "./glossy-orb";
 export { Segmented } from "./segmented";

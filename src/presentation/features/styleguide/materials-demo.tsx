@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { ArrowUp, CurrencyDollar, Question, Sun, Moon, Desktop } from "@phosphor-icons/react";
 import {
-  Button,
   GlossyOrb,
-  MeshSurface,
   Segmented,
   Stepper,
 } from "@/presentation/components/ui";
@@ -15,32 +13,10 @@ export function MaterialsDemo() {
 
   return (
     <div className="flex flex-col gap-12">
-      {/* Grainient mesh surfaces */}
-      <Section title="Grainient surfaces">
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          <MeshSurface variant="aurora" className="flex min-h-[180px] flex-col justify-between rounded-[var(--radius-xl)] p-6 text-white shadow-md">
-            <span className="text-sm font-medium text-white/80">Net profit</span>
-            <div>
-              <div className="font-mono text-3xl font-semibold tabular-nums">$4,820.50</div>
-              <div className="mt-1 text-sm text-white/75">Aurora</div>
-            </div>
-          </MeshSurface>
-          <MeshSurface variant="night" className="flex min-h-[180px] flex-col items-center justify-between rounded-[var(--radius-xl)] p-6 text-center text-white shadow-md">
-            <span className="text-base font-semibold">Start Working Smarter</span>
-            <Button variant="secondary" className="!bg-paper !text-ink">
-              Get started
-            </Button>
-          </MeshSurface>
-          <MeshSurface variant="night-danger" className="flex min-h-[180px] items-end rounded-[var(--radius-xl)] p-6 text-white shadow-md">
-            <span className="text-sm text-white/80">Night · rose</span>
-          </MeshSurface>
-        </div>
-      </Section>
-
       {/* Glossy orbs */}
       <Section title="Glossy 3D orbs">
         <div className="flex flex-wrap items-center gap-6">
-          <GlossyOrb tone="blue" size={56}>
+          <GlossyOrb tone="sand" size={56}>
             <ArrowUp size={24} weight="bold" />
           </GlossyOrb>
           <GlossyOrb tone="silver" size={56}>
@@ -48,7 +24,7 @@ export function MaterialsDemo() {
           </GlossyOrb>
           <GlossyOrb tone="emerald" size={56} />
           <GlossyOrb tone="silver" size={40} />
-          <GlossyOrb tone="blue" size={40} />
+          <GlossyOrb tone="sand" size={40} />
         </div>
       </Section>
 

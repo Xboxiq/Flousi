@@ -74,7 +74,7 @@ export function MobileDock() {
           href="/products/new"
           aria-label="إضافة منتج"
           title="إضافة منتج"
-          className="molded molded-accent flex size-13 items-center justify-center rounded-full text-white"
+          className="molded molded-accent flex size-13 items-center justify-center rounded-full text-accent-fg"
         >
           <Plus size={23} weight="bold" />
         </Link>

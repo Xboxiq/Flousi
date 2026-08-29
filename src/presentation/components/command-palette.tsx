@@ -210,7 +210,7 @@ export function CommandPalette() {
                 placeholder="ابحث أو انتقل…"
                 className="h-14 w-full bg-transparent text-base text-fg placeholder:text-subtle focus:outline-none"
               />
-              <kbd className="hidden rounded-md border border-border bg-surface-2 px-1.5 py-0.5 font-mono text-[11px] text-subtle sm:block">
+              <kbd className="hidden rounded-md border border-border bg-surface-2 px-1.5 py-0.5 font-figure text-[11px] text-subtle sm:block">
                 esc
               </kbd>
             </div>

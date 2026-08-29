@@ -66,7 +66,7 @@ export function Odometer({ value, format, drumHeight = 1.16, className }: Odomet
          name: every glyph inside is aria-hidden, so on a bare <bdi> the whole
          figure was announced as nothing. */
       role="img"
-      className={cn("odo font-mono tabular-nums", className)}
+      className={cn("odo font-figure tabular-nums", className)}
       style={{ "--odo-h": `${drumHeight}em` } as React.CSSProperties}
       aria-label={format(value)}
     >

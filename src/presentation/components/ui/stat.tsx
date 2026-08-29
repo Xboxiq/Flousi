@@ -7,7 +7,7 @@ import { TickMeter } from "../objects/tick-meter";
 export type StatTone = "default" | "success" | "danger";
 /** Accent hues are locked to the semantic set: blue (interactive/brand),
  *  green (profit), neutral. Violet/orange were decorative — removed (MASTER §1). */
-export type StatAccent = "blue" | "green" | "neutral";
+export type StatAccent = "sand" | "green" | "neutral";
 
 export interface StatProps {
   label: string;
@@ -39,7 +39,7 @@ const VALUE_TONE: Record<StatTone, string> = {
 };
 
 const CHIP: Record<StatAccent, string> = {
-  blue: "bg-accent-soft text-accent",
+  sand: "bg-accent-soft text-accent",
   green: "bg-success-soft text-success",
   neutral: "bg-surface-2 text-muted",
 };
@@ -61,7 +61,7 @@ export function Stat({
   meter,
   icon,
   tone = "default",
-  accent = "blue",
+  accent = "sand",
   className,
 }: StatProps) {
   return (

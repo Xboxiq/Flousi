@@ -65,7 +65,7 @@ export function LivingNumber({
   }, [value, duration, reduce]);
 
   return (
-    <bdi dir="ltr" aria-hidden={ariaHidden} className={cn("font-mono tabular-nums", className)}>
+    <bdi dir="ltr" aria-hidden={ariaHidden} className={cn("font-figure tabular-nums", className)}>
       {format(display)}
     </bdi>
   );

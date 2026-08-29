@@ -104,7 +104,7 @@ export function CashTill({
           <ArrowUUpLeft size={15} weight="bold" className="mt-0.5 shrink-0" />
           <span>
             رجعت أو أُلغيت {countedNoun(r.lost.trips, NOUNS.order)}: خسرتَ أجرة التوصيل{" "}
-            <bdi dir="ltr" className="font-mono font-bold">
+            <bdi dir="ltr" className="font-figure font-bold">
               {money(Math.abs(r.lost.netProfit))}
             </bdi>
           </span>
@@ -145,7 +145,7 @@ function Bay({
       <bdi
         dir="ltr"
         className={cn(
-          "block font-mono text-lg font-bold leading-[1.2] tabular-nums",
+          "block font-figure text-lg font-bold leading-[1.2] tabular-nums",
           // A provisional figure is printed quieter than a real one: it is not a
           // smaller amount, it is a less certain one.
           provisional ? "text-muted" : "text-fg",

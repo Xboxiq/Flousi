@@ -154,7 +154,7 @@ function ProductBrief({ product }: { product: Product }) {
             className="flex items-baseline justify-between gap-4 border-b border-border-soft py-3 last:border-b-0"
           >
             <span className="text-sm text-muted">{line.label}</span>
-            <bdi dir="ltr" className="font-mono text-sm font-semibold text-fg">
+            <bdi dir="ltr" className="font-figure text-sm font-semibold text-fg">
               {line.value}
             </bdi>
           </li>

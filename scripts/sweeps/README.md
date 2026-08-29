@@ -1,6 +1,6 @@
 # Interaction sweeps
 
-Four scripts that MEASURE or DRIVE the built app rather than reading its source. They exist because of
+Five scripts that MEASURE or DRIVE the built app rather than reading its source. They exist because of
 one repeated lesson in this project: every defect that mattered was invisible to the
 typechecker, the linter, the tests **and the screenshots**. P9's focus thief broke
 every dialog in the app since P1 and only surfaced when a script typed into a field.
@@ -15,9 +15,27 @@ node scripts/sweeps/sweep-writes.mjs      # every store mutation, through its re
 node scripts/sweeps/sweep-keyboard.mjs    # anything clickable a keyboard cannot reach
 node scripts/sweeps/sweep-corrupt.mjs     # the app against a mangled localStorage
 node scripts/sweeps/sweep-density.mjs     # the quiet ceiling (VISUAL-LAW §15), at rest
+node scripts/sweeps/sweep-contrast.mjs    # every text run vs. the colour painted behind it
 ```
 
-Override the port with `BASE=http://localhost:9999 node …`. All four honour it.
+Override the port with `BASE=http://localhost:9999 node …`. All five honour it.
+
+## sweep-contrast and grounding a run
+
+Written when the identity's palette landed in the app and put `text-white` on the
+board's sand in five places at 2.35:1 — none of which the typechecker, the linter, the
+tests or a screenshot noticed.
+
+It measures the ground the COMPOSITOR paints, not the one the DOM tree suggests: colours
+are resolved through a canvas (so `color-mix()` and `oklab()` answer for themselves), a
+run is grounded by hit test (so an absolutely-positioned pill under a label counts), and
+the walk stops at the first opaque paint (so a gradient slab is not scored against the
+page behind it). Each of those three started out wrong and reported a readable surface
+as a failure.
+
+A planted failing control runs before anything real — the board's sand as a word on the
+page ground, 2.08:1. If the control is not caught, the sweep exits reporting ITSELF
+broken rather than reporting the app clean.
 
 ## sweep-density and the rule about metrics
 

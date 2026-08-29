@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight, Calculator, UsersThree, FolderOpen } from "@phosphor-icons/react";
-import { LogoMark } from "@/presentation/components/layout/logo";
+import { LogoMark, LogoWord } from "@/presentation/components/layout/logo";
 import { Delta } from "@/presentation/components/ui";
 import { Odometer } from "@/presentation/components/objects/odometer";
 import { RingGauge } from "@/presentation/components/objects/ring-gauge";
@@ -84,7 +84,7 @@ export function LandingPage() {
         <div className="mx-auto flex h-16 max-w-[1240px] items-center justify-between px-5 md:px-8">
           <Link href="/" className="flex items-center gap-2.5">
             <LogoMark />
-            <span className="text-lg font-semibold tracking-tight">RITM</span>
+            <LogoWord />
           </Link>
           <nav className="hidden items-center gap-9 text-sm text-muted md:flex">
             <a href="#instrument" className="transition-colors hover:text-fg">الأداة</a>
@@ -94,7 +94,7 @@ export function LandingPage() {
           <Magnetic>
             <Link
               href="/dashboard"
-              className="inline-flex h-10 items-center gap-1.5 rounded-full bg-accent px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-strong"
+              className="inline-flex h-10 items-center gap-1.5 rounded-full bg-accent px-5 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-strong"
             >
               فتح التطبيق <ArrowRight size={15} weight="bold" className="rtl:rotate-180" />
             </Link>
@@ -136,7 +136,7 @@ export function LandingPage() {
               <Magnetic strength={0.4}>
                 <Link
                   href="/dashboard"
-                  className="inline-flex h-12 items-center gap-2 rounded-full bg-accent px-7 text-base font-semibold text-white transition-colors hover:bg-accent-strong"
+                  className="inline-flex h-12 items-center gap-2 rounded-full bg-accent px-7 text-base font-semibold text-accent-fg transition-colors hover:bg-accent-strong"
                 >
                   افتح رِتم <ArrowRight size={18} weight="bold" className="rtl:rotate-180" />
                 </Link>
@@ -300,7 +300,7 @@ export function LandingPage() {
                   transition={{ duration: 0.6, ease, delay: i * 0.07 }}
                   className="grid gap-x-6 gap-y-2 border-t border-border py-8 first:border-t-0 first:pt-0 sm:grid-cols-[4rem_1fr]"
                 >
-                  <span className="font-mono text-sm font-semibold text-accent tabular-nums">
+                  <span className="font-figure text-sm font-semibold text-accent tabular-nums">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div>
@@ -344,7 +344,7 @@ export function LandingPage() {
         <div className="mx-auto flex max-w-[1240px] flex-col gap-6 px-5 py-10 text-sm text-muted md:flex-row md:items-center md:px-8">
           <div className="flex items-center gap-2.5">
             <LogoMark />
-            <span className="font-semibold text-fg">RITM</span>
+            <LogoWord className="text-base" />
           </div>
           <p className="md:max-w-[34ch]">صافي الربح الحقيقي للمتاجر الإلكترونية والأعمال الصغيرة.</p>
           <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 md:ms-auto">

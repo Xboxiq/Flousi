@@ -41,7 +41,7 @@ export function ReportFolder({ sheets, className }: ReportFolderProps) {
       <div className="folder-front" />
       {sheets > 0 && (
         <span className="dock absolute -bottom-2 -end-2 z-10 flex h-7 min-w-7 items-center justify-center px-1.5 text-[12px] font-bold text-fg">
-          <bdi dir="ltr" className="font-mono tabular-nums">
+          <bdi dir="ltr" className="font-figure tabular-nums">
             {sheets}
           </bdi>
         </span>

@@ -73,7 +73,7 @@ export function WeekBars({
                   {activeCaption && (
                     <span className="me-1 font-medium text-muted">{activeCaption}</span>
                   )}
-                  <bdi dir="ltr" className="font-mono tabular-nums">
+                  <bdi dir="ltr" className="font-figure tabular-nums">
                     {activeLabel}
                   </bdi>
                 </span>

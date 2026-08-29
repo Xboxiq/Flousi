@@ -142,7 +142,7 @@ export function DistributionBar({
             >
               <bdi
                 dir="ltr"
-                className="font-mono text-[10px] font-semibold tabular-nums whitespace-nowrap text-muted"
+                className="font-figure text-[10px] font-semibold tabular-nums whitespace-nowrap text-muted"
               >
                 {pct(share)}
               </bdi>
@@ -166,7 +166,7 @@ export function DistributionBar({
             <bdi
               dir="ltr"
               className={cn(
-                "font-mono text-[12px] tabular-nums",
+                "font-figure text-[12px] tabular-nums",
                 part.kind === "keep"
                   ? "font-bold text-success"
                   : part.kind === "overrun"
@@ -177,7 +177,7 @@ export function DistributionBar({
               {format(part.amount)}
             </bdi>
             <span className="w-10 shrink-0 text-end text-[11px] text-subtle">
-              <bdi dir="ltr" className="font-mono tabular-nums">
+              <bdi dir="ltr" className="font-figure tabular-nums">
                 {pct(share)}
               </bdi>
             </span>
@@ -187,11 +187,11 @@ export function DistributionBar({
           <li className="flex items-center gap-2 text-[13px]">
             <span className="dist-chip seg-overrun size-3.5 shrink-0 bg-danger" />
             <span className="min-w-0 flex-1 truncate text-muted">{overrun.label}</span>
-            <bdi dir="ltr" className="font-mono text-[12px] font-bold tabular-nums text-danger">
+            <bdi dir="ltr" className="font-figure text-[12px] font-bold tabular-nums text-danger">
               {format(overrun.amount)}
             </bdi>
             <span className="w-10 shrink-0 text-end text-[11px] text-subtle">
-              <bdi dir="ltr" className="font-mono tabular-nums">
+              <bdi dir="ltr" className="font-figure tabular-nums">
                 {pct(overrunShare)}
               </bdi>
             </span>
