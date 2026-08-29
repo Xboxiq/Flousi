@@ -175,8 +175,8 @@ export function AccessView() {
               <thead>
                 <tr>
                   <th>الدور</th>
-                  <th className="hidden md:table-cell">ماذا يرى</th>
-                  <th className="w-[22%] min-w-[130px]">الصلاحيات</th>
+                  <th className="pri-3">ماذا يرى</th>
+                  <th className="pri-2 w-[22%] min-w-[130px]">الصلاحيات</th>
                   <th />
                 </tr>
               </thead>
@@ -289,10 +289,10 @@ function RoleRow({
           {owner && <Chip className="h-[18px] text-[10px]">ثابت</Chip>}
         </span>
       </td>
-      <td className="hidden max-w-[46ch] whitespace-normal py-2 text-muted md:table-cell">
+      <td className="pri-3 max-w-[46ch] whitespace-normal py-2 text-muted">
         {role.description ?? "—"}
       </td>
-      <td>
+      <td className="pri-2">
         <span className="flex items-center gap-2">
           <span className="h-2 flex-1 overflow-hidden rounded-full bg-surface-2">
             <i

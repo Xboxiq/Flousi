@@ -524,8 +524,8 @@ function CostTable({
         <thead>
           <tr>
             <th>السطر</th>
-            <th className="hidden sm:table-cell">القاعدة</th>
-            <th className="hidden md:table-cell">كيف حُسب</th>
+            <th className="pri-2">القاعدة</th>
+            <th className="pri-3">كيف حُسب</th>
             <th className="n">المبلغ</th>
             <th className="n">من السعر</th>
           </tr>
@@ -534,8 +534,8 @@ function CostTable({
           {rows.map(({ line, component, amount }) => (
             <tr key={line}>
               <td className="font-bold">{COST_LINE_LABELS[line]}</td>
-              <td className="hidden text-muted sm:table-cell">{rule(component.fixed, component.percent)}</td>
-              <td className="hidden text-subtle md:table-cell">{how(component.fixed, component.percent)}</td>
+              <td className="pri-2 text-muted">{rule(component.fixed, component.percent)}</td>
+              <td className="pri-3 text-subtle">{how(component.fixed, component.percent)}</td>
               <td className="n">{money(amount)}</td>
               <td className="n text-muted">
                 {product.sellingPrice > 0
@@ -548,8 +548,8 @@ function CostTable({
         <tfoot>
           <tr>
             <td>مجموع الكلفة</td>
-            <td className="hidden sm:table-cell" />
-            <td className="hidden md:table-cell" />
+            <td className="pri-2" />
+            <td className="pri-3" />
             <td className="n">{money(totalCost)}</td>
             <td className="n">
               {product.sellingPrice > 0

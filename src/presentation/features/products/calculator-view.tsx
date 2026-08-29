@@ -12,7 +12,7 @@ import {
 } from "@/domain";
 import { useDataStore } from "@/presentation/stores/data-store";
 import { PageHeader } from "@/presentation/components/layout/page-header";
-import { Button, Field, Input, Select } from "@/presentation/components/ui";
+import { Button, Field, Input, Select, Skeleton } from "@/presentation/components/ui";
 import {
   Grid,
   Panel,
@@ -53,6 +53,27 @@ const CURRENCY_OPTIONS = [
  * every figure on the page he lands on.
  */
 export function CalculatorView() {
+  /* Split for the same reason the settings screen is: `useState(settings.currency)`
+     captured the store's DEFAULT on the first render, so a merchant whose account
+     is in USD priced in IQD and saved a product in the wrong currency. Never seed
+     state from async data — mount the form once the data is there. */
+  const loaded = useDataStore((s) => s.loaded);
+
+  if (!loaded) {
+    return (
+      <>
+        <PageHeader title="حاسبة الأرباح" />
+        <Grid>
+          <Skeleton className="span-6 h-[420px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-6 h-[420px] rounded-[var(--radius-md)]" />
+        </Grid>
+      </>
+    );
+  }
+  return <CalculatorForm />;
+}
+
+function CalculatorForm() {
   const router = useRouter();
   const settings = useDataStore((s) => s.settings);
   const createProduct = useDataStore((s) => s.createProduct);

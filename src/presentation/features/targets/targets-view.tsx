@@ -297,9 +297,9 @@ export function TargetsView() {
                   <tr>
                     <th>الموضوع</th>
                     <th className="n">المُنجَز</th>
-                    <th className="n hidden sm:table-cell">الهدف</th>
-                    <th className="w-[30%] min-w-[160px]">الوتيرة</th>
-                    <th className="n">يتبقّى</th>
+                    <th className="n pri-3">الهدف</th>
+                    <th className="pri-2 w-[30%] min-w-[160px]">الوتيرة</th>
+                    <th className="n pri-2">يتبقّى</th>
                     {canEdit && <th />}
                   </tr>
                 </thead>
@@ -393,10 +393,10 @@ function SubjectRow({
         )}
       </td>
       <td className="n">{fmt(p.actual)}</td>
-      <td className="n hidden text-muted sm:table-cell">
+      <td className="n pri-3 text-muted">
         {p.hasTarget ? fmt(p.targetAmount) : "—"}
       </td>
-      <td>
+      <td className="pri-2">
         {p.hasTarget ? (
           /* The rail DRAWS the attainment and its label announces it; a percentage
              printed beside it was the same fact a third time, on a row that also
@@ -413,7 +413,7 @@ function SubjectRow({
           <span className="text-[11px] text-subtle">لم يُحدَّد هدف، فلا وتيرة تُقاس.</span>
         )}
       </td>
-      <td className="n">
+      <td className="n pri-2">
         {p.hasTarget ? (
           <span className={cn(p.met ? "text-success" : !p.onPace ? "text-warning" : "text-fg")}>
             {p.met ? "تحقّق" : fmt(p.remaining)}

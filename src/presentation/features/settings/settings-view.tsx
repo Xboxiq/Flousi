@@ -20,7 +20,7 @@ import {
   clearAll,
 } from "@/infrastructure/persistence/local-storage/backup";
 import { PageHeader } from "@/presentation/components/layout/page-header";
-import { Button, Dialog, Field, Input, Segmented, Select } from "@/presentation/components/ui";
+import { Button, Dialog, Field, Input, Segmented, Select, Skeleton } from "@/presentation/components/ui";
 import { Grid, Panel } from "@/presentation/components/structure";
 import { cn } from "@/presentation/lib/cn";
 
@@ -49,7 +49,38 @@ const THEME_OPTIONS: { value: ThemePreference; label: string; icon: React.ReactN
   { value: "system", label: "تلقائي", icon: <Desktop size={16} /> },
 ];
 
+/**
+ * The screen is split in two so the form can never initialise from an unhydrated
+ * store.
+ *
+ * `useState(settings)` captures its value on the FIRST render, and on that render
+ * the store still holds its defaults — so the draft was IQD / ar-IQ regardless of
+ * what the merchant had saved, and pressing «حفظ التغييرات» before hydration wrote
+ * those defaults over his real settings. That is the same trap P3 documented on
+ * the targets screen, and the same fix: never seed state from async data. Mounting
+ * the form only once `loaded` is true means its initial value IS the stored one.
+ */
 export function SettingsView() {
+  const loaded = useDataStore((s) => s.loaded);
+
+  if (!loaded) {
+    return (
+      <>
+        <PageHeader title="الإعدادات" />
+        <Grid>
+          <Skeleton className="span-6 h-[200px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[200px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-3 h-[200px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-6 h-[240px] rounded-[var(--radius-md)]" />
+          <Skeleton className="span-6 h-[240px] rounded-[var(--radius-md)]" />
+        </Grid>
+      </>
+    );
+  }
+  return <SettingsForm />;
+}
+
+function SettingsForm() {
   const settings = useDataStore((s) => s.settings);
   const saveSettings = useDataStore((s) => s.saveSettings);
   const reload = useDataStore((s) => s.reload);

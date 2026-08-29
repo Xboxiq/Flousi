@@ -363,9 +363,9 @@ export function RepsList() {
                 <tr>
                   <th>المندوب</th>
                   <th className="n">حصته</th>
-                  <th>نسبته إلى أعلى حصة</th>
-                  <th className="n">الرصيد</th>
-                  <th>آخر بيع</th>
+                  <th className="pri-3">نسبته إلى أعلى حصة</th>
+                  <th className="n pri-2">الرصيد</th>
+                  <th className="pri-3">آخر بيع</th>
                 </tr>
               </thead>
               <tbody>
@@ -408,7 +408,7 @@ export function RepsList() {
                       <td className={cn("n font-bold", losing && "text-danger")}>
                         {money(toMajor(row.repShareMinor, row.currency))}
                       </td>
-                      <td className="w-[34%] min-w-[140px]">
+                      <td className="pri-3 w-[34%] min-w-[140px]">
                         <span className="flex items-center gap-2">
                           <span className="h-2 flex-1 overflow-hidden rounded-full bg-surface-2">
                             {drawn && (
@@ -432,13 +432,13 @@ export function RepsList() {
                           </bdi>
                         </span>
                       </td>
-                      <td className={cn("n", owed < 0 && "text-accent")}>
+                      <td className={cn("n pri-2", owed < 0 && "text-accent")}>
                         {money(Math.abs(owed))}
                         {owed < 0 && (
                           <span className="ms-1.5 text-[10px] font-normal text-subtle">مقدّم</span>
                         )}
                       </td>
-                      <td className="text-muted">
+                      <td className="pri-3 text-muted">
                         {lastSaleAt
                           ? formatDate(lastSaleAt, {
                               locale: settings.locale,

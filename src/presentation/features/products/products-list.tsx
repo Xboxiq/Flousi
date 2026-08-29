@@ -252,15 +252,15 @@ export function ProductsList() {
               <thead>
                 <tr>
                   <th>المنتج</th>
-                  <th>الفئة</th>
-                  {canSeeCosts && <th className="hidden md:table-cell">آخر 6 أشهر</th>}
-                  <th className="n">السعر</th>
+                  <th className="pri-3">الفئة</th>
+                  {canSeeCosts && <th className="pri-3">آخر 6 أشهر</th>}
+                  <th className="n pri-2">السعر</th>
                   {/* Profit and margin ARE the cost: revenue minus profit is what
                       the merchant paid, so printing them to a session without
                       `viewCosts` hands over the purchase price by subtraction
                       (gate P3/G4). */}
                   {canSeeCosts && <th className="n">صافي الربح / وحدة</th>}
-                  {canSeeCosts && <th className="n">الهامش</th>}
+                  {canSeeCosts && <th className="n pri-2">الهامش</th>}
                 </tr>
               </thead>
               <tbody>
@@ -289,23 +289,23 @@ export function ProductsList() {
                         <bdi className="r-num block text-[10px] text-subtle">{product.sku}</bdi>
                       )}
                     </td>
-                    <td className="text-muted">{product.category ?? "—"}</td>
+                    <td className="pri-3 text-muted">{product.category ?? "—"}</td>
                     {canSeeCosts && (
-                      <td className="hidden md:table-cell">
+                      <td className="pri-3">
                         <Sparkline
                           values={trends.get(product.id) ?? []}
                           label={`اتجاه ربح ${product.name} في آخر ستة أشهر`}
                         />
                       </td>
                     )}
-                    <td className="n">{money(product.sellingPrice, product.currency)}</td>
+                    <td className="n pri-2">{money(product.sellingPrice, product.currency)}</td>
                     {canSeeCosts && (
                       <td className={`n ${result.netProfit >= 0 ? "text-success" : "text-danger"}`}>
                         {money(result.netProfit, product.currency)}
                       </td>
                     )}
                     {canSeeCosts && (
-                      <td className="n">
+                      <td className="n pri-2">
                         <Chip tone={result.margin >= 0 ? "success" : "danger"}>
                           {formatPercent(result.margin, { locale: settings.locale })}
                         </Chip>
