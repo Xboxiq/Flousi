@@ -8,27 +8,37 @@ export type ButtonVariant = "primary" | "secondary" | "graphite" | "ghost" | "ou
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 /**
- * Buttons are moulded bodies (see `.molded*` in materials.css): a lighter rim
- * around the fill, a lit top edge, a shaded lower lip, and a shadow the size of
- * the body — pressing travels the body down into that shadow. Ghost and outline
- * stay flat on purpose: they are not objects, they are text with a hit area.
+ * Buttons are FLAT PLATES, and the authority for that is the client's own actions
+ * board (design-system/ritm/renders/d4-actions.png): a solid sand ground with dark
+ * ink for the primary, a hairline over nothing for the secondary, text alone for
+ * the tertiary, and a modest rounded rectangle under all of them.
+ *
+ * What was here before was a moulded body — a lighter rim, a lit top edge, a
+ * shaded lower lip and a drop shadow the size of the button. It was drawn before
+ * the boards were approved, it contradicts them, and once every panel around it
+ * became one hairline on a flat ground it was the loudest object on every screen
+ * in the product. The board wins.
+ *
+ * The radius is the ramp's `--radius-md`, not a pill: on the board a button is a
+ * rectangle with its corners taken off, which is what lets a row of them read as
+ * one control group instead of a string of lozenges.
  */
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: "molded molded-accent text-accent-fg",
-  secondary: "molded molded-quiet text-fg",
-  graphite: "molded molded-graphite text-white",
+  primary: "bg-accent-fill text-accent-fill-fg hover:bg-accent-fill-hover",
+  secondary: "border border-line-strong bg-transparent text-fg hover:bg-surface-2",
+  graphite: "bg-fg text-bg hover:opacity-90",
   ghost: "text-muted hover:bg-surface-2 hover:text-fg",
   outline: "border border-border bg-transparent text-fg hover:bg-surface-2",
-  danger: "molded molded-danger text-white",
+  danger: "bg-danger text-paper hover:opacity-90",
 };
 
 const SIZES: Record<ButtonSize, string> = {
-  sm: "h-9 px-3.5 text-sm gap-1.5 rounded-full",
-  md: "h-11 px-5 text-sm gap-2 rounded-full",
-  lg: "h-12 px-6 text-base gap-2 rounded-full",
-  /* A key, not a bubble: the reference action rows set icon-only actions as
-     squircles slightly wider than tall, so they read as siblings of the pill. */
-  icon: "h-11 w-[54px] rounded-[18px]",
+  sm: "h-9 px-3.5 text-sm gap-1.5 rounded-[var(--radius-md)]",
+  md: "h-11 px-5 text-sm gap-2 rounded-[var(--radius-md)]",
+  lg: "h-12 px-6 text-base gap-2 rounded-[var(--radius-md)]",
+  /* Square-ish, and the same corner as its siblings, so an icon-only action
+     reads as one of the row rather than as a different kind of thing. */
+  icon: "h-11 w-11 rounded-[var(--radius-md)]",
 };
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -57,11 +67,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   },
   ref,
 ) {
-  const flat = variant === "ghost" || variant === "outline";
   const classes = cn(
-    "inline-flex select-none items-center justify-center whitespace-nowrap font-semibold",
+    "inline-flex select-none items-center justify-center whitespace-nowrap font-medium",
     "transition-[background-color,color,transform,opacity] duration-[var(--motion-fast)]",
-    flat && "active:scale-[0.98]",
+    "active:scale-[0.98]",
     "disabled:pointer-events-none disabled:opacity-50",
     VARIANTS[variant],
     SIZES[size],

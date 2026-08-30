@@ -1,4 +1,5 @@
 import { cn } from "@/presentation/lib/cn";
+import { figureParts } from "@/presentation/components/ui/money";
 
 /**
  * ═══ THE PAGE STRUCTURE ═══════════════════════════════════════════════════
@@ -129,6 +130,7 @@ export function Metric({
   /** The comparison line, under the label. */
   children?: React.ReactNode;
 }) {
+  const split = figureParts(amount);
   return (
     <div
       className={cn(
@@ -139,7 +141,22 @@ export function Metric({
       )}
     >
       <div className="headline">
-        <bdi className="amount">{amount}</bdi>
+        {/* The currency mark rides INSIDE the figure, one size down: `formatCurrency`
+            appends «د.ع.» to the string, and printing that at the amount's own size
+            made a four-character word as tall as the 56px hero it qualifies. Same
+            split, same rule, as <Money> — see the note there for why. */}
+        <bdi className="amount">
+          {split ? (
+            <>
+              {split.lead}
+              {split.whole}
+              {split.sep && <span className="mark">{split.sep + split.frac}</span>}
+              {split.trail && <span className="mark">{split.trail}</span>}
+            </>
+          ) : (
+            amount
+          )}
+        </bdi>
         {unit && <span className="unit">{unit}</span>}
       </div>
       {name && <span className="name">{name}</span>}

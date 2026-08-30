@@ -131,6 +131,7 @@
   --accent-soft: rgba(184, 168, 128, 0.22);
   --accent-fill: #b8a880;     /* the sand plate; ink on it, never the reverse */
   --accent-fill-fg: #0b0e11;  /* 8.25 on the plate */
+  --accent-fill-hover: #c6b795;  /* the board's HOVER plate is LIGHTER, not darker */
 
   --success: #2d7154;         /* 5.17 on its wash */
   --success-soft: rgba(95, 191, 149, 0.16);
@@ -246,6 +247,7 @@
   --accent-soft: rgba(184, 168, 128, 0.15);
   --accent-fill: #b8a880;
   --accent-fill-fg: #0b0e11;
+  --accent-fill-hover: #c6b795;
 
   --success: #5fbf95;         /* 8.64 on bg · 5.46 on its wash */
   --success-soft: rgba(95, 191, 149, 0.16);
@@ -307,16 +309,25 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-tajawal), ui-sans-serif, system-ui, sans-serif;
-  /* Figures are Archivo with tabular numerals, not a monospace face: the
+  /* ---------- The three type roles ----------
+     Kufi builds, Naskh reads, Plex counts. The faces themselves are chosen and
+     argued in src/app/layout.tsx; these three tokens are the only place the app
+     refers to them, so a swap is a two-file change.
+
+     Every stack falls back through the OTHER two before it reaches the system,
+     on purpose: Noto Kufi Arabic carries no Latin worth setting, so a heading
+     with a product code or a year in it resolves that run to Plex rather than to
+     whatever the OS hands back. Per-glyph fallback is a feature here, not a leak. */
+  --font-sans: var(--font-plex-arabic), var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+  /* Figures are Plex Latin with tabular numerals, not a monospace face: the
      lining-up is done by `tabular-nums`, and a Latin-only mono carries no
      Arabic, which is how «صافي الربح» once lost its joins in a table head.
      The token is called --font-figure and not --font-mono for exactly that
      reason: a name that says "mono" invites the next person to put code in it,
      or to swap in a real monospace and quietly break every Arabic run that
      shares the class. */
-  --font-figure: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-tajawal), ui-sans-serif, system-ui, sans-serif;
+  --font-figure: var(--font-plex), var(--font-plex-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-kufi), var(--font-plex), var(--font-plex-arabic), ui-sans-serif, sans-serif;
 
   --color-bg: var(--bg);
   --color-bg-tint: var(--bg-tint);
@@ -336,6 +347,13 @@
   --color-accent-strong: var(--accent-strong);
   --color-accent-fg: var(--accent-fg);
   --color-accent-soft: var(--accent-soft);
+  /* The PLATE and its ink. Distinct from --accent/--accent-fg on purpose: in light
+     mode --accent-fg is white, and white on the sand plate measures 2.1:1. A button
+     filled with --accent-fill must take --accent-fill-fg or it fails AA in one theme
+     while passing in the other, which is the worst way for a token to be wrong. */
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-fill-fg: var(--accent-fill-fg);
+  --color-accent-fill-hover: var(--accent-fill-hover);
 
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
@@ -407,12 +425,43 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
+  /* ---------- THE WEIGHT LAW ----------
+     Four weights, one job each. Before this there were 175 weight decisions in
+     the app and no law behind them: 135 of them were 600 or 700, which is a
+     screen where everything is emphasised and therefore nothing is. The client
+     asked for «أوزان جيده متماسكة» and this is what that means here.
+
+       400  prose, descriptions, table cells, secondary values. The default.
+       500  the identity of a row — a product, a rep, a period — plus nav items,
+            buttons, chips and the values in a definition list. Findable in a
+            scan without shouting.
+       600  structure: headings, eyebrow labels, table heads, the current nav
+            item. Everything that names a region rather than filling it.
+       700  a figure that carries a decision, and the wordmark. NOTHING ELSE.
+
+     The last line is the whole point: bold in this product does not mean
+     "important text", it means "a number you act on". That is why a heading is
+     lighter than the figure underneath it, which looks wrong for one second and
+     then reads correctly forever.
+
+     ---------- THE TRACKING LAW ----------
+     ARABIC IS NEVER TRACKED. It is a connected script, and `letter-spacing`
+     inserts its space between joined glyphs: at 0.04em «الشهر» starts to come
+     apart and at 0.08em it is visibly two words. The app carried 0.04em on
+     `.r-label` and on every table head — a Latin habit (tracked-out small caps)
+     applied to a script that has no such convention and is damaged by it.
+     Verified by eye at 4x before it was removed.
+
+     Latin figures are a different case: they do not join, so tightening them is
+     optical work rather than damage. They tighten as they grow. */
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    font-weight: 700;
-    letter-spacing: -0.005em;
+    font-weight: 600;
+    letter-spacing: 0;
   }
-  /* Tabular figures everywhere numbers matter */
+  /* Tabular figures everywhere numbers matter. The tightening scales with the
+     size: a 56px figure at 0 tracking reads loose, a 12px one at -0.03em reads
+     cramped, so neither number is used for both. */
   .tnum, .font-figure { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
   :focus-visible {
     outline: 2px solid var(--focus);

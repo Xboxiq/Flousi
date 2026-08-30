@@ -108,7 +108,7 @@ function SidebarFoot({ collapsed }: { collapsed: boolean }) {
       <div className="mt-auto border-t border-line p-2">
         <div
           title={`${name} · ${role}`}
-          className="mx-auto grid size-8 place-items-center rounded-full bg-surface-2 text-sm font-bold text-muted"
+          className="mx-auto grid size-8 place-items-center rounded-full bg-surface-2 text-sm font-semibold text-muted"
         >
           {initial}
         </div>
@@ -122,11 +122,11 @@ function SidebarFoot({ collapsed }: { collapsed: boolean }) {
         href="/access"
         className="flex items-center gap-2 rounded-[var(--radius-sm)] p-2 transition-colors hover:bg-surface-2"
       >
-        <span className="grid size-8 flex-none place-items-center rounded-full bg-surface-2 text-sm font-bold text-muted">
+        <span className="grid size-8 flex-none place-items-center rounded-full bg-surface-2 text-sm font-semibold text-muted">
           {initial}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-bold text-fg">{name}</span>
+          <span className="block truncate text-sm font-medium text-fg">{name}</span>
           <span className="block truncate text-[11px] text-subtle">{role}</span>
         </span>
         <CaretUpDown size={16} className="flex-none text-subtle" />

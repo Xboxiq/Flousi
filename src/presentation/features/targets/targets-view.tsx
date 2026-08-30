@@ -387,7 +387,7 @@ function SubjectRow({
   return (
     <tr data-row>
       <td>
-        <span className="font-bold text-fg">{row.name}</span>
+        <span className="font-medium text-fg">{row.name}</span>
         {row.fromOverride && (
           <Chip className="ms-2 h-[18px] text-[10px]">هذا الشهر</Chip>
         )}

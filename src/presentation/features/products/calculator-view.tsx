@@ -175,7 +175,7 @@ function CalculatorForm() {
           </div>
 
           <div className="border-t border-line pt-4">
-            <h3 className="text-[13px] font-bold text-fg">سطور الكلفة</h3>
+            <h3 className="text-[13px] font-semibold text-fg">سطور الكلفة</h3>
             <p className="mt-1 text-[12px] leading-relaxed text-subtle">
               كل سطر يقبل مبلغاً ثابتاً أو نسبة من سعر البيع، أو الاثنين معاً.
             </p>

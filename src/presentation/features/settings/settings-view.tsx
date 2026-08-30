@@ -250,11 +250,11 @@ function SettingsForm() {
           <p className="text-[12px] leading-relaxed text-muted">
             بياناتك مخزّنة محلياً في هذا المتصفّح وحده. لا خادم، ولا حساب، ولا نسخة عندنا
             — وهذا يعني أن النسخة الاحتياطية مسؤوليتك. اقرأ{" "}
-            <Link href="/legal/privacy" className="font-bold text-accent hover:underline">
+            <Link href="/legal/privacy" className="font-medium text-accent hover:underline">
               سياسة الخصوصية
             </Link>{" "}
             و
-            <Link href="/legal/terms" className="font-bold text-accent hover:underline">
+            <Link href="/legal/terms" className="font-medium text-accent hover:underline">
               شروط الاستخدام
             </Link>
             .

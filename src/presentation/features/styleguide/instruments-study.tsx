@@ -2,15 +2,14 @@
 
 import { RingGauge } from "@/presentation/components/objects/ring-gauge";
 import { TickMeter } from "@/presentation/components/objects/tick-meter";
-import { WeekBars } from "@/presentation/components/objects/week-bars";
 import { Odometer } from "@/presentation/components/objects/odometer";
 import { DistributionBar } from "@/presentation/components/objects/distribution-bar";
 import { PriceColumn } from "@/presentation/components/objects/price-column";
 import { Delta } from "@/presentation/components/ui";
 import { Sparkline } from "@/presentation/components/objects/sparkline";
 import { MagnitudeRings } from "@/presentation/components/objects/magnitude-rings";
-import { ReportFolder } from "@/presentation/components/objects/report-folder";
 import { SlideToCommit } from "@/presentation/components/interactive/slide-to-commit";
+import { Sparkbars } from "@/presentation/components/structure";
 
 const money = (n: number) =>
   new Intl.NumberFormat("ar-IQ", {
@@ -55,7 +54,7 @@ export function InstrumentsStudy() {
             value={1492359}
             format={money}
             drumHeight={1.25}
-            className="text-[34px] font-bold leading-none text-fg"
+            className="text-[34px] font-semibold leading-none text-fg"
           />
         </Bay>
 
@@ -84,20 +83,17 @@ export function InstrumentsStudy() {
         </Bay>
 
         <Bay
-          name="الأسبوع · WeekBars"
-          measures="سبعة أيام، واحد منها هو القراءة"
+          name="الأسبوع · Sparkbars"
+          measures="سبعة أيام، أعلاها هو القراءة"
           law="§11a النقاط = قراءة مُهدّأة · الصلب = القراءة المُبلَّغ عنها"
         >
           <div className="w-full pt-6">
-            <WeekBars
+            <Sparkbars
               height={64}
-              activeIndex={6}
-              activeLabel={money(91065)}
-              activeCaption="اليوم"
-              days={["ح", "ن", "ث", "ر", "خ", "ج", "س"].map((mark, i) => ({
-                mark,
-                value: [420000, 180000, 610000, 95000, 350000, -80000, 91065][i],
-                title: `${mark}`,
+              label="صافي كل يوم في آخر سبعة أيام"
+              points={["ح", "ن", "ث", "ر", "خ", "ج", "س"].map((mark, i) => ({
+                key: mark,
+                value: [420000, 180000, 610000, 95000, 350000, 0, 91065][i],
               }))}
             />
           </div>
@@ -179,15 +175,6 @@ export function InstrumentsStudy() {
           />
         </Bay>
 
-        <Bay
-          name="ملف الأرشيف · ReportFolder"
-          measures="كم شهراً مؤرشفاً يحمله المتجر"
-          law="§8 الأوراق تظهر فقط عند وجود أشهر مقفلة · §4 لا تساوي بين ميلين"
-        >
-          <div className="stage stage-standing h-[120px] w-44">
-            <ReportFolder sheets={3} />
-          </div>
-        </Bay>
 
         <Bay
           name="اسحب للإتمام · SlideToCommit"
@@ -222,7 +209,7 @@ function Bay({
 }) {
   return (
     <div
-      className={`clay flex flex-col gap-4 p-5 ${wide ? "lg:col-span-2" : ""}`}
+      className={`r-card p-5 ${wide ? "lg:col-span-2" : ""}`}
       data-part="instrument-bay"
     >
       <div className="flex min-h-[132px] items-center justify-center">{children}</div>

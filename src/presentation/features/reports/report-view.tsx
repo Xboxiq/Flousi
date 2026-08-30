@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, FileCsv, FilePdf, FileXls, Printer } from "@phosphor-icons/react";
+import { FileCsv, FilePdf, FileXls, Printer } from "@phosphor-icons/react";
 import {
   buildReport,
   toExportableTable,
@@ -12,19 +11,10 @@ import {
 import { useDataStore } from "@/presentation/stores/data-store";
 import { downloadReport, printReport } from "@/infrastructure/export/export-service";
 import { PageHeader } from "@/presentation/components/layout/page-header";
-import {
-  Button,
-  Card,
-  EmptyState,
-  Skeleton,
-  Table,
-  TBody,
-  TD,
-  TH,
-  THead,
-  TR,
-} from "@/presentation/components/ui";
+import { Button, EmptyState, Skeleton } from "@/presentation/components/ui";
+import { Grid, Panel, Toolbar } from "@/presentation/components/structure";
 import { formatCurrency, formatNumber, formatPercent } from "@/presentation/lib/format";
+import { cn } from "@/presentation/lib/cn";
 
 export function ReportView({ type }: { type: ReportType }) {
   const loaded = useDataStore((s) => s.loaded);
@@ -102,58 +92,82 @@ export function ReportView({ type }: { type: ReportType }) {
 
   return (
     <>
-      <div className="mb-2">
-        <Button asChild variant="ghost" size="sm" leadingIcon={<ArrowLeft size={16} className="rtl:rotate-180" />}>
-          <Link href="/reports">التقارير</Link>
-        </Button>
-      </div>
-      <PageHeader
-        title={report.title}
-        actions={loaded ? actions : undefined}
-      />
+      <PageHeader title={report.title} section="التقارير" actions={loaded ? actions : undefined} />
 
-      {!loaded ? (
-        <Skeleton className="h-80 w-full" />
-      ) : report.rows.length === 0 ? (
-        <EmptyState title="لا توجد بيانات بعد" description="سجّل بعض المبيعات لتعبئة هذا التقرير." />
-      ) : (
-        <Card>
-          <Table>
-            <THead>
-              <TR>
-                {report.columns.map((c) => (
-                  <TH key={c.label} className={c.kind === "text" ? "" : "text-end"}>
-                    {c.label}
-                  </TH>
-                ))}
-              </TR>
-            </THead>
-            <TBody>
-              {report.rows.map((row, i) => (
-                <TR key={i}>
-                  {row.map((cell, j) => {
-                    const col = report.columns[j];
-                    const profitTone =
-                      col.kind === "profit"
-                        ? Number(cell) >= 0
-                          ? "text-success"
-                          : "text-danger"
-                        : "";
-                    return (
-                      <TD
-                        key={j}
-                        className={`${col.kind === "text" ? "font-medium" : "text-end font-figure tabular-nums"} ${profitTone}`}
-                      >
-                        {fmt(cell, col.kind)}
-                      </TD>
-                    );
-                  })}
-                </TR>
-              ))}
-            </TBody>
-          </Table>
-        </Card>
-      )}
+      <Grid>
+        {!loaded ? (
+          <Skeleton className="span-12 h-[420px] rounded-[var(--radius-md)]" />
+        ) : (
+          <Panel
+            span={12}
+            bare
+            footer={
+              <span className="text-[11px] text-subtle">
+                {report.rows.length} سطر · الأرقام هي نفسها التي تراها في الشاشات، مرتّبةً
+                للتصدير والطباعة.
+              </span>
+            }
+          >
+            <Toolbar title={report.title}>
+              <span className="r-spacer" />
+            </Toolbar>
+            {report.rows.length === 0 ? (
+              <EmptyState
+                title="لا توجد بيانات بعد"
+                description="سجّل بعض المبيعات لتعبئة هذا التقرير."
+              />
+            ) : (
+              <div className="r-tablewrap">
+                <table className="r-tbl">
+                  <thead>
+                    <tr>
+                      {report.columns.map((c, i) => (
+                        <th
+                          key={c.label}
+                          /* The first column names the row and never leaves; the
+                             rest shed by position, because a report's columns
+                             carry no priority of their own — they are whatever
+                             the report type declares. */
+                          className={cn(
+                            c.kind === "text" ? "" : "n",
+                            i > 2 && "pri-3",
+                            i === 2 && "pri-2",
+                          )}
+                        >
+                          {c.label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {report.rows.map((row, i) => (
+                      <tr key={i} data-row>
+                        {row.map((cell, j) => {
+                          const col = report.columns[j];
+                          return (
+                            <td
+                              key={j}
+                              className={cn(
+                                col.kind === "text" ? "font-medium" : "n",
+                                j > 2 && "pri-3",
+                                j === 2 && "pri-2",
+                                col.kind === "profit" &&
+                                  (Number(cell) >= 0 ? "text-fg" : "text-danger"),
+                              )}
+                            >
+                              {fmt(cell, col.kind)}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Panel>
+        )}
+      </Grid>
     </>
   );
 }

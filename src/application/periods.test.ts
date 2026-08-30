@@ -58,7 +58,7 @@ describe("computePeriodSummary", () => {
 describe("nextPeriodAfter", () => {
   it("rolls into the following month", () => {
     const next = nextPeriodAfter(period);
-    expect(next.label).toBe("يوليو 2026");
+    expect(next.label).toBe("تموز 2026"); // ar-IQ month names, not ar
     expect(new Date(next.startDate).getMonth()).toBe(6); // July (0-indexed)
   });
 
@@ -69,6 +69,6 @@ describe("nextPeriodAfter", () => {
       startDate: "2026-12-01T00:00:00.000Z",
     };
     const next = nextPeriodAfter(dec);
-    expect(next.label).toBe("يناير 2027");
+    expect(next.label).toBe("كانون الثاني 2027");
   });
 });

@@ -47,7 +47,13 @@ export function nextPeriodAfter(period: AccountingPeriod): { label: string; star
   const start = new Date(period.startDate);
   const next = new Date(start.getFullYear(), start.getMonth() + 1, 1);
   return {
-    label: new Intl.DateTimeFormat("ar", { month: "long", year: "numeric" }).format(next),
+    /* `ar-IQ`, not `ar`: see the note in periods-view. A period opened here would
+       otherwise be labelled «سبتمبر 2026» while every date inside it reads «أيلول». */
+    label: new Intl.DateTimeFormat("ar-IQ", {
+      month: "long",
+      year: "numeric",
+      numberingSystem: "latn",
+    }).format(next),
     startDate: next.toISOString(),
   };
 }

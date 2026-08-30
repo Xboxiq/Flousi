@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { Archive, ArrowLeft, ArrowUUpLeft, FloppyDisk, Plus, Sliders } from "@phosphor-icons/react";
+import { Archive, ArrowUUpLeft, FloppyDisk, Plus, Sliders } from "@phosphor-icons/react";
 import {
   CommissionCalculator,
   DEFAULT_REP_RATIO,
@@ -25,11 +24,6 @@ import { PageHeader } from "@/presentation/components/layout/page-header";
 import {
   Badge,
   Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   EmptyState,
   Field,
   Input,
@@ -37,6 +31,7 @@ import {
   Segmented,
   Skeleton,
 } from "@/presentation/components/ui";
+import { Grid, Panel, Chip } from "@/presentation/components/structure";
 import {
   DistributionBar,
   type DistributionPart,
@@ -448,25 +443,9 @@ export function CommissionBench() {
     );
   }
 
-  const back = (
-    <div className="mb-2">
-      {/* Back is toward the inline START, which in RTL is the right — an unmirrored
-          left arrow reads as «forward» (the idiom slide-to-commit already owns). */}
-      <Button
-        asChild
-        variant="ghost"
-        size="sm"
-        leadingIcon={<ArrowLeft size={16} className="rtl:rotate-180" />}
-      >
-        <Link href="/reps">الفريق</Link>
-      </Button>
-    </div>
-  );
-
   if (schemes.length === 0 || !selected) {
     return (
       <>
-        {back}
         {header}
         <EmptyState
           icon={<Sliders size={24} />}
@@ -485,24 +464,25 @@ export function CommissionBench() {
 
   return (
     <>
-      {back}
       {header}
 
-      <Card>
-        <CardHeader className="flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-          <div>
-            {/* The tiles print the share and the binding count themselves, so a
-                description saying that they do was a sentence about the screen rather
-                than about the merchant's money (VISUAL-LAW §15). */}
-            <CardTitle>أنظمة القسمة</CardTitle>
-          </div>
-          {!isDefault && (
-            <Button variant="secondary" size="sm" className="sm:ms-auto" onClick={makeDefault}>
-              اجعله الافتراضي للحساب
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent>
+      <Grid>
+        {/* The tiles print the share and the binding count themselves, so a
+            description saying that they do was a sentence about the screen rather
+            than about the merchant's money (VISUAL-LAW §15). */}
+        <Panel
+          span={12}
+          title="أنظمة القسمة"
+          meta={
+            !isDefault ? (
+              <Button variant="secondary" size="sm" onClick={makeDefault}>
+                اجعله الافتراضي للحساب
+              </Button>
+            ) : (
+              <Chip tone="accent">الافتراضي للحساب</Chip>
+            )
+          }
+        >
           <SchemeTiles
             schemes={schemes}
             bindings={bindings}
@@ -517,23 +497,26 @@ export function CommissionBench() {
             exampleLabel="حصة المندوب في المثال"
             count={count}
           />
-        </CardContent>
-      </Card>
+        </Panel>
+      </Grid>
 
       {/* The workbench column got SHORTER when its two secondary devices moved onto
           the ladder, and two equal columns then left a 350px void under it. The form
           takes the wide track and the bench a fixed sticky rail beside it, which is
           also the better fit for a panel of two figures (VISUAL-LAW §10). */}
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
-        <Card>
-          <CardHeader>
-            <div>
-              <CardTitle>القاعدة</CardTitle>
-              <CardDescription>تعديلها يسري على المبيعات الجديدة فقط.</CardDescription>
-            </div>
-            {dirty && <Badge tone="warning">غير محفوظ</Badge>}
-          </CardHeader>
-          <CardContent className="flex flex-col gap-5">
+        <Panel
+          span="none"
+          title="القاعدة"
+          meta={
+            dirty ? (
+              <Chip tone="warning">غير محفوظ</Chip>
+            ) : (
+              <span className="text-[12px] text-subtle">تسري على المبيعات الجديدة فقط</span>
+            )
+          }
+          bodyClassName="flex flex-col gap-5"
+        >
             <Field label="اسم النظام" htmlFor="scheme-name" required error={error ?? undefined}>
               <Input
                 id="scheme-name"
@@ -571,7 +554,6 @@ export function CommissionBench() {
                     min={0}
                     max={100}
                     trailing="%"
-                    className="clay-inset"
                     value={draft.repPercent || ""}
                     onChange={(e) => set({ repPercent: parseFloat(e.target.value) || 0 })}
                   />
@@ -609,7 +591,6 @@ export function CommissionBench() {
                   min={0}
                   step="0.01"
                   leading={symbol}
-                  className="clay-inset"
                   value={draft.fixedAmountMajor || ""}
                   onChange={(e) => set({ fixedAmountMajor: parseFloat(e.target.value) || 0 })}
                 />
@@ -628,7 +609,6 @@ export function CommissionBench() {
                   min={0}
                   max={100}
                   trailing="%"
-                  className="clay-inset"
                   value={draft.pricePercent || ""}
                   onChange={(e) => set({ pricePercent: parseFloat(e.target.value) || 0 })}
                 />
@@ -734,20 +714,15 @@ export function CommissionBench() {
                 </Button>
               )}
             </div>
-          </CardContent>
-        </Card>
+        </Panel>
 
-        {/* The example column is bodies on a bench, not a card: an instrument
-            shell inside a card would be a card in a card (VISUAL-LAW, and the
-            same shape product-form uses for the profit panel). */}
-        <div className="flex flex-col gap-4 lg:sticky lg:top-20 lg:self-start">
-          <div className="clay px-5 pt-4 pb-5">
+        <div className="flex flex-col gap-3 lg:sticky lg:top-[72px] lg:self-start">
+          <Panel span="none" title="المثال، رقماً رقماً" bodyClassName="flex flex-col gap-3">
             {/* The client's own example used to be spelled out in words here as
                 well: «اشتريته بعشرة، باعه المندوب بعشرين، والتوصيل باثنين» over four
                 labelled fields already holding 20, 10 and 2. The fields ARE the
                 sentence (VISUAL-LAW §15). */}
-            <span className="text-sm font-semibold text-fg">المثال، رقمًا رقمًا</span>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
               <Field label="سعر البيع" htmlFor="ex-price">
                 <Input
                   id="ex-price"
@@ -796,7 +771,7 @@ export function CommissionBench() {
                 />
               </Field>
             </div>
-          </div>
+          </Panel>
 
           <SplitPreview
             split={split}
@@ -987,8 +962,8 @@ function CrumbCase({ label, value, applied }: { label: string; value: string; ap
   return (
     <div
       className={cn(
-        "rounded-[var(--radius-md)] px-3 py-2",
-        applied ? "molded molded-quiet" : "clay-inset",
+        "r-choice px-3 py-2",
+        applied && "is-on",
       )}
     >
       <div className="text-[11px] text-muted">{label}</div>
@@ -1016,8 +991,8 @@ function LossCase({
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 rounded-[var(--radius-lg)] px-4 py-3",
-        applied ? "molded molded-quiet" : "clay-inset",
+        "r-choice flex flex-col gap-2 px-4 py-3",
+        applied && "is-on",
       )}
     >
       <div className="flex items-center justify-between gap-2">

@@ -57,7 +57,7 @@ export function ProfitPanel({
   return (
     <div className={cn("flex flex-col gap-3", className)}>
       {/* The instrument: a moulded body with the counter sunk into it. */}
-      <div className="device relative px-5 pt-4 pb-5" data-part="focal-panel">
+      <div className="r-slab relative px-5 pt-4 pb-5" data-part="focal-panel">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-muted">صافي الربح</span>
           <span
@@ -144,7 +144,7 @@ export function ProfitPanel({
       {/* The focal object. It replaces the old flat cost list: the breakdown is
           the object now — each slab's height is its share of the price (§8). */}
       {withColumn ? (
-        <div className="clay px-4 pt-4 pb-2" data-part="focal-object">
+        <div className="r-inset px-4 pt-4 pb-2" data-part="focal-object">
           <div className="flex items-baseline justify-between px-1">
             <span className="text-xs font-semibold text-subtle">من السعر إلى الربح</span>
             <span className="text-[11px] text-subtle">ارتفاع كل طبقة = حصتها</span>
@@ -162,7 +162,7 @@ export function ProfitPanel({
           />
         </div>
       ) : (
-        <div className="clay p-5">
+        <div className="r-inset p-5">
           <span className="text-xs font-semibold text-subtle">تفصيل التكاليف</span>
           <ul className="mt-3 flex flex-col gap-2">
             {Object.entries(result.costByLine)
@@ -185,7 +185,7 @@ export function ProfitPanel({
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="clay px-4 py-3">
+    <div className="r-inset px-4 py-3">
       <div className="text-xs text-muted">{label}</div>
       <div className="mt-1 text-base font-semibold text-fg">
         <Money>{value}</Money>

@@ -103,11 +103,11 @@ export function Segmented<T extends string>({
       /* The GROUP wraps, the labels do not: a squeezed row breaks between options
          instead of snapping a two-word state in half. */
       className={cn(
-        "neu-inset relative inline-flex flex-wrap gap-1 rounded-full bg-sunken p-1",
+        "relative inline-flex flex-wrap gap-1 rounded-[var(--radius-md)] border border-line bg-surface-2 p-1",
         className,
       )}
     >
-      <span ref={pillRef} aria-hidden className="seg-pill molded molded-accent" />
+      <span ref={pillRef} aria-hidden className="seg-pill bg-accent-fill" />
       {options.map((opt) => {
         const active = opt.value === value;
         return (
@@ -119,8 +119,8 @@ export function Segmented<T extends string>({
             className={cn(
               /* nowrap: a squeezed group used to break «في الطريق» in half INSIDE
                  its own pill. Labels ride above the pill on their own layer. */
-              "relative z-[1] inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-[var(--motion-base)] ease-[var(--ease-out)]",
-              active ? "font-semibold text-accent-fg" : "text-muted hover:text-fg",
+              "relative z-[1] inline-flex items-center gap-1.5 whitespace-nowrap rounded-[var(--radius-sm)] px-4 py-1.5 text-sm font-medium transition-colors duration-[var(--motion-base)] ease-[var(--ease-out)]",
+              active ? "font-semibold text-accent-fill-fg" : "text-muted hover:text-fg",
             )}
           >
             {opt.icon}

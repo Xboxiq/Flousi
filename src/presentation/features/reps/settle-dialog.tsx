@@ -173,7 +173,6 @@ export function SettleDialog({ pinned, onClose, locale, periodId }: Props) {
             type="number"
             min={0}
             step={step === 1 ? "0.01" : "1"}
-            className="clay-inset"
             value={amountText === null ? defaultAmount || "" : amountText}
             onChange={(e) => setAmountText(e.target.value)}
           />
@@ -208,7 +207,7 @@ export function SettleDialog({ pinned, onClose, locale, periodId }: Props) {
 
       {/* The receipt: every printed line is a field of the record about to be
           written, and the remainder answers back as the amount is typed. */}
-      <dl className="clay-inset mt-4 flex flex-col gap-2 rounded-[var(--radius-md)] px-4 py-3 text-[13px]">
+      <dl className="r-inset mt-4 flex flex-col gap-2 rounded-[var(--radius-md)] px-4 py-3 text-[13px]">
         <div className="flex items-baseline justify-between gap-3">
           <dt className="text-muted">المستحق قبل الدفع</dt>
           <dd>

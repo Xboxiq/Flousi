@@ -79,7 +79,16 @@ export function PeriodsView() {
   const startFirstPeriod = async () => {
     const now = new Date();
     await openPeriod({
-      label: new Intl.DateTimeFormat("ar", { month: "long", year: "numeric" }).format(now),
+      /* «ar» alone resolves to the Egyptian month names — «أغسطس» — while every
+         date this app formats goes through `ar-IQ`, which uses the Levantine/Iraqi
+         ones — «آب». Both were on the screen at once: the period chip in the top bar
+         said «أغسطس 2026» and the rows underneath it said «27 آب». One locale, so a
+         merchant reads one calendar. */
+      label: new Intl.DateTimeFormat("ar-IQ", {
+        month: "long",
+        year: "numeric",
+        numberingSystem: "latn",
+      }).format(now),
       startDate: new Date(now.getFullYear(), now.getMonth(), 1).toISOString(),
       status: "open",
     });

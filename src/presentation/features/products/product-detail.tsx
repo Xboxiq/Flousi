@@ -293,7 +293,7 @@ export function ProductDetail({ id }: { id: string }) {
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
-                <h1 className="text-[22px] font-bold leading-tight tracking-tight text-fg">
+                <h1 className="text-[22px] font-semibold leading-tight text-fg">
                   {product.name}
                 </h1>
                 <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-subtle">
@@ -533,7 +533,7 @@ function CostTable({
         <tbody>
           {rows.map(({ line, component, amount }) => (
             <tr key={line}>
-              <td className="font-bold">{COST_LINE_LABELS[line]}</td>
+              <td className="font-medium">{COST_LINE_LABELS[line]}</td>
               <td className="pri-2 text-muted">{rule(component.fixed, component.percent)}</td>
               <td className="pri-3 text-subtle">{how(component.fixed, component.percent)}</td>
               <td className="n">{money(amount)}</td>

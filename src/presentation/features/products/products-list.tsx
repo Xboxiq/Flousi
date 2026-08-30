@@ -281,7 +281,7 @@ export function ProductsList() {
                       <Link
                         href={`/products/view?id=${product.id}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="rounded-[var(--radius-sm)] font-bold text-fg outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+                        className="rounded-[var(--radius-sm)] font-medium text-fg outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
                       >
                         {product.name}
                       </Link>

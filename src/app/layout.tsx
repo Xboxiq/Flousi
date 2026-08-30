@@ -1,30 +1,61 @@
 import type { Metadata, Viewport } from "next";
-import { Tajawal, Archivo } from "next/font/google";
+import { Noto_Kufi_Arabic, IBM_Plex_Sans_Arabic, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider, themeNoFlashScript } from "@/presentation/components/theme/theme-provider";
 
 /**
- * The identity's own pairing. Tajawal carries every Arabic word and the Latin that
- * sits inside an Arabic sentence; Archivo carries standalone Latin and, with
- * tabular figures, every number in the product.
+ * Three roles, two skeletons, one voice.
  *
- * Archivo replaces IBM Plex Mono for figures deliberately: a monospace face is not
- * what makes a column of money line up — `font-variant-numeric: tabular-nums` is,
- * and Archivo has it. Plex Mono also carries no Arabic at all, which cost this
- * project three separate bugs where a header fell back glyph by glyph.
+ * The pairing before this was Tajawal for everything and Archivo for figures, and the
+ * client's verdict on it was «خطوط مخزية». The measurement agreed: Tajawal is the face
+ * every Arabic template ships, it has almost no vertical drama, and at 10-11px — which
+ * this product uses for labels and captions — its counters close up. A screen set
+ * entirely in it has one texture, so nothing on it can be more important than anything
+ * else by voice alone.
  *
- * Tajawal and Archivo stand in for the commercial Tajawal Next and Neue Montreal
- * until those are licensed; swapping them is a change to this block alone.
+ * What replaced it is the oldest working pairing in Arabic typography, not an invention:
+ * KUFI for what is built and NASKH for what is read.
+ *
+ *   --font-display  Noto Kufi Arabic   titles, the wordmark, table heads, eyebrows.
+ *                   Geometric, flat-based, architectural — the same construction as the
+ *                   four-bar mark, which is why it belongs to THIS product rather than
+ *                   to any product. Weights 100-900, so the ladder is real and not
+ *                   synthesised. Reem Kufi was tried first and rejected on sight: it is
+ *                   a display Kufi and its joins come apart below ~16px, which is most
+ *                   of this app.
+ *
+ *   --font-sans     IBM Plex Sans Arabic   every word that is read rather than scanned.
+ *                   Drawn for interfaces: open counters that survive 11px, seven real
+ *                   weights, and a Latin companion cut from the same skeleton — so a
+ *                   Latin word inside an Arabic sentence no longer switches design
+ *                   mid-line, which it did on every screen with a product code in it.
+ *
+ *   --font-figure   IBM Plex Sans   standalone Latin and every number in the product.
+ *                   The same superfamily as the text face, so the whole product is one
+ *                   design plus one deliberate voice. It carries `tabular-nums`, which
+ *                   is what actually makes a column of money line up — a monospace face
+ *                   is not, and a Latin-only mono carries no Arabic at all, which cost
+ *                   this project three separate glyph-fallback bugs.
+ *
+ * Swapping any of the three is a change to this block and to the three tokens in
+ * globals.css, nowhere else.
  */
-const tajawal = Tajawal({
-  variable: "--font-tajawal",
-  subsets: ["arabic", "latin"],
-  weight: ["300", "400", "500", "700", "800", "900"],
+const kufi = Noto_Kufi_Arabic({
+  variable: "--font-kufi",
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const archivo = Archivo({
-  variable: "--font-archivo",
+const plexArabic = IBM_Plex_Sans_Arabic({
+  variable: "--font-plex-arabic",
+  subsets: ["arabic", "latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const plex = IBM_Plex_Sans({
+  variable: "--font-plex",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
@@ -78,7 +109,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${tajawal.variable} ${archivo.variable} h-full`}
+      className={`${kufi.variable} ${plexArabic.variable} ${plex.variable} h-full`}
       suppressHydrationWarning
     >
       <head>
