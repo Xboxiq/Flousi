@@ -268,7 +268,7 @@ export function DashboardView() {
 
           {/* Two states, never summed: what is spendable and what is still out.
               An app that reports one figure answers a question nobody asked. */}
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="r-steps grid items-start gap-3 sm:grid-cols-3">
             <StateTile label="عند التوصيل" value={money(cash.awaiting)} note="شُحنت ولم يوصلك مالها" trips={cash.withCourier.trips} locale={settings.locale} />
             <StateTile label="في الطريق" value={money(cash.inFlight.expected)} note="لم تخرج نتيجتها بعد" trips={cash.inFlight.trips} locale={settings.locale} />
             <StateTile label="راجعة أو ملغاة" value={money(Math.abs(cash.lost.netProfit))} note="أجرة توصيل خسرتها" trips={cash.lost.trips} locale={settings.locale} tone="danger" />

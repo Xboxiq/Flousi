@@ -100,18 +100,49 @@
      word. `--accent` therefore carries the darkened sand — because `text-accent` is
      used in 25 places and every one of them must stay legible — and `--accent-fill`
      carries the plate for the places that want the sand itself. */
-  --bg: #f2f1ee;              /* the board's own light ground */
+  /* ---------- THE PLATE AND THE RECESS ----------
+     Direction «الحفر»: the PAGE is a plate and a panel is CUT INTO it. Depth is
+     made by subtraction, not by lifting — so there is no drop shadow anywhere in
+     the product except the one reserved for a layer that genuinely floats above
+     the page (a dialog, a menu), and that exception is named at `--float`.
+
+     Exactly ONE step of recession, on purpose. A second step darker in light mode
+     puts `--subtle` at 4.26:1 on it, which fails AA — measured, not assumed. So a
+     well INSIDE a panel steps back UP to the plate's own tone instead of down,
+     which is also how a machined part reads: a ledge inside a groove. Every text
+     token in the product therefore lands on one of two grounds in each theme,
+     and both are already contrast-documented above. */
+  --bg: #f2f1ee;              /* the plate — the board's own light ground */
   --bg-tint: #f7f6f3;
-  --surface: #ffffff;
-  --surface-2: #e8e2da;       /* bone */
+  --recess: #e8e2da;          /* bone — a panel, cut into the plate */
+  --recess-2: #f2f1ee;        /* a well inside a panel: back up to the plate */
+  --surface: #ffffff;         /* only what FLOATS: dialog, menu, popover */
+  /* THE THIRD PLANE. It has to differ from the plate AND from the recess: it is
+     what a track, a badge, a chip and a hover are drawn on, and every one of
+     those sits INSIDE a panel. It was bone, which is now the panel itself — so
+     the pace track, the ranked bars and every badge went invisible in light mode
+     the moment the recess landed. Caught by eye on the first render.
+     Measured on this value: fg 12.86 · muted 6.96 · subtle 5.08 · accent 4.58. */
+  --surface-2: #d8d2c6;
   --sunken: #e8e2da;
+  /* The cut. A dark lip at the top and a light one at the bottom read as
+     "down into the surface"; reversing them would read as "up out of it". */
+  --cut:
+    inset 0 1px 2px rgba(11, 14, 17, 0.09),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.85);
+  --cut-deep:
+    inset 0 2px 4px rgba(11, 14, 17, 0.11),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.8);
+  /* The ONE shadow left in the product, and the only thing allowed to use it:
+     a layer that is genuinely above the page and must say so. */
+  --float: 0 18px 40px -14px rgba(11, 14, 17, 0.28), 0 2px 6px rgba(11, 14, 17, 0.12);
   --border: rgba(11, 14, 17, 0.10);
   --border-soft: rgba(11, 14, 17, 0.06);
   /* A SOLID rule, not a wash. The structural layer draws card edges, table
      rules and dividers with this: a translucent border over two different
      surfaces is two different greys, which is what made the boards' crispness
      impossible to reproduce with --border alone. */
-  --line: #d8d2c6;
+  --line: #cfc7b7;
   --line-control: #9c947f;    /* 3.02 on white — a control's own boundary */
   --line-strong: #b4ae9e;
 
@@ -123,9 +154,15 @@
   --series-4: #c3bfb4; --on-series-4: #0b0e11;
   --fg: #0b0e11;              /* 17.13 on bg · 15.04 on bone */
   --muted: #3a4047;           /* 9.28 on bg · 8.14 on bone */
-  --subtle: #5a6068;          /* 5.62 on bg · 4.93 on bone */
+  /* Re-derived, because there are three grounds in light mode now and the old
+     value measured 4.22 on the third — a fail. This one clears all three:
+     6.77 on the plate · 5.94 on the recess · 5.08 on the plane. */
+  --subtle: #4e545c;
 
-  --accent: #736440;          /* 5.13 on bg · 4.90 on its own wash */
+  /* Same re-derivation: #736440 measured 3.85 on the third plane. This clears
+     all three — 6.10 on the plate · 5.35 on the recess · 4.58 on the plane —
+     and `--accent-fill` is untouched, so the sand PLATE is the same sand it was. */
+  --accent: #665937;
   --accent-strong: #5c5033;
   --accent-fg: #ffffff;       /* 5.79 on the accent */
   --accent-soft: rgba(184, 168, 128, 0.22);
@@ -217,11 +254,24 @@
      six colours is used here unchanged. Sand needs no darkened twin on this
      ground — it measures 8.25:1 — so `--accent` and `--accent-fill` are the
      same value, and the light mode is the one that has to carry two. */
-  --bg: #0b0e11;              /* ink */
-  --bg-tint: #14181d;
-  --surface: #1a1f24;         /* coal */
+  /* The same inversion as the light block, and the reason it works here is that
+     the darkest tone becomes the RECESS rather than the page: ink is what a panel
+     is cut down to, coal is the plate it is cut into. `--subtle` measures 6.90 on
+     ink against 5.92 on coal, so the text in a panel got MORE contrast, not less. */
+  --bg: #1a1f24;              /* coal — the plate */
+  --bg-tint: #1e242a;
+  --recess: #0b0e11;          /* ink — a panel, cut into the plate */
+  --recess-2: #16191d;        /* a well inside a panel */
+  --surface: #22272e;         /* only what FLOATS, and it is lighter to say so */
   --surface-2: #2a2f36;       /* graphite */
   --sunken: #090c0e;
+  --cut:
+    inset 0 1px 2px rgba(0, 0, 0, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+  --cut-deep:
+    inset 0 2px 5px rgba(0, 0, 0, 0.7),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  --float: 0 20px 44px -14px rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.5);
   --border: rgba(242, 241, 238, 0.10);
   --border-soft: rgba(242, 241, 238, 0.06);
   /* On the dark ground the rule IS the third ground at 1px: no invented grey. */
@@ -334,6 +384,8 @@
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-sunken: var(--sunken);
+  --color-recess: var(--recess);
+  --color-recess-2: var(--recess-2);
   --color-border: var(--border);
   --color-border-soft: var(--border-soft);
   --color-fg: var(--fg);
