@@ -118,3 +118,27 @@ local-first Arabic finance app.
 **The rule stays the rule** (see the top of this file and `CLAUDE.md`): a vendored
 skill's advice is applied only when it is MEASURED or SEEN to help this app. Installing
 one is not adopting it.
+
+## Batch 4 — installed 2026-09-02 on the client's instruction
+
+    npx skills add https://github.com/Leonxlnx/taste-skill --skill "design-taste-frontend"
+
+| Skill | Source | What it is actually for here |
+|---|---|---|
+| `design-taste-frontend` | github.com/Leonxlnx/taste-skill | The FULL anti-slop frontend method, of which `ritm-anti-slop-gate` already carries a consolidated extract. Installed via the `skills` CLI, so `skills-lock.json` records the exact commit and `.claude/skills/` symlinks into `.agents/skills/` |
+
+**Read the scope line before applying it.** The skill says so itself, in its own
+opening: *"Landing pages, portfolios, and redesigns. Not dashboards, not data
+tables, not multi-step product UI."* RITM is a dashboard, data tables and
+multi-step product UI. So its **brief-inference** section (§0) and its
+**anti-templated** discipline apply here; its landing-page aesthetics do not
+transfer to `/orders` or `/ledger` without the same clause-by-clause
+reconciliation the other design skills got.
+
+`taste-skill` was already one of the sources consolidated into
+`ritm-anti-slop-gate` (see that skill's own header). What is new is the complete
+original beside the extract — useful as a reference, and a live conflict risk with
+`design-system/VISUAL-LAW.md` §14, §23 and §25, all three of which were settled by
+MEASUREMENT on this app. The standing rule holds: where a skill contradicts a law
+this project arrived at by measuring, the conflict is written into VISUAL-LAW
+clause by clause, never resolved silently in either direction.
