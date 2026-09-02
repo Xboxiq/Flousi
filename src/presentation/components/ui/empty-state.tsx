@@ -25,11 +25,10 @@ export function EmptyState({ icon, title, description, action, className }: Empt
         className,
       )}
     >
-      {icon && (
-        <div className="stage mb-6 h-[92px] w-[150px]">
-          <div className="squircle size-[68px] text-muted">{icon}</div>
-        </div>
-      )}
+      {/* The icon, and nothing under it. It was a 3D squircle standing on a lit
+          stage floor — two objects drawn to hold one glyph, and the pastel icon
+          tile is a named anti-pattern in this project's own gate. */}
+      {icon && <div className="mb-5 text-subtle [&>svg]:size-11">{icon}</div>}
       <h3 className="text-base font-semibold text-fg">{title}</h3>
       {description && <p className="mt-1 max-w-sm text-sm text-muted">{description}</p>}
       {action && <div className="mt-5">{action}</div>}

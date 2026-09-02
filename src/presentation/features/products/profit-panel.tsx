@@ -5,9 +5,9 @@ import { TrendUp, TrendDown, Equals } from "@phosphor-icons/react";
 import { ProfitCalculator, type CostBreakdown, type CostLine } from "@/domain";
 import { Money } from "@/presentation/components/ui";
 import { PriceColumn } from "@/presentation/components/objects/price-column";
-import { Odometer } from "@/presentation/components/objects/odometer";
 import { formatCurrency, formatPercent } from "@/presentation/lib/format";
 import { cn } from "@/presentation/lib/cn";
+import { LivingNumber } from "@/presentation/components/interactive/living-number";
 import { COST_LINE_LABELS } from "@/presentation/lib/labels";
 
 interface Props {
@@ -68,25 +68,18 @@ export function ProfitPanel({
               polarity === "even" && "bg-surface-2 text-muted",
             )}
           >
-            {/* the lamp only glows when it has something to report (§12) */}
+            {/* Second channel only: the WORD beside it already says which way the
+                money went, and this agrees with it. It was a lamp with a coloured
+                glow halo — an emitted light, which is the one thing a flat plate
+                cannot have. */}
             <span
               aria-hidden
-              data-part="lamp"
-              className="lamp size-[9px]"
-              style={
-                {
-                  "--lamp-color":
-                    polarity === "profit"
-                      ? "var(--success)"
-                      : polarity === "loss"
-                        ? "var(--danger)"
-                        : "var(--subtle)",
-                  "--lamp-glow":
-                    polarity === "even"
-                      ? "transparent"
-                      : `color-mix(in srgb, ${isLoss ? "var(--danger)" : "var(--success)"} 65%, transparent)`,
-                } as React.CSSProperties
-              }
+              className={cn(
+                "size-[7px] rounded-full",
+                polarity === "profit" && "bg-success",
+                polarity === "loss" && "bg-danger",
+                polarity === "even" && "bg-subtle",
+              )}
             />
             {POLARITY[polarity].word}
           </span>
@@ -94,7 +87,7 @@ export function ProfitPanel({
 
         {/* the drum bay: figures roll inside the housing, behind its glass */}
         <div
-          className="display-window mt-3 overflow-hidden px-4 py-3.5"
+          className="r-inset mt-3 overflow-hidden px-4 py-3.5"
           data-part="display"
           aria-live="polite"
           aria-atomic="true"
@@ -109,15 +102,18 @@ export function ProfitPanel({
               } 40%, transparent), transparent 70%)`,
             }}
           />
-          <Odometer
+          {/* It was an Odometer: ten digit glyphs rendered per drum for a rolling
+              illusion, so a seven-figure amount put seventy characters into the
+              DOM — which is also what blinded the density gate once. The figure is
+              the content; LivingNumber glides it to its new value and stops. */}
+          <LivingNumber
             value={result.netProfit}
             format={money}
-            drumHeight={1.32}
             className={cn(
               "relative text-[38px] font-semibold leading-none",
-              polarity === "profit" && "text-[#7ef0b0]",
-              polarity === "loss" && "text-[#ff9a93]",
-              polarity === "even" && "text-white/70",
+              polarity === "profit" && "text-success",
+              polarity === "loss" && "text-danger",
+              polarity === "even" && "text-muted",
             )}
           />
         </div>

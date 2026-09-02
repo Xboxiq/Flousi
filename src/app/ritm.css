@@ -493,6 +493,46 @@
   }
   .r-progress.is-thin { height: 3px }
 
+  /* THE COUNTED SHARE. A share you can count instead of estimate: discrete ticks,
+     filled up to the value, the rest left as empty slots — so the remainder is
+     structural by construction and needs no hatch, and «about two thirds» reads
+     without a label.
+
+     It was drawn as a row of small lit bodies: a gradient per tick, a rim light,
+     a contact shadow, and a ring on the tick the value lands on. Four lighting
+     effects on a 7px object. What the reader needs is which ticks are on, which
+     is one colour and one ground. */
+  .r-comb {
+    display: flex;
+    align-items: stretch;
+    gap: 3px;
+  }
+  .r-comb > span {
+    flex: 1 1 0;
+    max-width: 7px;
+    border-radius: 2px;
+    background: var(--surface-2);
+  }
+  .r-comb > span[data-on="true"] { background: var(--comb-color, var(--accent-fill)) }
+  /* The tick the value LANDS on is the reading, so it is the one that is named —
+     by a full-height cap rather than by a glow. */
+  .r-comb > span[data-edge="true"] { border-radius: 1px }
+
+  /* THE PROPORTIONAL BAND. One cost line's share of the price, as its height.
+     It was a milled metal plate — a vertical gradient, a bevelled top face and a
+     cast edge — which made four bands read as four objects instead of one column
+     divided four ways. Flat bands in the series colours read as the division. */
+  .r-band {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--series-2);
+  }
+  .r-band.is-profit { background: var(--series-1) }
+  .r-band.is-overrun { background: var(--danger) }
+
   /* a claim at rest, its reasoning one tap away */
   .r-disclose > summary {
     display: flex;

@@ -161,9 +161,9 @@ function Slab({
     <div className="relative w-full" style={{ height }} title={`${label}: ${value}`}>
       <div
         className={cn(
-          "slab relative h-full w-full overflow-hidden",
-          tone === "profit" && "slab-profit",
-          tone === "overrun" && "slab-overrun",
+          "r-band",
+          tone === "profit" && "is-profit",
+          tone === "overrun" && "is-overrun",
           capped ? "rounded-t-[11px] rounded-b-[2px]" : "rounded-[2px]",
           depth === 0 && "rounded-b-[11px]",
         )}

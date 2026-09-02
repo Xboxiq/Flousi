@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight, Calculator, UsersThree, FolderOpen } from "@phosphor-icons/react";
 import { LogoMark, LogoWord } from "@/presentation/components/layout/logo";
 import { Delta } from "@/presentation/components/ui";
-import { Odometer } from "@/presentation/components/objects/odometer";
 import { RingGauge } from "@/presentation/components/objects/ring-gauge";
 import { PriceColumn } from "@/presentation/components/objects/price-column";
 import { Sparkbars } from "@/presentation/components/structure";
@@ -19,12 +18,13 @@ import {
 } from "@/presentation/lib/format";
 import { easeOut as ease } from "@/presentation/lib/motion";
 import { cn } from "@/presentation/lib/cn";
+import { Money } from "@/presentation/components/ui";
 
 /**
  * The landing page is the app, standing still.
  *
  * Every figure and every object on this page comes from the same components the
- * product renders (`Odometer`, `RingGauge`, `Sparkbars`, `PriceColumn`,
+ * product renders (`RingGauge`, `Sparkbars`, `PriceColumn`,
  * `DistributionBar`) fed a fixed sample month. Nothing here is
  * drawn for the page: there is no hand-rolled SVG sparkline, no gradient bar
  * chart, no mock screenshot. A visitor looking at the hero is looking at the
@@ -225,7 +225,7 @@ export function LandingPage() {
             <div className="grid items-end gap-6 lg:grid-cols-[1fr_22rem]">
               <div>
                 <span className="inline-flex items-center gap-2.5 text-sm font-semibold text-accent">
-                  <span className="squircle size-9 text-accent">
+                  <span className="text-accent">
                     <UsersThree size={19} weight="bold" />
                   </span>
                   الفريق
@@ -330,28 +330,40 @@ export function LandingPage() {
 
       {/* ───────────────────────── Close ───────────────────────── */}
       <section id="start" className="mx-auto max-w-[1240px] px-5 py-24 md:px-8">
-        <motion.div
-          {...reveal}
-          /* A solid graphite slab with a real rim, not a mesh-gradient panel: the
-             page's one dark surface earns its depth from the mould, not from a
-             multi-stop wash (`anti-slop-ui` #1, VISUAL-LAW §14). */
-          className="molded-graphite relative overflow-hidden rounded-[var(--radius-xl)] px-8 py-20 text-center text-white md:py-24"
-        >
-          <div className="mx-auto max-w-2xl">
+        {/* The page's one dark plate. It used to be a moulded graphite slab with a
+            rim and a cast shadow; it is now a flat ground, because nothing in this
+            product lifts.
+
+            `bg-ink`, NOT `bg-fg`. --ink and --paper are theme-INVARIANT (#14151a and
+            #ffffff in both blocks) while --fg inverts, so `bg-fg` painted a
+            near-WHITE plate in dark mode and the white heading on it measured
+            1.13:1. This band is the page's one deliberately inverted surface, so it
+            needs the two tokens that do not follow the theme.
+
+            THE REVEAL IS ON THE INNER DIV, NOT ON THE PLATE, and that is a
+            correctness fix rather than a preference: the heading here is white, so
+            its contrast depends entirely on this background being painted. With the
+            motion on the plate, the plate starts at `opacity: 0` — and any moment
+            the reveal has not fired yet (off-screen, an interrupted load, a
+            viewport resized under it) is a moment of white text on the near-white
+            page. The contrast sweep measured it at 1.13:1. Animating the child
+            keeps the ground opaque from the first frame. */}
+        <div className="relative overflow-hidden rounded-[var(--radius-xl)] bg-ink px-8 py-20 text-center text-paper md:py-24">
+          <motion.div {...reveal} className="mx-auto max-w-2xl">
             <h2 className="font-display text-[clamp(2.1rem,4.4vw,3.2rem)] font-semibold leading-[1.16] tracking-[-0.02em]">
               ابدأ بأرقامك الحقيقية.
             </h2>
-            <p className="mt-5 text-lg text-white/75">
+            <p className="mt-5 text-lg text-paper/75">
               مجاني، ويعمل داخل متصفّحك. لا حساب، ولا خادم، ولا بيانات تغادر جهازك.
             </p>
             <Link
               href="/dashboard"
-              className="mt-9 inline-flex h-12 items-center gap-2 rounded-[var(--radius-md)] bg-white px-8 text-base font-medium text-ink transition-colors hover:bg-white/90"
+              className="mt-9 inline-flex h-12 items-center gap-2 rounded-[var(--radius-md)] bg-paper px-8 text-base font-medium text-ink transition-colors hover:bg-paper/90"
             >
               افتح رِتم <ArrowRight size={18} weight="bold" className="rtl:rotate-180" />
             </Link>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </section>
 
       <footer className="border-t border-border-soft">
@@ -391,17 +403,12 @@ function DashboardReading() {
       <p className="px-1 text-xs font-semibold text-muted">
         لوحة رِتم · شهر نموذجي
       </p>
-      <div className="halftone mt-3 flex flex-col gap-6 rounded-[var(--radius-2xl)] p-5">
+      <div className="r-inset mt-3 flex flex-col gap-6 p-5">
         <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-4">
           <div className="min-w-0">
             <span className="text-sm font-semibold text-fg/70">صافي الربح · هذا الشهر</span>
             <div className="mt-2 text-fg">
-              <Odometer
-                value={SAMPLE.netProfit}
-                format={money}
-                drumHeight={1.3}
-                className="text-[28px] font-semibold leading-none sm:text-[40px]"
-              />
+              <Money className="text-[28px] font-semibold leading-none sm:text-[40px]">{money(SAMPLE.netProfit)}</Money>
             </div>
             <span className="mt-3 flex items-center gap-2">
               <Delta value={SAMPLE.delta} label={formatSignedPercent(SAMPLE.delta)} />
@@ -469,7 +476,7 @@ function NarrativeRow({
     >
       <div className={cn(flip && "lg:order-2")}>
         <span className="inline-flex items-center gap-2.5 text-sm font-semibold text-accent">
-          <span className="squircle size-9 text-accent">{icon}</span>
+          <span className="text-accent">{icon}</span>
           {eyebrow}
         </span>
         <h3 className="mt-4 font-display text-[clamp(1.5rem,2.5vw,2.1rem)] font-semibold leading-[1.22] tracking-[-0.015em]">
