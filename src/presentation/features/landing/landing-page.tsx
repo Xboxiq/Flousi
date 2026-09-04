@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, Calculator, UsersThree, FolderOpen } from "@phosphor-icons/react";
 import { LogoMark, LogoWord } from "@/presentation/components/layout/logo";
 import { Delta } from "@/presentation/components/ui";
@@ -55,8 +58,36 @@ const SAMPLE = {
   ],
 };
 
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
+
 export function LandingPage() {
   const reduce = useReducedMotion();
+  const stepsRef = useRef<HTMLOListElement>(null);
+  const railFillRef = useRef<HTMLDivElement>(null);
+
+  // The one place GSAP earns its keep on this page: a rail that fills WITH
+  // scroll position, not on a boolean enter/exit like every `whileInView`
+  // reveal above. motion/react's viewport prop only knows in-view/not —
+  // it cannot express "40% through these three steps", which is what a
+  // scrubbed progress rail needs. Skipped entirely under reduced motion.
+  useEffect(() => {
+    if (reduce || !stepsRef.current || !railFillRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.set(railFillRef.current, { height: 0 });
+      gsap.to(railFillRef.current, {
+        height: "100%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: stepsRef.current,
+          start: "top 75%",
+          end: "bottom 55%",
+          scrub: true,
+        },
+      });
+    }, stepsRef);
+    return () => ctx.revert();
+  }, [reduce]);
+
   const rise = (delay = 0) =>
     reduce
       ? {}
@@ -293,7 +324,19 @@ export function LandingPage() {
             >
               ثلاث خطوات، ثم يعمل وحده.
             </motion.h2>
-            <ol className="flex flex-col">
+            <ol ref={stepsRef} className="relative flex flex-col">
+              {/* Track + scrubbed fill, in the gutter between the step number and its
+                  text (the 4rem number column plus half the gap-x-6). Hidden below
+                  `sm` where the grid collapses to one column and the gutter closes. */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-y-0 start-[76px] hidden w-px bg-border-soft sm:block"
+              />
+              <div
+                ref={railFillRef}
+                aria-hidden
+                className="pointer-events-none absolute top-0 start-[76px] hidden w-px bg-accent sm:block"
+              />
               {[
                 {
                   t: "أضف منتجك",
