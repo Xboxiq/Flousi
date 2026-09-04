@@ -2,10 +2,9 @@
 
 import { RingGauge } from "@/presentation/components/objects/ring-gauge";
 import { TickMeter } from "@/presentation/components/objects/tick-meter";
-import { Odometer } from "@/presentation/components/objects/odometer";
 import { DistributionBar } from "@/presentation/components/objects/distribution-bar";
 import { PriceColumn } from "@/presentation/components/objects/price-column";
-import { Delta } from "@/presentation/components/ui";
+import { Delta, Money } from "@/presentation/components/ui";
 import { Sparkline } from "@/presentation/components/objects/sparkline";
 import { MagnitudeRings } from "@/presentation/components/objects/magnitude-rings";
 import { SlideToCommit } from "@/presentation/components/interactive/slide-to-commit";
@@ -46,16 +45,11 @@ export function InstrumentsStudy() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Bay
-          name="العدّاد · Odometer"
+          name="الرقم الحيّ · LivingNumber"
           measures="مبلغ يتغيّر: الرقم نفسه في حالة حركة"
           law="§8 التفصيل يحمل معلومة · الأسطوانة اليمنى تسبق والبقية تتبعها بإيقاع"
         >
-          <Odometer
-            value={1492359}
-            format={money}
-            drumHeight={1.25}
-            className="text-[34px] font-semibold leading-none text-fg"
-          />
+          <Money className="text-[34px] font-semibold leading-none text-fg">{money(1492359)}</Money>
         </Bay>
 
         <Bay

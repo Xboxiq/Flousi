@@ -147,16 +147,7 @@ export function SplitPreview({
       {/* state-bound, and named in words: nothing here glows without a reason */}
       {split.lossApplied && (
         <p className="mt-3 flex items-start gap-2 text-[12px] text-muted">
-          <span
-            aria-hidden
-            className="lamp mt-[5px] size-[8px] shrink-0"
-            style={
-              {
-                "--lamp-color": "var(--danger)",
-                "--lamp-glow": "color-mix(in srgb, var(--danger) 60%, transparent)",
-              } as React.CSSProperties
-            }
-          />
+          <span aria-hidden className="mt-[5px] size-[7px] shrink-0 rounded-full bg-danger" />
           الأساس سالب، فحصة المندوب صفر حسب سياسة الخسارة، والخسارة كلها عليك.
         </p>
       )}

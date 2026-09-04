@@ -45,7 +45,7 @@ export function TickMeter({
 
   return (
     <div
-      className={cn("comb", className)}
+      className={cn("r-comb", className)}
       style={{ height, ["--comb-color" as string]: TONE[tone] }}
       role="img"
       aria-label={label}
@@ -53,7 +53,6 @@ export function TickMeter({
       {Array.from({ length: ticks }, (_, i) => (
         <span
           key={i}
-          className="comb-tick"
           data-on={i < filled ? "true" : undefined}
           data-edge={i === filled - 1 ? "true" : undefined}
         />

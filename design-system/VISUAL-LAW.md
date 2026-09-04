@@ -624,3 +624,109 @@ unfinished migration.** Every one of these survived because it was defensible in
 the file it lived in and only wrong next to the file beside it. That is exactly the
 class of defect a typechecker, a linter and a test suite cannot see, and the reason
 this project renders every surface and looks at it.
+
+---
+
+## §25 · العمق المصنوع / MADE DEPTH
+
+The client's answer, when asked how far to flatten:
+
+> «ليس مسطحة بحد كبير بقدر ما تكون ابداعية وكرييتف اكثر ومميز وتضم افكار من رفرنس
+> واشكال وترتيبات ذات قيمة تصميمة احترافية تفوق قواعد ui ux»
+
+This is not a preference. It is the correct diagnosis, and it corrects §14 and §22
+where they implied the fix for skeuomorphism is flat design.
+
+**The cure for cheap 3D is not flatness. Flatness is cowardice.** A screen with
+nothing in it is not restrained, it is empty, and it reads as a template because a
+template is exactly what has no ideas in it.
+
+The distinction that does the work:
+
+| SIMULATED depth | MADE depth |
+|---|---|
+| light reflecting off glass | a panel one step down from the plate |
+| a shadow cast on a floor | a row that steps by the mark's own pitch |
+| metal catching an overhead lamp | a figure large enough that nothing competes |
+| a glow emitted by an arc | an arc solid against a hatched track |
+
+Simulated depth answers "what material is this pretending to be". Made depth
+answers "what is more important than what". Only the second is design.
+
+### 25.1 · One mechanism, and it is subtraction
+
+`--cut`: a dark lip at the top of an element and a light one at the bottom. The
+eye reads that pair as *down into the surface*; reverse the two and the identical
+element reads as *up out of it*. That is the entire mechanism and it is one
+declaration.
+
+The page is a PLATE. A panel is CUT INTO it. Nothing in the product lifts.
+
+`--float` is the one shadow that survives, and only a dialog may use it, because a
+dialog is genuinely above the page and hiding that makes it read as glued on.
+
+### 25.2 · Thirteen simulations is thirteen answers to a one-answer question
+
+`materials.css` was 1,319 lines holding thirteen families, each simulating a
+different material. Six of them were already dead code that nothing called.
+
+**That is the tell.** A design language nobody's screen runs was never a language;
+it was a collection of one-off effects that each looked defensible in the file it
+lived in and only wrong next to the file beside it. 1,319 → 479 lines.
+
+### 25.3 · Texture that encodes is not decoration
+
+The hatches survived the purge and they had to. A diagonal hatch means AN UNFILLED
+REMAINDER and a dot screen means A READING THAT HAS BEEN QUIETED, app-wide (§11).
+A colour-blind reader and a printed page both still read the distribution bar
+because of them.
+
+The test is not "is it flat" but **"does removing it lose information"**. Remove
+the glass caustic: nothing is lost. Remove the hatch: the remainder becomes
+indistinguishable from a series.
+
+### 25.4 · An object earns its keep by carrying a quantity
+
+`Odometer` was deleted and `RingGauge` was kept, and the rule is the same for both.
+
+The odometer's ONLY content was the rolling illusion — flat, it is just a number,
+and `Metric` is a better number. It also rendered ten digit glyphs per drum, so a
+seven-figure amount put seventy characters into the DOM, which is what blinded the
+density gate in an earlier phase.
+
+The ring gauge carries a real proportion, so it stayed — but its drop-shadow halo
+came off. **An arc cannot glow.** That halo was found by eye on a styleguide
+render, not by any sweep, because no sweep measures emitted light.
+
+### 25.5 · The light ground stops being an extension
+
+Open for two phases: the identity board prints no light ground, so `#f2f1ee` was a
+derivation nobody had approved.
+
+It answers itself here. **Bone is the PANEL and `#f2f1ee` is the page.** The
+board's own value is now the ground it was drawn as, and bone has a job instead of
+a justification.
+
+### 25.6 · A token change is a contrast change
+
+Making bone the panel made `--surface-2` equal the panel, so every track, bar and
+badge inside a panel went invisible in light mode — caught by eye on the first
+render.
+
+Fixing it as one plane per token forced re-deriving two inks that now sit on THREE
+grounds instead of two. Measured: `--subtle` was 4.22 on the new plane (a fail) and
+`--accent` 3.85. Both moved until all three grounds cleared AA.
+
+**The general form: a ground is never changed alone.** Every ink that lands on it
+is part of the same change, and the only way to know is to compute all of them.
+
+### 25.7 · A theme-relative token cannot paint an inverted surface
+
+The landing page's one dark band was set with `bg-fg`. In dark mode `--fg` is
+`#f2f1ee`, so the plate was near-WHITE under white text: **1.13:1**, caught by the
+contrast sweep.
+
+A surface that is deliberately inverted against BOTH themes needs the tokens that
+do not follow the theme — `--ink` and `--paper`. And the reveal animation must not
+sit on that surface either: a plate at `opacity: 0` is not a plate, and every
+moment before the reveal fires is a moment of white text on the page.

@@ -404,7 +404,7 @@ function OrderRowView({
             «بيدك» at a glance and never by colour alone (§13, gate P5/G3). */}
         <span
           className={cn(
-            "squircle size-9 shrink-0",
+            "grid size-9 shrink-0 place-items-center rounded-[var(--radius-sm)]",
             isVoid ? "text-danger" : state === "inHand" ? "text-accent" : "text-muted",
           )}
           aria-hidden

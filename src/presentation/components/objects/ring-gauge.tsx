@@ -95,9 +95,6 @@ export function RingGauge({
               strokeWidth={stroke}
               strokeLinecap="round"
               strokeDasharray={`${c * pct} ${c}`}
-              style={{
-                filter: `drop-shadow(0 2px 5px color-mix(in srgb, ${color} 45%, transparent))`,
-              }}
             />
           )}
         </g>

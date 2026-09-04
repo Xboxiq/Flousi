@@ -25,7 +25,7 @@ export function RouteGuard({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="mx-auto flex max-w-[34rem] flex-col items-center gap-5 py-16 text-center">
-      <span className="squircle size-14 text-muted" aria-hidden>
+      <span className="text-subtle [&>svg]:size-11" aria-hidden>
         <Lock size={24} weight="bold" />
       </span>
       <div>

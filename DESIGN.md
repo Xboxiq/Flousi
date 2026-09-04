@@ -54,7 +54,41 @@ and Arabic that says what it means.
 
 ---
 
-## 3 · Colour
+## 3 · Depth
+
+**The page is a plate and a panel is cut into it.** Depth is made by subtraction:
+`--cut` puts a dark lip at the top of an element and a light one at the bottom, and
+the eye reads that pair as down into the surface. Reverse them and the identical
+element reads as up out of it.
+
+Nothing in the product lifts. `--float` is the one shadow that exists and only a
+dialog uses it, because a dialog is genuinely above the page.
+
+```
+--bg        the plate      #f2f1ee light · #1a1f24 dark
+--recess    a panel        #e8e2da light · #0b0e11 dark
+--recess-2  a well in one  #f2f1ee light · #16191d dark
+--surface   what FLOATS    #ffffff light · #22272e dark
+```
+
+Exactly one step of recession, and that is measured rather than chosen: a second
+step darker in light mode puts `--subtle` at 4.26:1, which fails AA. So a well
+inside a panel steps back UP to the plate's tone — which is also how a machined
+part reads, a ledge inside a groove.
+
+One rhythm rule rides on top. Where a row of tiles carries three DIFFERENT fates
+for the same money, each starts a step lower by the mark's own pitch (`.r-steps`).
+That is the identity used as a layout rule, which is the only decoration this
+project allows: one that says something true. It collapses on a phone, where the
+tiles stack and a step would read as broken spacing.
+
+This direction was chosen by drawing three of them on the real dashboard with the
+real content and looking. See `design-system/VISUAL-LAW.md` §25 for the two that
+were rejected and why one of them failed on measurement rather than taste.
+
+---
+
+## 4 · Colour
 
 The palette is the client's own identity board, measured off the original
 artwork. Six values are printed by the board and used unchanged:
@@ -109,7 +143,7 @@ impossible to reproduce.
 
 ---
 
-## 4 · Type
+## 5 · Type
 
 Three roles, two skeletons, one voice. The pairing is the oldest working one in
 Arabic typography and not an invention: **Kufi for what is built, Naskh for what
@@ -211,7 +245,7 @@ taller x-height and joins across the baseline.
 
 ---
 
-## 5 · The rhythm grid
+## 6 · The rhythm grid
 
 Read off the mark, which is four bars of ONE width at ONE pitch whose feet step
 down by exactly that pitch, with one bar deliberately short.
@@ -242,7 +276,7 @@ capsule IS a capsule and anything larger is a panel.
 
 ---
 
-## 6 · The page template
+## 7 · The page template
 
 Every working screen is the same three bands:
 
@@ -277,7 +311,7 @@ is lying about its importance.
 
 ---
 
-## 7 · Components
+## 8 · Components
 
 `src/presentation/components/structure/` — the pieces every screen is assembled
 from, in one module. They live together because `.toolbar` was once used on five
@@ -326,7 +360,7 @@ away from the shape to find out what it is.
 
 ---
 
-## 8 · States
+## 9 · States
 
 Every screen carries loading, empty and permission-denied. Two rules learned the
 hard way:
@@ -341,7 +375,7 @@ standing where a chart will be.
 
 ---
 
-## 9 · RTL
+## 10 · RTL
 
 RTL is the architecture. Every inline axis is a logical property —
 `padding-inline`, `inset-inline`, `border-inline`, `text-align: start/end`. There
@@ -362,7 +396,7 @@ when it is not (a calendar, a package).
 
 ---
 
-## 10 · Responsive
+## 11 · Responsive
 
 Not a shrunken desktop. Below the tablet threshold the twelve columns become
 four, and the four legal spans survive: 3, 6, 9, 12 of twelve become 1, 2, 3, 4
@@ -387,7 +421,7 @@ What is shed is not lost: every row opens its own record.
 
 ---
 
-## 11 · Motion
+## 12 · Motion
 
 The beat is 120ms. Exit is ⅔ of enter. Only opacity and translate ever move, and
 the one translate distance is 2px.
@@ -404,7 +438,7 @@ nothing) and a theme switch.
 
 ---
 
-## 12 · Accessibility
+## 13 · Accessibility
 
 Target is WCAG AA, **measured, never asserted**.
 
@@ -430,7 +464,7 @@ people tap so it carries a hit box rather than a line height.
 
 ---
 
-## 13 · The gates
+## 14 · The gates
 
 Nothing about this system is a rule unless a script enforces it.
 
@@ -484,7 +518,7 @@ gate is investigated before the screen is changed:
 
 ---
 
-## 14 · Anti-patterns, banned
+## 15 · Anti-patterns, banned
 
 Not preferences. Each of these has been removed from this codebase at least once.
 
@@ -507,7 +541,7 @@ Not preferences. Each of these has been removed from this codebase at least once
 
 ---
 
-## 15 · Conventions
+## 16 · Conventions
 
 * Money is **integer minor units** in `src/domain`, major units in `application/`
   and above. Never mixed, and the scale is documented at every field.

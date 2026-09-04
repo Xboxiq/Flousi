@@ -263,7 +263,7 @@ function MovementRow({ movement, locale }: { movement: Movement; locale: string 
           before any word is read (§1, §5). */}
       <span
         className={cn(
-          "squircle size-9 shrink-0",
+          "grid size-9 shrink-0 place-items-center rounded-[var(--radius-sm)]",
           // Neutral ink: an arrow's DIRECTION already says in or out, and a wall of
           // 216 green keys would be colour spent on a fact (§13). Colour is kept
           // for the exception, which is the losing sale below.

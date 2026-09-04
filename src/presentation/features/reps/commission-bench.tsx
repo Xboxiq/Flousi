@@ -642,16 +642,7 @@ export function CommissionBench() {
                 {/* lit only while the rep can actually be debited (§8 §12) */}
                 {draft.lossPolicy === "shared" && (
                   <span className="inline-flex items-center gap-1.5 text-[11px] text-muted">
-                    <span
-                      aria-hidden
-                      className="lamp size-[8px]"
-                      style={
-                        {
-                          "--lamp-color": "var(--danger)",
-                          "--lamp-glow": "color-mix(in srgb, var(--danger) 60%, transparent)",
-                        } as React.CSSProperties
-                      }
-                    />
+                    <span aria-hidden className="size-[7px] rounded-full bg-danger" />
                     يُخصم من رصيد المندوب
                   </span>
                 )}

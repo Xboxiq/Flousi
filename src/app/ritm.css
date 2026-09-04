@@ -49,15 +49,34 @@
   .span-12 { grid-column: 1 / -1 }
 
   /* ── 2 · SURFACES ────────────────────────────────────────────────────────
-     A surface declares its height ONCE: with a lighter ground on dark, with a
-     shadow on light. A hairline border AND a shadow on the same element is the
-     ghost card, and it does not ship. */
+     THE PAGE IS A PLATE AND A PANEL IS CUT INTO IT.
+
+     Depth is made by SUBTRACTION. A panel has no border and no drop shadow: it
+     has a ground one step down from the plate and a pair of inset lips — dark at
+     the top, light at the bottom — which the eye reads as "down into the
+     surface". Reverse the lips and the same element reads as "up out of it";
+     that is the whole mechanism, and it is one declaration.
+
+     Chosen by looking. Three directions were drawn on the real dashboard with
+     the real content and only the depth mechanism swapped, then rendered and
+     compared: this one (الحفر), depth from layout offset alone (الطبقات
+     المنزاحة), and a single sand bearing edge whose length carried meaning
+     (الحافّة الحاملة). The third failed measurably rather than by taste — its
+     edge CLIPPED the rep names in the ranked list, and repeated on every panel,
+     row and tile it became wallpaper. The second contributed one idea, kept
+     below at `.r-steps`.
+
+     The rule this replaces said a surface declares its height "with a lighter
+     ground on dark, with a shadow on light". It is gone in both halves: nothing
+     in the product lifts, and the only shadow left is `--float`, reserved for a
+     layer that is genuinely above the page. */
   .r-card {
     display: flex;
     flex-direction: column;
-    background: var(--surface);
-    border: 1px solid var(--line);
+    background: var(--recess);
+    border: none;
     border-radius: var(--radius-md);
+    box-shadow: var(--cut);
     min-width: 0;
   }
   .r-card > header,
@@ -88,12 +107,16 @@
   }
   /* the one card on a screen that is asking for a decision */
   .r-card.is-accent {
-    background: var(--accent-soft);
-    border-color: color-mix(in srgb, var(--accent-fill) 44%, transparent);
+    background: color-mix(in srgb, var(--recess) 88%, var(--accent-fill));
+    box-shadow: var(--cut), inset 0 0 0 1px color-mix(in srgb, var(--accent-fill) 26%, transparent);
   }
+  /* A well inside a panel. It steps back UP to the plate's own tone rather than
+     further down, because a second step down puts `--subtle` at 4.26:1 in light
+     mode — measured. A ledge inside a groove is also how a machined part reads. */
   .r-inset {
-    background: var(--sunken);
+    background: var(--recess-2);
     border-radius: var(--radius-sm);
+    box-shadow: var(--cut);
   }
 
   /* A raised body inside a screen: the split preview, the profit object, the
@@ -104,9 +127,30 @@
      terms: a surface, a hairline, a radius from the ramp. */
   .r-slab {
     position: relative;
-    border: 1px solid var(--line);
+    border: none;
     border-radius: var(--radius-lg);
-    background: var(--surface);
+    background: var(--recess);
+    box-shadow: var(--cut);
+  }
+
+  /* Grafted from the second direction that was drawn and compared: where a row of
+     tiles carries three DIFFERENT states rather than three of the same thing,
+     each one starts a step lower, by the mark's own pitch.
+
+     The mark is four bars of one width at one pitch whose feet step down by
+     exactly that pitch, with one bar deliberately short. A row that steps is
+     therefore the identity used as a LAYOUT rule, which is the only kind of
+     decoration this project allows: one that says something true.
+
+     It is correct only when the tiles differ in KIND — «عند التوصيل» and «في
+     الطريق» and «راجعة» are three different fates for the same money. Three of
+     the same thing stepping is noise, and the step collapses on a phone where
+     the tiles stack and the rhythm would read as broken spacing instead. */
+  .r-steps > :nth-child(2) { margin-block-start: var(--grid-gutter) }
+  .r-steps > :nth-child(3) { margin-block-start: calc(var(--grid-gutter) * 2) }
+  @media (max-width: 639px) {
+    .r-steps > :nth-child(2),
+    .r-steps > :nth-child(3) { margin-block-start: 0 }
   }
 
   /* A plate the reader CHOOSES between: a scheme tile, a priced case, the tier
@@ -118,18 +162,19 @@
      inline start and a filled ground, in one colour and one shape. */
   .r-choice {
     position: relative;
-    border: 1px solid var(--line);
+    border: none;
     border-radius: var(--radius-md);
-    background: var(--surface);
+    background: var(--recess-2);
+    box-shadow: var(--cut);
     transition:
       background var(--motion-fast) var(--ease-out),
       border-color var(--motion-fast) var(--ease-out);
   }
-  .r-choice:hover { background: var(--surface-2) }
+  .r-choice:hover { background: color-mix(in srgb, var(--recess-2) 92%, var(--fg)) }
   .r-choice[aria-pressed="true"],
   .r-choice.is-on {
-    background: var(--accent-soft);
-    border-color: var(--accent-fill);
+    background: color-mix(in srgb, var(--recess-2) 82%, var(--accent-fill));
+    box-shadow: var(--cut), inset 0 0 0 1px color-mix(in srgb, var(--accent-fill) 40%, transparent);
   }
   .r-choice[aria-pressed="true"]::before,
   .r-choice.is-on::before {
@@ -272,7 +317,7 @@
   .r-tbl thead th {
     height: var(--h-row-sm);
     padding-inline: var(--s-3);
-    background: var(--surface-2);
+    background: var(--recess-2);
     text-align: start;
     white-space: nowrap;
     font-family: var(--font-display);
@@ -304,7 +349,7 @@
     height: var(--h-row);
     padding-inline: var(--s-3);
     font-weight: 700;
-    background: var(--surface-2);
+    background: var(--recess-2);
     border-top: 1px solid var(--line-strong);
   }
 
@@ -447,6 +492,46 @@
     border-radius: var(--radius-full);
   }
   .r-progress.is-thin { height: 3px }
+
+  /* THE COUNTED SHARE. A share you can count instead of estimate: discrete ticks,
+     filled up to the value, the rest left as empty slots — so the remainder is
+     structural by construction and needs no hatch, and «about two thirds» reads
+     without a label.
+
+     It was drawn as a row of small lit bodies: a gradient per tick, a rim light,
+     a contact shadow, and a ring on the tick the value lands on. Four lighting
+     effects on a 7px object. What the reader needs is which ticks are on, which
+     is one colour and one ground. */
+  .r-comb {
+    display: flex;
+    align-items: stretch;
+    gap: 3px;
+  }
+  .r-comb > span {
+    flex: 1 1 0;
+    max-width: 7px;
+    border-radius: 2px;
+    background: var(--surface-2);
+  }
+  .r-comb > span[data-on="true"] { background: var(--comb-color, var(--accent-fill)) }
+  /* The tick the value LANDS on is the reading, so it is the one that is named —
+     by a full-height cap rather than by a glow. */
+  .r-comb > span[data-edge="true"] { border-radius: 1px }
+
+  /* THE PROPORTIONAL BAND. One cost line's share of the price, as its height.
+     It was a milled metal plate — a vertical gradient, a bevelled top face and a
+     cast edge — which made four bands read as four objects instead of one column
+     divided four ways. Flat bands in the series colours read as the division. */
+  .r-band {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--series-2);
+  }
+  .r-band.is-profit { background: var(--series-1) }
+  .r-band.is-overrun { background: var(--danger) }
 
   /* a claim at rest, its reasoning one tap away */
   .r-disclose > summary {

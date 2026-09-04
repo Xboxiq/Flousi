@@ -68,3 +68,77 @@ and pre-flight folded into `ritm-anti-slop-gate`), `VoltAgent/awesome-design-md`
   streaming text, approval cards, diff tables). RITM has no AI surface, so almost
   nothing applies today. Recorded so the next reader does not re-derive that
   conclusion. If an AI feature ever lands, start there.
+
+## Batch 3 — installed 2026-09-01 on the client's instruction
+
+The client asked for two plugin bundles:
+
+    /plugin marketplace add anthropics/skills
+    claude plugins install mattpocock-skills
+
+Neither command runs in this remote session: `/plugin` is not available here, and
+plugin installation is a local-CLI operation. Both repositories ARE reachable, so
+they were vendored the way this repo has always vendored skills — copied under
+`.claude/skills/`, sourced in this table.
+
+### github.com/mattpocock/skills
+
+| Skill | What it is actually for here |
+|---|---|
+| `grill-me`, `grilling`, `grill-with-docs` | The interrogation method: turn an underspecified ask into a decided one by asking one question at a time. This is what the client reached for first, and it is the right tool for a request like «تناسب أكثر من غرض» |
+| `to-spec`, `to-tickets`, `to-questionnaire` | Vague ask → written spec → tickets. The missing front half of this project's gates method |
+| `domain-modeling` | The highest-value one for RITM: the product's whole worth is a framework-free domain where money is integer minor units. Widening it to more than one kind of business is a domain-modelling problem before it is a screen problem |
+| `codebase-design`, `improve-codebase-architecture` | Structure review above the file level |
+| `wayfinder`, `research`, `triage`, `wait-what` | Orientation in an unfamiliar area, and context mapping |
+| `diagnosing-bugs`, `tdd`, `implement`, `wizard` | Execution discipline. `tdd` sits beside `unlazy`'s gates rather than replacing them |
+| `handoff`, `teach`, `writing-for-agents` | Writing for the next session, which this project does constantly |
+
+**Deliberately skipped:** `ask-matt` and `setup-matt-pocock-skills` (installer/authorial,
+not applicable), `migrate-to-shoehorn`, `scaffold-exercises`, `git-guardrails-claude-code`,
+`setup-pre-commit` (tooling this repo does not use), everything under `deprecated/` and
+`in-progress/`, and `prototype` + `code-review` (already vendored from other sources —
+vendoring a second copy under the same name would shadow one of them).
+
+### github.com/anthropics/skills
+
+| Skill | What it is actually for here |
+|---|---|
+| `webapp-testing` | Browser-driven verification. This project already does exactly this by hand in `scripts/sweeps/`; the skill is the method written down |
+| `brand-guidelines` | Brand-system discipline, next to `design-system/VISUAL-LAW.md` |
+| `theme-factory` | Theming method. RITM is two hand-tuned token blocks, so this is a reference, not a generator |
+
+**Deliberately skipped:** `docx`, `pdf`, `pptx`, `xlsx`, `skill-creator`, `claude-api`
+and `frontend-design` are already available in these sessions (and `frontend-design` was
+vendored in batch 1) — a second copy is dead weight and a name collision. `canvas-design`
+is 5.6 MB of assets for a job this repo does not have. `academy-guide`,
+`slack-gif-creator`, `internal-comms`, `doc-coauthoring`, `discernment-nudge`,
+`mcp-builder`, `algorithmic-art`, `web-artifacts-builder` are out of scope for a
+local-first Arabic finance app.
+
+**The rule stays the rule** (see the top of this file and `CLAUDE.md`): a vendored
+skill's advice is applied only when it is MEASURED or SEEN to help this app. Installing
+one is not adopting it.
+
+## Batch 4 — installed 2026-09-02 on the client's instruction
+
+    npx skills add https://github.com/Leonxlnx/taste-skill --skill "design-taste-frontend"
+
+| Skill | Source | What it is actually for here |
+|---|---|---|
+| `design-taste-frontend` | github.com/Leonxlnx/taste-skill | The FULL anti-slop frontend method, of which `ritm-anti-slop-gate` already carries a consolidated extract. Installed via the `skills` CLI, so `skills-lock.json` records the exact commit and `.claude/skills/` symlinks into `.agents/skills/` |
+
+**Read the scope line before applying it.** The skill says so itself, in its own
+opening: *"Landing pages, portfolios, and redesigns. Not dashboards, not data
+tables, not multi-step product UI."* RITM is a dashboard, data tables and
+multi-step product UI. So its **brief-inference** section (§0) and its
+**anti-templated** discipline apply here; its landing-page aesthetics do not
+transfer to `/orders` or `/ledger` without the same clause-by-clause
+reconciliation the other design skills got.
+
+`taste-skill` was already one of the sources consolidated into
+`ritm-anti-slop-gate` (see that skill's own header). What is new is the complete
+original beside the extract — useful as a reference, and a live conflict risk with
+`design-system/VISUAL-LAW.md` §14, §23 and §25, all three of which were settled by
+MEASUREMENT on this app. The standing rule holds: where a skill contradicts a law
+this project arrived at by measuring, the conflict is written into VISUAL-LAW
+clause by clause, never resolved silently in either direction.

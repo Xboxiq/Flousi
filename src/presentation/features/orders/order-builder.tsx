@@ -317,7 +317,7 @@ export function OrderBuilder({ open, onClose }: { open: boolean; onClose: () => 
         {/* ── the trip ── */}
         <section className="r-slab flex flex-col gap-4 p-4">
           <div className="flex items-center gap-2.5">
-            <span className="squircle size-9 text-accent">
+            <span className="text-accent">
               <Truck size={17} weight="bold" />
             </span>
             <div>

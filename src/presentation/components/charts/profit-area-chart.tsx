@@ -53,7 +53,7 @@ function ThresholdChip({
         fill={met ? "var(--success)" : "var(--surface)"}
         stroke={met ? "var(--success)" : "var(--border)"}
         strokeWidth={1}
-        filter="drop-shadow(0 1px 2px rgba(18,26,38,0.22))"
+
       />
       <text
         x={x + w / 2}

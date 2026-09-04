@@ -101,7 +101,10 @@ export function Dialog({
               // band, the title and the footer stay put: the commit control is the
               // whole point of a dialog, so it can never be the part that is cut off.
               "relative z-10 flex max-h-[calc(100dvh-2rem)] w-full max-w-lg flex-col",
-              "rounded-[var(--radius-lg)] border border-border bg-surface shadow-xl",
+              /* The ONE thing in the product allowed a shadow. A dialog is genuinely above
+                 the page, and `--float` is the single token that says so — everything
+                 else is cut into the plate. See the surfaces note in ritm.css. */
+              "rounded-[var(--radius-lg)] border border-border bg-surface shadow-[var(--float)]",
               className,
             )}
             initial={reduce ? false : { opacity: 0, scale: 0.96, y: 8 }}
@@ -110,7 +113,7 @@ export function Dialog({
             transition={{ duration: 0.2, ease: [0.33, 1, 0.68, 1] }}
           >
             {art && (
-              <div className="scene-field relative flex shrink-0 items-center justify-center overflow-hidden !rounded-b-none rounded-t-[calc(var(--radius-lg)-1px)] px-5 pt-6 pb-4">
+              <div className="r-inset relative flex shrink-0 items-center justify-center overflow-hidden !rounded-b-none rounded-t-[calc(var(--radius-lg)-1px)] px-5 pt-6 pb-4">
                 {art}
                 <button
                   type="button"
